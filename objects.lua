@@ -7,8 +7,17 @@ function Unit:init(args)
 
   if self.character == 'vagrant' then
     self.color = fg[0]
-    self.visual_shape = 'triangle'
+    self.visual_shape = 'rectangle'
     self.classes = {'ranger', 'warrior', 'mage'}
+  elseif self.character == 'seeker' then
+    self.color = red[0]
+    self.visual_shape = 'capsule'
+    self.classes = {'seeker'}
+    if self.enemy then
+      self.enemy_behavior = 'seek'
+      self:calculate_stats()
+      self:set_as_steerable(self.v)
+    end
   end
 
   self:calculate_stats()
@@ -49,8 +58,34 @@ function Unit:update(dt)
     else camera.r = math.lerp_angle_dt(0.005, dt, camera.r, 0) end
   end
 
+  if not self.player and self.leader then
+    local player = main.current.player
+    if self.enemy_behavior == 'seek' then
+      if self.being_pushed then
+        local v = math.length(self:get_velocity())
+        if v < 25 then
+          self.being_pushed = false
+          self.steering_enabled = true
+          self:set_damping(0)
+          self:set_angular_damping(0)
+        end
+        self.r = self:get_angle()
+      else
+        self:seek_point(player.x, player.y)
+        self:wander(25, 100, 20)
+        self:rotate_towards_velocity(0.5)
+        self.r = self:get_angle()
+      end
+    end
+  end
+
   if not self.leader then
-    local d = math.ceil(self.v*0.1)*self.follower_index
+    local ds
+    if self.parent.v >= 80 and self.parent.v <= 90 then ds = 8 end
+    if self.parent.v >= 20 and self.parent.v <= 30 then ds = 12 end
+    if not ds then error('undefined unit distance for parent velocity: ' .. self.parent.v) end
+
+    local d = ds*self.follower_index
     local p = self.parent.previous_positions[d]
     if p then
       self:set_position(p.x, p.y)
@@ -62,12 +97,31 @@ function Unit:update(dt)
 end
 
 
+function Unit:on_trigger_enter(other)
+  if other:is(Unit) and other.enemy then
+    other:push(math.length(self:get_velocity())/3.5, self:angle_to_object(other))
+  end
+end
+
+
+function Unit:push(f, r)
+  self.being_pushed = true
+  self.steering_enabled = false
+  self:apply_impulse(f*math.cos(r), f*math.sin(r))
+  self:apply_angular_impulse(random:float(-12*math.pi, 12*math.pi))
+  self:set_damping(1.5)
+  self:set_angular_damping(1.5)
+end
+
+
 function Unit:draw()
   graphics.push(self.x, self.y, self.r, self.hfx.hit.x, self.hfx.hit.x)
     if self.visual_shape == 'triangle' then
       graphics.triangle(self.x, self.y, self.shape.w, self.shape.h, self.hfx.hit.f and fg[0] or self.color)
     elseif self.visual_shape == 'rectangle' then
       graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 2, 2, self.hfx.hit.f and fg[0] or self.color)
+    elseif self.visual_shape == 'capsule' then
+      graphics.rectangle(self.x, self.y, self.shape.w, 0.525*self.shape.h, 2, 2, self.hfx.hit.f and fg[0] or self.color)
     end
   graphics.pop()
 
@@ -154,35 +208,29 @@ function Unit:calculate_stats()
 
   for _, class in ipairs(self.classes) do
     if class == 'warrior' then self.class_hp_m = self.class_hp_m*1.4
-    elseif class == 'ranger' then self.class_hp_m = self.class_hp_m*1
     elseif class == 'mage' then self.class_hp_m = self.class_hp_m*0.6
     elseif class == 'healer' then self.class_hp_m = self.class_hp_m*1.1
-    elseif class == 'cycler' then self.class_hp_m = self.class_hp_m*0.9 end
+    elseif class == 'cycler' then self.class_hp_m = self.class_hp_m*0.9
+    elseif class == 'seeker' then self.class_hp_m = self.class_hp_m*0.5 end
   end
   self.max_hp = (self.base_hp + self.class_hp_a + self.buff_hp_a)*self.class_hp_m*self.buff_hp_m
 
   for _, class in ipairs(self.classes) do
     if class == 'warrior' then self.class_dmg_m = self.class_dmg_m*1.1
     elseif class == 'ranger' then self.class_dmg_m = self.class_dmg_m*1.2
-    elseif class == 'mage' then self.class_dmg_m = self.class_dmg_m*1.4
-    elseif class == 'healer' then self.class_dmg_m = self.class_dmg_m*1
-    elseif class == 'cycler' then self.class_dmg_m = self.class_dmg_m*1 end
+    elseif class == 'mage' then self.class_dmg_m = self.class_dmg_m*1.4 end
   end
   self.dmg = (self.base_dmg + self.class_dmg_a + self.buff_dmg_a)*self.class_dmg_m*self.buff_dmg_m
 
   for _, class in ipairs(self.classes) do
     if class == 'warrior' then self.class_aspd_m = self.class_aspd_m*0.9
     elseif class == 'ranger' then self.class_aspd_m = self.class_aspd_m*1.4
-    elseif class == 'mage' then self.class_aspd_m = self.class_aspd_m*1
-    elseif class == 'healer' then self.class_aspd_m = self.class_aspd_m*0.5
-    elseif class == 'cycler' then self.class_aspd_m = self.class_aspd_m*1 end
+    elseif class == 'healer' then self.class_aspd_m = self.class_aspd_m*0.5 end
   end
   self.aspd = 1/((self.base_aspd + self.class_aspd_a + self.buff_aspd_a)*self.class_aspd_m*self.buff_aspd_m)
 
   for _, class in ipairs(self.classes) do
-    if class == 'warrior' then self.class_cycle_m = self.class_cycle_m*1
-    elseif class == 'ranger' then self.class_cycle_m = self.class_cycle_m*1
-    elseif class == 'mage' then self.class_cycle_m = self.class_cycle_m*1.25
+    if class == 'mage' then self.class_cycle_m = self.class_cycle_m*1.25
     elseif class == 'healer' then self.class_cycle_m = self.class_cycle_m*1.1
     elseif class == 'cycler' then self.class_cycle_m = self.class_cycle_m*1.5 end
   end
@@ -192,17 +240,14 @@ function Unit:calculate_stats()
     if class == 'warrior' then self.class_def_m = self.class_def_m*1.25
     elseif class == 'ranger' then self.class_def_m = self.class_def_m*1.1
     elseif class == 'mage' then self.class_def_m = self.class_def_m*1.5
-    elseif class == 'healer' then self.class_def_m = self.class_def_m*1.2
-    elseif class == 'cycler' then self.class_def_m = self.class_def_m*1 end
+    elseif class == 'healer' then self.class_def_m = self.class_def_m*1.2 end
   end
   self.def = (self.base_def + self.class_def_a + self.buff_def_a)*self.class_def_m*self.buff_def_m
 
   for _, class in ipairs(self.classes) do
     if class == 'warrior' then self.class_mvspd_m = self.class_mvspd_m*0.9
     elseif class == 'ranger' then self.class_mvspd_m = self.class_mvspd_m*1.2
-    elseif class == 'mage' then self.class_mvspd_m = self.class_mvspd_m*1
-    elseif class == 'healer' then self.class_mvspd_m = self.class_mvspd_m*1
-    elseif class == 'cycler' then self.class_mvspd_m = self.class_mvspd_m*1 end
+    elseif class == 'seeker' then self.class_mvspd_m = self.class_mvspd_m*0.3 end
   end
   self.v = (self.base_mvspd + self.class_mvspd_a + self.buff_mvspd_a)*self.class_mvspd_m*self.buff_mvspd_m
 end

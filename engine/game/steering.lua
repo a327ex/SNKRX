@@ -5,6 +5,7 @@
 -- self:set_as_steerable(100, 1000)
 function Physics:set_as_steerable(max_v, max_f, max_turn_rate, turn_multiplier)
   self.steerable = true
+  self.steering_enabled = true
   self.heading = Vector()
   self.side = Vector()
   self.mass = 1
@@ -29,14 +30,14 @@ end
 
 
 function Physics:steering_update(dt)
-  if self.steerable then
+  if self.steerable and self.steering_enabled then
     local steering_force = self:calculate_steering_force(dt):div(self.mass)
     self:apply_force(steering_force.x, steering_force.y)
     local vx, vy = self:get_velocity()
     local v = Vector(vx, vy):truncate(self.max_v)
     self:set_velocity(v.x, v.y)
     if v:length_squared() > 0.00001 then
-      self.heading = self.v:clone():normalize()
+      self.heading = v:clone():normalize()
       self.side = self.heading:perpendicular()
     end
   end
@@ -80,7 +81,8 @@ function Physics:seek_point(x, y, deceleration, weight)
     local v = d/((deceleration or 1)*0.08)
     v = math.min(v, self.max_v)
     local dvx, dvy = v*tx/d, v*ty/d
-    self.seek_f:set((dvx - self.v.x)*self.turn_multiplier*(weight or 1), (dvy - self.v.y)*self.turn_multiplier*(weight or 1))
+    local vx, vy = self:get_velocity()
+    self.seek_f:set((dvx - vx)*self.turn_multiplier*(weight or 1), (dvy - vy)*self.turn_multiplier*(weight or 1))
   else self.seek_f:set(0, 0) end
 end
 

@@ -28,11 +28,11 @@ end
 -- then you need to destroy everything that needs to be destroyed in an on_exit function and then recreate it again in the on_enter function.
 --
 -- You'd add a state to the game like this:
---   state.add(MyState'level_1')
+--   main:add(MyState'level_1')
 -- You'd move to that state like so:
---   state.go_to'level_1'
--- state.go_to automatically calls on_exit for the currently active state and on_enter for the new one.
--- You can access the currently active state with state.current.
+--   main:go_to'level_1'
+-- main:go_to automatically calls on_exit for the currently active state and on_enter for the new one.
+-- You can access the currently active state with main.current.
 State = Object:extend()
 function State:init_state(name)
   self.name = name or random:uid()

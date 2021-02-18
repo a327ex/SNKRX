@@ -452,7 +452,7 @@ end
 -- Applies a continuous amount of force to the object
 -- self:apply_force(100*math.cos(angle), 100*math.sin(angle))
 function Physics:apply_force(fx, fy, x, y)
-  if self.body then self.body:applyForce(fx, fy, x, y) end
+  if self.body then self.body:applyForce(fx, fy, x or self.x, y or self.y) end
   return self
 end
 
