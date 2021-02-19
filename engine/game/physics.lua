@@ -143,6 +143,18 @@ function Physics:set_as_triangle(w, h, body_type, tag)
 end
 
 
+function Physics:connect(other, direction)
+  if not self.joints then self.joints = {} end
+  local d = Vector(0, 0)
+  if direction == 'right' then d:set(1, 0)
+  elseif direction == 'left' then d:set(-1, 0)
+  elseif direction == 'up' then d:set(0, -1)
+  elseif direction == 'down' then d:set(0, 1) end
+  self.joints[direction] = love.physics.newRevoluteJoint(self.body, other.body, self.x + 0.5*d.x*self.shape.w, self.y + 0.5*d.y*self.shape.h)
+  return self
+end
+
+
 -- Automatically called by the group instance this game object belongs to whenever it dies.
 function Physics:destroy()
   if self.body then

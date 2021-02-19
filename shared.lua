@@ -291,6 +291,35 @@ end
 
 
 
+SpawnEffect = Object:extend()
+SpawnEffect:implement(GameObject)
+function SpawnEffect:init(args)
+  self:init_game_object(args)
+  self.target_color = self.color or red[0]
+  self.color = fg[0]
+  self.rs = 0
+  self.t:tween(0.1, self, {rs = 6}, math.cubic_in_out, function()
+    if self.action then self.action(self.x, self.y) end
+    self.spring:pull(1)
+    for i = 1, random:int(6, 8) do HitParticle{group = main.current.effects, x = self.x, y = self.y, color = self.target_color, duration = random:float(0.3, 0.5), w = random:float(5, 8), v = random:float(150, 200)} end
+    self.t:tween(0.25, self, {rs = 0}, math.linear, function() self.dead = true end)
+    self.t:after(0.15, function() self.color = self.target_color end)
+  end)
+end
+
+
+function SpawnEffect:update(dt)
+  self:update_game_object(dt)
+end
+
+
+function SpawnEffect:draw()
+  graphics.circle(self.x, self.y, random:float(0.9, 1.1)*self.rs*self.spring.x, self.color)
+end
+
+
+
+
 HoverCrosshair = Object:extend()
 HoverCrosshair:implement(GameObject)
 function HoverCrosshair:init(args)
@@ -489,7 +518,7 @@ end
 function flash(duration, color)
   flashing = true
   flash_color = color or fg[0]
-  t:after(duration, function() flashing = false end, 'flash')
+  trigger:after(duration, function() flashing = false end, 'flash')
 end
 
 
@@ -498,7 +527,7 @@ function slow(amount, duration, tween_method)
   duration = duration or 0.5
   tween_method = tween_method or math.cubic_in_out
   slow_amount = amount
-  t:tween(duration, _G, {slow_amount = 1}, tween_method, function() slow_amount = 1 end, 'slow')
+  trigger:tween(duration, _G, {slow_amount = 1}, tween_method, function() slow_amount = 1 end, 'slow')
 end
 
 
@@ -510,7 +539,7 @@ function HitCircle:init(args)
   self:init_game_object(args)
   self.rs = self.rs or 8
   self.duration = self.duration or 0.05
-  self.color = self.color or white
+  self.color = self.color or fg[0]
   self.t:after(self.duration, function() self.dead = true end, 'die')
   return self
 end
@@ -552,7 +581,7 @@ function HitParticle:init(args)
   self.duration = self.duration or random:float(0.2, 0.6)
   self.w = self.w or random:float(3.5, 7)
   self.h = self.h or self.w/2
-  self.color = self.color or white
+  self.color = self.color or fg[0]
   self.t:tween(self.duration, self, {w = 2, h = 2, v = 0}, math.cubic_in_out, function() self.dead = true end)
 end
 
@@ -585,7 +614,7 @@ AnimationEffect:implement(GameObject)
 function AnimationEffect:init(args)
   self:init_game_object(args)
   self.animation = Animation(self.delay, self.frames, 'once', {[0] = function() self.dead = true end})
-  self.color = self.color or white
+  self.color = self.color or fg[0]
 end
 
 
