@@ -2,6 +2,8 @@ require 'engine'
 require 'shared'
 require 'arena'
 require 'objects'
+require 'player'
+require 'enemies'
 
 
 function init()

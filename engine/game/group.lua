@@ -44,7 +44,7 @@ function Group:init()
   self.objects.by_id = {}
   self.objects.by_class = {}
   self.cells = {}
-  self.cell_size = 128
+  self.cell_size = 64
   return self
 end
 

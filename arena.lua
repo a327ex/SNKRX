@@ -4,10 +4,23 @@ Arena:implement(GameObject)
 function Arena:init(name)
   self:init_state(name)
   self:init_game_object()
+end
+
+
+function Arena:on_enter(from)
   self.main = Group():set_as_physics_world(32, 0, 0, {'player', 'enemy', 'projectile', 'enemy_projectile'})
   self.effects = Group()
   self.ui = Group():no_camera()
   self.main:disable_collision_between('player', 'player')
+  self.main:disable_collision_between('player', 'projectile')
+  self.main:disable_collision_between('player', 'enemy_projectile')
+  self.main:disable_collision_between('projectile', 'projectile')
+  self.main:disable_collision_between('projectile', 'enemy_projectile')
+  self.main:disable_collision_between('projectile', 'enemy')
+  self.main:disable_collision_between('enemy_projectile', 'enemy')
+  self.main:disable_collision_between('enemy_projectile', 'enemy_projectile')
+  self.main:enable_trigger_between('projectile', 'enemy')
+  self.main:enable_trigger_between('enemy_projectile', 'player')
 
   self.enemies = {Seeker}
 
@@ -26,19 +39,15 @@ function Arena:init(name)
   Wall{group = self.main, vertices = math.to_rectangle_vertices(self.x2, -40, gw + 40, gh + 40), color = bg[-1]}
   Wall{group = self.main, vertices = math.to_rectangle_vertices(self.x1, -40, self.x2, self.y1), color = bg[-1]}
   Wall{group = self.main, vertices = math.to_rectangle_vertices(self.x1, self.y2, self.x2, gh + 40), color = bg[-1]}
-
   self.player = Player{group = self.main, x = gw/2, y = gh/2, leader = true, character = 'vagrant'}
+  self.player:add_follower(Player{group = self.main, character = 'swordsman'})
+  --[[
   self.player:add_follower(Player{group = self.main, character = 'vagrant'})
   self.player:add_follower(Player{group = self.main, character = 'vagrant'})
   self.player:add_follower(Player{group = self.main, character = 'vagrant'})
   self.player:add_follower(Player{group = self.main, character = 'vagrant'})
   self.player:add_follower(Player{group = self.main, character = 'vagrant'})
-  self.player:add_follower(Player{group = self.main, character = 'vagrant'})
-end
-
-
-function Arena:on_enter(from)
-  
+  ]]--
 end
 
 

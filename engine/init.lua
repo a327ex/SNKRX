@@ -137,7 +137,7 @@ function engine_run(config)
       local mx, my = love.mouse.getPosition()
       mouse:set(mx/sx, my/sy)
       mouse_dt:set(mouse.x - last_mouse.x, mouse.y - last_mouse.y)
-      update(dt)
+      update(fixed_dt)
       system.update()
       input.last_key_pressed = nil
       last_mouse:set(mouse.x, mouse.y)

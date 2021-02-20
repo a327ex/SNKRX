@@ -43,3 +43,26 @@ Right now basic player and enemy movement works, as well as melee collisions bet
 * One or a few of the characters
 * Port over enemy spawn logic from SHOOTRX
 * Sounds
+
+# Day 3 - 19/02/21
+
+Managed to get the first 4 items of the previous todo list done. Removed the cycle stat because the way projectiles work (they're autoshot) already feels like a cycle so having that in would feel redundant.
+I changed it for area damage + area size stats which feel more fundamental. So currently the synergies are:
+
+* Ranger: yellow, buff attack speed
+* Warrior: orange, buff attack damage
+* Healer: green, buff healing effectiveness
+* Mage: blue, debuff enemy defense
+* Void: purple, buff area damage and size
+
+And the stats are:
+
+* HP
+* Damage
+* Area damage
+* Area of effect
+* Attack speed
+* Defense -> if defense >= 0 then dmg_m = 100/(100+defense) else dmg_m = 2-100/(100-defense)
+
+HP, damage and defense are flat stats, whereas area damage, area of effect and attack speed are multipliers. This is because each character/attack has its own attack speed/area and trying to generalize that
+too much wouldn't work well. For tomorrow I'll just try to finish the rest of the todo, which is add more characters, port enemy spawning logic from SHOOTRX and add sounds.

@@ -132,6 +132,7 @@ end
 -- This is useful when you need the event to happen in a varying interval, like based on the player's attack speed, which might change every frame based on buffs.
 -- Call this on the update function with the appropriate multiplier.
 function Trigger:set_every_multiplier(tag, multiplier)
+  if not self.triggers[tag] then return end
   self.triggers[tag].multiplier = multiplier or 1
 end
 
