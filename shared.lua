@@ -7,6 +7,7 @@ function shared_init()
     fg_alt = ColorRamp(Color'#b0a89f', 0.025),
     yellow = ColorRamp(Color'#facf00', 0.025),
     orange = ColorRamp(Color'#f07021', 0.025),
+    yellow_orange = ColorRamp(Color(245, 160, 16), 0.025),
     blue = ColorRamp(Color'#019bd6', 0.025),
     green = ColorRamp(Color'#8bbf40', 0.025),
     red = ColorRamp(Color'#e91d39', 0.025),

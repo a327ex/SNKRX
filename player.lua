@@ -7,7 +7,7 @@ function Player:init(args)
   self:init_unit()
 
   if self.character == 'vagrant' then
-    self.color = blue[0]
+    self.color = fg[0]
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
     self.classes = {'ranger', 'warrior', 'mage'}
@@ -33,6 +33,48 @@ function Player:init(args)
         self:attack()
       end
     end, nil, nil, 'attack')
+
+  elseif self.character == 'wizard' then
+    self.color = blue[0]
+    self:set_as_rectangle(9, 9, 'dynamic', 'player')
+    self.visual_shape = 'rectangle'
+    self.classes = {'mage'}
+
+    self.attack_sensor = Circle(self.x, self.y, 64)
+    self.t:every(2, function()
+      local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
+      if closest_enemy then
+        self:shoot(self:angle_to_object(closest_enemy), {wizard = self})
+      end
+    end, nil, nil, 'shoot')
+
+  elseif self.character == 'archer' then
+    self.color = yellow[0]
+    self:set_as_rectangle(9, 9, 'dynamic', 'player')
+    self.visual_shape = 'rectangle'
+    self.classes = {'ranger'}
+
+    self.attack_sensor = Circle(self.x, self.y, 160)
+    self.t:every(2, function()
+      local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
+      if closest_enemy then
+        self:shoot(self:angle_to_object(closest_enemy), {pierce = 1000})
+      end
+    end, nil, nil, 'shoot')
+
+  elseif self.character == 'scout' then
+    self.color = red[0]
+    self:set_as_rectangle(9, 9, 'dynamic', 'player')
+    self.visual_shape = 'rectangle'
+    self.classes = {'rogue'}
+
+    self.attack_sensor = Circle(self.x, self.y, 64)
+    self.t:every(2, function()
+      local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
+      if closest_enemy then
+        self:shoot(self:angle_to_object(closest_enemy), {chain = 3})
+      end
+    end, nil, nil, 'shoot')
   end
   self:calculate_stats(true)
 
@@ -50,6 +92,8 @@ end
 function Player:update(dt)
   self:update_game_object(dt)
   self:calculate_stats()
+
+  if self.character == 'archer' then print(self.aspd_m) end
 
   self.attack_sensor:move_to(self.x, self.y)
   self.t:set_every_multiplier('shoot', self.aspd_m)
@@ -109,6 +153,7 @@ function Player:draw()
     graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 3, 3, (self.hfx.hit.f or self.hfx.shoot.f) and fg[0] or self.color)
   end
   graphics.pop()
+  -- self.attack_sensor:draw(self.color, 2)
 end
 
 
@@ -138,18 +183,20 @@ function Player:add_follower(unit)
 end
 
 
-function Player:shoot(r)
+function Player:shoot(r, mods)
   camera:spring_shake(2, r)
   self.hfx:use('shoot', 0.25)
   HitCircle{group = main.current.effects, x = self.x + 0.8*self.shape.w*math.cos(r), y = self.y + 0.8*self.shape.w*math.sin(r), rs = 6}
-  Projectile{group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), v = 250, r = r, color = self.color, dmg = self.dmg}
+  local t = {group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), v = 250, r = r, color = self.color, dmg = self.dmg}
+  Projectile(table.merge(t, mods or {}))
 end
 
 
-function Player:attack()
+function Player:attack(mods)
   camera:shake(2, 0.5)
   self.hfx:use('shoot', 0.25)
-  Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.area_size_m*64, color = self.color, dmg = self.area_dmg_m*self.dmg}
+  local t = {group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.area_size_m*64, color = self.color, dmg = self.area_dmg_m*self.dmg}
+  Area(table.merge(t, mods or {}))
 end
 
 
@@ -161,6 +208,9 @@ Projectile:implement(Physics)
 function Projectile:init(args)
   self:init_game_object(args)
   self:set_as_rectangle(10, 4, 'dynamic', 'projectile')
+  self.pierce = args.pierce or 0
+  self.chain = args.chain or 0
+  self.chain_enemies_hit = {}
 end
 
 
@@ -187,6 +237,10 @@ function Projectile:die(x, y, r, n)
   for i = 1, n do HitParticle{group = main.current.effects, x = x, y = y, r = random:float(0, 2*math.pi), color = self.color} end
   HitCircle{group = main.current.effects, x = x, y = y}:scale_down()
   self.dead = true
+
+  if self.wizard then
+    Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.wizard.area_size_m*32, color = self.color, dmg = self.wizard.area_dmg_m*self.dmg}
+  end
 end
 
 
@@ -207,7 +261,25 @@ end
 
 function Projectile:on_trigger_enter(other, contact)
   if table.any(main.current.enemies, function(v) return other:is(v) end) then
-    self:die(self.x, self.y, nil, random:int(2, 3))
+    if self.pierce <= 0 and self.chain <= 0 then
+      self:die(self.x, self.y, nil, random:int(2, 3))
+    else
+      if self.pierce > 0 then
+        self.pierce = self.pierce - 1
+      end
+      if self.chain > 0 then
+        self.chain = self.chain - 1
+        table.insert(self.chain_enemies_hit, other)
+        local object = self:get_random_object_in_shape(Circle(self.x, self.y, 160), main.current.enemies, self.chain_enemies_hit)
+        if object then
+          self.r = self:angle_to_object(object)
+          self.v = self.v*1.25
+          HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = fg[0], duration = 0.1}
+          HitParticle{group = main.current.effects, x = self.x, y = self.y, color = self.color}
+          HitParticle{group = main.current.effects, x = self.x, y = self.y, color = other.color}
+        end
+      end
+    end
     other:hit(self.dmg)
   end
 end

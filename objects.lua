@@ -46,6 +46,10 @@ function Unit:hit(damage)
     self.dead = true
     for i = 1, random:int(4, 6) do HitParticle{group = main.current.effects, x = self.x, y = self.y, color = self.color} end
     HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 12}:scale_down(0.3):change_color(0.5, self.color)
+
+    if table.any(main.current.enemies, function(v) return self:is(v) end) then
+      main.current:enemy_killed()
+    end
   end
 end
 
@@ -93,6 +97,7 @@ function Unit:calculate_stats(first_run)
     elseif class == 'mage' then self.class_hp_m = self.class_hp_m*0.6
     elseif class == 'healer' then self.class_hp_m = self.class_hp_m*1.1
     elseif class == 'void' then self.class_hp_m = self.class_hp_m*0.9
+    elseif class == 'rogue' then self.class_hp_m = self.class_hp_m*0.8
     elseif class == 'seeker' then self.class_hp_m = self.class_hp_m*0.5 end
   end
   self.max_hp = (self.base_hp + self.class_hp_a + self.buff_hp_a)*self.class_hp_m*self.buff_hp_m
@@ -101,27 +106,31 @@ function Unit:calculate_stats(first_run)
   for _, class in ipairs(self.classes) do
     if class == 'warrior' then self.class_dmg_m = self.class_dmg_m*1.1
     elseif class == 'ranger' then self.class_dmg_m = self.class_dmg_m*1.2
+    elseif class == 'rogue' then self.class_dmg_m = self.class_dmg_m*1.2
     elseif class == 'mage' then self.class_dmg_m = self.class_dmg_m*1.4 end
   end
   self.dmg = (self.base_dmg + self.class_dmg_a + self.buff_dmg_a)*self.class_dmg_m*self.buff_dmg_m
 
   for _, class in ipairs(self.classes) do
     if class == 'warrior' then self.class_aspd_m = self.class_aspd_m*0.9
-    elseif class == 'ranger' then self.class_aspd_m = self.class_aspd_m*1.4
+    elseif class == 'ranger' then self.class_aspd_m = self.class_aspd_m*1.5
     elseif class == 'healer' then self.class_aspd_m = self.class_aspd_m*0.5
+    elseif class == 'rogue' then self.class_aspd_m = self.class_aspd_m*1.1
     elseif class == 'void' then self.class_aspd_m = self.class_aspd_m*0.75 end
   end
   self.aspd_m = 1/(self.base_aspd_m*self.class_aspd_m*self.buff_aspd_m)
 
   for _, class in ipairs(self.classes) do
     if class == 'mage' then self.class_area_dmg_m = self.class_area_dmg_m*1.25
-    elseif class == 'void' then self.class_area_dmg_m = self.class_area_m*1.5 end
+    elseif class == 'void' then self.class_area_dmg_m = self.class_area_dmg_m*1.5
+    elseif class == 'rogue' then self.class_area_dmg_m = self.class_area_dmg_m*0.6 end
   end
   self.area_dmg_m = self.base_area_dmg_m*self.class_area_dmg_m*self.buff_area_dmg_m
 
   for _, class in ipairs(self.classes) do
     if class == 'mage' then self.class_area_size_m = self.class_area_size_m*1.2
-    elseif class == 'void' then self.class_area_size_m = self.class_area_m*1.3 end
+    elseif class == 'void' then self.class_area_size_m = self.class_area_size_m*1.3
+    elseif class == 'rogue' then self.class_area_size_m = self.class_area_size_m*0.6 end
   end
   self.area_size_m = self.base_area_size_m*self.class_area_size_m*self.buff_area_size_m
 
@@ -129,6 +138,7 @@ function Unit:calculate_stats(first_run)
     if class == 'warrior' then self.class_def_m = self.class_def_m*1.25
     elseif class == 'ranger' then self.class_def_m = self.class_def_m*1.1
     elseif class == 'mage' then self.class_def_m = self.class_def_m*0.8
+    elseif class == 'rogue' then self.class_def_m = self.class_def_m*0.8
     elseif class == 'healer' then self.class_def_m = self.class_def_m*1.2 end
   end
   self.def = (self.base_def + self.class_def_a + self.buff_def_a)*self.class_def_m*self.buff_def_m
@@ -136,6 +146,7 @@ function Unit:calculate_stats(first_run)
   for _, class in ipairs(self.classes) do
     if class == 'warrior' then self.class_mvspd_m = self.class_mvspd_m*0.9
     elseif class == 'ranger' then self.class_mvspd_m = self.class_mvspd_m*1.2
+    elseif class == 'rogue' then self.class_mvspd_m = self.class_mvspd_m*1.4
     elseif class == 'seeker' then self.class_mvspd_m = self.class_mvspd_m*0.3 end
   end
   self.v = (self.base_mvspd + self.class_mvspd_a + self.buff_mvspd_a)*self.class_mvspd_m*self.buff_mvspd_m

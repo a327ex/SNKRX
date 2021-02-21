@@ -66,3 +66,27 @@ And the stats are:
 
 HP, damage and defense are flat stats, whereas area damage, area of effect and attack speed are multipliers. This is because each character/attack has its own attack speed/area and trying to generalize that
 too much wouldn't work well. For tomorrow I'll just try to finish the rest of the todo, which is add more characters, port enemy spawning logic from SHOOTRX and add sounds.
+
+# Day 4 - 20/02/21
+
+Ported over enemy spawning logic and added all characters. The characters currently are:
+
+* Vagrant: shoots an ethereal projectile at any nearby enemy that deals physical and magical damage, medium range
+* Scout: throws a knife that chains 3 times at any nearby enemy, small range
+* Cleric: heals every unit when any one drops below 50% HP
+* Swordsman: deals physical damage in an area around the unit, small range
+* Archer: shoots an arrow that pierces at any nearby enemy, very long range
+* Wizard: shoots a projectile at any nearby enemy and deals AoE magical damage on contact, small range, AoE has very small range
+
+The classes are:
+
+* Ranger: yellow, buff attack speed
+* Warrior: orange, buff attack damage
+* Healer: green, buff healing effectiveness
+* Mage: blue, debuff enemy defense
+* Void: purple, buff area damage and size
+* Builder: orange, buffs construct damage, attack speed and duration
+* Rogue: red, chance to crit dealing 4x damage
+
+I'm not sure what I should focus on next. I know that there's sounds left to add, but after that I should probably start doing the actual game progression, but for that I think need a bunch more characters.
+I should probably try to think of a cast of maybe 15-20 characters (however that number should be as low as possible) that fills up the current classes to their multiple levels. Levels possible are: 1, 2, 3, 2/4, 2/4/6 and 3/6.
