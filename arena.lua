@@ -13,6 +13,7 @@ function Arena:on_enter(from, level)
   self.level = level or 1
 
   self.main = Group():set_as_physics_world(32, 0, 0, {'player', 'enemy', 'projectile', 'enemy_projectile'})
+  self.post_main = Group()
   self.effects = Group()
   self.ui = Group():no_camera()
   self.main:disable_collision_between('player', 'player')
@@ -44,16 +45,17 @@ function Arena:on_enter(from, level)
   Wall{group = self.main, vertices = math.to_rectangle_vertices(self.x2, -40, gw + 40, gh + 40), color = bg[-1]}
   Wall{group = self.main, vertices = math.to_rectangle_vertices(self.x1, -40, self.x2, self.y1), color = bg[-1]}
   Wall{group = self.main, vertices = math.to_rectangle_vertices(self.x1, self.y2, self.x2, gh + 40), color = bg[-1]}
+  WallCover{group = self.post_main, vertices = math.to_rectangle_vertices(-40, -40, self.x1, gh + 40), color = bg[-1]}
+  WallCover{group = self.post_main, vertices = math.to_rectangle_vertices(self.x2, -40, gw + 40, gh + 40), color = bg[-1]}
+  WallCover{group = self.post_main, vertices = math.to_rectangle_vertices(self.x1, -40, self.x2, self.y1), color = bg[-1]}
+  WallCover{group = self.post_main, vertices = math.to_rectangle_vertices(self.x1, self.y2, self.x2, gh + 40), color = bg[-1]}
 
-  self.player = Player{group = self.main, x = gw/2, y = gh/2, leader = true, character = 'scout'}
-  --self.player:add_follower(Player{group = self.main, character = 'scout'})
-  --[[
+  self.player = Player{group = self.main, x = gw/2, y = gh/2, leader = true, character = 'swordsman'}
+  self.player:add_follower(Player{group = self.main, character = 'archer'})
   self.player:add_follower(Player{group = self.main, character = 'vagrant'})
-  self.player:add_follower(Player{group = self.main, character = 'vagrant'})
-  self.player:add_follower(Player{group = self.main, character = 'vagrant'})
-  self.player:add_follower(Player{group = self.main, character = 'vagrant'})
-  self.player:add_follower(Player{group = self.main, character = 'vagrant'})
-  ]]--
+  self.player:add_follower(Player{group = self.main, character = 'cleric'})
+  self.player:add_follower(Player{group = self.main, character = 'scout'})
+  self.player:add_follower(Player{group = self.main, character = 'wizard'})
 
   self.win_condition = random:table{'time', 'enemy_kill', 'wave'}
   if self.win_condition == 'wave' then
@@ -68,9 +70,11 @@ function Arena:on_enter(from, level)
     self.start_time = 3
     self.t:after(1, function()
       self.t:every(1, function()
+        if self.start_time > 1 then alert1:play{volume = 0.5} end
         self.start_time = self.start_time - 1
         self.hfx:use('condition1', 0.25, 200, 10)
       end, 3, function()
+        alert1:play{pitch = 1.2, volume = 0.5}
         camera:shake(4, 0.25)
         SpawnEffect{group = self.effects, x = gw/2, y = gh/2 - 48}
         self.wave = 0
@@ -101,9 +105,11 @@ function Arena:on_enter(from, level)
     self.start_time = 3
     self.t:after(1, function()
       self.t:every(1, function()
+        if self.start_time > 1 then alert1:play{volume = 0.5} end
         self.start_time = self.start_time - 1
         self.hfx:use('condition1', 0.25, 200, 10)
       end, 3, function()
+        alert1:play{pitch = 1.2, volume = 0.5}
         camera:shake(4, 0.25)
         SpawnEffect{group = self.effects, x = gw/2, y = gh/2 - 48}
         self:spawn_distributed_enemies()
@@ -127,9 +133,11 @@ function Arena:on_enter(from, level)
     self.start_time = 3
     self.t:after(1, function()
       self.t:every(1, function()
+        if self.start_time > 1 then alert1:play{volume = 0.5} end
         self.start_time = self.start_time - 1
         self.hfx:use('condition1', 0.25, 200, 10)
       end, 3, function()
+        alert1:play{pitch = 1.2, volume = 0.5}
         camera:shake(4, 0.25)
         SpawnEffect{group = self.effects, x = gw/2, y = gh/2 - 48}
         self.t:every(1, function()
@@ -152,6 +160,7 @@ end
 function Arena:update(dt)
   self:update_game_object(dt*slow_amount)
   self.main:update(dt*slow_amount)
+  self.post_main:update(dt*slow_amount)
   self.effects:update(dt*slow_amount)
   self.ui:update(dt*slow_amount)
 
@@ -179,6 +188,7 @@ end
 
 function Arena:draw()
   self.main:draw()
+  self.post_main:draw()
   self.effects:draw()
   self.ui:draw()
 
@@ -279,6 +289,7 @@ function Arena:spawn_n_enemies(p, j, n)
   self.t:every(0.1, function()
     local o = self.spawn_offsets[(self.t:get_every_iteration('spawn_enemies_' .. j) % 5) + 1]
     SpawnEffect{group = self.effects, x = p.x + o.x, y = p.y + o.y, action = function(x, y)
+      spawn1:play{pitch = random:float(0.8, 1.2), volume = 0.15}
       if self.level == 1 then
         Seeker{group = self.main, x = x, y = y, character = 'seeker'}
       elseif self.level == 2 then

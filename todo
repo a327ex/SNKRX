@@ -1,9 +1,10 @@
 Vagrant: shoots an ethereal projectile at any nearby enemy that deals physical and magical damage, medium range
 Scout: throws a knife that chains 3 times at any nearby enemy, small range
 Cleric: heals every unit when any one drops below 50% HP
-Swordsman: deals physical damage in an area around the unit, small range
+Swordsman: deals physical damage in a medium area around the unit, small range
 Archer: shoots an arrow that pierces at any nearby enemy, very long range
-Wizard: shoots a projectile at any nearby enemy and deals AoE magical damage on contact, small range, AoE has very small range
+Wizard: shoots a projectile at any nearby enemy and deals AoE magical damage on contact, long range, AoE has very small range
+
 Engineer: drops a turret that shoots secondary projectiles very fast, medium range
 
 Ranger: yellow, buff attack speed
@@ -27,4 +28,4 @@ Defense -> if defense >= 0 then dmg_m = 100/(100+defense) else dmg_m = 2-100/(10
 * Stats: attack speed, damage, area
 * One or a few of the characters
 * Port over enemy spawn logic from SHOOTRX
-Sounds
+* Sounds

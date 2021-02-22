@@ -59,7 +59,25 @@ function Seeker:on_collision_enter(other, contact)
       other:push(random:float(10, 15), other:angle_to_object(self))
       HitCircle{group = main.current.effects, x = x, y = y, rs = 6, color = fg[0], duration = 0.1}
       for i = 1, 2 do HitParticle{group = main.current.effects, x = x, y = y, color = self.color} end
+      hit2:play{pitch = random:float(0.95, 1.05), volume = 0.35}
     end
+  end
+end
+
+
+function Seeker:hit(damage)
+  if self.dead then return end
+  self.hfx:use('hit', 0.25, 200, 10)
+  self:show_hp()
+  
+  local actual_damage = self:calculate_damage(damage)
+  self.hp = self.hp - actual_damage
+  if self.hp <= 0 then
+    self.dead = true
+    for i = 1, random:int(4, 6) do HitParticle{group = main.current.effects, x = self.x, y = self.y, color = self.color} end
+    HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 12}:scale_down(0.3):change_color(0.5, self.color)
+    main.current:enemy_killed()
+    _G[random:table{'enemy_die1', 'enemy_die2'}]:play{pitch = random:float(0.9, 1.1), volume = 0.5}
   end
 end
 

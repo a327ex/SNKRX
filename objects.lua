@@ -1,8 +1,73 @@
+WallKnife = Object:extend()
+WallKnife:implement(GameObject)
+WallKnife:implement(Physics)
+function WallKnife:init(args)
+  self:init_game_object(args)
+  self:set_as_rectangle(10, 4, 'dynamic', 'projectile')
+  self.hfx:add('hit', 1)
+  self.hfx:use('hit', 0.25)
+  self.t:tween({0.8, 1.6}, self, {v = 0}, math.linear, function()
+    self.t:every_immediate(0.05, function() self.hidden = not self.hidden end, 7, function() self.dead = true end)
+  end)
+
+  self.vr = self.r
+  self.dvr = random:table{random:float(-8*math.pi, -4*math.pi), random:float(4*math.pi, 8*math.pi)}
+end
+
+
+function WallKnife:update(dt)
+  self:update_game_object(dt)
+
+  self:set_angle(self.r)
+  self:move_along_angle(self.v, self.r)
+  self.vr = self.vr + self.dvr*dt
+end
+
+
+function WallKnife:draw()
+  if self.hidden then return end
+  graphics.push(self.x, self.y, self.vr, self.hfx.hit.x, self.hfx.hit.x)
+  graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 2, 2, self.hfx.hit.f and fg[0] or self.color)
+  graphics.pop()
+end
+
+
+
+
+WallArrow = Object:extend()
+WallArrow:implement(GameObject)
+function WallArrow:init(args)
+  self:init_game_object(args)
+  self.shape = Rectangle(self.x, self.y, 10, 4)
+  self.hfx:add('hit', 1)
+  self.hfx:use('hit', 0.25)
+  self.t:after({0.8, 2}, function()
+    self.t:every_immediate(0.05, function() self.hidden = not self.hidden end, 7, function() self.dead = true end)
+  end)
+end
+
+
+function WallArrow:update(dt)
+  self:update_game_object(dt)
+end
+
+
+function WallArrow:draw()
+  if self.hidden then return end
+  graphics.push(self.x, self.y, self.r, self.hfx.hit.x, self.hfx.hit.x)
+  graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 2, 2, self.hfx.hit.f and fg[0] or self.color)
+  graphics.pop()
+end
+
+
+
+
 Unit = Object:extend()
 function Unit:init_unit()
   self.hfx:add('hit', 1)
   self.hfx:add('shoot', 1)
   self.hp_bar = HPBar{group = main.current.effects, parent = self}
+  self.heal_bar = HealBar{group = main.current.effects, parent = self}
 end
 
 
@@ -16,6 +81,7 @@ function Unit:bounce(nx, ny)
     self:set_velocity(-vx, vy)
     self.r = math.pi - self.r
   end
+  return self.r
 end
 
 
@@ -25,32 +91,9 @@ function Unit:show_hp(n)
 end
 
 
-function Unit:hit(damage)
-  if self.dead then return end
-
-  self.hfx:use('hit', 0.25, 200, 10)
-  self:show_hp()
-  
-  local actual_damage = self:calculate_damage(damage)
-  self.hp = self.hp - actual_damage
-  if self:is(Player) then
-    if actual_damage >= 20 then
-      camera:shake(2, 1)
-      slow(0.25, 1)
-    else
-      camera:shake(2, 0.5)
-    end
-  end
-
-  if self.hp <= 0 then
-    self.dead = true
-    for i = 1, random:int(4, 6) do HitParticle{group = main.current.effects, x = self.x, y = self.y, color = self.color} end
-    HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 12}:scale_down(0.3):change_color(0.5, self.color)
-
-    if table.any(main.current.enemies, function(v) return self:is(v) end) then
-      main.current:enemy_killed()
-    end
-  end
+function Unit:show_heal(n)
+  self.heal_bar.hidden = false
+  self.t:after(n or 4, function() self.heal_bar.hidden = true end, 'heal_bar')
 end
 
 
@@ -150,6 +193,35 @@ function Unit:calculate_stats(first_run)
     elseif class == 'seeker' then self.class_mvspd_m = self.class_mvspd_m*0.3 end
   end
   self.v = (self.base_mvspd + self.class_mvspd_a + self.buff_mvspd_a)*self.class_mvspd_m*self.buff_mvspd_m
+end
+
+
+
+
+HealBar = Object:extend()
+HealBar:implement(GameObject)
+HealBar:implement(Parent)
+function HealBar:init(args)
+  self:init_game_object(args)
+  self.hidden = true
+  self.color = green[0]
+  self.color_transparent = Color(self.color.r, self.color.g, self.color.b, 0.2)
+end
+
+
+function HealBar:update(dt)
+  self:update_game_object(dt)
+  self:follow_parent_exclusively()
+end
+
+
+function HealBar:draw()
+  if self.hidden then return end
+  local p = self.parent
+  graphics.push(p.x, p.y, 0, p.hfx.hit.x, p.hfx.hit.x)
+    graphics.rectangle(p.x, p.y, 1.25*p.shape.w, 1.25*p.shape.h, 2, 2, self.color_transparent)
+    graphics.rectangle(p.x, p.y, 1.25*p.shape.w, 1.25*p.shape.h, 2, 2, self.color, 1)
+  graphics.pop()
 end
 
 

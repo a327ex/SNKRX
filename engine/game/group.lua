@@ -167,6 +167,7 @@ end
 function Group:add(object)
   local class = getmetatable(object)
   object.group = self
+
   if not object.id then object.id = random:uid() end
   self.objects.by_id[object.id] = object
   if not self.objects.by_class[class] then self.objects.by_class[class] = {} end

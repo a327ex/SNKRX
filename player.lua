@@ -30,7 +30,7 @@ function Player:init(args)
     self.t:every(3, function()
       local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies)
       if enemies and #enemies > 0 then
-        self:attack()
+        self:attack(96)
       end
     end, nil, nil, 'attack')
 
@@ -40,7 +40,7 @@ function Player:init(args)
     self.visual_shape = 'rectangle'
     self.classes = {'mage'}
 
-    self.attack_sensor = Circle(self.x, self.y, 64)
+    self.attack_sensor = Circle(self.x, self.y, 128)
     self.t:every(2, function()
       local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
       if closest_enemy then
@@ -75,6 +75,25 @@ function Player:init(args)
         self:shoot(self:angle_to_object(closest_enemy), {chain = 3})
       end
     end, nil, nil, 'shoot')
+
+  elseif self.character == 'cleric' then
+    self.color = green[0]
+    self:set_as_rectangle(9, 9, 'dynamic', 'player')
+    self.visual_shape = 'rectangle'
+    self.classes = {'healer'}
+
+    self.last_heal_time = love.timer.getTime()
+    self.t:every(2, function()
+      local followers
+      local leader = (self.leader and self) or self.parent
+      if self.leader then followers = self.followers else followers = self.parent.followers end
+      if (table.any(followers, function(v) return v.hp <= 0.5*v.max_hp end) or (leader.hp <= 0.5*leader.max_hp)) and love.timer.getTime() - self.last_heal_time > 6 then
+        self.last_heal_time = love.timer.getTime()
+        if self.leader then self:heal(0.1*self.max_hp) else self.parent:heal(0.1*self.parent.max_hp) end
+        for _, f in ipairs(followers) do f:heal(0.1*f.max_hp) end
+        heal1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      end
+    end)
   end
   self:calculate_stats(true)
 
@@ -93,9 +112,7 @@ function Player:update(dt)
   self:update_game_object(dt)
   self:calculate_stats()
 
-  if self.character == 'archer' then print(self.aspd_m) end
-
-  self.attack_sensor:move_to(self.x, self.y)
+  if self.attack_sensor then self.attack_sensor:move_to(self.x, self.y) end
   self.t:set_every_multiplier('shoot', self.aspd_m)
   self.t:set_every_multiplier('attack', self.aspd_m)
 
@@ -136,6 +153,7 @@ function Player:update(dt)
       self:set_position(p.x, p.y)
       self.r = p.r
       if not self.following then
+        spawn1:play{pitch = random:float(0.8, 1.2), volume = 0.15}
         for i = 1, random:int(3, 4) do HitParticle{group = main.current.effects, x = self.x, y = self.y, color = self.color} end
         HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 10, color = fg[0]}:scale_down(0.3):change_color(0.5, self.color)
         self.following = true
@@ -161,9 +179,22 @@ function Player:on_collision_enter(other, contact)
   local x, y = contact:getPositions()
 
   if other:is(Wall) then
-    self.hfx:use('hit', 0.5, 200, 10, 0.1)
-    camera:spring_shake(2, math.pi - self.r)
-    self:bounce(contact:getNormal())
+    if self.leader then
+      self.hfx:use('hit', 0.5, 200, 10, 0.1)
+      camera:spring_shake(2, math.pi - self.r)
+      self:bounce(contact:getNormal())
+      local r = random:float(0.9, 1.1)
+      player_hit_wall1:play{pitch = r, volume = 0.1}
+      pop1:play{pitch = r, volume = 0.2}
+
+      for i, f in ipairs(self.followers) do
+        trigger:after(i*0.002*self.v, function()
+          f.hfx:use('hit', 0.5, 200, 10, 0.1)
+          player_hit_wall1:play{pitch = r + 0.025*i, volume = 0.1}
+          pop1:play{pitch = r + 0.05*i, volume = 0.2}
+        end)
+      end
+    end
 
   elseif table.any(main.current.enemies, function(v) return other:is(v) end) then
     other:push(random:float(25, 35), self:angle_to_object(other))
@@ -173,6 +204,36 @@ function Player:on_collision_enter(other, contact)
     for i = 1, 2 do HitParticle{group = main.current.effects, x = x, y = y, color = self.color} end
     for i = 1, 2 do HitParticle{group = main.current.effects, x = x, y = y, color = other.color} end
   end
+end
+
+
+function Player:hit(damage)
+  if self.dead then return end
+  self.hfx:use('hit', 0.25, 200, 10)
+  self:show_hp()
+  
+  local actual_damage = self:calculate_damage(damage)
+  self.hp = self.hp - actual_damage
+  _G[random:table{'player_hit1', 'player_hit2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+  camera:shake(4, 0.5)
+
+  if self.hp <= 0 then
+    slow(0.25, 1)
+    self.dead = true
+    for i = 1, random:int(4, 6) do HitParticle{group = main.current.effects, x = self.x, y = self.y, color = self.color} end
+    HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 12}:scale_down(0.3):change_color(0.5, self.color)
+  end
+end
+
+
+function Player:heal(amount)
+  local hp = self.hp
+
+  self.hfx:use('hit', 0.25, 200, 10)
+  self:show_hp(1.5)
+  self:show_heal(1.5)
+  self.hp = self.hp + amount
+  if self.hp > self.max_hp then self.hp = self.max_hp end
 end
 
 
@@ -187,16 +248,30 @@ function Player:shoot(r, mods)
   camera:spring_shake(2, r)
   self.hfx:use('shoot', 0.25)
   HitCircle{group = main.current.effects, x = self.x + 0.8*self.shape.w*math.cos(r), y = self.y + 0.8*self.shape.w*math.sin(r), rs = 6}
-  local t = {group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), v = 250, r = r, color = self.color, dmg = self.dmg}
+  local t = {group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), v = 250, r = r, color = self.color, dmg = self.dmg, character = self.character}
   Projectile(table.merge(t, mods or {}))
+
+  if self.character == 'vagrant' then
+    shoot1:play{pitch = random:float(0.95, 1.05), volume = 0.3}
+  elseif self.character == 'archer' then
+    archer1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+  elseif self.character == 'wizard' then
+    wizard1:play{pitch = random:float(0.95, 1.05), volume = 0.15}
+  elseif self.character == 'scout' then
+    _G[random:table{'scout1', 'scout2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+  end
 end
 
 
-function Player:attack(mods)
+function Player:attack(area, mods)
   camera:shake(2, 0.5)
   self.hfx:use('shoot', 0.25)
-  local t = {group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.area_size_m*64, color = self.color, dmg = self.area_dmg_m*self.dmg}
+  local t = {group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.area_size_m*(area or 64), color = self.color, dmg = self.area_dmg_m*self.dmg, character = self.character}
   Area(table.merge(t, mods or {}))
+
+  if self.character == 'swordsman' then
+    _G[random:table{'swordsman1', 'swordsman2'}]:play{pitch = random:float(0.9, 1.1), volume = 0.75}
+  end
 end
 
 
@@ -238,8 +313,8 @@ function Projectile:die(x, y, r, n)
   HitCircle{group = main.current.effects, x = x, y = y}:scale_down()
   self.dead = true
 
-  if self.wizard then
-    Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.wizard.area_size_m*32, color = self.color, dmg = self.wizard.area_dmg_m*self.dmg}
+  if self.character == 'wizard' then
+    Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.wizard.area_size_m*32, color = self.color, dmg = self.wizard.area_dmg_m*self.dmg, character = self.character}
   end
 end
 
@@ -254,7 +329,24 @@ function Projectile:on_collision_enter(other, contact)
   else r = 0 end
 
   if other:is(Wall) then
-    self:die(x, y, r, random:int(2, 3))
+    if self.character == 'archer' then
+      self:die(x, y, r, 0)
+      _G[random:table{'arrow_hit_wall1', 'arrow_hit_wall2'}]:play{pitch = random:float(0.9, 1.1), volume = 0.2}
+      WallArrow{group = main.current.main, x = x, y = y, r = self.r, color = self.color}
+    elseif self.character == 'scout' then
+      self:die(x, y, r, 0)
+      knife_hit_wall1:play{pitch = random:float(0.9, 1.1), volume = 0.2}
+      local r = Unit.bounce(self, nx, ny)
+      trigger:after(0.01, function()
+        WallKnife{group = main.current.main, x = x, y = y, r = r, v = self.v*0.1, color = self.color}
+      end)
+    elseif self.character == 'wizard' then
+      self:die(x, y, r, random:int(2, 3))
+      magic_area1:play{pitch = random:float(0.95, 1.05), volume = 0.075}
+    else
+      self:die(x, y, r, random:int(2, 3))
+      proj_hit_wall1:play{pitch = random:float(0.9, 1.1), volume = 0.2}
+    end
   end
 end
 
@@ -274,11 +366,19 @@ function Projectile:on_trigger_enter(other, contact)
         if object then
           self.r = self:angle_to_object(object)
           self.v = self.v*1.25
-          HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = fg[0], duration = 0.1}
-          HitParticle{group = main.current.effects, x = self.x, y = self.y, color = self.color}
-          HitParticle{group = main.current.effects, x = self.x, y = self.y, color = other.color}
         end
       end
+      HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = fg[0], duration = 0.1}
+      HitParticle{group = main.current.effects, x = self.x, y = self.y, color = self.color}
+      HitParticle{group = main.current.effects, x = self.x, y = self.y, color = other.color}
+    end
+
+    if self.character == 'archer' or self.character == 'scout' then
+      hit2:play{pitch = random:float(0.95, 1.05), volume = 0.35}
+    elseif self.character == 'wizard' then
+      magic_area1:play{pitch = random:float(0.95, 1.05), volume = 0.15}
+    else
+      hit3:play{pitch = random:float(0.95, 1.05), volume = 0.35}
     end
     other:hit(self.dmg)
   end
@@ -298,6 +398,11 @@ function Area:init(args)
     HitCircle{group = main.current.effects, x = enemy.x, y = enemy.y, rs = 6, color = fg[0], duration = 0.1}
     for i = 1, 2 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = self.color} end
     for i = 1, 2 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = enemy.color} end
+    if self.character == 'wizard' then
+      magic_hit1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    elseif self.character == 'swordsman' then
+      hit2:play{pitch = random:float(0.95, 1.05), volume = 0.35}
+    end
   end
 
   self.color = fg[0]
