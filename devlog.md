@@ -97,3 +97,101 @@ Sounds done for everything. Surprising to me how much sounds added to the game a
 I should probably make it a habit to add sounds earlier rather than later from now on.
 
 Tomorrow I should probably ideaguy the full set of characters and classes that I'll need so that the game is playable and start on implementing those additional characters as well as some class bonuses.
+
+# Day 6 - 22/02/21
+
+Ideaguyed the entire roster for the demo and implemented a few of them.
+
+### Classes
+
+| Class | Color | Set Effect |
+| --- | --- | --- |
+| Ranger | yellow | chance to release a barrage |
+| Warrior | orange | increased defense |
+| Healer | green | increased healing effectiveness |
+| Mage | blue | decreased enemy defense |
+| Nuker | purple | increased area damage and size |
+| Conjurer | orange | increased construct damage and duration |
+| Rogue | red | chance to crit dealing 4x damage |
+| Enchanter | pink | increased damage to all allies |
+| Psy | white | returns damage taken based on number of active psy units |
+
+### Characters
+
+| Character | Description | Trigger Range | Effect Range |
+| --- | --- | --- | --- |
+| Vagrant | shoots a projectile | medium | nil |
+| Scout | throws a knife that chains 3 times | small | nil |
+| Cleric | heals every unit when any one drops below 50% HP | nil | nil |
+| Swordsman | deals physical damage in an area around the unit | small | medium |
+| Archer | shoots an arrow that pierces | very long | nil |
+| Wizard | shoots a projectile that deals AoE damage | long | very small |
+| Outlaw | throws a fan of 5 knives | medium | nil |
+| Blade | shoots multiple blades that deal AoE damage on contact | small | small |
+| Elementor | deals massive AoE damage to a random target | long | medium |
+| Ninja | creates clones that roam and shoot shurikens | nil | very small |
+| Linker | links nearby enemies together making them share damage taken | medium | small |
+| Sage | shoots a slow projectile that draws enemies in | medium | medium |
+| Squire | improves damage and defense for adjacent units as well as healing them periodically | nil | nil |
+| Cannoneer | shoots a projectile that deals massive AoE damage | long | medium |
+| Dual Gunner | shoots two parallel projectiles | medium | nil |
+| Hunter | shoots an arrow with a chance to summon a pet | long | small |
+| Chronomancer | dramatically improves attack speed for adjacent units | nil | nil |
+| Spellblade | knives orbit you and hoam towards nearby enemies | small | small |
+| Psykeeper | all damage taken is stored and distributed as healing | nil | nil |
+| Gambler | drops a sentry that uses random attacks | nil | medium |
+
+### Character Classes
+
+| Character | Classes |
+| --- | --- |
+| Vagrant | warrior, ranger, psy |
+| Scout | rogue |
+| Cleric | healer |
+| Swordsman | warrior |
+| Archer | ranger |
+| Wizard | mage |
+| Outlaw | rogue, warrior |
+| Blade | warrior, nuker |
+| Elementor | mage, nuker |
+| Ninja | rogue, conjurer |
+| Linker | enchanter, nuker |
+| Sage | mage, nuker |
+| Squire | warrior, healer, enchanter |
+| Cannoneer | ranger, nuker |
+| Dual | unner [ranger, rogue |
+| Hunter | ranger, conjurer |
+| Chronomancer | mage, enchanter |
+| Spellblade | mage, rogue |
+| Psykeeper | healer, psy |
+| Gambler | conjurer |
+
+### Class Numbers
+
+| Class | Set Levels | Total Units |
+| --- | --- | --- |
+| Ranger | 2, 4 | 5 |
+| Warrior | 2, 4 | 5 |
+| Healer | 3 | 3 |
+| Mage | 2, 4 | 5 |
+| Nuker | 2, 4 | 5 |
+| Conjurer | 2 | 3 |
+| Rogue | 2, 4 | 5 |
+| Enchanter | 3 | 3 |
+| Psy | n | 2 |
+
+### Class Stat Multipliers
+
+| Class | HP | DMG | ASPD | Area DMG | Area Size | DEF | MVSPD |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Warrior | 1.4 | 1.1 | 0.9 | 1.0 | 1.0 | 1.25 | 0.9 |
+| Ranger | 1.0 | 1.2 | 1.5 | 1.0 | 1.0 | 0.9 | 1.2 |
+| Healer | 1.2 | 1.0 | 0.5 | 1.0 | 1.0 | 1.2 | 1.0 |
+| Mage | 0.6 | 1.4 | 1.0 | 1.25 | 1.25 | 0.75 | 1.0 |
+| Rogue | 0.8 | 1.3 | 1.1 | 0.6 | 0.6 | 0.8 | 1.4 |
+| Nuker | 0.9 | 1.4 | 0.75 | 1.5 | 1.3 | 1.0 | 1.0 |
+| Conjurer | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 |
+| Enchanter | 1.2 | 1.0 | 1.0 | 1.0 | 1.0 | 1.2 | 1.2 |
+| Psy | 1.5 | 1.0 | 1.0 | 1.0 | 1.0 | 0.5 | 1.0 |
+
+I've implemented up to Elementor today and ATM in the process of doing Ninja, but today seems like a particularly low energy day so I'm just going to play some games instead.

@@ -10,7 +10,7 @@ function Player:init(args)
     self.color = fg[0]
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
-    self.classes = {'ranger', 'warrior', 'mage'}
+    self.classes = {'ranger', 'warrior', 'psy'}
 
     self.attack_sensor = Circle(self.x, self.y, 96)
     self.t:every(2, function()
@@ -93,6 +93,62 @@ function Player:init(args)
         for _, f in ipairs(followers) do f:heal(0.1*f.max_hp) end
         heal1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       end
+    end)
+
+  elseif self.character == 'outlaw' then
+    self.color = red[0]
+    self:set_as_rectangle(9, 9, 'dynamic', 'player')
+    self.visual_shape = 'rectangle'
+    self.classes = {'warrior', 'rogue'}
+
+    self.attack_sensor = Circle(self.x, self.y, 96)
+    self.t:every(3, function()
+      local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
+      if closest_enemy then
+        self:shoot(self:angle_to_object(closest_enemy))
+      end
+    end, nil, nil, 'shoot')
+
+  elseif self.character == 'blade' then
+    self.color = orange[0]
+    self:set_as_rectangle(9, 9, 'dynamic', 'player')
+    self.visual_shape = 'rectangle'
+    self.classes = {'warrior', 'rogue'}
+
+    self.attack_sensor = Circle(self.x, self.y, 64)
+    self.t:every(4, function()
+      local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies)
+      if enemies and #enemies > 0 then
+        self:shoot()
+      end
+    end, nil, nil, 'shoot')
+
+  elseif self.character == 'elementor' then
+    self.color = blue[0]
+    self:set_as_rectangle(9, 9, 'dynamic', 'player')
+    self.visual_shape = 'rectangle'
+    self.classes = {'mage', 'nuker'}
+
+    self.attack_sensor = Circle(self.x, self.y, 128)
+    self.t:every(12, function()
+      local enemy = self:get_random_object_in_shape(self.attack_sensor, main.current.enemies)
+      if enemy then
+        self:attack(128, {x = enemy.x, y = enemy.y})
+      end
+    end, nil, nil, 'attack')
+
+  elseif self.character == 'ninja' then
+    self.color = red[0]
+    self:set_as_rectangle(9, 9, 'dynamic', 'player')
+    self.visual_shape = 'rectangle'
+    self.classes = {'rogue', 'conjurer'}
+
+    self.t:every(8, function()
+      self.t:every(0.25, function()
+        SpawnEffect{group = self.effects, x = self.x, y = self.y, action = function(x, y)
+          NinjaClone{group = self.main, x = x, y = y, parent = self}
+        end}
+      end, 3)
     end)
   end
   self:calculate_stats(true)
@@ -247,9 +303,30 @@ end
 function Player:shoot(r, mods)
   camera:spring_shake(2, r)
   self.hfx:use('shoot', 0.25)
-  HitCircle{group = main.current.effects, x = self.x + 0.8*self.shape.w*math.cos(r), y = self.y + 0.8*self.shape.w*math.sin(r), rs = 6}
-  local t = {group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), v = 250, r = r, color = self.color, dmg = self.dmg, character = self.character}
-  Projectile(table.merge(t, mods or {}))
+
+  if self.character == 'outlaw' then
+    HitCircle{group = main.current.effects, x = self.x + 0.8*self.shape.w*math.cos(r), y = self.y + 0.8*self.shape.w*math.sin(r), rs = 6}
+    r = r - 2*math.pi/8
+    for i = 1, 5 do
+      local t = {group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), v = 250, r = r, color = self.color, dmg = self.dmg, character = self.character, parent = self}
+      Projectile(table.merge(t, mods or {}))
+      r = r + math.pi/8
+    end
+  elseif self.character == 'blade' then
+    local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies)
+    if enemies and #enemies > 0 then
+      for _, enemy in ipairs(enemies) do
+        local r = self:angle_to_object(enemy)
+        HitCircle{group = main.current.effects, x = self.x + 0.8*self.shape.w*math.cos(r), y = self.y + 0.8*self.shape.w*math.sin(r), rs = 6}
+        local t = {group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), v = 250, r = r, color = self.color, dmg = self.dmg, character = self.character, parent = self}
+        Projectile(table.merge(t, mods or {}))
+      end
+    end
+  else
+    HitCircle{group = main.current.effects, x = self.x + 0.8*self.shape.w*math.cos(r), y = self.y + 0.8*self.shape.w*math.sin(r), rs = 6}
+    local t = {group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), v = 250, r = r, color = self.color, dmg = self.dmg, character = self.character, parent = self}
+    Projectile(table.merge(t, mods or {}))
+  end
 
   if self.character == 'vagrant' then
     shoot1:play{pitch = random:float(0.95, 1.05), volume = 0.3}
@@ -257,7 +334,7 @@ function Player:shoot(r, mods)
     archer1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
   elseif self.character == 'wizard' then
     wizard1:play{pitch = random:float(0.95, 1.05), volume = 0.15}
-  elseif self.character == 'scout' then
+  elseif self.character == 'scout' or self.character == 'outlaw' or self.character == 'blade' then
     _G[random:table{'scout1', 'scout2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
   end
 end
@@ -266,11 +343,13 @@ end
 function Player:attack(area, mods)
   camera:shake(2, 0.5)
   self.hfx:use('shoot', 0.25)
-  local t = {group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.area_size_m*(area or 64), color = self.color, dmg = self.area_dmg_m*self.dmg, character = self.character}
+  local t = {group = main.current.effects, x = mods.x or self.x, y = mods.y or self.y, r = self.r, w = self.area_size_m*(area or 64), color = self.color, dmg = self.area_dmg_m*self.dmg, character = self.character}
   Area(table.merge(t, mods or {}))
 
   if self.character == 'swordsman' then
     _G[random:table{'swordsman1', 'swordsman2'}]:play{pitch = random:float(0.9, 1.1), volume = 0.75}
+  elseif self.character == 'elementor' then
+    elementor1:play{pitch = random:float(0.9, 1.1), volume = 0.5}
   end
 end
 
@@ -314,7 +393,9 @@ function Projectile:die(x, y, r, n)
   self.dead = true
 
   if self.character == 'wizard' then
-    Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.wizard.area_size_m*32, color = self.color, dmg = self.wizard.area_dmg_m*self.dmg, character = self.character}
+    Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.parent.area_size_m*32, color = self.color, dmg = self.parent.area_dmg_m*self.dmg, character = self.character}
+  elseif self.character == 'blade' then
+    Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.parent.area_size_m*64, color = self.color, dmg = self.parent.area_dmg_m*self.dmg, character = self.character}
   end
 end
 
@@ -333,7 +414,7 @@ function Projectile:on_collision_enter(other, contact)
       self:die(x, y, r, 0)
       _G[random:table{'arrow_hit_wall1', 'arrow_hit_wall2'}]:play{pitch = random:float(0.9, 1.1), volume = 0.2}
       WallArrow{group = main.current.main, x = x, y = y, r = self.r, color = self.color}
-    elseif self.character == 'scout' then
+    elseif self.character == 'scout' or self.character == 'outlaw' or self.character == 'blade' then
       self:die(x, y, r, 0)
       knife_hit_wall1:play{pitch = random:float(0.9, 1.1), volume = 0.2}
       local r = Unit.bounce(self, nx, ny)
@@ -373,7 +454,7 @@ function Projectile:on_trigger_enter(other, contact)
       HitParticle{group = main.current.effects, x = self.x, y = self.y, color = other.color}
     end
 
-    if self.character == 'archer' or self.character == 'scout' then
+    if self.character == 'archer' or self.character == 'scout' or self.character == 'outlaw' or self.character == 'blade' then
       hit2:play{pitch = random:float(0.95, 1.05), volume = 0.35}
     elseif self.character == 'wizard' then
       magic_area1:play{pitch = random:float(0.95, 1.05), volume = 0.15}
@@ -398,10 +479,13 @@ function Area:init(args)
     HitCircle{group = main.current.effects, x = enemy.x, y = enemy.y, rs = 6, color = fg[0], duration = 0.1}
     for i = 1, 2 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = self.color} end
     for i = 1, 2 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = enemy.color} end
-    if self.character == 'wizard' then
+    if self.character == 'wizard' or self.character == 'elementor' then
       magic_hit1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     elseif self.character == 'swordsman' then
       hit2:play{pitch = random:float(0.95, 1.05), volume = 0.35}
+    elseif self.character == 'blade' then
+      blade_hit1:play{pitch = random:float(0.9, 1.1), volume = 0.35}
+      hit2:play{pitch = random:float(0.95, 1.05), volume = 0.2}
     end
   end
 
@@ -434,5 +518,36 @@ function Area:draw()
   graphics.polyline(self.color, 2, x2 - w10, y2, x2, y2, x2, y2 - w10)
   graphics.polyline(self.color, 2, x1, y2 - w10, x1, y2, x1 + w10, y2)
   graphics.rectangle((x1+x2)/2, (y1+y2)/2, x2-x1, y2-y1, nil, nil, self.color_transparent)
+  graphics.pop()
+end
+
+
+
+
+NinjaClone = Object:extend()
+NinjaClone:implement(GameObject)
+NinjaClone:implement(Physics)
+function NinjaClone:init(args)
+  self:init_game_object(args)
+  self:init_unit()
+  self:set_as_rectangle(8, 8, 'dynamic', 'enemy')
+  self:set_restitution(0.5)
+  
+  self.color = red[0]
+  self.classes = {'ninja_clone'}
+  self:calculate_stats(true)
+  self:set_as_steerable(self.v, 2000, 4*math.pi, 4)
+end
+
+
+function NinjaClone:update(dt)
+  self:update_game_object(dt)
+  self:calculate_stats()
+end
+
+
+function NinjaClone:draw()
+  graphics.push(self.x, self.y, self.r, self.hfx.hit.x, self.hfx.hit.x)
+    graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 3, 3, self.hfx.hit.f and fg[0] or self.color)
   graphics.pop()
 end

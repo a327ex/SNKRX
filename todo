@@ -1,19 +1,66 @@
-Vagrant: shoots an ethereal projectile at any nearby enemy that deals physical and magical damage, medium range
+Vagrant: shoots a projectile at any nearby enemy, medium range
 Scout: throws a knife that chains 3 times at any nearby enemy, small range
 Cleric: heals every unit when any one drops below 50% HP
-Swordsman: deals physical damage in a medium area around the unit, small range
+Swordsman: deals physical damage in a medium area around the unit, small range, AoE has medium range
 Archer: shoots an arrow that pierces at any nearby enemy, very long range
-Wizard: shoots a projectile at any nearby enemy and deals AoE magical damage on contact, long range, AoE has very small range
+Wizard: shoots a projectile at any nearby enemy and deals AoE damage on contact, long range, AoE has very small range
+Outlaw: throws a leque of knives at nearby enemies, medium range
+Blade: shoots multiple blades at nearby enemies, each dealing AoE damage on contact, small range, AoE has small range
+Elementor: deals massive AoE damage to a random target, long range, AoE has medium range
 
-Engineer: drops a turret that shoots secondary projectiles very fast, medium range
+Ninja: creates clones that roam and shoot projectiles at nearby enemies, very small range
+Linker: links nearby enemies together making them share damage taken, medium range
+Sage: shoots a slow projectile that draws enemies in, medium range, AoE has medium range
+Squire: improves damage and defense for adjacent units, as well as healing them periodically
+Cannoneer: shoots a projectile at any nearby enemy and deals massive AoE damage on contact, long range, AoE has medium range
+Dual Gunner: shoots two parallel projectiles at any nearby enemy, medium range
+Hunter: shoots an arrow at any nearby enemy with a chance to summon a pet that will trample through enemies knocking them away, arrow has long range, pet has small range
+Chronomancer: dramatically improves attack speed for adjacent units
+Spellblade: knives orbit you and hoam towards nearby enemies, small range
+Psykeeper: all damage taken is stored and distributed as healing
+Gambler: drops a sentry that uses random attacks, medium range
 
-Ranger: yellow, buff attack speed
-Warrior: orange, buff attack damage
-Healer: green, buff healing effectiveness
-Mage: blue, debuff enemy defense
-Void: purple, buff area damage and size
-Builder: orange, buffs construct damage, attack speed and duration
+Ranger: yellow, chance to release a barrage
+Warrior: orange, increased defense
+Healer: green, increased healing effectiveness
+Mage: blue, decreased enemy defense
+Nuker: purple, increased area damage and size
+Conjurer: orange, increased construct damage and duration
 Rogue: red, chance to crit dealing 4x damage
+Enchanter: pink, increased damage to all allies
+Psy: white, returns damage taken based on number of active psy units
+
+Vagrant [warrior, ranger, psy]
+Scout [rogue]
+Cleric [healer]
+Swordsman [warrior]
+Archer [ranger]
+Wizard [mage]
+Outlaw [rogue, warrior]
+Blade [warrior, nuker]
+Elementor [mage, nuker]
+
+Ninja [rogue, conjurer]
+Linker [enchanter, nuker]
+Sage [mage, nuker]
+Squire [warrior, healer, enchanter]
+Cannoneer [ranger, nuker]
+Dual Gunner [ranger, rogue]
+Hunter [ranger, conjurer]
+Chronomancer [mage, enchanter]
+Spellblade [mage, rogue]
+Psykeeper [healer, psy]
+Gambler [conjurer]
+
+Ranger [2, 4] (5)
+Warrior [2, 4] (5)
+Healer [3]
+Mage [2, 4] (5)
+Nuker [2, 4] (5)
+Conjurer [2] (3)
+Rogue [2, 4] (5)
+Enchanter [3] (3)
+Psy [n] (2)
 
 HP
 Damage
@@ -21,11 +68,3 @@ Area damage
 Area of effect
 Attack speed
 Defense -> if defense >= 0 then dmg_m = 100/(100+defense) else dmg_m = 2-100/(100-defense)
-
-* HP bar should be drawn on top of all player units
-* Projectiles 
-* Areas
-* Stats: attack speed, damage, area
-* One or a few of the characters
-* Port over enemy spawn logic from SHOOTRX
-* Sounds
