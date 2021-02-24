@@ -1,3 +1,71 @@
+LightningLine = Object:extend()
+LightningLine:implement(GameObject)
+function LightningLine:init(args)
+  self:init_game_object(args)
+  self.lines = {}
+  table.insert(self.lines, {x1 = self.src.x, y1 = self.src.y, x2 = self.dst.x, y2 = self.dst.y})
+  self.w = 3
+  self.generations = 3
+  self.max_offset = 8
+  self:generate()
+  self.t:tween(0.1, self, {w = 1}, math.linear, function() self.dead = true end)
+  self.color = blue[0]
+  HitCircle{group = main.current.effects, x = self.src.x, y = self.src.y, rs = 6, color = fg[0], duration = 0.1}
+  for i = 1, 2 do HitParticle{group = main.current.effects, x = self.src.x, y = self.src.y, color = blue[0]} end
+  HitCircle{group = main.current.effects, x = self.dst.x, y = self.dst.y, rs = 6, color = fg[0], duration = 0.1}
+  HitParticle{group = main.current.effects, x = self.dst.x, y = self.dst.y, color = blue[0]}
+end
+
+
+function LightningLine:update(dt)
+  self:update_game_object(dt)
+end
+
+
+function LightningLine:draw()
+  graphics.polyline(self.color, self.w, unpack(self.points))
+end
+
+
+function LightningLine:generate()
+  local offset_amount = self.max_offset
+  local lines = self.lines
+
+  for j = 1, self.generations do
+    for i = #self.lines, 1, -1 do
+      local x1, y1 = self.lines[i].x1, self.lines[i].y1
+      local x2, y2 = self.lines[i].x2, self.lines[i].y2
+      table.remove(self.lines, i)
+
+      local x, y = (x1+x2)/2, (y1+y2)/2
+      local p = Vector(x2-x1, y2-y1):normalize():perpendicular()
+      x = x + p.x*random:float(-offset_amount, offset_amount)
+      y = y + p.y*random:float(-offset_amount, offset_amount)
+      table.insert(self.lines, {x1 = x1, y1 = y1, x2 = x, y2 = y})
+      table.insert(self.lines, {x1 = x, y1 = y, x2 = x2, y2 = y2})
+    end
+    offset_amount = offset_amount/2
+  end
+
+  self.points = {}
+  while #self.lines > 0 do
+    local min_d, min_i = 1000000, 0
+    for i, line in ipairs(self.lines) do
+      local d = math.distance(self.src.x, self.src.y, line.x1, line.y1)
+      if d < min_d then
+        min_d = d
+        min_i = i
+      end
+    end
+    local line = table.remove(self.lines, min_i)
+    table.insert(self.points, line.x1)
+    table.insert(self.points, line.y1)
+  end
+end
+
+
+
+
 WallKnife = Object:extend()
 WallKnife:implement(GameObject)
 WallKnife:implement(Physics)
@@ -68,6 +136,7 @@ function Unit:init_unit()
   self.hfx:add('shoot', 1)
   self.hp_bar = HPBar{group = main.current.effects, parent = self}
   self.heal_bar = HealBar{group = main.current.effects, parent = self}
+  self.infused_bar = InfusedBar{group = main.current.effects, parent = self}
 end
 
 
@@ -94,6 +163,12 @@ end
 function Unit:show_heal(n)
   self.heal_bar.hidden = false
   self.t:after(n or 4, function() self.heal_bar.hidden = true end, 'heal_bar')
+end
+
+
+function Unit:show_infused(n)
+  self.infused_bar.hidden = false
+  self.t:after(n, function() self.infused_bar.hidden = true end, 'infused_bar')
 end
 
 
@@ -152,7 +227,8 @@ function Unit:calculate_stats(first_run)
     if class == 'warrior' then self.class_dmg_m = self.class_dmg_m*1.1
     elseif class == 'ranger' then self.class_dmg_m = self.class_dmg_m*1.2
     elseif class == 'rogue' then self.class_dmg_m = self.class_dmg_m*1.3
-    elseif class == 'mage' then self.class_dmg_m = self.class_dmg_m*1.4 end
+    elseif class == 'mage' then self.class_dmg_m = self.class_dmg_m*1.4
+    elseif class == 'ninja_clone' then self.class_dmg_m = self.class_dmg_m*1.5 end
   end
   self.dmg = (self.base_dmg + self.class_dmg_a + self.buff_dmg_a)*self.class_dmg_m*self.buff_dmg_m
 
@@ -195,9 +271,39 @@ function Unit:calculate_stats(first_run)
     elseif class == 'ranger' then self.class_mvspd_m = self.class_mvspd_m*1.2
     elseif class == 'rogue' then self.class_mvspd_m = self.class_mvspd_m*1.4
     elseif class == 'enchanter' then self.class_mvspd_m = self.class_mvspd_m*1.2
-    elseif class == 'seeker' then self.class_mvspd_m = self.class_mvspd_m*0.3 end
+    elseif class == 'seeker' then self.class_mvspd_m = self.class_mvspd_m*0.3
+    elseif class == 'saboteur' then self.class_mvspd_m = self.class_mvspd_m*1.4 end
   end
   self.v = (self.base_mvspd + self.class_mvspd_a + self.buff_mvspd_a)*self.class_mvspd_m*self.buff_mvspd_m
+end
+
+
+
+
+InfusedBar = Object:extend()
+InfusedBar:implement(GameObject)
+InfusedBar:implement(Parent)
+function InfusedBar:init(args)
+  self:init_game_object(args)
+  self.hidden = true
+  self.color = blue[0]
+  self.color_transparent = Color(self.color.r, self.color.g, self.color.b, 0.2)
+end
+
+
+function InfusedBar:update(dt)
+  self:update_game_object(dt)
+  self:follow_parent_exclusively()
+end
+
+
+function InfusedBar:draw()
+  if self.hidden then return end
+  local p = self.parent
+  graphics.push(p.x, p.y, 0, p.hfx.hit.x, p.hfx.hit.x)
+    graphics.rectangle(p.x, p.y, 1.25*p.shape.w, 1.25*p.shape.h, 2, 2, self.color_transparent)
+    graphics.rectangle(p.x, p.y, 1.25*p.shape.w, 1.25*p.shape.h, 2, 2, self.color, 1)
+  graphics.pop()
 end
 
 

@@ -7,9 +7,8 @@ Wizard: shoots a projectile at any nearby enemy and deals AoE damage on contact,
 Outlaw: throws a leque of knives at nearby enemies, medium range
 Blade: shoots multiple blades at nearby enemies, each dealing AoE damage on contact, small range, AoE has small range
 Elementor: deals massive AoE damage to a random target, long range, AoE has medium range
-
-Ninja: creates clones that roam and shoot projectiles at nearby enemies, very small range
-Linker: links nearby enemies together making them share damage taken, medium range
+Saboteur: calls on other saboteurs to seek targets and explode on contact, AoE has small range
+Stormweaver: infuses all projectile attacks with chain lightning, small range 
 Sage: shoots a slow projectile that draws enemies in, medium range, AoE has medium range
 Squire: improves damage and defense for adjacent units, as well as healing them periodically
 Cannoneer: shoots a projectile at any nearby enemy and deals massive AoE damage on contact, long range, AoE has medium range
@@ -39,9 +38,9 @@ Wizard [mage]
 Outlaw [rogue, warrior]
 Blade [warrior, nuker]
 Elementor [mage, nuker]
+Saboteur [rogue, conjurer, nuker]
 
-Ninja [rogue, conjurer]
-Linker [enchanter, nuker]
+Linker [enchanter]
 Sage [mage, nuker]
 Squire [warrior, healer, enchanter]
 Cannoneer [ranger, nuker]

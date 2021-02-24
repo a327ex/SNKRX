@@ -137,18 +137,37 @@ function Player:init(args)
       end
     end, nil, nil, 'attack')
 
-  elseif self.character == 'ninja' then
+  elseif self.character == 'saboteur' then
     self.color = red[0]
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
-    self.classes = {'rogue', 'conjurer'}
+    self.classes = {'rogue', 'conjurer', 'nuker'}
 
     self.t:every(8, function()
       self.t:every(0.25, function()
-        SpawnEffect{group = self.effects, x = self.x, y = self.y, action = function(x, y)
-          NinjaClone{group = self.main, x = x, y = y, parent = self}
+        SpawnEffect{group = main.current.effects, x = self.x, y = self.y, action = function(x, y)
+          Saboteur{group = main.current.main, x = x, y = y, parent = self}
         end}
-      end, 3)
+      end, 4)
+    end)
+
+  elseif self.character == 'stormweaver' then
+    self.color = blue[0]
+    self:set_as_rectangle(9, 9, 'dynamic', 'player')
+    self.visual_shape = 'rectangle'
+    self.classes = {'enchanter'}
+
+    self.attack_sensor = Circle(self.x, self.y, 96)
+    self.t:every(8, function()
+      stormweaver1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      local followers
+      local leader = (self.leader and self) or self.parent
+      if self.leader then followers = self.followers else followers = self.parent.followers end
+      for _, f in ipairs(followers) do
+        if f.character ~= 'swordsman' and f.character ~= 'cleric' and f.character ~= 'elementor' and f.character ~= 'saboteur' then
+          f:chain_infuse(4)
+        end
+      end
     end)
   end
   self:calculate_stats(true)
@@ -244,7 +263,7 @@ function Player:on_collision_enter(other, contact)
       pop1:play{pitch = r, volume = 0.2}
 
       for i, f in ipairs(self.followers) do
-        trigger:after(i*0.002*self.v, function()
+        trigger:after(i*(10.6/self.v), function()
           f.hfx:use('hit', 0.5, 200, 10, 0.1)
           player_hit_wall1:play{pitch = r + 0.025*i, volume = 0.1}
           pop1:play{pitch = r + 0.05*i, volume = 0.2}
@@ -290,6 +309,13 @@ function Player:heal(amount)
   self:show_heal(1.5)
   self.hp = self.hp + amount
   if self.hp > self.max_hp then self.hp = self.max_hp end
+end
+
+
+function Player:chain_infuse(duration)
+  self.chain_infused = true
+  self:show_infused(duration or 2)
+  self.t:after(duration or 2, function() self.chain_infused = false end, 'chain_infuse')
 end
 
 
@@ -341,10 +367,11 @@ end
 
 
 function Player:attack(area, mods)
+  mods = mods or {}
   camera:shake(2, 0.5)
   self.hfx:use('shoot', 0.25)
   local t = {group = main.current.effects, x = mods.x or self.x, y = mods.y or self.y, r = self.r, w = self.area_size_m*(area or 64), color = self.color, dmg = self.area_dmg_m*self.dmg, character = self.character}
-  Area(table.merge(t, mods or {}))
+  Area(table.merge(t, mods))
 
   if self.character == 'swordsman' then
     _G[random:table{'swordsman1', 'swordsman2'}]:play{pitch = random:float(0.9, 1.1), volume = 0.75}
@@ -365,6 +392,7 @@ function Projectile:init(args)
   self.pierce = args.pierce or 0
   self.chain = args.chain or 0
   self.chain_enemies_hit = {}
+  self.infused_enemies_hit = {}
 end
 
 
@@ -454,6 +482,7 @@ function Projectile:on_trigger_enter(other, contact)
       HitParticle{group = main.current.effects, x = self.x, y = self.y, color = other.color}
     end
 
+
     if self.character == 'archer' or self.character == 'scout' or self.character == 'outlaw' or self.character == 'blade' then
       hit2:play{pitch = random:float(0.95, 1.05), volume = 0.35}
     elseif self.character == 'wizard' then
@@ -461,7 +490,22 @@ function Projectile:on_trigger_enter(other, contact)
     else
       hit3:play{pitch = random:float(0.95, 1.05), volume = 0.35}
     end
+
     other:hit(self.dmg)
+
+    if self.parent.chain_infused then
+      local src = other
+      for i = 1, 2 do
+        _G[random:table{'spark1', 'spark2', 'spark3'}]:play{pitch = random:float(0.9, 1.1), volume = 0.3}
+        table.insert(self.infused_enemies_hit, src)
+        local dst = src:get_random_object_in_shape(Circle(src.x, src.y, 64), main.current.enemies, self.infused_enemies_hit)
+        if dst then
+          dst:hit(self.dmg/(i+1))
+          LightningLine{group = main.current.effects, src = src, dst = dst}
+          src = dst 
+        end
+      end
+    end
   end
 end
 
@@ -486,6 +530,8 @@ function Area:init(args)
     elseif self.character == 'blade' then
       blade_hit1:play{pitch = random:float(0.9, 1.1), volume = 0.35}
       hit2:play{pitch = random:float(0.95, 1.05), volume = 0.2}
+    elseif self.character == 'saboteur' then
+      _G[random:table{'saboteur_hit1', 'saboteur_hit2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.2}
     end
   end
 
@@ -524,30 +570,54 @@ end
 
 
 
-NinjaClone = Object:extend()
-NinjaClone:implement(GameObject)
-NinjaClone:implement(Physics)
-function NinjaClone:init(args)
+Saboteur = Object:extend()
+Saboteur:implement(GameObject)
+Saboteur:implement(Physics)
+Saboteur:implement(Unit)
+function Saboteur:init(args)
   self:init_game_object(args)
   self:init_unit()
-  self:set_as_rectangle(8, 8, 'dynamic', 'enemy')
+  self:set_as_rectangle(8, 8, 'dynamic', 'player')
   self:set_restitution(0.5)
   
   self.color = red[0]
-  self.classes = {'ninja_clone'}
+  self.character = 'saboteur'
+  self.classes = {'saboteur', 'rogue', 'nuker'}
   self:calculate_stats(true)
   self:set_as_steerable(self.v, 2000, 4*math.pi, 4)
+
+  _G[random:table{'saboteur1', 'saboteur2', 'saboteur3'}]:play{pitch = random:float(0.8, 1.2), volume = 0.2}
+  self.target = random:table(self.group:get_objects_by_classes(main.current.enemies))
 end
 
 
-function NinjaClone:update(dt)
+function Saboteur:update(dt)
   self:update_game_object(dt)
   self:calculate_stats()
+
+  if not self.target then self.target = random:table(self.group:get_objects_by_classes(main.current.enemies)) end
+  if not self.target then return end
+  if self.target.dead then self.target = random:table(self.group:get_objects_by_classes(main.current.enemies)) end
+  if not self.target then return end
+
+  self:seek_point(self.target.x, self.target.y)
+  self:rotate_towards_velocity(0.5)
+  self.r = self:get_angle()
 end
 
 
-function NinjaClone:draw()
+function Saboteur:draw()
   graphics.push(self.x, self.y, self.r, self.hfx.hit.x, self.hfx.hit.x)
     graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 3, 3, self.hfx.hit.f and fg[0] or self.color)
   graphics.pop()
+end
+
+
+function Saboteur:on_collision_enter(other, contact)
+  if table.any(main.current.enemies, function(v) return other:is(v) end) then
+    camera:shake(4, 0.5)
+    local t = {group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.area_size_m*64, color = self.color, dmg = self.area_dmg_m*self.dmg, character = self.character}
+    Area(table.merge(t, mods or {}))
+    self.dead = true
+  end
 end

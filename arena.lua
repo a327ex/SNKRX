@@ -50,13 +50,18 @@ function Arena:on_enter(from, level)
   WallCover{group = self.post_main, vertices = math.to_rectangle_vertices(self.x1, -40, self.x2, self.y1), color = bg[-1]}
   WallCover{group = self.post_main, vertices = math.to_rectangle_vertices(self.x1, self.y2, self.x2, gh + 40), color = bg[-1]}
 
-  self.player = Player{group = self.main, x = gw/2, y = gh/2, leader = true, character = 'elementor'}
-  --[[
-  self.player:add_follower(Player{group = self.main, character = 'archer'})
+  self.player = Player{group = self.main, x = gw/2, y = gh/2, leader = true, character = 'stormweaver'}
   self.player:add_follower(Player{group = self.main, character = 'vagrant'})
+  self.player:add_follower(Player{group = self.main, character = 'archer'})
+  self.player:add_follower(Player{group = self.main, character = 'wizard'})
+  self.player:add_follower(Player{group = self.main, character = 'scout'})
+  --[[
   self.player:add_follower(Player{group = self.main, character = 'cleric'})
+  self.player:add_follower(Player{group = self.main, character = 'swordsman'})
   self.player:add_follower(Player{group = self.main, character = 'scout'})
   self.player:add_follower(Player{group = self.main, character = 'wizard'})
+  self.player:add_follower(Player{group = self.main, character = 'blade'})
+  self.player:add_follower(Player{group = self.main, character = 'elementor'})
   ]]--
 
   self.win_condition = random:table{'time', 'enemy_kill', 'wave'}

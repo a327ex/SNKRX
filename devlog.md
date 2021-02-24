@@ -120,26 +120,26 @@ Ideaguyed the entire roster for the demo and implemented a few of them.
 
 | Character | Description | Trigger Range | Effect Range |
 | --- | --- | --- | --- |
-| Vagrant | shoots a projectile | medium | nil |
-| Scout | throws a knife that chains 3 times | small | nil |
-| Cleric | heals every unit when any one drops below 50% HP | nil | nil |
+| Vagrant | shoots a projectile | medium |  |
+| Scout | throws a knife that chains 3 times | small |  |
+| Cleric | heals every unit when any one drops below 50% HP |  |  |
 | Swordsman | deals physical damage in an area around the unit | small | medium |
-| Archer | shoots an arrow that pierces | very long | nil |
+| Archer | shoots an arrow that pierces | very long |  |
 | Wizard | shoots a projectile that deals AoE damage | long | very small |
-| Outlaw | throws a fan of 5 knives | medium | nil |
+| Outlaw | throws a fan of 5 knives | medium |  |
 | Blade | shoots multiple blades that deal AoE damage on contact | small | small |
 | Elementor | deals massive AoE damage to a random target | long | medium |
-| Ninja | creates clones that roam and shoot shurikens | nil | very small |
+| Ninja | creates clones that roam and shoot shurikens |  | very small |
 | Linker | links nearby enemies together making them share damage taken | medium | small |
 | Sage | shoots a slow projectile that draws enemies in | medium | medium |
-| Squire | improves damage and defense for adjacent units as well as healing them periodically | nil | nil |
+| Squire | improves damage and defense for adjacent units as well as healing them periodically |  |  |
 | Cannoneer | shoots a projectile that deals massive AoE damage | long | medium |
-| Dual Gunner | shoots two parallel projectiles | medium | nil |
+| Dual Gunner | shoots two parallel projectiles | medium |  |
 | Hunter | shoots an arrow with a chance to summon a pet | long | small |
-| Chronomancer | dramatically improves attack speed for adjacent units | nil | nil |
+| Chronomancer | dramatically improves attack speed for adjacent units |  |  |
 | Spellblade | knives orbit you and hoam towards nearby enemies | small | small |
-| Psykeeper | all damage taken is stored and distributed as healing | nil | nil |
-| Gambler | drops a sentry that uses random attacks | nil | medium |
+| Psykeeper | all damage taken is stored and distributed as healing |  |  |
+| Gambler | drops a sentry that uses random attacks |  | medium |
 
 ### Character Classes
 
@@ -195,3 +195,12 @@ Ideaguyed the entire roster for the demo and implemented a few of them.
 | Psy | 1.5 | 1.0 | 1.0 | 1.0 | 1.0 | 0.5 | 1.0 |
 
 I've implemented up to Elementor today and ATM in the process of doing Ninja, but today seems like a particularly low energy day so I'm just going to play some games instead.
+
+# Day 7 - 23/02/21
+
+Not a lot done today... My sleep schedule is fucked up and I've been unable to focus properly. I managed to get 2 characters done though and also changed their definitions a bit:
+
+Ninja -> Saboteur: calls on other saboteurs to seek targets and explode on contact, AoE has small range
+Ninja -> Saboteur: rogue, conjurer, nuker
+Linker -> Stormweaver: infuses all projetile attacks with chain lightning, medium range
+Linker -> Stormweaver: enchanter, ~~nuker~~
