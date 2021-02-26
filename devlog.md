@@ -200,13 +200,10 @@ I've implemented up to Elementor today and ATM in the process of doing Ninja, bu
 
 Not a lot done today... My sleep schedule is fucked up and I've been unable to focus properly. I managed to get 2 characters done though and also changed their definitions a bit:
 
-Ninja -> Saboteur: calls on other saboteurs to seek targets and explode on contact, AoE has small range
-
-Ninja -> Saboteur: rogue, conjurer, nuker
-
-Linker -> Stormweaver: infuses all projetile attacks with chain lightning, medium range
-
-Linker -> Stormweaver: enchanter, ~~nuker~~
+* Ninja -> Saboteur: calls on other saboteurs to seek targets and explode on contact, AoE has small range
+* Ninja -> Saboteur: rogue, conjurer, nuker
+* Linker -> Stormweaver: infuses all projetile attacks with chain lightning, medium range
+* Linker -> Stormweaver: enchanter, ~~nuker~~
 
 # Day 8-9 - 24-25/02/21
 
