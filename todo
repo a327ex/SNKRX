@@ -9,15 +9,15 @@ Blade: shoots multiple blades at nearby enemies, each dealing AoE damage on cont
 Elementor: deals massive AoE damage to a random target, long range, AoE has medium range
 Saboteur: calls on other saboteurs to seek targets and explode on contact, AoE has small range
 Stormweaver: infuses all projectile attacks with chain lightning, small range 
-Sage: shoots a slow projectile that draws enemies in, medium range, AoE has medium range
+Sage: shoots a slow projectile that draws enemies in, medium range, AoE has small range
 Squire: improves damage and defense for adjacent units, as well as healing them periodically
 Cannoneer: shoots a projectile at any nearby enemy and deals massive AoE damage on contact, long range, AoE has medium range
 Dual Gunner: shoots two parallel projectiles at any nearby enemy, medium range
 Hunter: shoots an arrow at any nearby enemy with a chance to summon a pet that will trample through enemies knocking them away, arrow has long range, pet has small range
 Chronomancer: dramatically improves attack speed for adjacent units
-Spellblade: knives orbit you and hoam towards nearby enemies, small range
+Spellblade: knives spiral outwards and pierce enemies
 Psykeeper: all damage taken is stored and distributed as healing
-Gambler: drops a sentry that uses random attacks, medium range
+Engineer: drops a sentry that uses random attacks, medium range
 
 Ranger: yellow, chance to release a barrage
 Warrior: orange, increased defense
@@ -39,8 +39,7 @@ Outlaw [rogue, warrior]
 Blade [warrior, nuker]
 Elementor [mage, nuker]
 Saboteur [rogue, conjurer, nuker]
-
-Linker [enchanter]
+Stormweaver [enchanter]
 Sage [mage, nuker]
 Squire [warrior, healer, enchanter]
 Cannoneer [ranger, nuker]
@@ -49,7 +48,8 @@ Hunter [ranger, conjurer]
 Chronomancer [mage, enchanter]
 Spellblade [mage, rogue]
 Psykeeper [healer, psy]
-Gambler [conjurer]
+
+Engineer [conjurer]
 
 Ranger [2, 4] (5)
 Warrior [2, 4] (5)

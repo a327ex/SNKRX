@@ -135,8 +135,7 @@ function Unit:init_unit()
   self.hfx:add('hit', 1)
   self.hfx:add('shoot', 1)
   self.hp_bar = HPBar{group = main.current.effects, parent = self}
-  self.heal_bar = HealBar{group = main.current.effects, parent = self}
-  self.infused_bar = InfusedBar{group = main.current.effects, parent = self}
+  self.effect_bar = EffectBar{group = main.current.effects, parent = self}
 end
 
 
@@ -156,19 +155,36 @@ end
 
 function Unit:show_hp(n)
   self.hp_bar.hidden = false
+  self.hp_bar.color = red[0]
   self.t:after(n or 2, function() self.hp_bar.hidden = true end, 'hp_bar')
 end
 
 
 function Unit:show_heal(n)
-  self.heal_bar.hidden = false
-  self.t:after(n or 4, function() self.heal_bar.hidden = true end, 'heal_bar')
+  self.effect_bar.hidden = false
+  self.effect_bar.color = green[0]
+  self.t:after(n or 4, function() self.effect_bar.hidden = true end, 'effect_bar')
 end
 
 
 function Unit:show_infused(n)
-  self.infused_bar.hidden = false
-  self.t:after(n, function() self.infused_bar.hidden = true end, 'infused_bar')
+  self.effect_bar.hidden = false
+  self.effect_bar.color = blue[0]
+  self.t:after(n or 4, function() self.effect_bar.hidden = true end, 'effect_bar')
+end
+
+
+function Unit:show_squire(n)
+  self.effect_bar.hidden = false
+  self.effect_bar.color = purple[0]
+  self.t:after(n or 4, function() self.effect_bar.hidden = false end, 'effect_bar')
+end
+
+
+function Unit:show_chronomancer(n)
+  self.effect_bar.hidden = false
+  self.effect_bar.color = purple[0]
+  self.t:after(n or 2, function() self.effect_bar.hidden = false end, 'effect_bar')
 end
 
 
@@ -198,17 +214,19 @@ function Unit:calculate_stats(first_run)
   self.class_area_size_m = 1
   self.class_def_m = 1
   self.class_mvspd_m = 1
-  self.buff_hp_a = 0
-  self.buff_dmg_a = 0
-  self.buff_def_a = 0
-  self.buff_mvspd_a = 0
-  self.buff_hp_m = 1
-  self.buff_dmg_m = 1
-  self.buff_aspd_m = 1
-  self.buff_area_dmg_m = 1
-  self.buff_area_size_m = 1
-  self.buff_def_m = 1
-  self.buff_mvspd_m = 1
+  if first_run then
+    self.buff_hp_a = 0
+    self.buff_dmg_a = 0
+    self.buff_def_a = 0
+    self.buff_mvspd_a = 0
+    self.buff_hp_m = 1
+    self.buff_dmg_m = 1
+    self.buff_aspd_m = 1
+    self.buff_area_dmg_m = 1
+    self.buff_area_size_m = 1
+    self.buff_def_m = 1
+    self.buff_mvspd_m = 1
+  end
 
   for _, class in ipairs(self.classes) do
     if class == 'warrior' then self.class_hp_m = self.class_hp_m*1.4
@@ -280,59 +298,30 @@ end
 
 
 
-InfusedBar = Object:extend()
-InfusedBar:implement(GameObject)
-InfusedBar:implement(Parent)
-function InfusedBar:init(args)
+EffectBar = Object:extend()
+EffectBar:implement(GameObject)
+EffectBar:implement(Parent)
+function EffectBar:init(args)
   self:init_game_object(args)
   self.hidden = true
-  self.color = blue[0]
-  self.color_transparent = Color(self.color.r, self.color.g, self.color.b, 0.2)
+  self.color = fg[0]
 end
 
 
-function InfusedBar:update(dt)
+function EffectBar:update(dt)
   self:update_game_object(dt)
   self:follow_parent_exclusively()
 end
 
 
-function InfusedBar:draw()
+function EffectBar:draw()
   if self.hidden then return end
+  --[[
   local p = self.parent
-  graphics.push(p.x, p.y, 0, p.hfx.hit.x, p.hfx.hit.x)
-    graphics.rectangle(p.x, p.y, 1.25*p.shape.w, 1.25*p.shape.h, 2, 2, self.color_transparent)
-    graphics.rectangle(p.x, p.y, 1.25*p.shape.w, 1.25*p.shape.h, 2, 2, self.color, 1)
+  graphics.push(p.x, p.y, p.r, p.hfx.hit.x, p.hfx.hit.x)
+    graphics.rectangle(p.x, p.y, 3, 3, 1, 1, self.color)
   graphics.pop()
-end
-
-
-
-
-HealBar = Object:extend()
-HealBar:implement(GameObject)
-HealBar:implement(Parent)
-function HealBar:init(args)
-  self:init_game_object(args)
-  self.hidden = true
-  self.color = green[0]
-  self.color_transparent = Color(self.color.r, self.color.g, self.color.b, 0.2)
-end
-
-
-function HealBar:update(dt)
-  self:update_game_object(dt)
-  self:follow_parent_exclusively()
-end
-
-
-function HealBar:draw()
-  if self.hidden then return end
-  local p = self.parent
-  graphics.push(p.x, p.y, 0, p.hfx.hit.x, p.hfx.hit.x)
-    graphics.rectangle(p.x, p.y, 1.25*p.shape.w, 1.25*p.shape.h, 2, 2, self.color_transparent)
-    graphics.rectangle(p.x, p.y, 1.25*p.shape.w, 1.25*p.shape.h, 2, 2, self.color, 1)
-  graphics.pop()
+  ]]--
 end
 
 

@@ -8,6 +8,9 @@ function Physics:set_as_steerable(max_v, max_f, max_turn_rate, turn_multiplier)
   self.steering_enabled = true
   self.heading = Vector()
   self.side = Vector()
+  self.steering_force = Vector()
+  self.applied_force = Vector()
+  self.applied_impulse = Vector()
   self.mass = 1
   self.max_v = max_v or 100
   self.max_f = max_f or 2000
@@ -32,29 +35,33 @@ end
 function Physics:steering_update(dt)
   if self.steerable and self.steering_enabled then
     local steering_force = self:calculate_steering_force(dt):div(self.mass)
-    self:apply_force(steering_force.x, steering_force.y)
+    local applied_force = self:calculate_applied_force(dt):div(self.mass)
+    local applied_impulse = self:calculate_applied_impulse(dt):div(self.mass)
+    self:apply_force(steering_force.x + applied_force.x, steering_force.y + applied_force.y)
     local vx, vy = self:get_velocity()
     local v = Vector(vx, vy):truncate(self.max_v)
-    self:set_velocity(v.x, v.y)
+    self:set_velocity(v.x + applied_impulse.x, v.y + applied_impulse.y)
     if v:length_squared() > 0.00001 then
       self.heading = v:clone():normalize()
       self.side = self.heading:perpendicular()
     end
+    self.apply_force_f:set(0, 0)
+    self.apply_impulse_f:set(0, 0)
   end
 end
 
 
 function Physics:calculate_steering_force(dt)
-  local steering_force = Vector(0, 0)
-  if self.seeking then steering_force:add(self.seek_f) end
-  if self.fleeing then steering_force:add(self.flee_f) end
-  if self.pursuing then steering_force:add(self.pursuit_f) end
-  if self.evading then steering_force:add(self.evade_f) end
-  if self.wandering then steering_force:add(self.wander_f) end
-  if self.path_following then steering_force:add(self.path_follow_f) end
-  if self.separating then steering_force:add(self.separation_f) end
-  if self.aligning then steering_force:add(self.alignment_f) end
-  if self.cohesing then steering_force:add(self.cohesion_f) end
+  self.steering_force:set(0, 0)
+  if self.seeking then self.steering_force:add(self.seek_f) end
+  if self.fleeing then self.steering_force:add(self.flee_f) end
+  if self.pursuing then self.steering_force:add(self.pursuit_f) end
+  if self.evading then self.steering_force:add(self.evade_f) end
+  if self.wandering then self.steering_force:add(self.wander_f) end
+  if self.path_following then self.steering_force:add(self.path_follow_f) end
+  if self.separating then self.steering_force:add(self.separation_f) end
+  if self.aligning then self.steering_force:add(self.alignment_f) end
+  if self.cohesing then self.steering_force:add(self.cohesion_f) end
   self.seeking = false
   self.fleeing = false
   self.pursuing = false
@@ -64,7 +71,55 @@ function Physics:calculate_steering_force(dt)
   self.separating = false
   self.aligning = false
   self.cohesing = false
-  return steering_force:truncate(self.max_f)
+  return self.steering_force:truncate(self.max_f)
+end
+
+
+function Physics:calculate_applied_force(dt)
+  self.applied_force:set(0, 0)
+  if self.applying_force then self.applied_force:add(self.apply_force_f) end
+  return self.applied_force
+end
+
+
+function Physics:calculate_applied_impulse(dt)
+  self.applied_impulse:set(0, 0)
+  if self.applying_impulse then self.applied_impulse:add(self.apply_impulse_f) end
+  return self.applied_impulse
+end
+
+
+-- Applies force f to the object at the given angle r for duration s
+-- This plays along with steering behaviors, whereas the apply_force function simply applies it directly to the body and doesn't work when steering behaviors are enabled
+-- self:apply_steering_force(100, math.pi/4)
+function Physics:apply_steering_force(f, r, s)
+  self.applying_force = true
+  self.apply_force_f:set(f*math.cos(r), f*math.sin(r))
+  if s then
+    self.t:after((s or 0.01)/2, function()
+      self.t:tween((s or 0.01)/2, self.apply_force_f, {x = 0, y = 0}, math.linear, function()
+        self.applying_force = false
+        self.apply_force_f:set(0, 0)
+      end, 'apply_steering_force_2')
+    end, 'apply_steering_force_1')
+  end
+end
+
+
+-- Applies impulse f to the object at the given angle r for duration s
+-- This plays along with steering behaviors, whereas the apply_impulse function simply applies it directly to the body and doesn't work when steering behaviors are enabled
+-- self:apply_steering_impulse(100, math.pi/4, 0.5)
+function Physics:apply_steering_impulse(f, r, s)
+  self.applying_impulse = true
+  self.apply_impulse_f:set(f*math.cos(r), f*math.sin(r))
+  if s then
+    self.t:after((s or 0.01)/2, function()
+      self.t:tween((s or 0.01)/2, self.apply_impulse_f, {x = 0, y = 0}, math.linear, function()
+        self.applying_impulse = false
+        self.apply_impulse_f:set(0, 0)
+      end, 'apply_steering_impulse_2')
+    end, 'apply_steering_impulse_1')
+  end
 end
 
 

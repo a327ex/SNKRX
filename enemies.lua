@@ -31,7 +31,7 @@ function Seeker:update(dt)
     local player = main.current.player
     self:seek_point(player.x, player.y)
     self:wander(50, 100, 20)
-    self:separate(16, main.current.enemies)
+    self:steering_separate(16, main.current.enemies)
     self:rotate_towards_velocity(0.5)
   end
   self.r = self:get_angle()
@@ -61,6 +61,11 @@ function Seeker:on_collision_enter(other, contact)
       for i = 1, 2 do HitParticle{group = main.current.effects, x = x, y = y, color = self.color} end
       hit2:play{pitch = random:float(0.95, 1.05), volume = 0.35}
     end
+  
+  elseif other:is(Turret) then
+    _G[random:table{'player_hit1', 'player_hit2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.35}
+    self:hit(0)
+    self:push(random:float(2.5, 7), other:angle_to_object(self))
   end
 end
 

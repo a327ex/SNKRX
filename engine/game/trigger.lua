@@ -31,6 +31,20 @@ function Trigger:after(delay, action, tag)
 end
 
 
+-- Calls the action every delay seconds if the condition is true.
+-- If the condition isn't true when delay seconds are up then it waits and only performs the action and resets the timer when that happens.
+-- If times is passed in then it only calls action for that amount of times.
+-- If after is passed in then it is called after the last time action is called.
+-- If tag is passed in then any other trigger actions with the same tag are automatically cancelled.
+-- trigger:cooldown(2, function() return #self:get_objects_in_shape(self.attack_sensor, enemies) > 0 end, function() self:attack() end) -> only attacks when 2 seconds have passed and there are more than 0 enemies around
+function Trigger:cooldown(delay, condition, action, times, after, tag)
+  local times = times or 0
+  local after = after or function() end
+  local tag = tag or random:uid()
+  self.triggers[tag] = {type = "cooldown", timer = 0, unresolved_delay = delay, delay = self:resolve_delay(delay), condition = condition, action = action, times = times, max_times = times, after = after, multiplier = 1}
+end
+
+
 -- Calls the action every delay seconds.
 -- Or calls the action once every time the condition becomes true.
 -- If times is passed in then it only calls action for that amount of times.
@@ -161,6 +175,20 @@ function Trigger:update(dt)
 
     if trigger.type == "run" then
       trigger.action()
+
+    elseif trigger.type == "cooldown" then
+      if trigger.timer > trigger.delay*trigger.multiplier and trigger.condition() then
+        trigger.action()
+        trigger.timer = 0
+        trigger.delay = self:resolve_delay(trigger.unresolved_delay)
+        if trigger.times > 0 then
+          trigger.times = trigger.times - 1
+          if trigger.times <= 0 then
+            trigger.after()
+            self.triggers[tag] = nil
+          end
+        end
+      end
 
     elseif trigger.type == "after" then
       if trigger.timer > trigger.delay then

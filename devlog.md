@@ -201,6 +201,19 @@ I've implemented up to Elementor today and ATM in the process of doing Ninja, bu
 Not a lot done today... My sleep schedule is fucked up and I've been unable to focus properly. I managed to get 2 characters done though and also changed their definitions a bit:
 
 Ninja -> Saboteur: calls on other saboteurs to seek targets and explode on contact, AoE has small range
+
 Ninja -> Saboteur: rogue, conjurer, nuker
+
 Linker -> Stormweaver: infuses all projetile attacks with chain lightning, medium range
+
 Linker -> Stormweaver: enchanter, ~~nuker~~
+
+# Day 8-9 - 24-25/02/21
+
+Finished all characters finally. My sleep is so fucked these two days blended together seamlessly. It's so fucking hot and I'm so tired. God damn I fucking hate the summer so fucking much. I hope I can sleep properly today.
+Definition changes for one character: Spellblade - knives slowly spiral outwards.
+
+Tomorrow I'll probably do some UI work so the player can buy new characters as he goes from arena to arena, or work on the game's progression in terms of enemy HP and DMG. These are fundamentally the only two things missing
+and I have a essentially 1 week to do them, which should be more than enough.
+
+Note: remember to attribute https://freesound.org/people/Hybrid_V/sounds/321215/ for turret_deploy sound in credits.

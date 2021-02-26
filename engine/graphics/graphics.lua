@@ -148,6 +148,14 @@ function graphics.circle(x, y, r, color, line_width)
 end
 
 
+-- Draws an arc of radius r from angle r1 to angle r2 centered on x, y.
+-- If color is passed in then the arc will be filled with that color (color is Color object)
+-- If line_width is passed in then the arc will not be filled and will instead be drawn as a set of lines of the given width.
+function graphics.arc(arctype, x, y, r, r1, r2, color, line_width)
+  graphics.shape("arc", color, line_width, arctype, x, y, r, r1, r2)
+end
+
+
 -- Draws a polygon with the given points.
 -- If color is passed in then the polygon will be filled with that color (color is Color object)
 -- If line_width is passed in then the polygon will not be filled and will instead be drawn as a set of lines of the given width.
