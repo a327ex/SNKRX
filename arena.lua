@@ -50,12 +50,14 @@ function Arena:on_enter(from, level)
   WallCover{group = self.post_main, vertices = math.to_rectangle_vertices(self.x1, -40, self.x2, self.y1), color = bg[-1]}
   WallCover{group = self.post_main, vertices = math.to_rectangle_vertices(self.x1, self.y2, self.x2, gh + 40), color = bg[-1]}
 
-  self.player = Player{group = self.main, x = gw/2, y = gh/2, leader = true, character = 'engineer'}
+  self.player = Player{group = self.main, x = gw/2, y = gh/2, leader = true, character = 'swordsman'}
+  self.player:add_follower(Player{group = self.main, character = 'outlaw'})
+  -- self.player:add_follower(Player{group = self.main, character = 'squire'})
+  self.player:add_follower(Player{group = self.main, character = 'blade'})
   --[[
   self.player:add_follower(Player{group = self.main, character = 'sage'})
   self.player:add_follower(Player{group = self.main, character = 'archer'})
   self.player:add_follower(Player{group = self.main, character = 'spellblade'})
-  self.player:add_follower(Player{group = self.main, character = 'hunter'})
   self.player:add_follower(Player{group = self.main, character = 'cleric'})
   self.player:add_follower(Player{group = self.main, character = 'wizard'})
   self.player:add_follower(Player{group = self.main, character = 'squire'})
@@ -164,11 +166,65 @@ function Arena:on_enter(from, level)
       end)
     end)
   end
+
+  local units = {}
+  table.insert(units, self.player)
+  for _, f in ipairs(self.player.followers) do table.insert(units, f) end
+
+  local rangers = 0
+  local warriors = 0
+  local healers = 0
+  local mages = 0
+  local nukers = 0
+  local conjurers = 0
+  local rogues = 0
+  local enchanters = 0
+  local psys = 0
+  for _, unit in ipairs(units) do
+    for _, unit_class in ipairs(unit.classes) do
+      if unit_class == 'ranger' then rangers = rangers + 1 end
+      if unit_class == 'warrior' then warriors = warriors + 1 end
+      if unit_class == 'healer' then healers = healers + 1 end
+      if unit_class == 'mage' then mages = mages + 1 end
+      if unit_class == 'nuker' then nukers = nukers + 1 end
+      if unit_class == 'conjurer' then conjurers = conjurers + 1 end
+      if unit_class == 'rogue' then rogues = rogues + 1 end
+      if unit_class == 'enchanter' then enchanters = enchanters + 1 end
+      if unit_class == 'psy' then psys = psys + 1 end
+    end
+  end
+
+  self.ranger_level = 0
+  if rangers >= 2 then self.ranger_level = 1 end
+  if rangers >= 4 then self.ranger_level = 2 end
+  self.warrior_level = 0
+  if warriors >= 2 then self.warrior_level = 1 end
+  if warriors >= 4 then self.warrior_level = 2 end
+  self.healer_level = 0
+  if healers >= 3 then self.healer_level = 1 end
+  self.mage_level = 0
+  if mages >= 2 then self.mage_level = 1 end
+  if mages >= 4 then self.mage_level = 2 end
+  self.nuke_level = 0
+  if nukers >= 2 then self.nuke_level = 1 end
+  if nukers >= 4 then self.nuke_level = 2 end
+  self.conjurer_level = 0
+  if conjurers >= 2 then self.conjurer_level = 1 end
+  self.rogue_level = 0
+  if rogues >= 2 then self.rogue_level = 1 end
+  if rogues >= 4 then self.rogue_level = 2 end
+  self.enchanter_level = 0
+  if enchanters >= 3 then self.enchanter_level = 1 end
+  self.psy_level = psys
 end
 
 
 function Arena:update(dt)
   self:update_game_object(dt*slow_amount)
+
+  if self.enchanter_level == 1 then self.enchanter_dmg_m = 1.25
+  else self.enchanter_dmg_m = 1 end
+
   self.main:update(dt*slow_amount)
   self.post_main:update(dt*slow_amount)
   self.effects:update(dt*slow_amount)

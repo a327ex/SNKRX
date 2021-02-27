@@ -86,8 +86,8 @@ function Player:init(args)
       if self.leader then followers = self.followers else followers = self.parent.followers end
       if (table.any(followers, function(v) return v.hp <= 0.5*v.max_hp end) or (leader.hp <= 0.5*leader.max_hp)) and love.timer.getTime() - self.last_heal_time > 6 then
         self.last_heal_time = love.timer.getTime()
-        if self.leader then self:heal(0.1*self.max_hp) else self.parent:heal(0.1*self.parent.max_hp) end
-        for _, f in ipairs(followers) do f:heal(0.1*f.max_hp) end
+        if self.leader then self:heal(0.1*self.max_hp*(self.heal_effect_m or 1)) else self.parent:heal(0.1*self.parent.max_hp*(self.heal_effect_m or 1)) end
+        for _, f in ipairs(followers) do f:heal(0.1*f.max_hp*(self.heal_effect_m or 1)) end
         heal1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       end
     end)
@@ -110,7 +110,7 @@ function Player:init(args)
     self.color = orange[0]
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
-    self.classes = {'warrior', 'rogue'}
+    self.classes = {'warrior', 'nuker'}
 
     self.attack_sensor = Circle(self.x, self.y, 64)
     self.t:cooldown(4, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -194,8 +194,8 @@ function Player:init(args)
       if previous_character then previous_character:squire_buff(8) end
       self.t:after(8, function() self.applying_buff = false end, 'squire_buff_apply')
       heal1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-      if next_character then next_character:heal(0.1*next_character.max_hp) end
-      if previous_character then previous_character:heal(0.1*previous_character.max_hp) end
+      if next_character then next_character:heal(0.1*next_character.max_hp*(self.heal_effect_m or 1)) end
+      if previous_character then previous_character:heal(0.1*previous_character.max_hp*(self.heal_effect_m or 1)) end
     end)
 
   elseif self.character == 'cannoneer' then
@@ -280,8 +280,8 @@ function Player:init(args)
 
       if self.psykeeper_heal > 0 then
         local heal_amount = math.floor(self.psykeeper_heal/(#followers+1))
-        if self.leader then self:heal(heal_amount) else self.parent:heal(heal_amount) end
-        for _, f in ipairs(followers) do f:heal(heal_amount) end
+        if self.leader then self:heal(heal_amount*(self.heal_effect_m or 1)) else self.parent:heal(heal_amount*(self.heal_effect_m or 1)) end
+        for _, f in ipairs(followers) do f:heal(heal_amount*(self.heal_effect_m or 1)) end
         heal1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
         self.psykeeper_heal = 0
       end
@@ -313,7 +313,6 @@ end
 
 
 function Player:update(dt)
-  if self.attack_sensor then self.enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies) end
   self:update_game_object(dt)
 
   if self.character == 'squire' then
@@ -352,9 +351,51 @@ function Player:update(dt)
     if previous_character then previous_character.chronomancer_aspd_m = 1.25 end
   end
 
-  self.buff_dmg_a = self.squire_dmg_a or 0
-  self.buff_def_a = self.squire_def_a or 0
-  self.buff_aspd_m = self.chronomancer_aspd_m or 1
+  if table.any(self.classes, function(v) return v == 'ranger' end) then
+    if main.current.ranger_level == 2 then self.chance_to_barrage = 20
+    elseif main.current.ranger_level == 1 then self.chance_to_barrage = 10
+    elseif main.current.ranger_level == 0 then self.chance_to_barrage = 0 end
+  end
+
+  if table.any(self.classes, function(v) return v == 'warrior' end) then
+    if main.current.warrior_level == 2 then self.warrior_def_a = 50
+    elseif main.current.warrior_level == 1 then self.warrior_def_a = 25
+    elseif main.current.warrior_level == 0 then self.warrior_def_a = 0 end
+  end
+
+  if table.any(self.classes, function(v) return v == 'healer' end) then
+    if main.current.healer_level == 1 then self.heal_effect_m = 1.25
+    else self.heal_effect_m = 1 end
+  end
+
+  if table.any(self.classes, function(v) return v == 'nuker' end) then
+    if main.current.nuker_level == 2 then self.nuker_area_size_m = 1.25; self.nuker_area_dmg_m = 1.25
+    elseif main.current.nuker_level == 1 then self.nuker_area_size_m = 1.15; self.nuker_area_dmg_m = 1.15
+    elseif main.current.nuker_level == 0 then self.nuker_area_size_m = 1; self.nuker_area_dmg_m = 1 end
+  end
+
+  if table.any(self.classes, function(v) return v == 'conjurer' end) then
+    if main.current.conjurer_level == 1 then self.conjurer_buff_m = 1.25
+    else self.conjurer_buff_m = 1 end
+  end
+
+  if table.any(self.classes, function(v) return v == 'rogue' end) then
+    if main.current.rogue_level == 2 then self.chance_to_crit = 20
+    elseif main.current.rogue_level == 1 then self.chance_to_crit = 10
+    elseif main.current.rogue_level == 0 then self.chance_to_crit = 0 end
+  end
+
+  if table.any(self.classes, function(v) return v == 'enchanter' end) then
+    if main.current.enchanter_level == 1 then self.enchanter_dmg_m = 1.25
+    else self.enchanter_dmg_m = 1 end
+  end
+
+  self.buff_dmg_a = (self.squire_dmg_a or 0)
+  self.buff_def_a = (self.squire_def_a or 0) + (self.warrior_def_a or 0)
+  self.buff_aspd_m = (self.chronomancer_aspd_m or 1)
+  self.buff_dmg_m = (main.current.enchanter_dmg_m or 1)
+  self.buff_area_size_m = (self.nuker_area_size_m or 1)
+  self.buff_area_dmg_m = (self.nuker_area_dmg_m or 1)
   self:calculate_stats()
 
   if self.attack_sensor then self.attack_sensor:move_to(self.x, self.y) end
@@ -407,6 +448,10 @@ function Player:update(dt)
     else
       self.r = self:get_angle()
     end
+  end
+
+  if self.character == 'blade' then
+    print(self.def)
   end
 end
 
@@ -509,14 +554,20 @@ end
 
 
 function Player:shoot(r, mods)
+  mods = mods or {}
   camera:spring_shake(2, r)
   self.hfx:use('shoot', 0.25)
+
+  local dmg_m = 1
+  local crit = false
+  if self.chance_to_crit and random:bool(self.chance_to_crit) then dmg_m = 4; crit = true end
 
   if self.character == 'outlaw' then
     HitCircle{group = main.current.effects, x = self.x + 0.8*self.shape.w*math.cos(r), y = self.y + 0.8*self.shape.w*math.sin(r), rs = 6}
     r = r - 2*math.pi/8
     for i = 1, 5 do
-      local t = {group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), v = 250, r = r, color = self.color, dmg = self.dmg, character = self.character, parent = self}
+      local t = {group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), v = 250, r = r, color = self.color, dmg = self.dmg*dmg_m, crit = crit, character = self.character,
+      parent = self}
       Projectile(table.merge(t, mods or {}))
       r = r + math.pi/8
     end
@@ -527,7 +578,8 @@ function Player:shoot(r, mods)
       for _, enemy in ipairs(enemies) do
         local r = self:angle_to_object(enemy)
         HitCircle{group = main.current.effects, x = self.x + 0.8*self.shape.w*math.cos(r), y = self.y + 0.8*self.shape.w*math.sin(r), rs = 6}
-        local t = {group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), v = 250, r = r, color = self.color, dmg = self.dmg, character = self.character, parent = self}
+        local t = {group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), v = 250, r = r, color = self.color, dmg = self.dmg*dmg_m, crit = crit, character = self.character,
+        parent = self}
         Projectile(table.merge(t, mods or {}))
       end
     end
@@ -541,31 +593,36 @@ function Player:shoot(r, mods)
     HitCircle{group = main.current.effects, x = self.x + 0.8*self.shape.w*math.cos(r) + 4*math.cos(r - math.pi/2), y = self.y + 0.8*self.shape.w*math.sin(r) + 4*math.sin(r - math.pi/2), rs = 6}
     HitCircle{group = main.current.effects, x = self.x + 0.8*self.shape.w*math.cos(r) + 4*math.cos(r + math.pi/2), y = self.y + 0.8*self.shape.w*math.sin(r) + 4*math.sin(r + math.pi/2), rs = 6}
     local t1 = {group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r) + 4*math.cos(r - math.pi/2) , y = self.y + 1.6*self.shape.w*math.sin(r) + 4*math.sin(r - math.pi/2),
-    v = 250, r = r, color = self.color, dmg = self.dmg, character = self.character, parent = self}
+    v = 250, r = r, color = self.color, dmg = self.dmg*dmg_m, crit = crit, character = self.character, parent = self}
     local t2 = {group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r) + 4*math.cos(r + math.pi/2) , y = self.y + 1.6*self.shape.w*math.sin(r) + 4*math.sin(r + math.pi/2),
-    v = 250, r = r, color = self.color, dmg = self.dmg, character = self.character, parent = self}
+    v = 250, r = r, color = self.color, dmg = self.dmg*dmg_m, crit = crit, character = self.character, parent = self}
     Projectile(table.merge(t1, mods or {}))
     Projectile(table.merge(t2, mods or {}))
 
   else
     HitCircle{group = main.current.effects, x = self.x + 0.8*self.shape.w*math.cos(r), y = self.y + 0.8*self.shape.w*math.sin(r), rs = 6}
-    local t = {group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), v = 250, r = r, color = self.color, dmg = self.dmg, character = self.character, parent = self}
+    local t = {group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), v = 250, r = r, color = self.color, dmg = self.dmg*dmg_m, crit = crit, character = self.character,
+    parent = self}
     Projectile(table.merge(t, mods or {}))
   end
 
   if self.character == 'vagrant' or self.character == 'dual_gunner' then
-    shoot1:play{pitch = random:float(0.95, 1.05), volume = 0.3}
+    shoot1:play{pitch = random:float(0.95, 1.05), volume = 0.2}
   elseif self.character == 'archer' or self.character == 'hunter' then
-    archer1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    archer1:play{pitch = random:float(0.95, 1.05), volume = 0.35}
   elseif self.character == 'wizard' then
     wizard1:play{pitch = random:float(0.95, 1.05), volume = 0.15}
   elseif self.character == 'scout' or self.character == 'outlaw' or self.character == 'blade' or self.character == 'spellblade' then
-    _G[random:table{'scout1', 'scout2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    _G[random:table{'scout1', 'scout2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.35}
     if self.character == 'spellblade' then
       wizard1:play{pitch = random:float(0.95, 1.05), volume = 0.15}
     end
   elseif self.character == 'cannoneer' then
     _G[random:table{'cannoneer1', 'cannoneer2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+  end
+
+  if self.chance_to_barrage and random:bool(self.chance_to_barrage) then
+    self:barrage(r, 4)
   end
 end
 
@@ -581,6 +638,20 @@ function Player:attack(area, mods)
     _G[random:table{'swordsman1', 'swordsman2'}]:play{pitch = random:float(0.9, 1.1), volume = 0.75}
   elseif self.character == 'elementor' then
     elementor1:play{pitch = random:float(0.9, 1.1), volume = 0.5}
+  end
+end
+
+
+function Player:barrage(r, n)
+  n = n or 8
+  for i = 1, n do
+    self.t:after((i-1)*0.075, function()
+      archer1:play{pitch = random:float(0.95, 1.05), volume = 0.35}
+      HitCircle{group = main.current.effects, x = self.x + 0.8*self.shape.w*math.cos(r), y = self.y + 0.8*self.shape.w*math.sin(r), rs = 6}
+      local t = {group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), v = 250, r = r + random:float(-math.pi/16, math.pi/16), color = self.color, dmg = self.dmg,
+      parent = self, character = 'barrage'}
+      Projectile(table.merge(t, mods or {}))
+    end)
   end
 end
 
@@ -694,7 +765,7 @@ function Projectile:on_collision_enter(other, contact)
   else r = 0 end
 
   if other:is(Wall) then
-    if self.character == 'archer' or self.character == 'hunter' then
+    if self.character == 'archer' or self.character == 'hunter' or self.character == 'barrage' then
       self:die(x, y, r, 0)
       _G[random:table{'arrow_hit_wall1', 'arrow_hit_wall2'}]:play{pitch = random:float(0.9, 1.1), volume = 0.2}
       WallArrow{group = main.current.main, x = x, y = y, r = self.r, color = self.color}
@@ -783,6 +854,15 @@ function Projectile:on_trigger_enter(other, contact)
         end
       end
     end
+
+    if self.crit then
+      camera:shake(5, 0.25)
+      rogue_crit1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      rogue_crit2:play{pitch = random:float(0.95, 1.05), volume = 0.15}
+      for i = 1, 3 do HitParticle{group = main.current.effects, x = other.x, y = other.y, color = self.color, v = random:float(100, 400)} end
+      for i = 1, 3 do HitParticle{group = main.current.effects, x = other.x, y = other.y, color = other.color, v = random:float(100, 400)} end
+      HitCircle{group = main.current.effects, x = other.x, y = other.y, rs = 12, color = fg[0], duration = 0.3}:scale_down():change_color(0.5, self.color)
+    end
   end
 end
 
@@ -866,15 +946,15 @@ function Turret:init(args)
     self.t:every({0.1, 0.2}, function()
       self.hfx:use('hit', 0.25, 200, 10)
       HitCircle{group = main.current.effects, x = self.x + 0.8*self.shape.w*math.cos(self.r), y = self.y + 0.8*self.shape.w*math.sin(self.r), rs = 6}
-      local t = {group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(self.r), y = self.y + 1.6*self.shape.w*math.sin(self.r), v = 200, r = self.r, color = self.color, dmg = self.parent.dmg,
-      character = self.parent.character, parent = self.parent}
+      local t = {group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(self.r), y = self.y + 1.6*self.shape.w*math.sin(self.r), v = 200, r = self.r, color = self.color,
+      dmg = self.parent.dmg*(self.parent.conjurer_buff_m or 1), character = self.parent.character, parent = self.parent}
       Projectile(table.merge(t, mods or {}))
       turret1:play{pitch = random:float(0.95, 1.05), volume = 0.35}
       turret2:play{pitch = random:float(0.95, 1.05), volume = 0.35}
     end, 3)
   end)
 
-  self.t:after(24, function()
+  self.t:after(24*(self.parent.conjurer_buff_m or 1), function()
     local n = n or random:int(3, 4)
     for i = 1, n do HitParticle{group = main.current.effects, x = self.x, y = self.y, r = random:float(0, 2*math.pi), color = self.color} end
     HitCircle{group = main.current.effects, x = self.x, y = self.y}:scale_down()

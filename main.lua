@@ -14,7 +14,7 @@ function init()
   input:bind('move_up', {'w', 'up'})
   input:bind('move_down', {'s', 'down'})
 
-  sfx_tag = {tags = {sfx}}
+  local s = {tags = {sfx}}
   shoot1 = Sound('Shooting Projectile (Classic) 11.ogg', s)
   archer1 = Sound('Releasing Bow String 1.ogg', s)
   wizard1 = Sound('Wind Bolt 20.ogg', s)
@@ -61,6 +61,8 @@ function init()
   turret_hit_wall1 = Sound('Concrete 6.ogg', s)
   turret_hit_wall2 = Sound('Concrete 7.ogg', s)
   turret_deploy = Sound('321215__hybrid-v__sci-fi-weapons-deploy.ogg', s)
+  rogue_crit1 = Sound('Dagger Stab (Flesh) 4.ogg', s)
+  rogue_crit2 = Sound('Sword hits another sword 6.ogg', s)
 
   main = Main()
   main:add(Arena'arena')

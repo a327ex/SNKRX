@@ -19,15 +19,15 @@ Spellblade: knives spiral outwards and pierce enemies
 Psykeeper: all damage taken is stored and distributed as healing
 Engineer: drops a sentry that uses random attacks, medium range
 
-Ranger: yellow, chance to release a barrage
-Warrior: orange, increased defense
-Healer: green, increased healing effectiveness
-Mage: blue, decreased enemy defense
-Nuker: purple, increased area damage and size
-Conjurer: orange, increased construct damage and duration
-Rogue: red, chance to crit dealing 4x damage
-Enchanter: pink, increased damage to all allies
-Psy: white, returns damage taken based on number of active psy units
+Ranger: yellow, 10%/20% chance to release a barrage on attack
+Warrior: orange, +25/+50 defense to all warriors
+Healer: green, 25% increased healing effectiveness
+Mage: blue, -15/-30 enemy defense
+Nuker: purple, 15%/25% increased area damage and size
+Conjurer: orange, 25% increased construct damage and duration
+Rogue: red, 10%/20% chance to crit dealing 4x damage
+Enchanter: pink, 25% increased damage to all allies
+Psy: white, 2X damage taken returned
 
 Vagrant [warrior, ranger, psy]
 Scout [rogue]
@@ -48,7 +48,6 @@ Hunter [ranger, conjurer]
 Chronomancer [mage, enchanter]
 Spellblade [mage, rogue]
 Psykeeper [healer, psy]
-
 Engineer [conjurer]
 
 Ranger [2, 4] (5)

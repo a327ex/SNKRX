@@ -214,3 +214,20 @@ Tomorrow I'll probably do some UI work so the player can buy new characters as h
 and I have a essentially 1 week to do them, which should be more than enough.
 
 Note: remember to attribute https://freesound.org/people/Hybrid_V/sounds/321215/ for turret_deploy sound in credits.
+
+# Day 10 - 26/02/21
+
+Another day with almost no sleep and just general low energy because of it... I managed to things done though. I got all the class set bonuses working. Here's what they do:
+
+| Class | Set Numbers | Set Effect |
+| --- | --- | --- |
+| Ranger | 2/4 | 10/20% chance to release a barrage |
+| Warrior | 2/4 | +25/+50 defense |
+| Healer | 3 | +25% healing effectiveness |
+| Mage | 2/4 | -15/-30 enemy defense |
+| Nuker | 2/4 | +15/25% area damage and size |
+| Conjurer | 2 | +25% construct damage and duration |
+| Rogue | 2/4 | 10/20% chance to crit dealing 4x damage |
+| Enchanter | 3 | +25% damage to all allies |
+
+Tomorrow I should get started on going from arena to arena, buying characters and figuring out enemy scaling.

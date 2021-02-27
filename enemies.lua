@@ -17,6 +17,10 @@ end
 
 function Seeker:update(dt)
   self:update_game_object(dt)
+
+  if main.current.mage_level == 2 then self.buff_def_a = -30
+  elseif main.current.mage_level == 1 then self.buff_def_a = -15
+  else self.buff_def_a = 0 end
   self:calculate_stats()
 
   if self.being_pushed then
