@@ -21,7 +21,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'swordsman' then
-    self.color = orange[0]
+    self.color = yellow[0]
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
     self.classes = {'warrior'}
@@ -46,7 +46,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'archer' then
-    self.color = yellow[0]
+    self.color = green[0]
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
     self.classes = {'ranger'}
@@ -107,7 +107,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'blade' then
-    self.color = orange[0]
+    self.color = yellow[0]
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
     self.classes = {'warrior', 'nuker'}
@@ -140,13 +140,13 @@ function Player:init(args)
     self.t:every(8, function()
       self.t:every(0.25, function()
         SpawnEffect{group = main.current.effects, x = self.x, y = self.y, action = function(x, y)
-          Saboteur{group = main.current.main, x = x, y = y, parent = self}
+          Saboteur{group = main.current.main, x = x, y = y, parent = self, conjurer_buff_m = self.conjurer_buff_m or 1}
         end}
       end, 4)
     end)
 
   elseif self.character == 'stormweaver' then
-    self.color = blue[0]
+    self.color = red[0]
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
     self.classes = {'enchanter'}
@@ -164,7 +164,7 @@ function Player:init(args)
     end)
 
   elseif self.character == 'sage' then
-    self.color = purple[0]
+    self.color = blue[0]
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
     self.classes = {'mage', 'nuker'}
@@ -178,7 +178,7 @@ function Player:init(args)
     end)
 
   elseif self.character == 'squire' then
-    self.color = green[0]
+    self.color = yellow[0]
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
     self.classes = {'warrior', 'healer', 'enchanter'}
@@ -199,7 +199,7 @@ function Player:init(args)
     end)
 
   elseif self.character == 'cannoneer' then
-    self.color = yellow[0]
+    self.color = green[0]
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
     self.classes = {'ranger', 'nuker'}
@@ -213,7 +213,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'dual_gunner' then
-    self.color = yellow[0]
+    self.color = green[0]
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
     self.classes = {'ranger', 'rogue'}
@@ -227,10 +227,10 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'hunter' then
-    self.color = orange[0]
+    self.color = green[0]
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
-    self.classes = {'ranger', 'rogue'}
+    self.classes = {'ranger', 'conjurer'}
 
     self.attack_sensor = Circle(self.x, self.y, 160)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -241,7 +241,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'chronomancer' then
-    self.color = purple[0]
+    self.color = blue[0]
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
     self.classes = {'mage', 'enchanter'}
@@ -288,7 +288,7 @@ function Player:init(args)
     end)
 
   elseif self.character == 'engineer' then
-    self.color = orange[0]
+    self.color = yellow[0]
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
     self.classes = {'conjurer'}
@@ -448,10 +448,6 @@ function Player:update(dt)
     else
       self.r = self:get_angle()
     end
-  end
-
-  if self.character == 'blade' then
-    print(self.def)
   end
 end
 
@@ -750,7 +746,7 @@ function Projectile:die(x, y, r, n)
   elseif self.character == 'blade' then
     Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.parent.area_size_m*64, color = self.color, dmg = self.parent.area_dmg_m*self.dmg, character = self.character}
   elseif self.character == 'cannoneer' then
-    Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.parent.area_size_m*96, color = self.color, dmg = self.parent.area_dmg_m*self.dmg, character = self.character}
+    Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.parent.area_size_m*96, color = self.color, dmg = 2*self.parent.area_dmg_m*self.dmg, character = self.character}
   end
 end
 
@@ -836,7 +832,7 @@ function Projectile:on_trigger_enter(other, contact)
     if self.character == 'hunter' and random:bool(40) then
       trigger:after(0.01, function()
         SpawnEffect{group = main.current.effects, x = self.parent.x, y = self.parent.y, color = orange[0], action = function(x, y)
-          Pet{group = main.current.main, x = x, y = y, r = self.parent:angle_to_object(other), v = 150, parent = self.parent}
+          Pet{group = main.current.main, x = x, y = y, r = self.parent:angle_to_object(other), v = 150, parent = self.parent, conjurer_buff_m = self.conjurer_buff_m or 1}
         end}
       end)
     end
@@ -1035,7 +1031,7 @@ function Pet:on_trigger_enter(other)
   if table.any(main.current.enemies, function(v) return other:is(v) end) then
     if self.pierce <= 0 then
       camera:shake(2, 0.5)
-      other:hit(self.parent.dmg)
+      other:hit(self.parent.dmg*(self.conjurer_buff_m or 1))
       other:push(35, self:angle_to_object(other))
       self.dead = true
       local n = random:int(3, 4)
@@ -1043,7 +1039,7 @@ function Pet:on_trigger_enter(other)
       HitCircle{group = main.current.effects, x = x, y = y}:scale_down()
     else
       camera:shake(2, 0.5)
-      other:hit(self.parent.dmg)
+      other:hit(self.parent.dmg*(self.conjurer_buff_m or 1))
       other:push(35, self:angle_to_object(other))
       self.pierce = self.pierce - 1
     end
@@ -1103,7 +1099,7 @@ end
 function Saboteur:on_collision_enter(other, contact)
   if table.any(main.current.enemies, function(v) return other:is(v) end) then
     camera:shake(4, 0.5)
-    local t = {group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.area_size_m*64, color = self.color, dmg = self.area_dmg_m*self.dmg, character = self.character}
+    local t = {group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.area_size_m*64, color = self.color, dmg = self.area_dmg_m*self.dmg*(self.conjurer_buff_m or 1), character = self.character}
     Area(table.merge(t, mods or {}))
     self.dead = true
   end

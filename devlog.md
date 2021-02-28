@@ -217,7 +217,7 @@ Note: remember to attribute https://freesound.org/people/Hybrid_V/sounds/321215/
 
 # Day 10 - 26/02/21
 
-Another day with almost no sleep and just general low energy because of it... I managed to things done though. I got all the class set bonuses working. Here's what they do:
+Another day with almost no sleep and just general low energy because of it... I managed to get things done though. I got all the class set bonuses working. Here's what they do:
 
 | Class | Set Numbers | Set Effect |
 | --- | --- | --- |
@@ -231,3 +231,85 @@ Another day with almost no sleep and just general low energy because of it... I 
 | Enchanter | 3 | +25% damage to all allies |
 
 Tomorrow I should get started on going from arena to arena, buying characters and figuring out enemy scaling.
+
+# Day 11 - 27/02/21
+
+Took a break today. Although I went through the game's stats because I noticed some of them were diverging from my internal docs as well as the tables posted to the devlog a few days ago. Here are current tables
+based on what's actually in the code:
+
+### Classes
+
+| Class | Set Color | Set Numbers | Total Units | Set Effect |
+| --- | --- | --- | --- | --- |
+| Ranger | green | 2/4 | 5 | 10/20% chance to release a barrage |
+| Warrior | yellow | 2/4 | 5 |+25/+50 ally defense |
+| Healer | green | 3 | 3 | +25% healing effectiveness |
+| Mage | blue | 2/4 | 5 | -15/-30 enemy defense |
+| Nuker | blue | 2/4 | 5 | +15/25% area damage and size |
+| Conjurer | yellow | 2 | 3 | +25% construct damage and duration |
+| Rogue | red | 2/4 | 5 | 10/20% chance to crit dealing 4x damage |
+| Enchanter | red | 3 | 3 | +25% damage to all allies |
+
+### Characters
+
+| Character | Description | Trigger Range | Effect Range |
+| --- | --- | --- | --- |
+| Vagrant | shoots a projectile | medium |  |
+| Swordsman | deals damage in an area around the unit | small | medium |
+| Wizard | shoots a projectile that deals AoE damage | big | very small |
+| Archer | shoots an arrow that pierces | very big |  |
+| Scout | throws a knife that chains 3 times | small |  |
+| Cleric | heals every unit when any one drops below 50% HP |  |  |
+| Outlaw | throws a fan of 5 knives | medium |  |
+| Blade | shoots multiple blades that deal AoE damage on contact | small | small |
+| Elementor | deals massive AoE damage to a random target | big | big |
+| Saboteur | calls 4 other saboteurs to seek targets and deal AoE damage |  | very small |
+| Stormweaver | infuses all allied projectiles with chain lightning | medium | small |
+| Sage | shoots a slow projectile that draws enemies in | medium | small |
+| Squire | improves damage and defense for adjacent units as well as healing them periodically |  |  |
+| Cannoneer | shoots a projectile that deals massive AoE damage | long | medium |
+| Dual Gunner | shoots two parallel projectiles | medium |  |
+| Hunter | shoots an arrow with a chance to summon a pet | very long | |
+| Chronomancer | improves attack speed for adjacent units |  |  |
+| Spellblade | knives that pierce spiral outwards | | |
+| Psykeeper | all damage taken is stored and distributed as healing to all allies |  |  |
+| Engineer | drops sentries that attacks with a burst of projectiles |  | medium |
+
+### Character Classes
+
+| Character | Classes |
+| --- | --- |
+| Vagrant | warrior, ranger, psy |
+| Swordsman | warrior |
+| Wizard | mage |
+| Archer | ranger |
+| Cleric | healer |
+| Scout | rogue |
+| Outlaw | rogue, warrior |
+| Blade | warrior, nuker |
+| Elementor | mage, nuker |
+| Saboteur | rogue, conjurer, nuker |
+| Stormweaver | enchanter |
+| Sage | mage, nuker |
+| Squire | warrior, healer, enchanter |
+| Cannoneer | ranger, nuker |
+| Dual Gunner | ranger, rogue |
+| Hunter | ranger, conjurer |
+| Chronomancer | mage, enchanter |
+| Spellblade | mage, rogue |
+| Psykeeper | healer, psy |
+| Engineer | conjurer |
+
+### Class Stat Multipliers
+
+| Class | HP | DMG | ASPD | Area DMG | Area Size | DEF | MVSPD |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Warrior   | 1.40 | 1.10 | 0.90 | 1.00 | 1.00 | 1.25 | 0.90 |
+| Ranger    | 1.00 | 1.20 | 1.50 | 1.00 | 1.00 | 0.90 | 1.20 |
+| Healer    | 1.20 | 1.00 | 0.50 | 1.00 | 1.00 | 1.20 | 1.00 |
+| Mage      | 0.60 | 1.40 | 1.00 | 1.25 | 1.20 | 0.75 | 1.00 |
+| Rogue     | 0.80 | 1.30 | 1.10 | 0.60 | 0.60 | 0.80 | 1.40 |
+| Nuker     | 0.90 | 1.00 | 0.75 | 1.50 | 1.30 | 1.00 | 1.00 |
+| Conjurer  | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 |
+| Enchanter | 1.20 | 1.00 | 1.00 | 1.00 | 1.00 | 1.20 | 1.20 |
+| Psy       | 1.50 | 1.00 | 1.00 | 1.00 | 1.00 | 0.50 | 1.00 |

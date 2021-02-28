@@ -50,24 +50,8 @@ function Arena:on_enter(from, level)
   WallCover{group = self.post_main, vertices = math.to_rectangle_vertices(self.x1, -40, self.x2, self.y1), color = bg[-1]}
   WallCover{group = self.post_main, vertices = math.to_rectangle_vertices(self.x1, self.y2, self.x2, gh + 40), color = bg[-1]}
 
-  self.player = Player{group = self.main, x = gw/2, y = gh/2, leader = true, character = 'swordsman'}
-  self.player:add_follower(Player{group = self.main, character = 'outlaw'})
-  -- self.player:add_follower(Player{group = self.main, character = 'squire'})
-  self.player:add_follower(Player{group = self.main, character = 'blade'})
-  --[[
-  self.player:add_follower(Player{group = self.main, character = 'sage'})
-  self.player:add_follower(Player{group = self.main, character = 'archer'})
-  self.player:add_follower(Player{group = self.main, character = 'spellblade'})
-  self.player:add_follower(Player{group = self.main, character = 'cleric'})
-  self.player:add_follower(Player{group = self.main, character = 'wizard'})
-  self.player:add_follower(Player{group = self.main, character = 'squire'})
-  self.player:add_follower(Player{group = self.main, character = 'scout'})
-  self.player:add_follower(Player{group = self.main, character = 'swordsman'})
-  self.player:add_follower(Player{group = self.main, character = 'scout'})
-  self.player:add_follower(Player{group = self.main, character = 'wizard'})
-  self.player:add_follower(Player{group = self.main, character = 'blade'})
-  self.player:add_follower(Player{group = self.main, character = 'elementor'})
-  ]]--
+  self.player = Player{group = self.main, x = gw/2, y = gh/2, leader = true, character = 'vagrant'}
+  -- self.player:add_follower(Player{group = self.main, character = 'elementor'})
 
   self.win_condition = random:table{'time', 'enemy_kill', 'wave'}
   if self.win_condition == 'wave' then
@@ -233,7 +217,7 @@ function Arena:update(dt)
   if self.win_condition == 'enemy_kill' then
     if self.can_quit then
       self.t:after(2, function()
-        -- PostArenaScreen{group = self.ui, x = gw/2, y = gh/2}
+        PostArenaScreen{group = self.ui, x = gw/2, y = gh/2}
       end)
     end
 
@@ -244,7 +228,7 @@ function Arena:update(dt)
         if #self.main:get_objects_by_classes(self.enemies) > 0 then
           self.can_quit = true
         else
-          -- PostArenaScreen{group = self.ui, x = gw/2, y = gh/2}
+          PostArenaScreen{group = self.ui, x = gw/2, y = gh/2}
         end
       end)
     end
@@ -386,4 +370,24 @@ function Arena:spawn_n_enemies(p, j, n)
       end
     end}
   end, n, nil, 'spawn_enemies_' .. j)
+end
+
+
+
+
+PostArenaScreen = Object:extend()
+PostArenaScreen:implement(GameObject)
+function PostArenaScreen:init(args)
+  self:init_game_object(args)
+  
+end
+
+
+function PostArenaScreen:update(dt)
+  self:update_game_object(dt)
+end
+
+
+function PostArenaScreen:draw()
+
 end
