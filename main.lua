@@ -64,9 +64,12 @@ function init()
   rogue_crit1 = Sound('Dagger Stab (Flesh) 4.ogg', s)
   rogue_crit2 = Sound('Sword hits another sword 6.ogg', s)
 
+  units = {}
+  gold = 0
+
   main = Main()
   main:add(Arena'arena')
-  main:go_to'arena'
+  main:go_to('arena', {first_run = true})
 end
 
 

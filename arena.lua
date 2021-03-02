@@ -50,13 +50,20 @@ function Arena:on_enter(from, level)
   WallCover{group = self.post_main, vertices = math.to_rectangle_vertices(self.x1, -40, self.x2, self.y1), color = bg[-1]}
   WallCover{group = self.post_main, vertices = math.to_rectangle_vertices(self.x1, self.y2, self.x2, gh + 40), color = bg[-1]}
 
-  self.player = Player{group = self.main, x = gw/2, y = gh/2, leader = true, character = 'vagrant'}
+
+  for i, unit in ipairs(units) do
+    if i == 1 then
+      self.player = Player{group = self.main, x = gw/2, y = gh/2, leader = true, character = unit.character, level = unit.level}
+    else
+      self.player:add_follower(Player{group = self.main, character = unit.character, level = unit.level})
+    end
+  end
   -- self.player:add_follower(Player{group = self.main, character = 'elementor'})
 
   self.win_condition = random:table{'time', 'enemy_kill', 'wave'}
   if self.win_condition == 'wave' then
     self.level_to_max_waves = {
-      2, 2, random:int(2, 3),
+      1, 2, random:int(2, 3),
       3, 3, 3, random:int(3, 4),
       4, 4, 4, 4, random:int(4, 5),
       5, 5, 5, 5, 5, random:int(5, 6),
@@ -89,8 +96,8 @@ function Arena:on_enter(from, level)
 
   elseif self.win_condition == 'enemy_kill' then
     self.level_to_enemies_to_kill = {
-      16, 16, random:int(16, 18),
-      18, 18, 18, random:int(18, 20),
+      8, 12, random:int(14, 16),
+      16, 16, 18, random:int(18, 20),
       20, 20, 20, 20, random:int(20, 22),
       22, 22, 22, 22, 22, random:int(22, 24),
       24, 26, 28, 30, 30, 32
@@ -340,34 +347,7 @@ function Arena:spawn_n_enemies(p, j, n)
     local o = self.spawn_offsets[(self.t:get_every_iteration('spawn_enemies_' .. j) % 5) + 1]
     SpawnEffect{group = self.effects, x = p.x + o.x, y = p.y + o.y, action = function(x, y)
       spawn1:play{pitch = random:float(0.8, 1.2), volume = 0.15}
-      if self.level == 1 then
-        Seeker{group = self.main, x = x, y = y, character = 'seeker'}
-      elseif self.level == 2 then
-        Seeker{group = self.main, x = x, y = y, character = 'seeker'}
-      elseif self.level == 3 then
-      elseif self.level == 4 then
-      elseif self.level == 5 then
-      elseif self.level == 6 then
-      elseif self.level == 7 then
-      elseif self.level == 8 then
-      elseif self.level == 9 then
-      elseif self.level == 10 then
-      elseif self.level == 11 then
-      elseif self.level == 12 then
-      elseif self.level == 13 then
-      elseif self.level == 14 then
-      elseif self.level == 15 then
-      elseif self.level == 16 then
-      elseif self.level == 17 then
-      elseif self.level == 18 then
-      elseif self.level == 19 then
-      elseif self.level == 20 then
-      elseif self.level == 21 then
-      elseif self.level == 22 then
-      elseif self.level == 23 then
-      elseif self.level == 24 then
-      elseif self.level == 25 then
-      end
+      Seeker{group = self.main, x = x, y = y, character = 'seeker', level = self.level}
     end}
   end, n, nil, 'spawn_enemies_' .. j)
 end
@@ -379,6 +359,7 @@ PostArenaScreen = Object:extend()
 PostArenaScreen:implement(GameObject)
 function PostArenaScreen:init(args)
   self:init_game_object(args)
+  self.transparent = Color(0.1, 0.1, 0.1, 0.5)
   
 end
 

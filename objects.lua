@@ -132,6 +132,7 @@ end
 
 Unit = Object:extend()
 function Unit:init_unit()
+  self.level = self.level or 1
   self.hfx:add('hit', 1)
   self.hfx:add('shoot', 1)
   self.hp_bar = HPBar{group = main.current.effects, parent = self}
@@ -196,13 +197,21 @@ end
 
 
 function Unit:calculate_stats(first_run)
-  self.base_hp = 100
-  self.base_dmg = 10
+  if self:is(Player) then
+    self.base_hp = 100*math.pow(2, self.level-1)
+    self.base_dmg = 10*math.pow(2, self.level-1)
+    self.base_mvspd = 75
+  elseif self:is(Seeker) then
+    local x = self.level
+    local y = {0, 1, 4, 2, 3, 6, 3, 4, 8, 4, 5, 10, 5, 6, 12, 7, 8, 15, 9, 10, 18, 14, 15, 24, 25}
+    self.base_hp = 50 + 20*y[x]
+    self.base_dmg = 10 + 3*y[x]
+    self.base_mvspd = 70 + 2*y[x]
+  end
   self.base_aspd_m = 1
   self.base_area_dmg_m = 1
   self.base_area_size_m = 1
   self.base_def = 25
-  self.base_mvspd = 75
   self.class_hp_a = 0
   self.class_dmg_a = 0
   self.class_def_a = 0

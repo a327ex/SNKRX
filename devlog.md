@@ -313,3 +313,7 @@ based on what's actually in the code:
 | Conjurer  | 1    | 1    | 1    | 1    | 1    | 1    | 1    |
 | Enchanter | 1.2  | 1    | 1    | 1    | 1    | 1.2  | 1.2  |
 | Psy       | 1.5  | 1    | 1    | 1    | 1    | 0.5  | 1    |
+
+# Day 12-13 - 28/02/21 & 01/03/21
+
+I didn't work on anything.
