@@ -40,15 +40,15 @@ function State:init_state(name)
 end
 
 
-function State:enter(from)
+function State:enter(from, ...)
   self.active = true
-  if self.on_enter then self:on_enter(from) end
+  if self.on_enter then self:on_enter(from, ...) end
 end
 
 
-function State:exit(to)
+function State:exit(to, ...)
   self.active = false
-  if self.on_exit then self:on_exit(to) end
+  if self.on_exit then self:on_exit(to, ...) end
 end
 
 

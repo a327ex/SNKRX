@@ -314,6 +314,13 @@ based on what's actually in the code:
 | Enchanter | 1.2  | 1    | 1    | 1    | 1    | 1.2  | 1.2  |
 | Psy       | 1.5  | 1    | 1    | 1    | 1    | 0.5  | 1    |
 
-# Day 12-13 - 28/02/21 & 01/03/21
+# Day 12-15 - 28/02/21-03/03/21
 
 I didn't work on anything.
+
+# Day 16 - 04/03/21
+
+UI work on the game's first screen. These days that I ended up not doing nothing happened because of a mix of me not knowing what to do next, fixing my sleep schedule (failed, so I give up on this already), and trying
+to think up how exactly I want the game's UI to be like. I ended up thinking too much and paralyzed myself into not doing anything.
+
+Right now I'm just doing the most basic thing I can that still looks reasonably OK and conveys all the info needed.

@@ -393,7 +393,11 @@ function TransitionEffect:init(args)
       self.t:after(0.5, function()
         self.x, self.y = gw/2, gh/2
         self.t:after(0.7, function() self.t:tween(0.05, self, {text_sx = 0, text_sy = 0}, math.cubic_in_out) end)
-        self.t:tween(0.75, self, {rs = 0}, math.linear, function() self.text = nil; self.dead = true end)
+        if not args.dont_tween_out then
+          self.t:tween(0.75, self, {rs = 0}, math.linear, function() self.text = nil; self.dead = true end)
+        else
+          self.t:after(0.75, function() self.text = nil; self.dead = true end)
+        end
       end)
     end)
   end)

@@ -15,7 +15,7 @@ function Arena:on_enter(from, level)
   self.main = Group():set_as_physics_world(32, 0, 0, {'player', 'enemy', 'projectile', 'enemy_projectile'})
   self.post_main = Group()
   self.effects = Group()
-  self.ui = Group():no_camera()
+  self.ui = Group()
   self.main:disable_collision_between('player', 'player')
   self.main:disable_collision_between('player', 'projectile')
   self.main:disable_collision_between('player', 'enemy_projectile')
@@ -28,7 +28,10 @@ function Arena:on_enter(from, level)
   self.main:enable_trigger_between('enemy_projectile', 'player')
 
   self.enemies = {Seeker}
+  self.resources_gained = 0
+  self.color = self.color or fg[0]
 
+  -- Spawn solids and player
   self.x1, self.y1 = gw/2 - 0.8*gw/2, gh/2 - 0.8*gh/2
   self.x2, self.y2 = gw/2 + 0.8*gw/2, gh/2 + 0.8*gh/2
   self.spawn_points = {
@@ -50,7 +53,6 @@ function Arena:on_enter(from, level)
   WallCover{group = self.post_main, vertices = math.to_rectangle_vertices(self.x1, -40, self.x2, self.y1), color = bg[-1]}
   WallCover{group = self.post_main, vertices = math.to_rectangle_vertices(self.x1, self.y2, self.x2, gh + 40), color = bg[-1]}
 
-
   for i, unit in ipairs(units) do
     if i == 1 then
       self.player = Player{group = self.main, x = gw/2, y = gh/2, leader = true, character = unit.character, level = unit.level}
@@ -58,8 +60,8 @@ function Arena:on_enter(from, level)
       self.player:add_follower(Player{group = self.main, character = unit.character, level = unit.level})
     end
   end
-  -- self.player:add_follower(Player{group = self.main, character = 'elementor'})
 
+  -- Set win condition and enemy spawns
   self.win_condition = random:table{'time', 'enemy_kill', 'wave'}
   if self.win_condition == 'wave' then
     self.level_to_max_waves = {
@@ -158,6 +160,7 @@ function Arena:on_enter(from, level)
     end)
   end
 
+  -- Calculate class levels
   local units = {}
   table.insert(units, self.player)
   for _, f in ipairs(self.player.followers) do table.insert(units, f) end
@@ -224,7 +227,14 @@ function Arena:update(dt)
   if self.win_condition == 'enemy_kill' then
     if self.can_quit then
       self.t:after(2, function()
-        PostArenaScreen{group = self.ui, x = gw/2, y = gh/2}
+        TransitionEffect{group = main.transition, x = self.player.x, y = self.player.y, dont_tween_out = true, color = self.color, transition_action = function()
+          main:add(BuyScreen'buy_screen')
+          main:go_to('buy_screen', self, self.level, self.color)
+        end, text = Text({
+          {text = '[wavy, bg]resources gained: +' .. tostring(self.resources_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+          {text = '[wavy, bg]interest: +' .. tostring(math.floor(resource/10)), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+          {text = '[wavy, bg]total: +' .. tostring(self.resources_gained + math.floor(resource/10)), font = pixul_font, alignment = 'center'}
+        }, global_text_tags)}
       end)
     end
 
@@ -235,7 +245,14 @@ function Arena:update(dt)
         if #self.main:get_objects_by_classes(self.enemies) > 0 then
           self.can_quit = true
         else
-          PostArenaScreen{group = self.ui, x = gw/2, y = gh/2}
+          TransitionEffect{group = main.transition, x = self.player.x, y = self.player.y, dont_tween_out = true, color = self.color, transition_action = function()
+            main:add(BuyScreen'buy_screen')
+            main:go_to('buy_screen', self, self.level, self.color)
+          end, text = Text({
+            {text = '[wavy, bg]resources gained: +' .. tostring(self.resources_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+            {text = '[wavy, bg]interest: +' .. tostring(math.floor(resource/10)), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+            {text = '[wavy, bg]total: +' .. tostring(self.resources_gained + math.floor(resource/10)), font = pixul_font, alignment = 'center'}
+          }, global_text_tags)}
         end
       end)
     end
@@ -350,25 +367,4 @@ function Arena:spawn_n_enemies(p, j, n)
       Seeker{group = self.main, x = x, y = y, character = 'seeker', level = self.level}
     end}
   end, n, nil, 'spawn_enemies_' .. j)
-end
-
-
-
-
-PostArenaScreen = Object:extend()
-PostArenaScreen:implement(GameObject)
-function PostArenaScreen:init(args)
-  self:init_game_object(args)
-  self.transparent = Color(0.1, 0.1, 0.1, 0.5)
-  
-end
-
-
-function PostArenaScreen:update(dt)
-  self:update_game_object(dt)
-end
-
-
-function PostArenaScreen:draw()
-
 end

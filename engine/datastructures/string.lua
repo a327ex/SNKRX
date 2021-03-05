@@ -43,3 +43,11 @@ end
 function string:index(i)
   return self:sub(i, i)
 end
+
+
+-- Returns the capitalized string
+-- a = 'engine'
+-- a:capitalize() -> 'Engine'
+function string:capitalize()
+  return self:gsub("^%l", string.upper)
+end

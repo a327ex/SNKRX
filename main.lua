@@ -1,6 +1,7 @@
 require 'engine'
 require 'shared'
 require 'arena'
+require 'buy_screen'
 require 'objects'
 require 'player'
 require 'enemies'
@@ -64,12 +65,80 @@ function init()
   rogue_crit1 = Sound('Dagger Stab (Flesh) 4.ogg', s)
   rogue_crit2 = Sound('Sword hits another sword 6.ogg', s)
 
+  warrior = Image('warrior')
+  ranger = Image('ranger')
+  healer = Image('healer')
+  mage = Image('mage')
+  rogue = Image('rogue')
+  nuker = Image('nuker')
+  conjurer = Image('conjurer')
+  enchanter = Image('enchanter')
+  psy = Image('psy')
+
+  class_colors = {
+    ['warrior'] = yellow[0],
+    ['ranger'] = green[0],
+    ['healer'] = green[0],
+    ['conjurer'] = yellow[0],
+    ['mage'] = blue[0],
+    ['nuker'] = blue[0],
+    ['rogue'] = red[0],
+    ['enchanter'] = red[0],
+    ['psy'] = fg[0],
+  }
+
+  character_colors = {
+    ['vagrant'] = fg[0],
+    ['swordsman'] = yellow[0],
+    ['wizard'] = blue[0],
+    ['archer'] = green[0],
+    ['scout'] = red[0],
+    ['cleric'] = green[0],
+    ['outlaw'] = red[0],
+    ['blade'] = yellow[0],
+    ['elementor'] = blue[0],
+    ['saboteur'] = red[0],
+    ['stormweaver'] = red[0],
+    ['sage'] = blue[0],
+    ['squire'] = yellow[0],
+    ['cannoneer'] = green[0],
+    ['dual_gunner'] = green[0],
+    ['hunter'] = green[0],
+    ['chronomancer'] = blue[0],
+    ['spellblade'] = blue[0],
+    ['psykeeper'] = fg[0],
+    ['engineer'] = yellow[0],
+  }
+
+  character_classes = {
+    ['vagrant'] = {'ranger', 'warrior', 'psy'},
+    ['swordsman'] = {'warrior'},
+    ['wizard'] = {'mage'},
+    ['archer'] = {'ranger'},
+    ['scout'] = {'rogue'},
+    ['cleric'] = {'healer'},
+    ['outlaw'] = {'warrior', 'rogue'},
+    ['blade'] = {'warrior', 'nuker'},
+    ['elementor'] = {'mage', 'nuker'},
+    ['saboteur'] = {'rogue', 'conjurer', 'nuker'},
+    ['stormweaver'] = {'enchanter'},
+    ['sage'] = {'mage', 'nuker'},
+    ['squire'] = {'warrior', 'healer', 'enchanter'},
+    ['cannoneer'] = {'ranger', 'nuker'},
+    ['dual_gunner'] = {'ranger', 'rogue'},
+    ['hunter'] = {'ranger', 'conjurer'},
+    ['chronomancer'] = {'mage', 'enchanter'},
+    ['spellblade'] = {'mage', 'rogue'},
+    ['psykeeper'] = {'healer', 'psy'},
+    ['engineer'] = {'conjurer'},
+  }
+
   units = {}
-  gold = 0
+  resource = 0
 
   main = Main()
-  main:add(Arena'arena')
-  main:go_to('arena', {first_run = true})
+  main:add(BuyScreen'buy_screen')
+  main:go_to('buy_screen', 0)
 end
 
 

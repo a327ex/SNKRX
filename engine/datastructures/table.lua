@@ -254,7 +254,7 @@ end
 -- The memo variable starts as the first argument in the array, but sometimes, as in the last example, that's not the desired functionality.
 -- For those cases the third argument comes in handy and can be used to set the initial value of memo directly.
 function table.reduce(t, f, dv, ...)
-  local memo = t[1] or dv
+  local memo = dv or t[1]
   for i = 2, #t do
     memo = f(memo, t[i], i, ...)
   end

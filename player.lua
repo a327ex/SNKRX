@@ -7,10 +7,10 @@ function Player:init(args)
   self:init_unit()
 
   if self.character == 'vagrant' then
-    self.color = fg[0]
+    self.color = character_colors.vagrant
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
-    self.classes = {'ranger', 'warrior', 'psy'}
+    self.classes = character_classes.vagrant
 
     self.attack_sensor = Circle(self.x, self.y, 96)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -21,10 +21,10 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'swordsman' then
-    self.color = yellow[0]
+    self.color = character_colors.swordsman
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
-    self.classes = {'warrior'}
+    self.classes = character_classes.swordsman
 
     self.attack_sensor = Circle(self.x, self.y, 64)
     self.t:cooldown(3, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -32,10 +32,10 @@ function Player:init(args)
     end, nil, nil, 'attack')
 
   elseif self.character == 'wizard' then
-    self.color = blue[0]
+    self.color = character_colors.wizard
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
-    self.classes = {'mage'}
+    self.classes = character_classes.wizard
 
     self.attack_sensor = Circle(self.x, self.y, 128)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -46,10 +46,10 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'archer' then
-    self.color = green[0]
+    self.color = character_colors.archer
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
-    self.classes = {'ranger'}
+    self.classes = character_classes.archer
 
     self.attack_sensor = Circle(self.x, self.y, 160)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -60,10 +60,10 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'scout' then
-    self.color = red[0]
+    self.color = character_colors.scout
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
-    self.classes = {'rogue'}
+    self.classes = character_classes.scout
 
     self.attack_sensor = Circle(self.x, self.y, 64)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
