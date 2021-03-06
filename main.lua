@@ -87,6 +87,18 @@ function init()
     ['psy'] = fg[0],
   }
 
+  class_color_strings = {
+    ['warrior'] = 'yellow',
+    ['ranger'] = 'green',
+    ['healer'] = 'green',
+    ['conjurer'] = 'yellow',
+    ['mage'] = 'blue',
+    ['nuker'] = 'blue',
+    ['rogue'] = 'red',
+    ['enchanter'] = 'red',
+    ['psy'] = 'fg',
+  }
+
   character_colors = {
     ['vagrant'] = fg[0],
     ['swordsman'] = yellow[0],
@@ -110,6 +122,29 @@ function init()
     ['engineer'] = yellow[0],
   }
 
+  character_color_strings = {
+    ['vagrant'] = 'fg',
+    ['swordsman'] = 'yellow',
+    ['wizard'] = 'blue',
+    ['archer'] = 'green',
+    ['scout'] = 'red',
+    ['cleric'] = 'green',
+    ['outlaw'] = 'red',
+    ['blade'] = 'yellow',
+    ['elementor'] = 'blue',
+    ['saboteur'] = 'red',
+    ['stormweaver'] = 'red',
+    ['sage'] = 'blue',
+    ['squire'] = 'yellow',
+    ['cannoneer'] = 'green',
+    ['dual_gunner'] = 'green',
+    ['hunter'] = 'green',
+    ['chronomancer'] = 'blue',
+    ['spellblade'] = 'blue',
+    ['psykeeper'] = 'fg',
+    ['engineer'] = 'yellow',
+  }
+
   character_classes = {
     ['vagrant'] = {'ranger', 'warrior', 'psy'},
     ['swordsman'] = {'warrior'},
@@ -131,6 +166,33 @@ function init()
     ['spellblade'] = {'mage', 'rogue'},
     ['psykeeper'] = {'healer', 'psy'},
     ['engineer'] = {'conjurer'},
+  }
+
+  character_descriptions = {
+    ['vagrant'] = function(dmg) return '[fg]shoots a projectile that deals [yellow]' .. dmg .. '[fg] damage' end,
+    ['swordsman'] = function(dmg) return '[fg]deals [yellow]' .. dmg .. '[fg] damage in an area around the unit' end,
+    ['wizard'] = function(dmg) return '[fg]shoots a projectile that deals [yellow]' .. dmg .. ' AoE[fg] damage' end,
+    ['archer'] = function(dmg) return '[fg]shoots an arrow that deals [yellow]' .. dmg .. '[fg] damage and pierces' end,
+    ['scout'] = function(dmg) return '[fg]throws a knife that deals [yellow]' .. dmg .. '[fg] damage and chains [yellow]3[fg] times' end,
+    ['cleric'] = function() return '[fg]heals every unit for [yellow]10%[fg] max hp when any one drops below [yellow]50%[fg] max hp' end,
+    ['outlaw'] = function(dmg) return '[fg]throws a fan of [yellow]5[] knives, each dealing [yellow]' .. dmg .. '[fg] damage' end,
+    ['blade'] = function(dmg) return '[fg]throws multiple blades that deal [yellow]' .. dmg .. ' AoE[fg] damage' end,
+    ['elementor'] = function(dmg) return '[fg]deals [yellow]' .. dmg .. ' AoE[fg] damage to a random target' end,
+    ['saboteur'] = function(dmg) return '[fg]calls [yellow]4[] saboteus to seek targets and deal [yellow]' .. dmg .. ' AoE[fg] damage' end,
+    ['stormweaver'] = function(dmg) return '[fg]infuses all allied projectiles with chain lightning that deals [yellow]+' .. dmg .. '[fg] damage on hit' end,
+    ['sage'] = function(dmg) return '[fg]shoots a slow projectile that draws enemies in' end,
+    ['squire'] = function(dmg) return '[yellow]+10 dmg[fg] & [yellow]+25 def[fg] to adjacent units, heal them for [yellow]10%[fg] max hp every 8 seconds' end, 
+    ['cannoneer'] = function(dmg) return '[fg]shoots a projectile that deals [yellow]' .. dmg .. ' AoE[fg] damage' end,
+    ['dual_gunner'] = function() return '[fg]shoots two parallel projectiles' end,
+    ['hunter'] = function(dmg) return '[fg]shoots an arrow that deals [yellow]' .. dmg .. '[fg] damage and has a [yellow]20%[fg] chance to summon a pet' end,
+    ['chronomancer'] = function() return '[yellow]+25% aspd[fg] to adjacent units' end,
+    ['spellblade'] = function(dmg) return '[fg]throws knives that deal [yellow]' .. dmg .. '[fg] damage, pierce and spiral outwards' end,
+    ['psykeeper'] = function() return '[fg]all damage taken is stored and distributed as healing to all allies' end,
+    ['engineer'] = function(dmg) return '[fg]drops sentries that shoot bursts of projectiles, each dealing [yellow]' .. dmg .. '[fg] damage' end,
+  }
+
+  character_stats = {
+
   }
 
   units = {}

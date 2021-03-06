@@ -255,7 +255,7 @@ end
 -- For those cases the third argument comes in handy and can be used to set the initial value of memo directly.
 function table.reduce(t, f, dv, ...)
   local memo = dv or t[1]
-  for i = 2, #t do
+  for i = 1, #t do
     memo = f(memo, t[i], i, ...)
   end
   return memo

@@ -439,6 +439,7 @@ function InfoText:init(args)
   self.sx, self.sy = 0, 0
   self.ox, self.oy = 0, 0
   self.ow, self.oh = 0, 0
+  self.tox, self.toy = 0, 0
   self.text = Text({}, global_text_tags)
 end
 
@@ -451,25 +452,25 @@ end
 function InfoText:draw()
   graphics.push(self.x + self.ox, self.y + self.oy, 0, self.sx*self.spring.x, self.sy*self.spring.x)
   graphics.rectangle(self.x + self.ox, self.y + self.oy, self.text.w + self.ow, self.text.h + self.oh, self.text.h/4, self.text.h/4, bg[-2])
-  self.text:draw(self.x + self.ox, self.y + self.oy + self.text.h/2)
+  self.text:draw(self.x + self.ox + self.tox, self.y + self.oy + self.toy)
   graphics.pop()
 end
 
 
-function InfoText:activate(text, ox, oy, sx, sy, ow, oh)
-  ox, oy = 0, 0
-  sx, sy = 1, 1
-  ow, oh = 16, 4
+function InfoText:activate(text, ox, oy, sx, sy, ow, oh, tox, toy)
+  self.ox, self.oy = ox or 0, oy or 0
+  self.sx, self.sy = sx or 1, sy or 1
+  self.ow, self.oh = ow or 0, oh or 0
+  self.tox, self.toy = tox or 0, toy or 0
   self.text:set_text(text)
   self.t:cancel'deactivate'
-  self.t:tween(0.1, self, {sx = sx, sy = sy}, math.cubic_in_out, function() self.sx, self.sy = sx, sy end, 'activate_1')
-  self.t:after(0.075, function() self.spring:pull(0.1, 200, 10) end, 'activate_2')
+  self.t:tween(0.1, self, {sx = sx or 1, sy = sy or 1}, math.cubic_in_out, function() self.sx, self.sy = sx or 1, sy or 1 end, 'activate')
+  self.spring:pull(0.075)
 end
 
 
 function InfoText:deactivate()
-  self.t:cancel'activate_1'
-  self.t:cancel'activate_2'
+  self.t:cancel'activate'
   self.t:tween(0.05, self, {sy = 0}, math.linear, function() self.sy = 0 end, 'deactivate')
 end
 

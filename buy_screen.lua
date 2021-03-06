@@ -13,14 +13,17 @@ function BuyScreen:on_enter(from, level)
   self.main = Group()
   self.effects = Group()
   self.ui = Group()
+  self.info_text = InfoText{group = self.ui}
 
   if self.level == 0 then
+    self.cards = {}
+    self.selected_card_index = 1
     local units = {'vagrant', 'swordsman', 'wizard', 'archer', 'scout', 'cleric'}
-    PairCard{group = self.main, x = gw/2, y = 85, w = gw, h = gh/4, unit_1 = random:table_remove(units), unit_2 = random:table_remove(units), i = 1}
+    self.cards[1] = PairCard{group = self.main, x = gw/2, y = 85, w = gw, h = gh/4, unit_1 = random:table_remove(units), unit_2 = random:table_remove(units), i = 1, parent = self}
     local units = {'vagrant', 'swordsman', 'wizard', 'archer', 'scout', 'cleric'}
-    PairCard{group = self.main, x = gw/2, y = 155, w = gw, h = gh/4, unit_1 = random:table_remove(units), unit_2 = random:table_remove(units), i = 2}
+    self.cards[2] = PairCard{group = self.main, x = gw/2, y = 155, w = gw, h = gh/4, unit_1 = random:table_remove(units), unit_2 = random:table_remove(units), i = 2, parent = self}
     local units = {'vagrant', 'swordsman', 'wizard', 'archer', 'scout', 'cleric'}
-    PairCard{group = self.main, x = gw/2, y = 225, w = gw, h = gh/4, unit_1 = random:table_remove(units), unit_2 = random:table_remove(units), i = 3}
+    self.cards[3] = PairCard{group = self.main, x = gw/2, y = 225, w = gw, h = gh/4, unit_1 = random:table_remove(units), unit_2 = random:table_remove(units), i = 3, parent = self}
     self.title = Text({{text = '[fg]choose your initial party', font = pixul_font, alignment = 'center'}}, global_text_tags)
   end
 end
@@ -34,6 +37,18 @@ function BuyScreen:update(dt)
 
   if self.level == 0 then
     self.title:update(dt)
+    if input.move_up.pressed then
+      self.selected_card_index = self.selected_card_index - 1
+      if self.selected_card_index == 0 then self.selected_card_index = 3 end
+      for i = 1, 3 do self.cards[i]:unselect() end
+      self.cards[self.selected_card_index]:select()
+    end
+    if input.move_down.pressed then
+      self.selected_card_index = self.selected_card_index + 1
+      if self.selected_card_index == 4 then self.selected_card_index = 1 end
+      for i = 1, 3 do self.cards[i]:unselect() end
+      self.cards[self.selected_card_index]:select()
+    end
   end
 end
 
@@ -57,9 +72,7 @@ function PairCard:init(args)
   self:init_game_object(args)
 
   self.plus_r = 0
-  if self.i == 1 then
-    self:select()
-  end
+  if self.i == 1 then self:select() end
 end
 
 
@@ -70,7 +83,7 @@ end
 
 function PairCard:select()
   self.selected = true
-  self.spring:pull(0.05, 200, 10)
+  self.spring:pull(0.2, 200, 10)
   self.t:every_immediate(1.4, function()
     if self.selected then
       self.t:tween(0.7, self, {sx = 0.97, sy = 0.97, plus_r = -math.pi/32}, math.linear, function()
@@ -78,6 +91,24 @@ function PairCard:select()
       end, 'pulse_2')
     end
   end, nil, nil, 'pulse')
+
+
+  self.parent.info_text:activate({
+    {text = '[' .. character_color_strings[self.unit_1] .. ']' .. self.unit_1:upper() .. '[] - ' .. table.reduce(character_classes[self.unit_1],
+    function(memo, v) return memo .. '[' .. class_color_strings[v] .. ']' .. v .. '[fg], ' end, ''):sub(1, -3), font = pixul_font, height_multiplier = 1.1},
+    {text = character_descriptions[self.unit_1](10), font = pixul_font},
+  }, nil, nil, nil, nil, 20, 10, nil, 3)
+  self.parent.info_text.x = gw/2
+  self.parent.info_text.y = gh/2
+end
+
+
+function PairCard:unselect()
+  self.selected = false
+  self.t:cancel'pulse'
+  self.t:cancel'pulse_1'
+  self.t:cancel'pulse_2'
+  self.t:tween(0.1, self, {sx = 1, sy = 1, plus_r = 0}, math.linear, function() self.sx, self.sy, self.plus_r = 1, 1, 0 end, 'pulse')
 end
 
 
@@ -86,7 +117,7 @@ function PairCard:draw()
 
   if self.selected then
     graphics.push(x + (fat_font:get_text_width(self.i) + 20)/2, self.y - 25 + 37/2, 0, self.spring.x*self.sx, self.spring.x*self.sy)
-      graphics.rectangle2(x - 52, self.y - 25, fat_font:get_text_width(self.i) + 20, 37, nil, nil, bg[2])
+      graphics.rectangle2(x - 52, self.y - 25, fat_font:get_text_width(self.i) + 20, 37, 6, 6, bg[2])
     graphics.pop()
   end
 
@@ -123,5 +154,3 @@ function PairCard:draw()
     end
   graphics.pop()
 end
-
-

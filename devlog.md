@@ -324,3 +324,10 @@ UI work on the game's first screen. These days that I ended up not doing nothing
 to think up how exactly I want the game's UI to be like. I ended up thinking too much and paralyzed myself into not doing anything.
 
 Right now I'm just doing the most basic thing I can that still looks reasonably OK and conveys all the info needed.
+
+# Day 17 - 05/03/21
+
+More UI stuff. Fairly slow moving but I'm slowly getting a clearer picture in my head of what the game's UI should be like which should make it easier to get it done.
+
+Also found this cool article today: https://halt.software/dead-simple-layouts/. This reminds me of one of my attempts from a few years ago at creating a clean UI abstraction but with a slightly different focus that seems promising.
+I wonder if I should try implementing this now or leave it for the next game.
