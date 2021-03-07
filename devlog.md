@@ -331,3 +331,8 @@ More UI stuff. Fairly slow moving but I'm slowly getting a clearer picture in my
 
 Also found this cool article today: https://halt.software/dead-simple-layouts/. This reminds me of one of my attempts from a few years ago at creating a clean UI abstraction but with a slightly different focus that seems promising.
 I wonder if I should try implementing this now or leave it for the next game.
+
+# Day 18 - 06/03/21
+
+Transition from first screen to first level works. Polish it up tomorrow with more sounds, tutorial markers (left/right arrows) and more consistency and anticipation when a level ends, and then start work on the main buy
+screen.
