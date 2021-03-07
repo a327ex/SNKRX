@@ -11,11 +11,10 @@ function BuyScreen:on_enter(from, level)
   self.level = level
 
   self.main = Group()
-  self.effects = Group()
-  self.ui = Group()
-  self.info_text = InfoText{group = self.ui}
 
   if self.level == 0 then
+    pop1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    self.first_screen = true
     self.cards = {}
     self.selected_card_index = 1
     local units = {'vagrant', 'swordsman', 'wizard', 'archer', 'scout', 'cleric'}
@@ -24,6 +23,8 @@ function BuyScreen:on_enter(from, level)
     self.cards[2] = PairCard{group = self.main, x = gw/2, y = 155, w = gw, h = gh/4, unit_1 = random:table_remove(units), unit_2 = random:table_remove(units), i = 2, parent = self}
     local units = {'vagrant', 'swordsman', 'wizard', 'archer', 'scout', 'cleric'}
     self.cards[3] = PairCard{group = self.main, x = gw/2, y = 225, w = gw, h = gh/4, unit_1 = random:table_remove(units), unit_2 = random:table_remove(units), i = 3, parent = self}
+
+    self.title_sy = 1
     self.title = Text({{text = '[fg]choose your initial party', font = pixul_font, alignment = 'center'}}, global_text_tags)
   end
 end
@@ -32,22 +33,48 @@ end
 function BuyScreen:update(dt)
   self:update_game_object(dt*slow_amount)
   self.main:update(dt*slow_amount)
-  self.effects:update(dt*slow_amount)
-  self.ui:update(dt*slow_amount)
 
-  if self.level == 0 then
-    self.title:update(dt)
+  if self.level == 0 and self.first_screen then
+    if self.title then self.title:update(dt) end
+
     if input.move_up.pressed then
       self.selected_card_index = self.selected_card_index - 1
       if self.selected_card_index == 0 then self.selected_card_index = 3 end
       for i = 1, 3 do self.cards[i]:unselect() end
       self.cards[self.selected_card_index]:select()
+      pop1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     end
     if input.move_down.pressed then
       self.selected_card_index = self.selected_card_index + 1
       if self.selected_card_index == 4 then self.selected_card_index = 1 end
       for i = 1, 3 do self.cards[i]:unselect() end
       self.cards[self.selected_card_index]:select()
+      pop1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    end
+
+    if input.enter.pressed and not self.transitioning then
+      ui_switch:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      ui_transition:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      self.transitioning = true
+      self.t:tween(0.1, self, {title_sy = 0}, math.linear, function() self.title_sy = 0; self.title = nil end)
+
+      local unit_1, unit_2 = self.cards[self.selected_card_index].unit_1, self.cards[self.selected_card_index].unit_2
+      TransitionEffect{group = main.transitions, x = 50, y = 85 + (self.selected_card_index-1)*70, color = character_colors[unit_1], transition_action = function()
+        main:add(Arena'arena')
+        main:go_to('arena', 1, {{character = unit_1, level = 1}, {character = unit_2, level = 1}})
+      end}
+      --[[
+      , text = Text({
+        {text = '[' .. character_color_strings[unit_1] .. ']' .. unit_1:upper() .. ' [yellow]Lv.1 [fg]- ' .. table.reduce(character_classes[unit_1],
+        function(memo, v) return memo .. '[' .. class_color_strings[v] .. ']' .. v .. '[fg], ' end, ''):sub(1, -3), font = pixul_font, height_multiplier = 1.7, alignment = 'center'},
+        {text = character_stats[unit_1](1), font = pixul_font, height_multiplier = 1.3, alignment = 'center'},
+        {text = character_descriptions[unit_1](get_character_stat(unit_1, 1, 'dmg')), font = pixul_font, alignment = 'center', height_multiplier = 3},
+        {text = '[' .. character_color_strings[unit_2] .. ']' .. unit_2:upper() .. ' [yellow]Lv.1 [fg]- ' .. table.reduce(character_classes[unit_2],
+        function(memo, v) return memo .. '[' .. class_color_strings[v] .. ']' .. v .. '[fg], ' end, ''):sub(1, -3), font = pixul_font, height_multiplier = 1.7, alignment = 'center'},
+        {text = character_stats[unit_2](1), font = pixul_font, height_multiplier = 1.3, alignment = 'center'},
+        {text = character_descriptions[unit_2](get_character_stat(unit_2, 1, 'dmg')), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+      }, global_text_tags)}
+      ]]--
     end
   end
 end
@@ -55,11 +82,12 @@ end
 
 function BuyScreen:draw()
   self.main:draw()
-  self.effects:draw()
-  self.ui:draw()
 
   if self.level == 0 then
-    self.title:draw(3.25*gw/4, 25)
+    if self.title then self.title:draw(3.25*gw/4, 25, 0, 1, self.title_sy) end
+    if self.unit_info_text then
+      self.unit_info_text:draw(gw/2, gh/2)
+    end
   end
 end
 
@@ -91,15 +119,6 @@ function PairCard:select()
       end, 'pulse_2')
     end
   end, nil, nil, 'pulse')
-
-
-  self.parent.info_text:activate({
-    {text = '[' .. character_color_strings[self.unit_1] .. ']' .. self.unit_1:upper() .. '[] - ' .. table.reduce(character_classes[self.unit_1],
-    function(memo, v) return memo .. '[' .. class_color_strings[v] .. ']' .. v .. '[fg], ' end, ''):sub(1, -3), font = pixul_font, height_multiplier = 1.1},
-    {text = character_descriptions[self.unit_1](10), font = pixul_font},
-  }, nil, nil, nil, nil, 20, 10, nil, 3)
-  self.parent.info_text.x = gw/2
-  self.parent.info_text.y = gh/2
 end
 
 

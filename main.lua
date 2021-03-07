@@ -14,8 +14,11 @@ function init()
   input:bind('move_right', {'d', 'right'})
   input:bind('move_up', {'w', 'up'})
   input:bind('move_down', {'s', 'down'})
+  input:bind('enter', {'space', 'return'})
 
   local s = {tags = {sfx}}
+  ui_switch = Sound('Switch.ogg', s)
+  ui_transition = Sound('Wind Bolt 8.ogg', s)
   shoot1 = Sound('Shooting Projectile (Classic) 11.ogg', s)
   archer1 = Sound('Releasing Bow String 1.ogg', s)
   wizard1 = Sound('Wind Bolt 20.ogg', s)
@@ -191,8 +194,43 @@ function init()
     ['engineer'] = function(dmg) return '[fg]drops sentries that shoot bursts of projectiles, each dealing [yellow]' .. dmg .. '[fg] damage' end,
   }
 
-  character_stats = {
+  get_character_stat_string = function(character, level)
+    local group = Group():set_as_physics_world(32, 0, 0, {'player', 'enemy', 'projectile', 'enemy_projectile'})
+    local mock = Player{group = group, leader = true, character = character, level = level}
+    mock:update(1/60)
+    return '[red]HP: [red]' .. mock.max_hp .. '[fg], [red]DMG: [red]' .. mock.dmg .. '[fg], [green]ASPD: [green]' .. math.round(mock.aspd_m, 2) .. 'x[fg], [blue]AREA: [blue]' ..
+    math.round(mock.area_dmg_m*mock.area_size_m, 2) ..  'x[fg], [yellow]DEF: [yellow]' .. math.round(mock.def, 2) .. '[fg], [green]MVSPD: [green]' .. math.round(mock.v, 2) .. '[fg]'
+  end
 
+  get_character_stat = function(character, level, stat)
+    print(character)
+    local group = Group():set_as_physics_world(32, 0, 0, {'player', 'enemy', 'projectile', 'enemy_projectile'})
+    local mock = Player{group = group, leader = true, character = character, level = level}
+    mock:update(1/60)
+    return math.round(mock[stat], 2)
+  end
+
+  character_stats = {
+    ['vagrant'] = function(lvl) return get_character_stat_string('vagrant', lvl) end,
+    ['swordsman'] = function(lvl) return get_character_stat_string('swordsman', lvl) end, 
+    ['wizard'] = function(lvl) return get_character_stat_string('wizard', lvl) end, 
+    ['archer'] = function(lvl) return get_character_stat_string('archer', lvl) end, 
+    ['scout'] = function(lvl) return get_character_stat_string('scout', lvl) end, 
+    ['cleric'] = function(lvl) return get_character_stat_string('cleric', lvl) end, 
+    ['outlaw'] = function(lvl) return get_character_stat_string('outlaw', lvl) end, 
+    ['blade'] = function(lvl) return get_character_stat_string('blade', lvl) end, 
+    ['elementor'] = function(lvl) return get_character_stat_string('elementor', lvl) end, 
+    ['saboteur'] = function(lvl) return get_character_stat_string('saboteur', lvl) end, 
+    ['stormweaver'] = function(lvl) return get_character_stat_string('stormweaver', lvl) end, 
+    ['sage'] = function(lvl) return get_character_stat_string('sage', lvl) end, 
+    ['squire'] = function(lvl) return get_character_stat_string('squire', lvl) end, 
+    ['cannoneer'] = function(lvl) return get_character_stat_string('cannoneer', lvl) end, 
+    ['dual_gunner'] = function(lvl) return get_character_stat_string('dual_gunner', lvl) end, 
+    ['hunter'] = function(lvl) return get_character_stat_string('hunter', lvl) end, 
+    ['chronomancer'] = function(lvl) return get_character_stat_string('chronomancer', lvl) end, 
+    ['spellblade'] = function(lvl) return get_character_stat_string('spellblade', lvl) end, 
+    ['psykeeper'] = function(lvl) return get_character_stat_string('psykeeper', lvl) end, 
+    ['engineer'] = function(lvl) return get_character_stat_string('engineer', lvl) end, 
   }
 
   units = {}

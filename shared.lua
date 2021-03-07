@@ -381,22 +381,21 @@ TransitionEffect = Object:extend()
 TransitionEffect:implement(GameObject)
 function TransitionEffect:init(args)
   self:init_game_object(args)
-  if not self.text then error('TransitionEffect must have a Text object defined to the .text attribute') end
   self.rs = 0
   self.text_sx, self.text_sy = 0, 0
   self.t:after(0.25, function()
     self.t:after(0.1, function()
       self.t:tween(0.1, self, {text_sx = 1, text_sy = 1}, math.cubic_in_out)
     end)
-    self.t:tween(0.75, self, {rs = gw}, math.linear, function()
-      if self.transition_action then self.transition_action(unpack(self.transition_action_args)) end
-      self.t:after(0.5, function()
+    self.t:tween(0.6, self, {rs = 1.2*gw}, math.linear, function()
+      if self.transition_action then self.transition_action(unpack(self.transition_action_args or {})) end
+      self.t:after(0.3, function()
         self.x, self.y = gw/2, gh/2
-        self.t:after(0.7, function() self.t:tween(0.05, self, {text_sx = 0, text_sy = 0}, math.cubic_in_out) end)
+        self.t:after(0.6, function() self.t:tween(0.05, self, {text_sx = 0, text_sy = 0}, math.cubic_in_out) end)
         if not args.dont_tween_out then
-          self.t:tween(0.75, self, {rs = 0}, math.linear, function() self.text = nil; self.dead = true end)
+          self.t:tween(0.6, self, {rs = 0}, math.linear, function() self.text = nil; self.dead = true end)
         else
-          self.t:after(0.75, function() self.text = nil; self.dead = true end)
+          self.t:after(0.6, function() self.text = nil; self.dead = true end)
         end
       end)
     end)
@@ -430,6 +429,7 @@ global_text_tags = {
   bg = TextTag{draw = function(c, i, text) graphics.set_color(bg[0]) end},
   fg = TextTag{draw = function(c, i, text) graphics.set_color(fg[0]) end},
   wavy = TextTag{update = function(c, dt, i, text) c.oy = 2*math.sin(4*time + i) end},
+  wavy_lower = TextTag{update = function(c, dt, i, text) c.oy = math.sin(4*time + i) end},
 }
 
 InfoText = Object:extend()
@@ -451,7 +451,7 @@ end
 
 function InfoText:draw()
   graphics.push(self.x + self.ox, self.y + self.oy, 0, self.sx*self.spring.x, self.sy*self.spring.x)
-  graphics.rectangle(self.x + self.ox, self.y + self.oy, self.text.w + self.ow, self.text.h + self.oh, self.text.h/4, self.text.h/4, bg[-2])
+  graphics.rectangle(self.x + self.ox, self.y + self.oy, self.text.w + self.ow, self.text.h + self.oh, self.text.h/12, self.text.h/12, bg[-2])
   self.text:draw(self.x + self.ox + self.tox, self.y + self.oy + self.toy)
   graphics.pop()
 end

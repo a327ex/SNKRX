@@ -7,7 +7,7 @@ function Arena:init(name)
 end
 
 
-function Arena:on_enter(from, level)
+function Arena:on_enter(from, level, units)
   self.hfx:add('condition1', 1)
   self.hfx:add('condition2', 1)
   self.level = level or 1
@@ -227,13 +227,13 @@ function Arena:update(dt)
   if self.win_condition == 'enemy_kill' then
     if self.can_quit then
       self.t:after(2, function()
-        TransitionEffect{group = main.transition, x = self.player.x, y = self.player.y, dont_tween_out = true, color = self.color, transition_action = function()
+        TransitionEffect{group = main.transitions, x = self.player.x, y = self.player.y, color = self.color, transition_action = function()
           main:add(BuyScreen'buy_screen')
           main:go_to('buy_screen', self, self.level, self.color)
         end, text = Text({
-          {text = '[wavy, bg]resources gained: +' .. tostring(self.resources_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-          {text = '[wavy, bg]interest: +' .. tostring(math.floor(resource/10)), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-          {text = '[wavy, bg]total: +' .. tostring(self.resources_gained + math.floor(resource/10)), font = pixul_font, alignment = 'center'}
+          {text = '[bg]resources gained: ' .. tostring(self.resources_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+          {text = '[bg]interest: ' .. tostring(math.floor(resource/10)), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+          {text = '[bg]total: ' .. tostring(self.resources_gained + math.floor(resource/10)), font = pixul_font, alignment = 'center'}
         }, global_text_tags)}
       end)
     end
@@ -245,13 +245,13 @@ function Arena:update(dt)
         if #self.main:get_objects_by_classes(self.enemies) > 0 then
           self.can_quit = true
         else
-          TransitionEffect{group = main.transition, x = self.player.x, y = self.player.y, dont_tween_out = true, color = self.color, transition_action = function()
+          TransitionEffect{group = main.transitions, x = self.player.x, y = self.player.y, color = self.color, transition_action = function()
             main:add(BuyScreen'buy_screen')
             main:go_to('buy_screen', self, self.level, self.color)
           end, text = Text({
-            {text = '[wavy, bg]resources gained: +' .. tostring(self.resources_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-            {text = '[wavy, bg]interest: +' .. tostring(math.floor(resource/10)), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-            {text = '[wavy, bg]total: +' .. tostring(self.resources_gained + math.floor(resource/10)), font = pixul_font, alignment = 'center'}
+            {text = '[bg]resources gained: ' .. tostring(self.resources_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+            {text = '[bg]interest: ' .. tostring(math.floor(resource/10)), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+            {text = '[bg]total: ' .. tostring(self.resources_gained + math.floor(resource/10)), font = pixul_font, alignment = 'center'}
           }, global_text_tags)}
         end
       end)
