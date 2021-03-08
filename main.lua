@@ -17,8 +17,13 @@ function init()
   input:bind('enter', {'space', 'return'})
 
   local s = {tags = {sfx}}
-  ui_switch = Sound('Switch.ogg', s)
-  ui_transition = Sound('Wind Bolt 8.ogg', s)
+  ui_switch1 = Sound('Switch.ogg', s)
+  ui_switch2 = Sound('Switch 3.ogg', s)
+  ui_transition1 = Sound('Wind Bolt 8.ogg', s)
+  ui_transition2 = Sound('Wind Bolt 12.ogg', s)
+  coins1 = Sound('Coins 7.ogg', s)
+  coins2 = Sound('Coins 8.ogg', s)
+  coins3 = Sound('Coins 9.ogg', s)
   shoot1 = Sound('Shooting Projectile (Classic) 11.ogg', s)
   archer1 = Sound('Releasing Bow String 1.ogg', s)
   wizard1 = Sound('Wind Bolt 20.ogg', s)
@@ -233,7 +238,34 @@ function init()
     ['engineer'] = function(lvl) return get_character_stat_string('engineer', lvl) end, 
   }
 
-  units = {}
+  class_stat_multipliers = {
+    ['warrior'] = {hp = 1.4, dmg = 1.1, aspd = 0.9, area_dmg = 1, area_size = 1, def = 1.25, mvspd = 0.9},
+    ['ranger'] = {hp = 1, dmg = 1.2, aspd = 1.5, area_dmg = 1, area_size = 1, def = 0.9, mvspd = 1.2},
+    ['healer'] = {hp = 1.2, dmg = 1, aspd = 0.5, area_dmg = 1, area_size = 1, def = 1.2, mvspd = 1},
+    ['mage'] = {hp = 0.6, dmg = 1.4, aspd = 1, area_dmg = 1.25, area_size = 1.2, def = 0.75, mvspd = 1},
+    ['rogue'] = {hp = 0.8, dmg = 1.3, aspd = 1.1, area_dmg = 0.6, area_size = 0.6, def = 0.8, mvspd = 1.4},
+    ['nuker'] = {hp = 0.9, dmg = 1, aspd = 0.75, area_dmg = 1.5, area_size = 1.5, def = 1, mvspd = 1},
+    ['conjurer'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 1},
+    ['enchanter'] = {hp = 1.2, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1.2, mvspd = 1.2},
+    ['psy'] = {hp = 1.5, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 0.5, mvspd = 1},
+    ['seeker'] = {hp = 0.5, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 0.3},
+    ['saboteur'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 1.4},
+  }
+
+  local ylb1 = function(lvl) return (lvl == 1 and 'yellow' or 'light_bg') end
+  local ylb2 = function(lvl) return (lvl == 2 and 'yellow' or 'light_bg') end
+  class_descriptions = {
+    ['ranger'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']10%[' .. ylb2(lvl) .. ']/20% [fg]chance to release a barrage on attack' end,
+    ['warrior'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+25[' .. ylb2(lvl) .. ']/+50 [fg]defense to allied warriors' end,
+    ['mage'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']-15[' .. ylb2(lvl) .. ']/-30 [fg]enemy defense' end,
+    ['nuker'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+15%[' .. ylb2(lvl) .. ']/+25% [fg]area damage and size' end,
+    ['rogue'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']10%[' .. ylb2(lvl) .. ']/20% [fg]chance to crit, dealing [yellow]4x[] damage' end,
+    ['healer'] = function(lvl) return '[' .. ylb1(lvl) .. ']3 [fg]- [' .. ylb1(lvl) .. ']+25% [fg]healing effectiveness' end,
+    ['conjurer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2 [fg]- [' .. ylb1(lvl) .. ']+25% [fg]construct damage and duration' end,
+    ['enchanter'] = function(lvl) return '[' .. ylb1(lvl) .. ']3 [fg]- [' .. ylb1(lvl) .. ']+25% [fg]damage to all allies' end,
+    ['psy'] = function(lvl) return 'damage taken by psy units is reflected to enemies at double its value' end,
+  }
+
   resource = 0
 
   main = Main()

@@ -25,7 +25,7 @@ function BuyScreen:on_enter(from, level)
     self.cards[3] = PairCard{group = self.main, x = gw/2, y = 225, w = gw, h = gh/4, unit_1 = random:table_remove(units), unit_2 = random:table_remove(units), i = 3, parent = self}
 
     self.title_sy = 1
-    self.title = Text({{text = '[fg]choose your initial party', font = pixul_font, alignment = 'center'}}, global_text_tags)
+    self.title = Text({{text = '[wavy_mid, fg]choose your initial party', font = pixul_font, alignment = 'center'}}, global_text_tags)
   end
 end
 
@@ -43,6 +43,8 @@ function BuyScreen:update(dt)
       for i = 1, 3 do self.cards[i]:unselect() end
       self.cards[self.selected_card_index]:select()
       pop1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      player_hit_wall1:play{pitch = r, volume = 0.5}
     end
     if input.move_down.pressed then
       self.selected_card_index = self.selected_card_index + 1
@@ -50,11 +52,13 @@ function BuyScreen:update(dt)
       for i = 1, 3 do self.cards[i]:unselect() end
       self.cards[self.selected_card_index]:select()
       pop1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      player_hit_wall1:play{pitch = r, volume = 0.5}
     end
 
     if input.enter.pressed and not self.transitioning then
-      ui_switch:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-      ui_transition:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      ui_transition1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       self.transitioning = true
       self.t:tween(0.1, self, {title_sy = 0}, math.linear, function() self.title_sy = 0; self.title = nil end)
 

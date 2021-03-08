@@ -1,3 +1,4 @@
+-- Shared functions and classes for projects using JUGGLRX's visual style.
 function shared_init()
   local colors = {
     white = ColorRamp(Color(1, 1, 1, 1), 0.025),
@@ -388,7 +389,7 @@ function TransitionEffect:init(args)
       self.t:tween(0.1, self, {text_sx = 1, text_sy = 1}, math.cubic_in_out)
     end)
     self.t:tween(0.6, self, {rs = 1.2*gw}, math.linear, function()
-      if self.transition_action then self.transition_action(unpack(self.transition_action_args or {})) end
+      if self.transition_action then self:transition_action(unpack(self.transition_action_args or {})) end
       self.t:after(0.3, function()
         self.x, self.y = gw/2, gh/2
         self.t:after(0.6, function() self.t:tween(0.05, self, {text_sx = 0, text_sy = 0}, math.cubic_in_out) end)
@@ -419,6 +420,7 @@ end
 
 
 
+local invisible = Color(1, 1, 1, 0)
 global_text_tags = {
   red = TextTag{draw = function(c, i, text) graphics.set_color(red[0]) end},
   orange = TextTag{draw = function(c, i, text) graphics.set_color(orange[0]) end},
@@ -427,10 +429,52 @@ global_text_tags = {
   purple = TextTag{draw = function(c, i, text) graphics.set_color(purple[0]) end},
   blue = TextTag{draw = function(c, i, text) graphics.set_color(blue[0]) end},
   bg = TextTag{draw = function(c, i, text) graphics.set_color(bg[0]) end},
+  light_bg = TextTag{draw = function(c, i, text) graphics.set_color(bg[5]) end},
   fg = TextTag{draw = function(c, i, text) graphics.set_color(fg[0]) end},
   wavy = TextTag{update = function(c, dt, i, text) c.oy = 2*math.sin(4*time + i) end},
-  wavy_lower = TextTag{update = function(c, dt, i, text) c.oy = math.sin(4*time + i) end},
+  wavy_mid = TextTag{update = function(c, dt, i, text) c.oy = 0.75*math.sin(3*time + i) end},
+  wavy_lower = TextTag{update = function(c, dt, i, text) c.oy = 0.25*math.sin(2*time + i) end},
+
+  cbyc = TextTag{init = function(c, i, text)
+    c.color = invisible
+    text.t:after((i-1)*0.15, function()
+      c.color = red[0]
+      camera:shake(3, 0.075)
+      pop1:play{pitch = random:float(0.95, 1.05), volume = 0.35}
+    end)
+  end, draw = function(c, i, text)
+    graphics.set_color(c.color)
+  end},
+
+  nudge_down = TextTag{init = function(c, i, text)
+    c.oy = -4
+    text.t:tween(0.1, c, {oy = 0}, math.linear)
+  end},
 }
+
+
+
+
+Text2 = Object:extend()
+Text2:implement(GameObject)
+function Text2:init(args)
+  self:init_game_object(args)
+  self.text = Text(args.lines, global_text_tags)
+end
+
+
+function Text2:update(dt)
+  self:update_game_object(dt)
+  self.text:update(dt)
+end
+
+
+function Text2:draw()
+  self.text:draw(self.x, self.y, self.r, self.sx, self.sy)
+end
+
+
+
 
 InfoText = Object:extend()
 InfoText:implement(GameObject)

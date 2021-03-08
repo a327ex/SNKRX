@@ -336,3 +336,8 @@ I wonder if I should try implementing this now or leave it for the next game.
 
 Transition from first screen to first level works. Polish it up tomorrow with more sounds, tutorial markers (left/right arrows) and more consistency and anticipation when a level ends, and then start work on the main buy
 screen.
+
+# Day 19 - 07/03/21
+
+First screen, transition from it to arena, arena and transition from arena to next screen are 99% complete and polished. There's one small bug left that I can't replicate where it will end the level right away, but I can't tell
+with which win condition it's happening... I'll fix it in time. Tomorrow I can get started on the main buy screen for real.

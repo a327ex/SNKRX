@@ -12,6 +12,7 @@ function Arena:on_enter(from, level, units)
   self.hfx:add('condition2', 1)
   self.level = level or 1
 
+  self.floor = Group()
   self.main = Group():set_as_physics_world(32, 0, 0, {'player', 'enemy', 'projectile', 'enemy_projectile'})
   self.post_main = Group()
   self.effects = Group()
@@ -72,6 +73,7 @@ function Arena:on_enter(from, level, units)
       6, 7, 8, 9, 9, 10
     }
     self.max_waves = self.level_to_max_waves[self.level]
+    self.wave = 0
     self.start_time = 3
     self.t:after(1, function()
       self.t:every(1, function()
@@ -82,9 +84,9 @@ function Arena:on_enter(from, level, units)
         alert1:play{pitch = 1.2, volume = 0.5}
         camera:shake(4, 0.25)
         SpawnEffect{group = self.effects, x = gw/2, y = gh/2 - 48}
-        self.wave = 0
         self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 0 end, function()
           self.wave = self.wave + 1
+          if self.wave > self.max_waves then return end
           self.hfx:use('condition1', 0.25, 200, 10)
           self.hfx:pull('condition2', 0.0625)
           self.t:after(0.5, function()
@@ -92,8 +94,9 @@ function Arena:on_enter(from, level, units)
             local spawn_points = {left = {x = self.x1 + 32, y = gh/2}, middle = {x = gw/2, y = gh/2}, right = {x = self.x2 - 32, y = gh/2}}
             self:spawn_n_enemies(spawn_points[spawn_type], nil, 8 + (self.wave-1)*2)
           end)
-        end, self.max_waves, function() self.can_quit = true end)
+        end, self.max_waves+1)
       end)
+      self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 0 and self.wave > self.max_waves end, function() self.can_quit = true end)
     end)
 
   elseif self.win_condition == 'enemy_kill' then
@@ -119,12 +122,13 @@ function Arena:on_enter(from, level, units)
         SpawnEffect{group = self.effects, x = gw/2, y = gh/2 - 48}
         self:spawn_distributed_enemies()
         self.t:every(2, function()
-          if love.timer.getTime() - self.last_spawn_enemy_time >= self.enemy_spawn_delay then
+          if love.timer.getTime() - self.last_spawn_enemy_time >= self.enemy_spawn_delay and #self.main:get_objects_by_class(self.enemies) < self.enemies_to_kill and not self.transitioning then
             self:spawn_distributed_enemies()
           end
         end, nil, nil, 'spawn_enemies')
       end)
     end)
+    self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 0 and self.enemies_killed >= self.enemies_to_kill end, function() self.can_quit = true end)
 
   elseif self.win_condition == 'time' then
     self.level_to_time_left = {
@@ -149,15 +153,27 @@ function Arena:on_enter(from, level, units)
           self.time_left = self.time_left - 1
           self.hfx:use('condition1', 0.25, 200, 10)
           self.hfx:pull('condition2', 0.0625)
-        end, self.time_left, function() self.can_quit = true end)
+        end, self.time_left)
 
         self.t:every_immediate(2, function()
-          if #self.main:get_objects_by_classes(self.enemies) <= 0 or love.timer.getTime() - self.last_spawn_enemy_time >= 8 then
+          if #self.main:get_objects_by_classes(self.enemies) <= 0 or love.timer.getTime() - self.last_spawn_enemy_time >= 8 and not self.transitioning then
             self:spawn_distributed_enemies()
           end
         end, self.time_left/2)
       end)
     end)
+    self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 0 and self.time_left <= 0 end, function() self.can_quit = true end)
+  end
+
+  if self.level == 1 then
+    local t1 = Text2{group = self.floor, x = gw/2, y = gh/2 + 12, sx = 0.6, sy = 0.6, lines = {{text = '[light_bg]<- or a         -> or d', font = fat_font, alignment = 'center'}}}
+    local t2 = Text2{group = self.floor, x = gw/2, y = gh/2 + 28, lines = {{text = '[light_bg]turn left                                      turn right', font = pixul_font, alignment = 'center'}}}
+    local t3 = Text2{group = self.floor, x = gw/2, y = gh/2 + 56, sx = 0.6, sy = 0.6, lines = {{text = '[light_bg]n - mute sfx', font = fat_font, alignment = 'center'}}}
+    local t4 = Text2{group = self.floor, x = gw/2, y = gh/2 + 78, sx = 0.6, sy = 0.6, lines = {{text = '[light_bg]m - mute music', font = fat_font, alignment = 'center'}}}
+    t1.t:after(8, function() t1.t:tween(0.2, t1, {sy = 0}, math.linear, function() t1.sy = 0 end) end)
+    t2.t:after(8, function() t2.t:tween(0.2, t2, {sy = 0}, math.linear, function() t2.sy = 0 end) end)
+    t3.t:after(8, function() t3.t:tween(0.2, t3, {sy = 0}, math.linear, function() t3.sy = 0 end) end)
+    t4.t:after(8, function() t4.t:tween(0.2, t4, {sy = 0}, math.linear, function() t4.sy = 0 end) end)
   end
 
   -- Calculate class levels
@@ -219,48 +235,58 @@ function Arena:update(dt)
   if self.enchanter_level == 1 then self.enchanter_dmg_m = 1.25
   else self.enchanter_dmg_m = 1 end
 
+  self.floor:update(dt*slow_amount)
   self.main:update(dt*slow_amount)
   self.post_main:update(dt*slow_amount)
   self.effects:update(dt*slow_amount)
   self.ui:update(dt*slow_amount)
 
-  if self.win_condition == 'enemy_kill' then
-    if self.can_quit then
-      self.t:after(2, function()
-        TransitionEffect{group = main.transitions, x = self.player.x, y = self.player.y, color = self.color, transition_action = function()
-          main:add(BuyScreen'buy_screen')
-          main:go_to('buy_screen', self, self.level, self.color)
-        end, text = Text({
-          {text = '[bg]resources gained: ' .. tostring(self.resources_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-          {text = '[bg]interest: ' .. tostring(math.floor(resource/10)), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-          {text = '[bg]total: ' .. tostring(self.resources_gained + math.floor(resource/10)), font = pixul_font, alignment = 'center'}
-        }, global_text_tags)}
-      end)
-    end
-
-  else
-    if self.can_quit and #self.main:get_objects_by_classes(self.enemies) <= 0 then
-      self.can_quit = false
-      self.t:after(2, function()
-        if #self.main:get_objects_by_classes(self.enemies) > 0 then
-          self.can_quit = true
-        else
-          TransitionEffect{group = main.transitions, x = self.player.x, y = self.player.y, color = self.color, transition_action = function()
-            main:add(BuyScreen'buy_screen')
-            main:go_to('buy_screen', self, self.level, self.color)
-          end, text = Text({
-            {text = '[bg]resources gained: ' .. tostring(self.resources_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-            {text = '[bg]interest: ' .. tostring(math.floor(resource/10)), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-            {text = '[bg]total: ' .. tostring(self.resources_gained + math.floor(resource/10)), font = pixul_font, alignment = 'center'}
-          }, global_text_tags)}
-        end
-      end)
-    end
+  if self.can_quit and #self.main:get_objects_by_classes(self.enemies) <= 0 then
+    self.can_quit = false
+    self.transitioning = true
+    if not self.arena_clear_text then self.arena_clear_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 48, lines = {{text = '[wavy_mid, cbyc]arena clear!', font = fat_font, alignment = 'center'}}} end
+    self.t:after(3, function()
+      self.transitioning = false
+      ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      TransitionEffect{group = main.transitions, x = self.player.x, y = self.player.y, color = self.color, transition_action = function(t)
+        main:add(BuyScreen'buy_screen')
+        main:go_to('buy_screen', self, self.level, self.color)
+        t.t:after(0.1, function()
+          t.text:set_text({
+            {text = '[nudge_down, bg]resources gained: ' .. tostring(self.resources_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+            {text = '[wavy_lower, bg]interest: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+            {text = '[wavy_lower, bg]total: 0', font = pixul_font, alignment = 'center'}
+          })
+          _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+          t.t:after(0.2, function()
+            t.text:set_text({
+              {text = '[wavy_lower, bg]resources gained: ' .. tostring(self.resources_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+              {text = '[nudge_down, bg]interest: ' .. tostring(math.floor(resource/10)), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+              {text = '[wavy_lower, bg]total: 0', font = pixul_font, alignment = 'center'}
+            })
+            _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+            t.t:after(0.2, function()
+              t.text:set_text({
+                {text = '[wavy_lower, bg]resources gained: ' .. tostring(self.resources_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+                {text = '[wavy_lower, bg]interest: ' .. tostring(math.floor(resource/10)), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+                {text = '[nudge_down, bg]total: ' .. tostring(self.resources_gained + math.floor(resource/10)), font = pixul_font, alignment = 'center'}
+              })
+              _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+            end)
+          end)
+        end)
+      end, text = Text({
+        {text = '[wavy_lower, bg]resources gained: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+        {text = '[wavy_lower, bg]interest: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+        {text = '[wavy_lower, bg]total: 0', font = pixul_font, alignment = 'center'}
+      }, global_text_tags)}
+    end, 'transition')
   end
 end
 
 
 function Arena:draw()
+  self.floor:draw()
   self.main:draw()
   self.post_main:draw()
   self.effects:draw()

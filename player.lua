@@ -484,7 +484,8 @@ function Player:on_collision_enter(other, contact)
 
   elseif table.any(main.current.enemies, function(v) return other:is(v) end) then
     other:push(random:float(25, 35), self:angle_to_object(other))
-    other:hit(20)
+    if self.character == 'vagrant' or self.character == 'psykeeper' then other:hit(40)
+    else other:hit(20) end
     self:hit(20)
     HitCircle{group = main.current.effects, x = x, y = y, rs = 6, color = fg[0], duration = 0.1}
     for i = 1, 2 do HitParticle{group = main.current.effects, x = x, y = y, color = self.color} end
