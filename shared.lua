@@ -433,6 +433,7 @@ global_text_tags = {
   fg = TextTag{draw = function(c, i, text) graphics.set_color(fg[0]) end},
   wavy = TextTag{update = function(c, dt, i, text) c.oy = 2*math.sin(4*time + i) end},
   wavy_mid = TextTag{update = function(c, dt, i, text) c.oy = 0.75*math.sin(3*time + i) end},
+  wavy_mid2 = TextTag{update = function(c, dt, i, text) c.oy = 0.5*math.sin(3*time + i) end},
   wavy_lower = TextTag{update = function(c, dt, i, text) c.oy = 0.25*math.sin(2*time + i) end},
 
   cbyc = TextTag{init = function(c, i, text)
@@ -485,6 +486,7 @@ function InfoText:init(args)
   self.ow, self.oh = 0, 0
   self.tox, self.toy = 0, 0
   self.text = Text({}, global_text_tags)
+  return self
 end
 
 
@@ -515,7 +517,7 @@ end
 
 function InfoText:deactivate()
   self.t:cancel'activate'
-  self.t:tween(0.05, self, {sy = 0}, math.linear, function() self.sy = 0 end, 'deactivate')
+  self.t:tween(0.05, self, {sy = 0}, math.linear, function() self.sy = 0; self.dead = true end, 'deactivate')
 end
 
 

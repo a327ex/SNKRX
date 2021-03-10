@@ -263,14 +263,14 @@ function init()
     ['healer'] = function(lvl) return '[' .. ylb1(lvl) .. ']3 [fg]- [' .. ylb1(lvl) .. ']+25% [fg]healing effectiveness' end,
     ['conjurer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2 [fg]- [' .. ylb1(lvl) .. ']+25% [fg]construct damage and duration' end,
     ['enchanter'] = function(lvl) return '[' .. ylb1(lvl) .. ']3 [fg]- [' .. ylb1(lvl) .. ']+25% [fg]damage to all allies' end,
-    ['psy'] = function(lvl) return 'damage taken by psy units is reflected to enemies at double its value' end,
+    ['psy'] = function(lvl) return '[fg]damage taken by psy units is reflected to enemies at double its value' end,
   }
 
   resource = 0
 
   main = Main()
   main:add(BuyScreen'buy_screen')
-  main:go_to('buy_screen', 0)
+  main:go_to('buy_screen', 1, {})
 end
 
 

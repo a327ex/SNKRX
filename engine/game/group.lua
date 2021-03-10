@@ -77,7 +77,11 @@ end
 -- The closer to 0, the more of a parallaxing effect there will be.
 function Group:draw(scroll_factor_x, scroll_factor_y)
   if self.camera then self.camera:attach(scroll_factor_x, scroll_factor_y) end
-    for _, object in ipairs(self.objects) do object:draw() end
+    for _, object in ipairs(self.objects) do
+      if not object.hidden then
+        object:draw()
+      end
+    end
   if self.camera then self.camera:detach() end
 end
 
@@ -86,7 +90,11 @@ end
 -- group:draw_range(1, 3) -> draws only 1st, 2nd and 3rd objects in this group
 function Group:draw_range(i, j, scroll_factor_x, scroll_factor_y)
   if self.camera then self.camera:attach(scroll_factor_x, scroll_factor_y) end
-    for k = i, j do self.objects[k]:draw() end
+    for k = i, j do
+      if not self.objects[k].hidden then
+        self.objects[k]:draw()
+      end
+    end
   if self.camera then self.camera:detach() end
 end
 
@@ -96,7 +104,7 @@ end
 function Group:draw_class(class, scroll_factor_x, scroll_factor_y)
   if self.camera then self.camera:attach(scroll_factor_x, scroll_factor_y) end
     for _, object in ipairs(self.objects) do
-      if object:is(class) then
+      if object:is(class) and not object.hidden then
         object:draw()
       end
     end
@@ -109,7 +117,7 @@ end
 function Group:draw_all_except(classes, scroll_factor_x, scroll_factor_y)
   if self.camera then self.camera:attach(scroll_factor_x, scroll_factor_y) end
     for _, object in ipairs(self.objects) do
-      if not table.any(classes, function(v) return object:is(v) end) then
+      if not table.any(classes, function(v) return object:is(v) end) and not object.hidden then
         object:draw()
       end
     end
