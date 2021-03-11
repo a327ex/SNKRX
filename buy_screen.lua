@@ -9,6 +9,7 @@ end
 
 function BuyScreen:on_enter(from, level, units)
   self.level = level
+  self.units = units
 
   self.main = Group()
   self.top = Group()
@@ -31,11 +32,6 @@ function BuyScreen:on_enter(from, level, units)
     self.title = Text({{text = '[wavy_mid, fg]choose your initial party', font = pixul_font, alignment = 'center'}}, global_text_tags)
 
   else
-    local tier_to_units = {
-      [1] = {'vagrant', 'swordsman', 'wizard', 'archer', 'cleric', 'scout'},
-      [2] = {'saboteur', 'hunter', 'cannoneer', 'stormweaver', 'squire', 'dual_gunner', 'chronomancer', 'sage', 'cannoneer'},
-      [3] = {'blade', 'outlaw', 'elementor', 'psykeeper', 'spellblade'},
-    }
     local level_to_tier_weights = {
       [1] = {100, 0, 0},
       [2] = {95, 5, 0},
@@ -65,11 +61,12 @@ function BuyScreen:on_enter(from, level, units)
     }
     self.cards = {}
     self.selected_card_index = 1
-    self.cards[1] = ShopCard{group = self.main, x = gw/2 - 120, y = gh/4, w = 100, h = 90, unit = random:table(tier_to_units[random:weighted_pick(unpack(level_to_tier_weights[self.level]))]), parent = self}
-    self.cards[2] = ShopCard{group = self.main, x = gw/2, y = gh/4, w = 100, h = 90, unit = random:table(tier_to_units[random:weighted_pick(unpack(level_to_tier_weights[self.level]))]), parent = self}
-    self.cards[3] = ShopCard{group = self.main, x = gw/2 + 120, y = gh/4, w = 100, h = 90, unit = random:table(tier_to_units[random:weighted_pick(unpack(level_to_tier_weights[self.level]))]), parent = self}
+    self.cards[1] = ShopCard{group = self.main, x = 60, y = 75, w = 80, h = 90, unit = random:table(tier_to_characters[random:weighted_pick(unpack(level_to_tier_weights[self.level]))]), parent = self}
+    self.cards[2] = ShopCard{group = self.main, x = 155, y = 75, w = 80, h = 90, unit = random:table(tier_to_characters[random:weighted_pick(unpack(level_to_tier_weights[self.level]))]), parent = self}
+    self.cards[3] = ShopCard{group = self.main, x = 250, y = 75, w = 80, h = 90, unit = random:table(tier_to_characters[random:weighted_pick(unpack(level_to_tier_weights[self.level]))]), parent = self}
     self.shop_text_sy = 1
     self.shop_text = Text({{text = '[wavy_mid, fg]shop', font = pixul_font, alignment = 'center'}}, global_text_tags)
+    self.party_text = Text({{text = '[wavy_mid, fg]your party', font = pixul_font, alignment = 'center'}}, global_text_tags)
   end
 end
 
@@ -129,7 +126,7 @@ function BuyScreen:update(dt)
 
   else
     if self.shop_text then self.shop_text:update(dt) end
-
+    if self.party_text then self.party_text:update(dt) end
   end
 end
 
@@ -140,11 +137,51 @@ function BuyScreen:draw()
   self.ui:draw()
 
   if self.level == 0 then
-    if self.title then self.title:draw(3.25*gw/4, 25, 0, 1, self.title_sy) end
-    if self.unit_info_text then self.unit_info_text:draw(gw/2, gh/2) end
+    if self.title then self.title:draw(3.25*gw/4, 32, 0, 1, self.title_sy) end
   else
-    if self.shop_text then self.shop_text:draw(gw/2, 15, 0, 1, self.shop_text_sy) end
+    if self.shop_text then self.shop_text:draw(32, 20, 0, 1, self.shop_text_sy) end
+    if self.party_text then self.party_text:draw(48, 190) end
   end
+end
+
+
+
+
+CharacterPart = Object:extend()
+CharacterPart:implement(GameObject)
+function CharacterPart:init(args)
+  self:init_game_object(args)
+  
+end
+
+
+function CharacterPart:update(dt)
+  self:update_game_object(dt)
+end
+
+
+function CharacterPart:draw()
+  graphics.push(self.x, self.y, 0, self.spring.x, self.spring.x)
+    graphics.rectangle(self.x, self.y, 14, 14, 3, 3, character_colors[self.character])
+    graphics.print_centered(self.level, pixul_font, self.x + 0.5, self.y + 2, 0, 1, 1, 0, 0, _G[character_color_strings[self.character]][-5])
+  graphics.pop()
+end
+
+
+function CharacterPart:on_mouse_enter()
+  self.spring:pull(0.2, 200, 10)
+  self.info_text = InfoText{group = main.current.ui}
+  self.info_text:activate({
+    {text = '[' .. character_color_strings[self.character] .. ']' .. self.character:capitalize() .. '[fg] - cost: [yellow]' .. self.parent.cost, font = pixul_font, alignment = 'center', height_multiplier = 1.25},
+    {text = character_descriptions[self.character](get_character_stat(self.character, 1, 'dmg')), font = pixul_font, alignment = 'center'},
+  }, nil, nil, nil, nil, 16, 4, nil, 2)
+  self.info_text.x, self.info_text.y = gw/2, gh/2 + 10
+end
+
+
+function CharacterPart:on_mouse_exit()
+  self.info_text:deactivate()
+  self.info_text = nil
 end
 
 
@@ -153,20 +190,22 @@ ShopCard = Object:extend()
 ShopCard:implement(GameObject)
 function ShopCard:init(args)
   self:init_game_object(args)
-  self.character_icon = CharacterIcon{group = main.current.top, x = self.x, y = self.y, character = self.unit}
+  self.shape = Rectangle(self.x, self.y, self.w, self.h)
+  self.interact_with_mouse = true
+  self.character_icon = CharacterIcon{group = main.current.top, x = self.x, y = self.y - 26, character = self.unit, parent = self}
   self.class_icons = {}
   for i, class in ipairs(character_classes[self.unit]) do
     local x = self.x
     if #character_classes[self.unit] == 2 then x = self.x - 10
     elseif #character_classes[self.unit] == 3 then x = self.x - 20 end
-    table.insert(self.class_icons, ClassIcon{group = main.current.top, x = x + (i-1)*20, y = self.y + 10, class = class})
+    table.insert(self.class_icons, ClassIcon{group = main.current.top, x = x + (i-1)*20, y = self.y + 6, class = class, parent = self})
   end
+  self.cost = character_tiers[self.unit]
 end
 
 
 function ShopCard:update(dt)
   self:update_game_object(dt)
-  if self.unit_text then self.unit_text:update(dt) end
 end
 
 
@@ -193,7 +232,28 @@ end
 
 
 function ShopCard:draw()
+  graphics.push(self.x, self.y, 0, self.spring.x, self.spring.x)
+    if self.selected then
+      graphics.rectangle(self.x, self.y, self.w, self.h, 6, 6, bg[-1])
+    end
+  graphics.pop()
+end
 
+
+function ShopCard:on_mouse_enter()
+  self.selected = true
+  self.spring:pull(0.1)
+  self.character_icon.spring:pull(0.1, 200, 10)
+  for _, class_icon in ipairs(self.class_icons) do
+    class_icon.selected = true
+    class_icon.spring:pull(0.1, 200, 10)
+  end
+end
+
+
+function ShopCard:on_mouse_exit()
+  self.selected = false
+  for _, class_icon in ipairs(self.class_icons) do class_icon.selected = false end
 end
 
 
@@ -203,6 +263,8 @@ CharacterIcon = Object:extend()
 CharacterIcon:implement(GameObject)
 function CharacterIcon:init(args)
   self:init_game_object(args)
+  self.shape = Rectangle(self.x, self.y, 40, 20)
+  self.interact_with_mouse = true
   self.character_text = Text({{text = '[' .. character_color_strings[self.character] .. ']' .. self.character, font = pixul_font, alignment = 'center'}}, global_text_tags)
 end
 
@@ -215,9 +277,27 @@ end
 
 function CharacterIcon:draw()
   graphics.push(self.x, self.y, 0, self.spring.x, self.spring.x)
-    graphics.rectangle(self.x, self.y - 25, 12, 12, 3, 3, character_colors[self.character])
-    self.character_text:draw(self.x, self.y - 10)
+    graphics.rectangle(self.x, self.y - 7, 14, 14, 3, 3, character_colors[self.character])
+    graphics.print_centered(self.parent.cost, pixul_font, self.x + 0.5, self.y - 5, 0, 1, 1, 0, 0, _G[character_color_strings[self.character]][-5])
+    self.character_text:draw(self.x, self.y + 10)
   graphics.pop()
+end
+
+
+function CharacterIcon:on_mouse_enter()
+  self.spring:pull(0.2, 200, 10)
+  self.info_text = InfoText{group = main.current.ui}
+  self.info_text:activate({
+    {text = '[' .. character_color_strings[self.character] .. ']' .. self.character:capitalize() .. '[fg] - cost: [yellow]' .. self.parent.cost, font = pixul_font, alignment = 'center', height_multiplier = 1.25},
+    {text = character_descriptions[self.character](get_character_stat(self.character, 1, 'dmg')), font = pixul_font, alignment = 'center'},
+  }, nil, nil, nil, nil, 16, 4, nil, 2)
+  self.info_text.x, self.info_text.y = gw/2, gh/2 + 10
+end
+
+
+function CharacterIcon:on_mouse_exit()
+  self.info_text:deactivate()
+  self.info_text = nil
 end
 
 
@@ -226,7 +306,7 @@ ClassIcon = Object:extend()
 ClassIcon:implement(GameObject)
 function ClassIcon:init(args)
   self:init_game_object(args)
-  self.shape = Rectangle(self.x, self.y, 20, 30)
+  self.shape = Rectangle(self.x, self.y + 11, 20, 40)
   self.interact_with_mouse = true
 end
 
@@ -238,19 +318,36 @@ end
 
 function ClassIcon:draw()
   graphics.push(self.x, self.y, 0, self.spring.x, self.spring.x)
-    _G[self.class]:draw(self.x, self.y, 0, 0.4, 0.4, 0, 0, class_colors[self.class])
+    local i, j, n = class_set_numbers[self.class](self.parent.parent.units)
+    graphics.rectangle(self.x, self.y, 16, 24, 4, 4, (n >= i) and class_colors[self.class] or bg[3])
+    _G[self.class]:draw(self.x, self.y, 0, 0.3, 0.3, 0, 0, (n >= i) and _G[class_color_strings[self.class]][-5] or bg[10])
+    graphics.rectangle(self.x, self.y + 26, 16, 16, 3, 3, bg[3])
+    if i == 2 then
+      graphics.line(self.x - 3, self.y + 20, self.x - 3, self.y + 25, (n >= 1) and class_colors[self.class] or bg[10], 3)
+      graphics.line(self.x - 3, self.y + 27, self.x - 3, self.y + 32, (n >= 2) and class_colors[self.class] or bg[10], 3)
+      graphics.line(self.x + 4, self.y + 20, self.x + 4, self.y + 25, (n >= 3) and class_colors[self.class] or bg[10], 3)
+      graphics.line(self.x + 4, self.y + 27, self.x + 4, self.y + 32, (n >= 4) and class_colors[self.class] or bg[10], 3)
+    elseif i == 3 then
+      graphics.line(self.x - 4, self.y + 22, self.x - 4, self.y + 30, (n >= 1) and class_colors[self.class] or bg[10], 2)
+      graphics.line(self.x, self.y + 22, self.x, self.y + 30, (n >= 2) and class_colors[self.class] or bg[10], 2)
+      graphics.line(self.x + 4, self.y + 22, self.x + 4, self.y + 30, (n >= 3) and class_colors[self.class] or bg[10], 2)
+    elseif i == 1 then
+      graphics.line(self.x - 3, self.y + 22, self.x - 3, self.y + 30, (n >= 1) and class_colors[self.class] or bg[10], 3)
+      graphics.line(self.x + 4, self.y + 22, self.x + 4, self.y + 30, (n >= 2) and class_colors[self.class] or bg[10], 3)
+    end
   graphics.pop()
 end
 
 
 function ClassIcon:on_mouse_enter()
   self.spring:pull(0.2, 200, 10)
+  local i, j, owned = class_set_numbers[self.class](self.parent.parent.units)
   self.info_text = InfoText{group = main.current.ui}
   self.info_text:activate({
-    {text = '[' .. class_color_strings[self.class] .. ']' .. self.class:capitalize(), font = pixul_font, alignment = 'center', height_multiplier = 1.25},
-    {text = class_descriptions[self.class](0), font = pixul_font, alignment = 'center'},
+    {text = '[' .. class_color_strings[self.class] .. ']' .. self.class:capitalize() .. '[fg] - owned: [yellow]' .. owned, font = pixul_font, alignment = 'center', height_multiplier = 1.25},
+    {text = class_descriptions[self.class]((owned >= j and 2) or (owned >= i and 1) or 0), font = pixul_font, alignment = 'center'},
   }, nil, nil, nil, nil, 16, 4, nil, 2)
-  self.info_text.x, self.info_text.y = gw/2, self.y + 60
+  self.info_text.x, self.info_text.y = gw/2, gh/2 + 10
 end
 
 

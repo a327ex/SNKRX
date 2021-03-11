@@ -347,3 +347,7 @@ with which win condition it's happening... I'll fix it in time. Tomorrow I can g
 Initial work done on the main buy screen. Fairly slow moving still. There's a sort of conceptual fuzziness that happens when writing UI code where there's a few different ways of doing it and this freedom seems fairly paralyzing.
 I've been thinking really hard about what to do about that but it's still up in the air. The "dead simple layouts" thing is a good idea but layouting is not necessarily the main problem I have, it's more like relationships between
 different objects and a UI coordination issue that seems to stop me.
+
+# Day 22 - 10/03/21
+
+More UI progress on buy screen.

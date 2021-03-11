@@ -208,7 +208,6 @@ function init()
   end
 
   get_character_stat = function(character, level, stat)
-    print(character)
     local group = Group():set_as_physics_world(32, 0, 0, {'player', 'enemy', 'projectile', 'enemy_projectile'})
     local mock = Player{group = group, leader = true, character = character, level = level}
     mock:update(1/60)
@@ -255,22 +254,89 @@ function init()
   local ylb1 = function(lvl) return (lvl == 1 and 'yellow' or 'light_bg') end
   local ylb2 = function(lvl) return (lvl == 2 and 'yellow' or 'light_bg') end
   class_descriptions = {
-    ['ranger'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']10%[' .. ylb2(lvl) .. ']/20% [fg]chance to release a barrage on attack' end,
+    ['ranger'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']10%[' .. ylb2(lvl) .. ']/20% [fg]chance to release a barrage on attack to allied rangers' end,
     ['warrior'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+25[' .. ylb2(lvl) .. ']/+50 [fg]defense to allied warriors' end,
     ['mage'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']-15[' .. ylb2(lvl) .. ']/-30 [fg]enemy defense' end,
-    ['nuker'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+15%[' .. ylb2(lvl) .. ']/+25% [fg]area damage and size' end,
-    ['rogue'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']10%[' .. ylb2(lvl) .. ']/20% [fg]chance to crit, dealing [yellow]4x[] damage' end,
+    ['nuker'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+15%[' .. ylb2(lvl) .. ']/+25% [fg]area damage and size to allied nukers' end,
+    ['rogue'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']10%[' .. ylb2(lvl) .. ']/20% [fg]chance to crit to allied rogues, dealing [yellow]4x[] damage' end,
     ['healer'] = function(lvl) return '[' .. ylb1(lvl) .. ']3 [fg]- [' .. ylb1(lvl) .. ']+25% [fg]healing effectiveness' end,
     ['conjurer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2 [fg]- [' .. ylb1(lvl) .. ']+25% [fg]construct damage and duration' end,
     ['enchanter'] = function(lvl) return '[' .. ylb1(lvl) .. ']3 [fg]- [' .. ylb1(lvl) .. ']+25% [fg]damage to all allies' end,
-    ['psy'] = function(lvl) return '[fg]damage taken by psy units is reflected to enemies at double its value' end,
+    ['psy'] = function(lvl) return '[fg]damage taken by psy units is reflected to enemies at [yellow]2x[fg] its value' end,
+  }
+
+  tier_to_characters = {
+    [1] = {'vagrant', 'swordsman', 'wizard', 'archer', 'cleric', 'scout'},
+    [2] = {'saboteur', 'hunter', 'cannoneer', 'stormweaver', 'squire', 'dual_gunner', 'chronomancer', 'sage', 'cannoneer'},
+    [3] = {'blade', 'outlaw', 'elementor', 'psykeeper', 'spellblade', 'engineer'},
+  }
+
+  character_tiers = {
+    ['vagrant'] = 1,
+    ['swordsman'] = 1,
+    ['wizard'] = 1,
+    ['archer'] = 1,
+    ['scout'] = 1,
+    ['cleric'] = 1,
+    ['outlaw'] = 3,
+    ['blade'] = 3,
+    ['elementor'] = 3,
+    ['saboteur'] = 2,
+    ['stormweaver'] = 2,
+    ['sage'] = 2,
+    ['squire'] = 2,
+    ['cannoneer'] = 2,
+    ['dual_gunner'] = 2,
+    ['hunter'] = 2,
+    ['chronomancer'] = 2,
+    ['spellblade'] = 3,
+    ['psykeeper'] = 3,
+    ['engineer'] = 3,
+  }
+
+  get_number_of_units_per_class = function(units)
+    local rangers = 0
+    local warriors = 0
+    local healers = 0
+    local mages = 0
+    local nukers = 0
+    local conjurers = 0
+    local rogues = 0
+    local enchanters = 0
+    local psys = 0
+    for _, unit in ipairs(units) do
+      for _, unit_class in ipairs(character_classes[unit.character]) do
+        if unit_class == 'ranger' then rangers = rangers + 1 end
+        if unit_class == 'warrior' then warriors = warriors + 1 end
+        if unit_class == 'healer' then healers = healers + 1 end
+        if unit_class == 'mage' then mages = mages + 1 end
+        if unit_class == 'nuker' then nukers = nukers + 1 end
+        if unit_class == 'conjurer' then conjurers = conjurers + 1 end
+        if unit_class == 'rogue' then rogues = rogues + 1 end
+        if unit_class == 'enchanter' then enchanters = enchanters + 1 end
+        if unit_class == 'psy' then psys = psys + 1 end
+      end
+    end
+    return {ranger = rangers, warrior = warriors, healer = healers, mage = mages, nuker = nukers, conjurer = conjurers, rogue = rogues, enchanter = enchanters, psy = psys}
+  end
+
+  class_set_numbers = {
+    ['ranger'] = function(units) return 2, 4, get_number_of_units_per_class(units).ranger end,
+    ['warrior'] = function(units) return 2, 4, get_number_of_units_per_class(units).warrior end,
+    ['mage'] = function(units) return 2, 4, get_number_of_units_per_class(units).mage end,
+    ['nuker'] = function(units) return 2, 4, get_number_of_units_per_class(units).nuker end,
+    ['rogue'] = function(units) return 2, 4, get_number_of_units_per_class(units).rogue end,
+    ['healer'] = function(units) return 3, 3, get_number_of_units_per_class(units).healer end,
+    ['conjurer'] = function(units) return 2, 2, get_number_of_units_per_class(units).conjurer end,
+    ['enchanter'] = function(units) return 3, 3, get_number_of_units_per_class(units).enchanter end,
+    ['psy'] = function(units) return 1, 2, get_number_of_units_per_class(units).psy end,
   }
 
   resource = 0
 
   main = Main()
   main:add(BuyScreen'buy_screen')
-  main:go_to('buy_screen', 1, {})
+  main:go_to('buy_screen', 1, {{character = 'vagrant'}, {character = 'swordsman'}, {character = 'wizard'}, {character = 'archer'}, {character = 'scout'}, {character = 'cleric'}})
 end
 
 
