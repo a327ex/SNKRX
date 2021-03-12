@@ -351,3 +351,12 @@ different objects and a UI coordination issue that seems to stop me.
 # Day 22 - 10/03/21
 
 More UI progress on buy screen.
+
+# Day 23 - 11/03/21
+
+Finished all visual progress on the main buy screen. Now all I have to do is make it all work logically, which is actually a lot easier than making it all work visually. This fact tells me that most of my problems with UI programming
+have to do with visuals and not much else. I would wager that most of it has to do with not knowing how the overall UI should look, and the rest is just building each UI component visually in a quick and easy way.
+
+The first problem can be fixed by just trying to draw the UI beforehand, which I never do but maybe I should start doing. The second problem is more involved and essentially it involves writing UI components that are generic enough
+like buttons, labels, image buttons, lists, etc, but also allow for enough specialization that I can make them really juicy, as this generally requires a lot of detail fiddling the inner works of the object. I think the Node refactor
+I'm planning will probably help with this, especially the idea of everything simply being a Node and classes being able to be defined inline by just defining update/draw/on_enter/etc functions.

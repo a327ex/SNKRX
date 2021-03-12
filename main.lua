@@ -87,11 +87,11 @@ function init()
     ['warrior'] = yellow[0],
     ['ranger'] = green[0],
     ['healer'] = green[0],
-    ['conjurer'] = yellow[0],
+    ['conjurer'] = orange[0],
     ['mage'] = blue[0],
-    ['nuker'] = blue[0],
+    ['nuker'] = purple[0],
     ['rogue'] = red[0],
-    ['enchanter'] = red[0],
+    ['enchanter'] = blue[0],
     ['psy'] = fg[0],
   }
 
@@ -99,11 +99,11 @@ function init()
     ['warrior'] = 'yellow',
     ['ranger'] = 'green',
     ['healer'] = 'green',
-    ['conjurer'] = 'yellow',
+    ['conjurer'] = 'orange',
     ['mage'] = 'blue',
-    ['nuker'] = 'blue',
+    ['nuker'] = 'purple',
     ['rogue'] = 'red',
-    ['enchanter'] = 'red',
+    ['enchanter'] = 'blue',
     ['psy'] = 'fg',
   }
 
@@ -117,17 +117,17 @@ function init()
     ['outlaw'] = red[0],
     ['blade'] = yellow[0],
     ['elementor'] = blue[0],
-    ['saboteur'] = red[0],
-    ['stormweaver'] = red[0],
-    ['sage'] = blue[0],
+    ['saboteur'] = orange[0],
+    ['stormweaver'] = blue[0],
+    ['sage'] = purple[0],
     ['squire'] = yellow[0],
-    ['cannoneer'] = green[0],
+    ['cannoneer'] = orange[0],
     ['dual_gunner'] = green[0],
     ['hunter'] = green[0],
     ['chronomancer'] = blue[0],
     ['spellblade'] = blue[0],
     ['psykeeper'] = fg[0],
-    ['engineer'] = yellow[0],
+    ['engineer'] = orange[0],
   }
 
   character_color_strings = {
@@ -140,17 +140,17 @@ function init()
     ['outlaw'] = 'red',
     ['blade'] = 'yellow',
     ['elementor'] = 'blue',
-    ['saboteur'] = 'red',
-    ['stormweaver'] = 'red',
-    ['sage'] = 'blue',
+    ['saboteur'] = 'orange',
+    ['stormweaver'] = 'blue',
+    ['sage'] = 'purple',
     ['squire'] = 'yellow',
-    ['cannoneer'] = 'green',
+    ['cannoneer'] = 'orange',
     ['dual_gunner'] = 'green',
     ['hunter'] = 'green',
     ['chronomancer'] = 'blue',
     ['spellblade'] = 'blue',
     ['psykeeper'] = 'fg',
-    ['engineer'] = 'yellow',
+    ['engineer'] = 'orange',
   }
 
   character_classes = {
@@ -202,7 +202,7 @@ function init()
   get_character_stat_string = function(character, level)
     local group = Group():set_as_physics_world(32, 0, 0, {'player', 'enemy', 'projectile', 'enemy_projectile'})
     local mock = Player{group = group, leader = true, character = character, level = level}
-    mock:update(1/60)
+    mock:update(0)
     return '[red]HP: [red]' .. mock.max_hp .. '[fg], [red]DMG: [red]' .. mock.dmg .. '[fg], [green]ASPD: [green]' .. math.round(mock.aspd_m, 2) .. 'x[fg], [blue]AREA: [blue]' ..
     math.round(mock.area_dmg_m*mock.area_size_m, 2) ..  'x[fg], [yellow]DEF: [yellow]' .. math.round(mock.def, 2) .. '[fg], [green]MVSPD: [green]' .. math.round(mock.v, 2) .. '[fg]'
   end
@@ -210,7 +210,7 @@ function init()
   get_character_stat = function(character, level, stat)
     local group = Group():set_as_physics_world(32, 0, 0, {'player', 'enemy', 'projectile', 'enemy_projectile'})
     local mock = Player{group = group, leader = true, character = character, level = level}
-    mock:update(1/60)
+    mock:update(0)
     return math.round(mock[stat], 2)
   end
 
@@ -251,8 +251,8 @@ function init()
     ['saboteur'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 1.4},
   }
 
-  local ylb1 = function(lvl) return (lvl == 1 and 'yellow' or 'light_bg') end
-  local ylb2 = function(lvl) return (lvl == 2 and 'yellow' or 'light_bg') end
+  local ylb1 = function(lvl) return (lvl >= 1 and 'yellow' or 'light_bg') end
+  local ylb2 = function(lvl) return (lvl >= 2 and 'yellow' or 'light_bg') end
   class_descriptions = {
     ['ranger'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']10%[' .. ylb2(lvl) .. ']/20% [fg]chance to release a barrage on attack to allied rangers' end,
     ['warrior'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+25[' .. ylb2(lvl) .. ']/+50 [fg]defense to allied warriors' end,
@@ -320,6 +320,14 @@ function init()
     return {ranger = rangers, warrior = warriors, healer = healers, mage = mages, nuker = nukers, conjurer = conjurers, rogue = rogues, enchanter = enchanters, psy = psys}
   end
 
+  get_classes = function(units)
+    local classes = {}
+    for _, unit in ipairs(units) do
+      table.insert(classes, table.copy(character_classes[unit.character]))
+    end
+    return table.unify(table.flatten(classes))
+  end
+
   class_set_numbers = {
     ['ranger'] = function(units) return 2, 4, get_number_of_units_per_class(units).ranger end,
     ['warrior'] = function(units) return 2, 4, get_number_of_units_per_class(units).warrior end,
@@ -332,11 +340,17 @@ function init()
     ['psy'] = function(units) return 1, 2, get_number_of_units_per_class(units).psy end,
   }
 
-  resource = 0
+  gold = 0
 
   main = Main()
   main:add(BuyScreen'buy_screen')
-  main:go_to('buy_screen', 1, {{character = 'vagrant'}, {character = 'swordsman'}, {character = 'wizard'}, {character = 'archer'}, {character = 'scout'}, {character = 'cleric'}})
+  local rsv = function() return {random:int(0, 2), random:int(0, 1)} end
+  main:go_to('buy_screen', 1, {
+    {character = 'vagrant', level = 1, reserve = rsv()}, {character = 'swordsman', level = 1, reserve = rsv()}, {character = 'wizard', level = 1, reserve = rsv()},
+    {character = 'archer', level = 1, reserve = rsv()}, {character = 'scout', level = 1, reserve = rsv()}, {character = 'cleric', level = 1, reserve = rsv()},
+    {character = 'elementor', level = 1, reserve = rsv()}, {character = 'cannoneer', level = 1, reserve = rsv()}, {character = 'blade', level = 1, reserve = rsv()},
+    {character = 'sage', level = 1, reserve = rsv()}, {character = 'outlaw', level = 1, reserve = rsv()},
+  })
 end
 
 

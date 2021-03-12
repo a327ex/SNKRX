@@ -60,13 +60,35 @@ function BuyScreen:on_enter(from, level, units)
       [25] = {0, 55, 45},
     }
     self.cards = {}
-    self.selected_card_index = 1
+    self.selected_index = 1
     self.cards[1] = ShopCard{group = self.main, x = 60, y = 75, w = 80, h = 90, unit = random:table(tier_to_characters[random:weighted_pick(unpack(level_to_tier_weights[self.level]))]), parent = self}
-    self.cards[2] = ShopCard{group = self.main, x = 155, y = 75, w = 80, h = 90, unit = random:table(tier_to_characters[random:weighted_pick(unpack(level_to_tier_weights[self.level]))]), parent = self}
-    self.cards[3] = ShopCard{group = self.main, x = 250, y = 75, w = 80, h = 90, unit = random:table(tier_to_characters[random:weighted_pick(unpack(level_to_tier_weights[self.level]))]), parent = self}
+    self.cards[2] = ShopCard{group = self.main, x = 140, y = 75, w = 80, h = 90, unit = random:table(tier_to_characters[random:weighted_pick(unpack(level_to_tier_weights[self.level]))]), parent = self}
+    self.cards[3] = ShopCard{group = self.main, x = 220, y = 75, w = 80, h = 90, unit = random:table(tier_to_characters[random:weighted_pick(unpack(level_to_tier_weights[self.level]))]), parent = self}
     self.shop_text_sy = 1
     self.shop_text = Text({{text = '[wavy_mid, fg]shop', font = pixul_font, alignment = 'center'}}, global_text_tags)
-    self.party_text = Text({{text = '[wavy_mid, fg]your party', font = pixul_font, alignment = 'center'}}, global_text_tags)
+    self.gold_text = Text2{group = self.main, x = 88, y = 20, lines = {{text = '[fg]- your gold: [yellow]' .. gold, font = pixul_font, alignment = 'center'}}}
+
+    self.characters = {}
+    local y = 40
+    for i, unit in ipairs(self.units) do
+      table.insert(self.characters, CharacterPart{group = self.main, x = gw - 30, y = y + (i-1)*20, character = unit.character, level = unit.level, reserve = unit.reserve})
+    end
+    self.party_text = Text({{text = '[wavy_mid, fg]party', font = pixul_font, alignment = 'center'}}, global_text_tags)
+
+    self.sets = {}
+    for i, class in ipairs(get_classes(self.units)) do
+      local x, y = math.index_to_coordinates(i, 2)
+      table.insert(self.sets, ClassIcon{group = self.main, x = 319 + (x-1)*20, y = 45 + (y-1)*56, class = class, units = self.units})
+    end
+    self.sets_text = Text({{text = '[wavy_mid, fg]sets', font = pixul_font, alignment = 'center'}}, global_text_tags)
+
+    self.items_text = Text({{text = '[wavy_mid, fg]items', font = pixul_font, alignment = 'center'}}, global_text_tags)
+    self.under_text = Text2{group = self.main, x = 140, y = gh - 60, r = -math.pi/48, lines = {
+      {text = '[light_bg]under', font = fat_font, alignment = 'center'},
+      {text = '[light_bg]construction', font = fat_font, alignment = 'center'},
+    }}
+
+    RerollButton{group = self.main, x = 255, y = 140, parent = self}
   end
 end
 
@@ -126,7 +148,9 @@ function BuyScreen:update(dt)
 
   else
     if self.shop_text then self.shop_text:update(dt) end
+    if self.sets_text then self.sets_text:update(dt) end
     if self.party_text then self.party_text:update(dt) end
+    if self.items_text then self.items_text:update(dt) end
   end
 end
 
@@ -134,14 +158,53 @@ end
 function BuyScreen:draw()
   self.main:draw()
   self.top:draw()
+  if self.items_text then self.items_text:draw(32, 150) end
   self.ui:draw()
 
   if self.level == 0 then
     if self.title then self.title:draw(3.25*gw/4, 32, 0, 1, self.title_sy) end
   else
     if self.shop_text then self.shop_text:draw(32, 20, 0, 1, self.shop_text_sy) end
-    if self.party_text then self.party_text:draw(48, 190) end
+    if self.sets_text then self.sets_text:draw(328, 20) end
+    if self.party_text then self.party_text:draw(440, 20) end
   end
+end
+
+
+
+
+RerollButton = Object:extend()
+RerollButton:implement(GameObject)
+function RerollButton:init(args)
+  self:init_game_object(args)
+  self.shape = Rectangle(self.x, self.y, 54, 16)
+  self.interact_with_mouse = true
+  self.text = Text({{text = '[bg10]reroll: [yellow]2', font = pixul_font, alignment = 'center'}}, global_text_tags)
+end
+
+
+function RerollButton:update(dt)
+  self:update_game_object(dt)
+end
+
+
+function RerollButton:draw()
+  graphics.push(self.x, self.y, 0, self.spring.x, self.spring.y)
+    graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 4, 4, self.selected and fg[0] or bg[1])
+    self.text:draw(self.x, self.y + 1)
+  graphics.pop()
+end
+
+
+function RerollButton:on_mouse_enter()
+  self.selected = true
+  self.text:set_text{{text = '[fgm5]reroll: 2', font = pixul_font, alignment = 'center'}}
+  self.spring:pull(0.2, 200, 10)
+end
+
+function RerollButton:on_mouse_exit()
+  self.text:set_text{{text = '[bg10]reroll: [yellow]2', font = pixul_font, alignment = 'center'}}
+  self.selected = false
 end
 
 
@@ -151,7 +214,20 @@ CharacterPart = Object:extend()
 CharacterPart:implement(GameObject)
 function CharacterPart:init(args)
   self:init_game_object(args)
-  
+  self.shape = Rectangle(self.x, self.y, self.sx*20, self.sy*20)
+  self.interact_with_mouse = true
+  self.parts = {}
+  local x = self.x - 20
+  if self.reserve then
+    if self.reserve[2] == 1 then
+      table.insert(self.parts, CharacterPart{group = main.current.main, x = x, y = self.y, character = self.character, level = 2})
+      x = x - 20
+    end
+    for i = 1, self.reserve[1] do
+      table.insert(self.parts, CharacterPart{group = main.current.main, x = x, y = self.y, character = self.character, level = 1, sx = 0.9, sy = 0.9})
+      x = x - 20
+    end
+  end
 end
 
 
@@ -161,7 +237,7 @@ end
 
 
 function CharacterPart:draw()
-  graphics.push(self.x, self.y, 0, self.spring.x, self.spring.x)
+  graphics.push(self.x, self.y, 0, self.sx*self.spring.x, self.sy*self.spring.x)
     graphics.rectangle(self.x, self.y, 14, 14, 3, 3, character_colors[self.character])
     graphics.print_centered(self.level, pixul_font, self.x + 0.5, self.y + 2, 0, 1, 1, 0, 0, _G[character_color_strings[self.character]][-5])
   graphics.pop()
@@ -169,11 +245,22 @@ end
 
 
 function CharacterPart:on_mouse_enter()
+  local get_sale_price = function()
+    local total = 0
+    total = total + self.level
+    if self.reserve then
+      if self.reserve[2] then total = total + self.reserve[2]*2 end
+      if self.reserve[1] then total = total + self.reserve[1] end
+    end
+    return total
+  end
+
   self.spring:pull(0.2, 200, 10)
   self.info_text = InfoText{group = main.current.ui}
   self.info_text:activate({
-    {text = '[' .. character_color_strings[self.character] .. ']' .. self.character:capitalize() .. '[fg] - cost: [yellow]' .. self.parent.cost, font = pixul_font, alignment = 'center', height_multiplier = 1.25},
-    {text = character_descriptions[self.character](get_character_stat(self.character, 1, 'dmg')), font = pixul_font, alignment = 'center'},
+    {text = '[' .. character_color_strings[self.character] .. ']' .. self.character:capitalize() .. '[fg] - [yellow]Lv.' .. self.level .. '[fg] - sells for [yellow]' .. get_sale_price(),
+    font = pixul_font, alignment = 'center', height_multiplier = 1.25},
+    {text = character_descriptions[self.character](get_character_stat(self.character, self.level, 'dmg')), font = pixul_font, alignment = 'center'},
   }, nil, nil, nil, nil, 16, 4, nil, 2)
   self.info_text.x, self.info_text.y = gw/2, gh/2 + 10
 end
@@ -198,7 +285,7 @@ function ShopCard:init(args)
     local x = self.x
     if #character_classes[self.unit] == 2 then x = self.x - 10
     elseif #character_classes[self.unit] == 3 then x = self.x - 20 end
-    table.insert(self.class_icons, ClassIcon{group = main.current.top, x = x + (i-1)*20, y = self.y + 6, class = class, parent = self})
+    table.insert(self.class_icons, ClassIcon{group = main.current.top, x = x + (i-1)*20, y = self.y + 6, class = class, units = self.parent.units})
   end
   self.cost = character_tiers[self.unit]
 end
@@ -318,7 +405,7 @@ end
 
 function ClassIcon:draw()
   graphics.push(self.x, self.y, 0, self.spring.x, self.spring.x)
-    local i, j, n = class_set_numbers[self.class](self.parent.parent.units)
+    local i, j, n = class_set_numbers[self.class](self.units)
     graphics.rectangle(self.x, self.y, 16, 24, 4, 4, (n >= i) and class_colors[self.class] or bg[3])
     _G[self.class]:draw(self.x, self.y, 0, 0.3, 0.3, 0, 0, (n >= i) and _G[class_color_strings[self.class]][-5] or bg[10])
     graphics.rectangle(self.x, self.y + 26, 16, 16, 3, 3, bg[3])
@@ -341,7 +428,7 @@ end
 
 function ClassIcon:on_mouse_enter()
   self.spring:pull(0.2, 200, 10)
-  local i, j, owned = class_set_numbers[self.class](self.parent.parent.units)
+  local i, j, owned = class_set_numbers[self.class](self.units)
   self.info_text = InfoText{group = main.current.ui}
   self.info_text:activate({
     {text = '[' .. class_color_strings[self.class] .. ']' .. self.class:capitalize() .. '[fg] - owned: [yellow]' .. owned, font = pixul_font, alignment = 'center', height_multiplier = 1.25},
