@@ -207,6 +207,10 @@ function Unit:calculate_stats(first_run)
     self.base_hp = 50 + 20*y[x]
     self.base_dmg = 10 + 3*y[x]
     self.base_mvspd = 70 + 2*y[x]
+  elseif self:is(Saboteur) then
+    self.base_hp = 100*math.pow(2, self.level-1)
+    self.base_dmg = 10*math.pow(2, self.level-1)
+    self.base_mvspd = 75
   end
   self.base_aspd_m = 1
   self.base_area_dmg_m = 1

@@ -74,10 +74,10 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'cleric' then
-    self.color = green[0]
+    self.color = character_colors.cleric
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
-    self.classes = {'healer'}
+    self.classes = character_classes.cleric
 
     self.last_heal_time = love.timer.getTime()
     self.t:every(2, function()
@@ -93,10 +93,10 @@ function Player:init(args)
     end)
 
   elseif self.character == 'outlaw' then
-    self.color = red[0]
+    self.color = character_colors.outlaw
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
-    self.classes = {'warrior', 'rogue'}
+    self.classes = character_classes.outlaw
 
     self.attack_sensor = Circle(self.x, self.y, 96)
     self.t:cooldown(3, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -107,10 +107,10 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'blade' then
-    self.color = yellow[0]
+    self.color = character_colors.blade
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
-    self.classes = {'warrior', 'nuker'}
+    self.classes = character_classes.blade
 
     self.attack_sensor = Circle(self.x, self.y, 64)
     self.t:cooldown(4, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -118,10 +118,10 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'elementor' then
-    self.color = blue[0]
+    self.color = character_colors.elementor
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
-    self.classes = {'mage', 'nuker'}
+    self.classes = character_classes.elementor
 
     self.attack_sensor = Circle(self.x, self.y, 128)
     self.t:cooldown(12, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -132,10 +132,10 @@ function Player:init(args)
     end, nil, nil, 'attack')
 
   elseif self.character == 'saboteur' then
-    self.color = red[0]
+    self.color = character_colors.saboteur
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
-    self.classes = {'rogue', 'conjurer', 'nuker'}
+    self.classes = character_classes.saboteur
 
     self.t:every(8, function()
       self.t:every(0.25, function()
@@ -146,10 +146,10 @@ function Player:init(args)
     end)
 
   elseif self.character == 'stormweaver' then
-    self.color = red[0]
+    self.color = character_colors.stormweaver
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
-    self.classes = {'enchanter'}
+    self.classes = character_classes.stormweaver
 
     self.t:every(8, function()
       stormweaver1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -164,10 +164,10 @@ function Player:init(args)
     end)
 
   elseif self.character == 'sage' then
-    self.color = blue[0]
+    self.color = character_colors.sage
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
-    self.classes = {'mage', 'nuker'}
+    self.classes = character_classes.sage
 
     self.attack_sensor = Circle(self.x, self.y, 96)
     self.t:cooldown(12, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -178,10 +178,10 @@ function Player:init(args)
     end)
 
   elseif self.character == 'squire' then
-    self.color = yellow[0]
+    self.color = character_colors.squire
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
-    self.classes = {'warrior', 'healer', 'enchanter'}
+    self.classes = character_classes.squire
 
     self.t:every(8, function()
       self.applying_buff = true
@@ -199,10 +199,10 @@ function Player:init(args)
     end)
 
   elseif self.character == 'cannoneer' then
-    self.color = green[0]
+    self.color = character_colors.cannoneer
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
-    self.classes = {'ranger', 'nuker'}
+    self.classes = character_classes.cannoneer
 
     self.attack_sensor = Circle(self.x, self.y, 128)
     self.t:cooldown(6, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -213,10 +213,10 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'dual_gunner' then
-    self.color = green[0]
+    self.color = character_colors.dual_gunner
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
-    self.classes = {'ranger', 'rogue'}
+    self.classes = character_classes.dual_gunner
 
     self.attack_sensor = Circle(self.x, self.y, 96)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -227,10 +227,10 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'hunter' then
-    self.color = green[0]
+    self.color = character_colors.hunter
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
-    self.classes = {'ranger', 'conjurer'}
+    self.classes = character_classes.hunter
 
     self.attack_sensor = Circle(self.x, self.y, 160)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -241,10 +241,10 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'chronomancer' then
-    self.color = blue[0]
+    self.color = character_colors.chronomancer
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
-    self.classes = {'mage', 'enchanter'}
+    self.classes = character_classes.chronomancer
 
     self.t:every(2, function()
       local followers
@@ -257,20 +257,20 @@ function Player:init(args)
     end)
 
   elseif self.character == 'spellblade' then
-    self.color = blue[0]
+    self.color = character_colors.spellblade
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
-    self.classes = {'mage', 'rogue'}
+    self.classes = character_classes.spellblade
 
     self.t:every(2, function()
       self:shoot(random:float(0, 2*math.pi))
     end, nil, nil, 'shoot')
 
   elseif self.character == 'psykeeper' then
-    self.color = fg[0]
+    self.color = character_colors.psykeeper
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
-    self.classes = {'healer', 'psy'}
+    self.classes = character_classes.psykeeper
 
     self.psykeeper_heal = 0
     self.t:every(8, function()
@@ -288,10 +288,10 @@ function Player:init(args)
     end)
 
   elseif self.character == 'engineer' then
-    self.color = yellow[0]
+    self.color = character_colors.engineer
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
-    self.classes = {'conjurer'}
+    self.classes = character_classes.engineer
 
     self.t:every(8, function()
       SpawnEffect{group = main.current.effects, x = self.x, y = self.y, color = orange[0], action = function(x, y)
@@ -299,6 +299,8 @@ function Player:init(args)
       end}
     end)
   end
+
+  print(self.character)
   self:calculate_stats(true)
 
   if self.leader then
@@ -1064,9 +1066,9 @@ function Saboteur:init(args)
   self:set_as_rectangle(8, 8, 'dynamic', 'player')
   self:set_restitution(0.5)
   
-  self.color = red[0]
+  self.color = character_colors.saboteur
   self.character = 'saboteur'
-  self.classes = {'saboteur', 'rogue', 'nuker'}
+  self.classes = character_classes.saboteur
   self:calculate_stats(true)
   self:set_as_steerable(self.v, 2000, 4*math.pi, 4)
 

@@ -360,3 +360,8 @@ have to do with visuals and not much else. I would wager that most of it has to 
 The first problem can be fixed by just trying to draw the UI beforehand, which I never do but maybe I should start doing. The second problem is more involved and essentially it involves writing UI components that are generic enough
 like buttons, labels, image buttons, lists, etc, but also allow for enough specialization that I can make them really juicy, as this generally requires a lot of detail fiddling the inner works of the object. I think the Node refactor
 I'm planning will probably help with this, especially the idea of everything simply being a Node and classes being able to be defined inline by just defining update/draw/on_enter/etc functions.
+
+# Day 24-25 - 12-13/03/21
+
+Finished buy screen. Now the only two things left is are redoing the first screen to take advantage of all the UI built for the buy screen, balance/progression and then fixing smaller details and finishing everything up.
+I can probably finish it all before day 30 which would be great.

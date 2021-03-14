@@ -17,10 +17,12 @@ function init()
   input:bind('enter', {'space', 'return'})
 
   local s = {tags = {sfx}}
+  ui_hover1 = Sound('bamboo_hit_by_lord.ogg', s)
   ui_switch1 = Sound('Switch.ogg', s)
   ui_switch2 = Sound('Switch 3.ogg', s)
   ui_transition1 = Sound('Wind Bolt 8.ogg', s)
   ui_transition2 = Sound('Wind Bolt 12.ogg', s)
+  error1 = Sound('Error 2.ogg', s)
   coins1 = Sound('Coins 7.ogg', s)
   coins2 = Sound('Coins 8.ogg', s)
   coins3 = Sound('Coins 9.ogg', s)
@@ -48,6 +50,9 @@ function init()
   player_hit2 = Sound('Body Fall 18.ogg', s)
   player_hit_wall1 = Sound('Wood Heavy 5.ogg', s)
   pop1 = Sound('Pop sounds 10.ogg', s)
+  pop2 = Sound('467951__benzix2__ui-button-click.ogg', s)
+  pop3 = Sound('258269__jcallison__mouth-pop.ogg', s)
+  confirm1 = Sound('80921__justinbw__buttonchime02up.ogg', s)
   heal1 = Sound('Buff 3.ogg', s)
   spawn1 = Sound('Buff 13.ogg', s)
   alert1 = Sound('Click.ogg', s)
@@ -201,7 +206,7 @@ function init()
 
   get_character_stat_string = function(character, level)
     local group = Group():set_as_physics_world(32, 0, 0, {'player', 'enemy', 'projectile', 'enemy_projectile'})
-    local mock = Player{group = group, leader = true, character = character, level = level}
+    local mock = Player{group = group, leader = true, character = character, level = level, follower_index = 1}
     mock:update(0)
     return '[red]HP: [red]' .. mock.max_hp .. '[fg], [red]DMG: [red]' .. mock.dmg .. '[fg], [green]ASPD: [green]' .. math.round(mock.aspd_m, 2) .. 'x[fg], [blue]AREA: [blue]' ..
     math.round(mock.area_dmg_m*mock.area_size_m, 2) ..  'x[fg], [yellow]DEF: [yellow]' .. math.round(mock.def, 2) .. '[fg], [green]MVSPD: [green]' .. math.round(mock.v, 2) .. '[fg]'
@@ -209,7 +214,7 @@ function init()
 
   get_character_stat = function(character, level, stat)
     local group = Group():set_as_physics_world(32, 0, 0, {'player', 'enemy', 'projectile', 'enemy_projectile'})
-    local mock = Player{group = group, leader = true, character = character, level = level}
+    local mock = Player{group = group, leader = true, character = character, level = level, follower_index = 1}
     mock:update(0)
     return math.round(mock[stat], 2)
   end
@@ -340,16 +345,40 @@ function init()
     ['psy'] = function(units) return 1, 2, get_number_of_units_per_class(units).psy end,
   }
 
-  gold = 0
+  level_to_tier_weights = {
+    [1] = {100, 0, 0},
+    [2] = {95, 5, 0},
+    [3] = {90, 10, 0},
+    [4] = {85, 15, 0},
+    [5] = {80, 20, 0},
+    [6] = {75, 25, 0},
+    [7] = {70, 30, 0},
+    [8] = {65, 35, 0},
+    [9] = {60, 40, 0},
+    [10] = {55, 45, 0},
+    [11] = {50, 50, 0},
+    [12] = {45, 50, 5},
+    [13] = {40, 50, 10},
+    [14] = {35, 50, 15},
+    [15] = {30, 50, 20},
+    [16] = {25, 50, 25},
+    [17] = {20, 55, 25},
+    [18] = {15, 60, 25},
+    [19] = {10, 65, 25},
+    [20] = {5, 70, 25},
+    [21] = {0, 75, 25},
+    [22] = {0, 70, 30},
+    [23] = {0, 65, 35},
+    [24] = {0, 60, 40},
+    [25] = {0, 55, 45},
+  }
+
+  gold = 100
 
   main = Main()
   main:add(BuyScreen'buy_screen')
-  local rsv = function() return {random:int(0, 2), random:int(0, 1)} end
   main:go_to('buy_screen', 1, {
-    {character = 'vagrant', level = 1, reserve = rsv()}, {character = 'swordsman', level = 1, reserve = rsv()}, {character = 'wizard', level = 1, reserve = rsv()},
-    {character = 'archer', level = 1, reserve = rsv()}, {character = 'scout', level = 1, reserve = rsv()}, {character = 'cleric', level = 1, reserve = rsv()},
-    {character = 'elementor', level = 1, reserve = rsv()}, {character = 'cannoneer', level = 1, reserve = rsv()}, {character = 'blade', level = 1, reserve = rsv()},
-    {character = 'sage', level = 1, reserve = rsv()}, {character = 'outlaw', level = 1, reserve = rsv()},
+    {character = 'vagrant', level = 1, reserve = {0, 0}}, {character = 'swordsman', level = 1, reserve = {0, 0}},
   })
 end
 
