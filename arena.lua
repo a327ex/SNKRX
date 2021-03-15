@@ -73,7 +73,7 @@ function Arena:on_enter(from, level, units)
       3, 3, 3, random:int(3, 4),
       4, 4, 4, 4, random:int(4, 5),
       5, 5, 5, 5, 5, random:int(5, 6),
-      6, 7, 8, 9, 9, 10
+      6, 7, 8, 9, 9, 10, 12
     }
     self.max_waves = self.level_to_max_waves[self.level]
     self.wave = 0
@@ -108,7 +108,7 @@ function Arena:on_enter(from, level, units)
       16, 16, 18, random:int(18, 20),
       20, 20, 20, 20, random:int(20, 22),
       22, 22, 22, 22, 22, random:int(22, 24),
-      24, 26, 28, 30, 30, 32
+      24, 26, 28, 30, 30, 32, 40
     }
     self.enemies_killed = 0
     self.enemies_to_kill = self.level_to_enemies_to_kill[self.level]
@@ -139,7 +139,7 @@ function Arena:on_enter(from, level, units)
       25, 25, 25, random:int(25, 30),
       30, 30, 30, 30, random:int(30, 35),
       35, 35, 35, 35, 35, random:int(35, 40),
-      40, 45, 50, 55, 55, 60
+      40, 45, 50, 55, 55, 60, 80
     }
     self.time_left = self.level_to_time_left[self.level]
     self.start_time = 3
@@ -244,14 +244,14 @@ function Arena:update(dt)
   self.effects:update(dt*slow_amount)
   self.ui:update(dt*slow_amount)
 
-  if self.can_quit and #self.main:get_objects_by_classes(self.enemies) <= 0 then
+  if self.can_quit and #self.main:get_objects_by_classes(self.enemies) <= 0 and not self.transitioning then
     self.can_quit = false
     self.transitioning = true
     local gold_gained = random:int(level_to_gold_gained[self.level][1], level_to_gold_gained[self.level][2])
+    print(gold_gained)
     gold = gold + gold_gained
     if not self.arena_clear_text then self.arena_clear_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 48, lines = {{text = '[wavy_mid, cbyc]arena clear!', font = fat_font, alignment = 'center'}}} end
     self.t:after(3, function()
-      self.transitioning = false
       ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       TransitionEffect{group = main.transitions, x = self.player.x, y = self.player.y, color = self.color, transition_action = function(t)
         main:add(BuyScreen'buy_screen')
@@ -349,6 +349,7 @@ function Arena:die()
       self.death_info_text = Text2{group = self.ui, x = gw/2, y = gh/2 + 16, sx = 0.7, sy = 0.7, lines = {
         {text = '[wavy_mid, light_bg]level reached: [wavy_mid, yellow]' .. self.level, font = fat_font, alignment = 'center'},
         {text = '[wavy_mid, light_bg]r - start new run', font = fat_font, alignment = 'center'},
+        {text = '[wavy_mid, light_bg]w - wishlist on steam', font = fat_font, alignment = 'center'},
       }}
     end)
   end

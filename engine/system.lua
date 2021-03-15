@@ -152,3 +152,8 @@ end
 function system.remove(path)
   os.remove(path)
 end
+
+
+function system.open_url(url)
+  love.system.openURL(url)
+end

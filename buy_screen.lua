@@ -47,13 +47,14 @@ function BuyScreen:on_enter(from, level, units)
   self.party_text = Text({{text = '[wavy_mid, fg]party', font = pixul_font, alignment = 'center'}}, global_text_tags)
   self.sets_text = Text({{text = '[wavy_mid, fg]sets', font = pixul_font, alignment = 'center'}}, global_text_tags)
   self.items_text = Text({{text = '[wavy_mid, fg]items', font = pixul_font, alignment = 'center'}}, global_text_tags)
-  self.under_text = Text2{group = self.main, x = 140, y = gh - 60, r = -math.pi/48, lines = {
+  self.under_text = Text2{group = self.main, x = 140, y = gh - 55, r = -math.pi/48, lines = {
     {text = '[light_bg]under', font = fat_font, alignment = 'center'},
     {text = '[light_bg]construction', font = fat_font, alignment = 'center'},
   }}
 
   if not self.first_screen then RerollButton{group = self.main, x = 150, y = 18, parent = self} end
   GoButton{group = self.main, x = gw - 30, y = gh - 20, parent = self}
+  WishlistButton{group = self.main, x = gw - 147, y = gh - 20, parent = self}
 end
 
 
@@ -170,6 +171,54 @@ function BuyScreen:set_party_and_sets()
     else x, y = math.index_to_coordinates(i, 3) end
     table.insert(self.sets, ClassIcon{group = self.main, x = (#classes <= 8 and 319 or 308) + (x-1)*20, y = 45 + (y-1)*56, class = class, units = self.units, parent = self})
   end
+end
+
+
+
+
+WishlistButton = Object:extend()
+WishlistButton:implement(GameObject)
+function WishlistButton:init(args)
+  self:init_game_object(args)
+  self.shape = Rectangle(self.x, self.y, 110, 18)
+  self.interact_with_mouse = true
+  self.text = Text({{text = '[bg10]wishlist on steam', font = pixul_font, alignment = 'center'}}, global_text_tags)
+end
+
+
+function WishlistButton:update(dt)
+  self:update_game_object(dt)
+
+  if self.selected and input.m1.pressed then
+    ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    self.spring:pull(0.2, 200, 10)
+    self.selected = true
+    ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    system.open_url'https://store.steampowered.com/app/760330/BYTEPATH/'
+  end
+end
+
+
+function WishlistButton:draw()
+  graphics.push(self.x, self.y, 0, self.spring.x, self.spring.y)
+    graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 4, 4, self.selected and fg[0] or bg[1])
+    self.text:draw(self.x, self.y + 1)
+  graphics.pop()
+end
+
+
+function WishlistButton:on_mouse_enter()
+  ui_hover1:play{pitch = random:float(1.3, 1.5), volume = 0.5}
+  pop2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+  self.selected = true
+  self.text:set_text{{text = '[fgm5]wishlist on steam', font = pixul_font, alignment = 'center'}}
+  self.spring:pull(0.2, 200, 10)
+end
+
+
+function WishlistButton:on_mouse_exit()
+  self.text:set_text{{text = '[bg10]wishlist on steam', font = pixul_font, alignment = 'center'}}
+  self.selected = false
 end
 
 

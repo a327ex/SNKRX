@@ -124,7 +124,7 @@ function Player:init(args)
     self.classes = character_classes.elementor
 
     self.attack_sensor = Circle(self.x, self.y, 128)
-    self.t:cooldown(12, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
+    self.t:cooldown(7, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       local enemy = self:get_random_object_in_shape(self.attack_sensor, main.current.enemies)
       if enemy then
         self:attack(128, {x = enemy.x, y = enemy.y})
@@ -911,7 +911,11 @@ function Area:init(args)
   self.shape = Rectangle(self.x, self.y, 1.5*self.w, 1.5*self.w, self.r)
   local enemies = main.current.main:get_objects_in_shape(self.shape, main.current.enemies)
   for _, enemy in ipairs(enemies) do
-    enemy:hit(self.dmg)
+    if self.character == 'elementor' then
+      enemy:hit(2*self.dmg)
+    else
+      enemy:hit(self.dmg)
+    end
     HitCircle{group = main.current.effects, x = enemy.x, y = enemy.y, rs = 6, color = fg[0], duration = 0.1}
     for i = 1, 2 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = self.color} end
     for i = 1, 2 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = enemy.color} end

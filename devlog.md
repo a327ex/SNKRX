@@ -395,3 +395,15 @@ spawned by the level. He can also grant modifiers to enemies. Upon completing su
   * Trapper: releases +1 trap
     * Plague Doctor [trapper, nuker]: releases an area that deals 6 AoE DoT
     * Fisherman [trapper, warrior]: throws a net that entangles enemies and prevents them from moving
+
+# Day 27 - 15/03/21
+
+Mostly done with balance tuning. Now all that's left are some final details:
+
+* Pausing
+* Muting sound/music
+* Music + pitch
+* Win screen
+* W to wishlist
+* R to restart
+* Unit death sound
