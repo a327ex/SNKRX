@@ -154,7 +154,7 @@ end
 
 
 function Group:destroy()
-  for _, object in ipairs(self.objects) do object:destroy() end
+  for _, object in ipairs(self.objects) do if object.destroy then object:destroy() end end
   self.objects = {}
   self.objects.by_id = {}
   self.objects.by_class = {}

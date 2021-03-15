@@ -29,8 +29,10 @@ function Arena:on_enter(from, level, units)
   self.main:enable_trigger_between('projectile', 'enemy')
   self.main:enable_trigger_between('enemy_projectile', 'player')
 
+  self.damage_dealt = 0
+  self.damage_taken = 0
+  self.main_slow_amount = 1
   self.enemies = {Seeker}
-  self.resources_gained = 0
   self.color = self.color or fg[0]
 
   -- Spawn solids and player
@@ -237,7 +239,7 @@ function Arena:update(dt)
   else self.enchanter_dmg_m = 1 end
 
   self.floor:update(dt*slow_amount)
-  self.main:update(dt*slow_amount)
+  self.main:update(dt*slow_amount*self.main_slow_amount)
   self.post_main:update(dt*slow_amount)
   self.effects:update(dt*slow_amount)
   self.ui:update(dt*slow_amount)
@@ -245,6 +247,8 @@ function Arena:update(dt)
   if self.can_quit and #self.main:get_objects_by_classes(self.enemies) <= 0 then
     self.can_quit = false
     self.transitioning = true
+    local gold_gained = random:int(level_to_gold_gained[self.level][1], level_to_gold_gained[self.level][2])
+    gold = gold + gold_gained
     if not self.arena_clear_text then self.arena_clear_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 48, lines = {{text = '[wavy_mid, cbyc]arena clear!', font = fat_font, alignment = 'center'}}} end
     self.t:after(3, function()
       self.transitioning = false
@@ -254,32 +258,32 @@ function Arena:update(dt)
         main:go_to('buy_screen', self.level, self.units)
         t.t:after(0.1, function()
           t.text:set_text({
-            {text = '[nudge_down, bg]resources gained: ' .. tostring(self.resources_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-            {text = '[wavy_lower, bg]interest: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-            {text = '[wavy_lower, bg]total: 0', font = pixul_font, alignment = 'center'}
+            {text = '[nudge_down, bg]gold gained: ' .. tostring(gold_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+            {text = '[wavy_lower, bg]damage taken: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+            {text = '[wavy_lower, bg]damage dealt: 0', font = pixul_font, alignment = 'center'}
           })
           _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
           t.t:after(0.2, function()
             t.text:set_text({
-              {text = '[wavy_lower, bg]resources gained: ' .. tostring(self.resources_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-              {text = '[nudge_down, bg]interest: ' .. tostring(math.floor(resource/10)), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-              {text = '[wavy_lower, bg]total: 0', font = pixul_font, alignment = 'center'}
+              {text = '[wavy_lower, bg]gold gained: ' .. tostring(gold_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+              {text = '[nudge_down, bg]damage taken: ' .. tostring(math.round(self.damage_taken, 0)), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+              {text = '[wavy_lower, bg]damage dealt: 0', font = pixul_font, alignment = 'center'}
             })
             _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
             t.t:after(0.2, function()
               t.text:set_text({
-                {text = '[wavy_lower, bg]resources gained: ' .. tostring(self.resources_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-                {text = '[wavy_lower, bg]interest: ' .. tostring(math.floor(resource/10)), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-                {text = '[nudge_down, bg]total: ' .. tostring(self.resources_gained + math.floor(resource/10)), font = pixul_font, alignment = 'center'}
+                {text = '[wavy_lower, bg]gold gained: ' .. tostring(gold_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+                {text = '[wavy_lower, bg]damage taken: ' .. tostring(math.round(self.damage_taken, 0)), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+                {text = '[nudge_down, bg]damage dealt: ' .. tostring(math.round(self.damage_dealt, 0)), font = pixul_font, alignment = 'center'}
               })
               _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
             end)
           end)
         end)
       end, text = Text({
-        {text = '[wavy_lower, bg]resources gained: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-        {text = '[wavy_lower, bg]interest: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-        {text = '[wavy_lower, bg]total: 0', font = pixul_font, alignment = 'center'}
+        {text = '[wavy_lower, bg]gold gained: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+        {text = '[wavy_lower, bg]damage taken: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+        {text = '[wavy_lower, bg]damage dealt: 0', font = pixul_font, alignment = 'center'}
       }, global_text_tags)}
     end, 'transition')
   end
@@ -334,6 +338,23 @@ function Arena:draw()
 end
 
 
+function Arena:die()
+  if not self.died_text then
+    self.died = true
+    self.t:tween(2, self, {main_slow_amount = 0}, math.linear, function() self.main_slow_amount = 0 end)
+    self.died_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 32, lines = {
+      {text = '[wavy_mid, cbyc]you died...', font = fat_font, alignment = 'center', height_multiplier = 1.25},
+    }}
+    self.t:after(2, function()
+      self.death_info_text = Text2{group = self.ui, x = gw/2, y = gh/2 + 16, sx = 0.7, sy = 0.7, lines = {
+        {text = '[wavy_mid, light_bg]level reached: [wavy_mid, yellow]' .. self.level, font = fat_font, alignment = 'center'},
+        {text = '[wavy_mid, light_bg]r - start new run', font = fat_font, alignment = 'center'},
+      }}
+    end)
+  end
+end
+
+
 function Arena:enemy_killed()
   if self.win_condition == 'enemy_kill' then
     self.enemies_killed = self.enemies_killed + 1
@@ -384,6 +405,7 @@ end
 
 
 function Arena:spawn_n_enemies(p, j, n)
+  if self.died then return end
   j = j or 1
   n = n or 4
   self.last_spawn_enemy_time = love.timer.getTime()

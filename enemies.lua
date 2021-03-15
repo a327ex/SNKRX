@@ -81,6 +81,7 @@ function Seeker:hit(damage)
   
   local actual_damage = self:calculate_damage(damage)
   self.hp = self.hp - actual_damage
+  main.current.damage_dealt = main.current.damage_dealt + actual_damage
   if self.hp <= 0 then
     self.dead = true
     for i = 1, random:int(4, 6) do HitParticle{group = main.current.effects, x = self.x, y = self.y, color = self.color} end

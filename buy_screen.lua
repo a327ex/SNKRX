@@ -7,46 +7,53 @@ function BuyScreen:init(name)
 end
 
 
+function BuyScreen:on_exit()
+  self.main:destroy()
+  self.effects:destroy()
+  self.ui:destroy()
+  self.main = nil
+  self.effects = nil
+  self.ui = nil
+  self.shop_text = nil
+  self.party_text = nil
+  self.sets_text = nil
+  self.items_text = nil
+  self.under_text = nil
+  self.characters = nil
+  self.sets = nil
+  self.cards = nil
+  self.info_text = nil
+end
+
+
 function BuyScreen:on_enter(from, level, units)
   self.level = level
   self.units = units
+  camera.x, camera.y = gw/2, gh/2
+
+  if self.level == 0 then
+    self.level = 1
+    self.first_screen = true
+  end
 
   self.main = Group()
   self.effects = Group()
   self.ui = Group()
 
-  if self.level == 0 then
-    pop1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-    ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-    player_hit_wall1:play{pitch = r, volume = 0.5}
-    self.first_screen = true
-    self.cards = {}
-    self.selected_card_index = 1
-    local units = {'vagrant', 'swordsman', 'wizard', 'archer', 'scout', 'cleric'}
-    self.cards[1] = PairCard{group = self.main, x = gw/2, y = 85, w = gw, h = gh/4, unit_1 = random:table_remove(units), unit_2 = random:table_remove(units), i = 1, parent = self}
-    local units = {'vagrant', 'swordsman', 'wizard', 'archer', 'scout', 'cleric'}
-    self.cards[2] = PairCard{group = self.main, x = gw/2, y = 155, w = gw, h = gh/4, unit_1 = random:table_remove(units), unit_2 = random:table_remove(units), i = 2, parent = self}
-    local units = {'vagrant', 'swordsman', 'wizard', 'archer', 'scout', 'cleric'}
-    self.cards[3] = PairCard{group = self.main, x = gw/2, y = 225, w = gw, h = gh/4, unit_1 = random:table_remove(units), unit_2 = random:table_remove(units), i = 3, parent = self}
-    self.title_sy = 1
-    self.title = Text({{text = '[wavy_mid, fg]choose your initial party', font = pixul_font, alignment = 'center'}}, global_text_tags)
+  self:set_cards()
+  self:set_party_and_sets()
 
-  else
-    self:set_cards()
-    self:set_party_and_sets()
+  self.shop_text = Text({{text = '[wavy_mid, fg]shop [fg]- gold: [yellow]' .. gold, font = pixul_font, alignment = 'center'}}, global_text_tags)
+  self.party_text = Text({{text = '[wavy_mid, fg]party', font = pixul_font, alignment = 'center'}}, global_text_tags)
+  self.sets_text = Text({{text = '[wavy_mid, fg]sets', font = pixul_font, alignment = 'center'}}, global_text_tags)
+  self.items_text = Text({{text = '[wavy_mid, fg]items', font = pixul_font, alignment = 'center'}}, global_text_tags)
+  self.under_text = Text2{group = self.main, x = 140, y = gh - 60, r = -math.pi/48, lines = {
+    {text = '[light_bg]under', font = fat_font, alignment = 'center'},
+    {text = '[light_bg]construction', font = fat_font, alignment = 'center'},
+  }}
 
-    self.shop_text = Text({{text = '[wavy_mid, fg]shop [fg]- gold: [yellow]' .. gold, font = pixul_font, alignment = 'center'}}, global_text_tags)
-    self.party_text = Text({{text = '[wavy_mid, fg]party', font = pixul_font, alignment = 'center'}}, global_text_tags)
-    self.sets_text = Text({{text = '[wavy_mid, fg]sets', font = pixul_font, alignment = 'center'}}, global_text_tags)
-    self.items_text = Text({{text = '[wavy_mid, fg]items', font = pixul_font, alignment = 'center'}}, global_text_tags)
-    self.under_text = Text2{group = self.main, x = 140, y = gh - 60, r = -math.pi/48, lines = {
-      {text = '[light_bg]under', font = fat_font, alignment = 'center'},
-      {text = '[light_bg]construction', font = fat_font, alignment = 'center'},
-    }}
-
-    RerollButton{group = self.main, x = 150, y = 18, parent = self}
-    GoButton{group = self.main, x = gw - 30, y = gh - 20, parent = self}
-  end
+  if not self.first_screen then RerollButton{group = self.main, x = 150, y = 18, parent = self} end
+  GoButton{group = self.main, x = gw - 30, y = gh - 20, parent = self}
 end
 
 
@@ -56,59 +63,10 @@ function BuyScreen:update(dt)
   self.effects:update(dt*slow_amount)
   self.ui:update(dt*slow_amount)
 
-  if self.level == 0 and self.first_screen then
-    if self.title then self.title:update(dt) end
-
-    if input.move_up.pressed then
-      self.selected_card_index = self.selected_card_index - 1
-      if self.selected_card_index == 0 then self.selected_card_index = 3 end
-      for i = 1, 3 do self.cards[i]:unselect() end
-      self.cards[self.selected_card_index]:select()
-      pop1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-      ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-      player_hit_wall1:play{pitch = r, volume = 0.5}
-    end
-    if input.move_down.pressed then
-      self.selected_card_index = self.selected_card_index + 1
-      if self.selected_card_index == 4 then self.selected_card_index = 1 end
-      for i = 1, 3 do self.cards[i]:unselect() end
-      self.cards[self.selected_card_index]:select()
-      pop1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-      ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-      player_hit_wall1:play{pitch = r, volume = 0.5}
-    end
-
-    if input.enter.pressed and not self.transitioning then
-      ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-      ui_transition1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-      self.transitioning = true
-      self.t:tween(0.1, self, {title_sy = 0}, math.linear, function() self.title_sy = 0; self.title = nil end)
-
-      local unit_1, unit_2 = self.cards[self.selected_card_index].unit_1, self.cards[self.selected_card_index].unit_2
-      TransitionEffect{group = main.transitions, x = 50, y = 85 + (self.selected_card_index-1)*70, color = character_colors[unit_1], transition_action = function()
-        main:add(Arena'arena')
-        main:go_to('arena', 1, {{character = unit_1, level = 1}, {character = unit_2, level = 1}})
-      end}
-      --[[
-      , text = Text({
-        {text = '[' .. character_color_strings[unit_1] .. ']' .. unit_1:upper() .. ' [yellow]Lv.1 [fg]- ' .. table.reduce(character_classes[unit_1],
-        function(memo, v) return memo .. '[' .. class_color_strings[v] .. ']' .. v .. '[fg], ' end, ''):sub(1, -3), font = pixul_font, height_multiplier = 1.7, alignment = 'center'},
-        {text = character_stats[unit_1](1), font = pixul_font, height_multiplier = 1.3, alignment = 'center'},
-        {text = character_descriptions[unit_1](get_character_stat(unit_1, 1, 'dmg')), font = pixul_font, alignment = 'center', height_multiplier = 3},
-        {text = '[' .. character_color_strings[unit_2] .. ']' .. unit_2:upper() .. ' [yellow]Lv.1 [fg]- ' .. table.reduce(character_classes[unit_2],
-        function(memo, v) return memo .. '[' .. class_color_strings[v] .. ']' .. v .. '[fg], ' end, ''):sub(1, -3), font = pixul_font, height_multiplier = 1.7, alignment = 'center'},
-        {text = character_stats[unit_2](1), font = pixul_font, height_multiplier = 1.3, alignment = 'center'},
-        {text = character_descriptions[unit_2](get_character_stat(unit_2, 1, 'dmg')), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-      }, global_text_tags)}
-      ]]--
-    end
-
-  else
-    if self.shop_text then self.shop_text:update(dt) end
-    if self.sets_text then self.sets_text:update(dt) end
-    if self.party_text then self.party_text:update(dt) end
-    if self.items_text then self.items_text:update(dt) end
-  end
+  if self.shop_text then self.shop_text:update(dt) end
+  if self.sets_text then self.sets_text:update(dt) end
+  if self.party_text then self.party_text:update(dt) end
+  if self.items_text then self.items_text:update(dt) end
 end
 
 
@@ -118,19 +76,15 @@ function BuyScreen:draw()
   if self.items_text then self.items_text:draw(32, 150) end
   self.ui:draw()
 
-  if self.level == 0 then
-    if self.title then self.title:draw(3.25*gw/4, 32, 0, 1, self.title_sy) end
-  else
-    if self.shop_text then self.shop_text:draw(64, 20) end
-    if self.sets_text then self.sets_text:draw(328, 20) end
-    if self.party_text then self.party_text:draw(440, 20) end
-  end
+  if self.shop_text then self.shop_text:draw(64, 20) end
+  if self.sets_text then self.sets_text:draw(328, 20) end
+  if self.party_text then self.party_text:draw(440, 20) end
 end
 
 
 function BuyScreen:buy(character, i)
   local bought
-  if table.any(self.units, function(v) return v.character == character end) then
+  if table.any(self.units, function(v) return v.character == character end) and gold >= character_tiers[character] then
     gold = gold - character_tiers[character]
     self.shop_text:set_text{{text = '[wavy_mid, fg]shop [fg]- [fg, nudge_down]gold: [yellow, nudge_down]' .. gold, font = pixul_font, alignment = 'center'}}
     for _, unit in ipairs(self.units) do
@@ -170,10 +124,12 @@ function BuyScreen:buy(character, i)
       end
       self.t:after(2, function() self.info_text:deactivate(); self.info_text.dead = true; self.info_text = nil end, 'info_text')
     else
-      gold = gold - character_tiers[character]
-      self.shop_text:set_text{{text = '[wavy_mid, fg]shop [fg]- [fg, nudge_down]gold: [yellow, nudge_down]' .. gold, font = pixul_font, alignment = 'center'}}
-      table.insert(self.units, {character = character, level = 1, reserve = {0, 0}})
-      bought = true
+      if gold >= character_tiers[character] then
+        gold = gold - character_tiers[character]
+        self.shop_text:set_text{{text = '[wavy_mid, fg]shop [fg]- [fg, nudge_down]gold: [yellow, nudge_down]' .. gold, font = pixul_font, alignment = 'center'}}
+        table.insert(self.units, {character = character, level = 1, reserve = {0, 0}})
+        bought = true
+      end
     end
   end
   self:set_party_and_sets()
@@ -223,27 +179,39 @@ GoButton = Object:extend()
 GoButton:implement(GameObject)
 function GoButton:init(args)
   self:init_game_object(args)
-  self.shape = Rectangle(self.x, self.y, 24, 16)
+  self.shape = Rectangle(self.x, self.y, 28, 18)
   self.interact_with_mouse = true
-  self.text = Text({{text = '[bg10]go!', font = pixul_font, alignment = 'center'}}, global_text_tags)
+  self.text = Text({{text = '[bg10]GO!', font = pixul_font, alignment = 'center'}}, global_text_tags)
 end
 
 
 function GoButton:update(dt)
   self:update_game_object(dt)
+
   if self.selected and input.m1.pressed and not self.transitioning then
-    ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-    self.spring:pull(0.2, 200, 10)
-    self.selected = true
+    if #self.parent.units == 0 then
+      if not self.info_text then
+        error1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+        self.info_text = InfoText{group = main.current.ui}
+        self.info_text:activate({
+          {text = '[fg]cannot start the round with [yellow]0 [fg]units', font = pixul_font, alignment = 'center'},
+        }, nil, nil, nil, nil, 16, 4, nil, 2)
+        self.info_text.x, self.info_text.y = gw/2, gh/2 + 10
+      end
+      self.t:after(2, function() self.info_text:deactivate(); self.info_text.dead = true; self.info_text = nil end, 'info_text')
 
-    ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-    ui_transition1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-    self.transitioning = true
-
-    TransitionEffect{group = main.transitions, x = self.x, y = self.y, color = character_colors[random:table(self.parent.units).character], transition_action = function()
-      main:add(Arena'arena')
-      main:go_to('arena', 1, self.parent.units)
-    end}
+    else
+      ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      self.spring:pull(0.2, 200, 10)
+      self.selected = true
+      ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      ui_transition1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      self.transitioning = true
+      TransitionEffect{group = main.transitions, x = self.x, y = self.y, color = character_colors[random:table(self.parent.units).character], transition_action = function()
+        main:add(Arena'arena')
+        main:go_to('arena', ((self.parent.first_screen and 1) or (self.parent.level + 1)), self.parent.units)
+      end, text = Text({{text = '[wavy, bg]level ' .. ((self.parent.first_screen and 1) or (self.parent.level + 1)), font = pixul_font, alignment = 'center'}}, global_text_tags)}
+    end
   end
 end
 
@@ -260,13 +228,13 @@ function GoButton:on_mouse_enter()
   ui_hover1:play{pitch = random:float(1.3, 1.5), volume = 0.5}
   pop2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
   self.selected = true
-  self.text:set_text{{text = '[fgm5]go!', font = pixul_font, alignment = 'center'}}
+  self.text:set_text{{text = '[fgm5]GO!', font = pixul_font, alignment = 'center'}}
   self.spring:pull(0.2, 200, 10)
 end
 
 
 function GoButton:on_mouse_exit()
-  self.text:set_text{{text = '[bg10]go!', font = pixul_font, alignment = 'center'}}
+  self.text:set_text{{text = '[bg10]GO!', font = pixul_font, alignment = 'center'}}
   self.selected = false
 end
 
@@ -681,86 +649,4 @@ function ClassIcon:die(dont_spawn_effect)
     self.info_text.dead = true
     self.info_text = nil
   end
-end
-
-
-
-
-PairCard = Object:extend()
-PairCard:implement(GameObject)
-function PairCard:init(args)
-  self:init_game_object(args)
-  self.plus_r = 0
-  if self.i == 1 then self:select() end
-end
-
-
-function PairCard:update(dt)
-  self:update_game_object(dt)
-end
-
-
-function PairCard:select()
-  self.selected = true
-  self.spring:pull(0.2, 200, 10)
-  self.t:every_immediate(1.4, function()
-    if self.selected then
-      self.t:tween(0.7, self, {sx = 0.97, sy = 0.97, plus_r = -math.pi/32}, math.linear, function()
-        self.t:tween(0.7, self, {sx = 1.03, sy = 1.03, plus_r = math.pi/32}, math.linear, nil, 'pulse_1')
-      end, 'pulse_2')
-    end
-  end, nil, nil, 'pulse')
-end
-
-
-function PairCard:unselect()
-  self.selected = false
-  self.t:cancel'pulse'
-  self.t:cancel'pulse_1'
-  self.t:cancel'pulse_2'
-  self.t:tween(0.1, self, {sx = 1, sy = 1, plus_r = 0}, math.linear, function() self.sx, self.sy, self.plus_r = 1, 1, 0 end, 'pulse')
-end
-
-
-function PairCard:draw()
-  local x = self.x - self.w/3
-
-  if self.selected then
-    graphics.push(x + (fat_font:get_text_width(self.i) + 20)/2, self.y - 25 + 37/2, 0, self.spring.x*self.sx, self.spring.x*self.sy)
-      graphics.rectangle2(x - 52, self.y - 25, fat_font:get_text_width(self.i) + 20, 37, 6, 6, bg[2])
-    graphics.pop()
-  end
-
-  -- 1, 2, 3
-  graphics.push(x - 40 + fat_font:get_text_width(self.i)/2, self.y - fat_font.h/8, 0, self.spring.x*self.sx, self.spring.x*self.sy)
-    graphics.print(self.i, fat_font, x - 40, self.y, 0, self.sx, self.sy, nil, fat_font.h/2, fg[0])
-  graphics.pop()
-
-  -- Unit 1 + class symbols
-  graphics.push(x + (fat_font:get_text_width(self.unit_1:capitalize() .. 'w') + table.reduce(character_classes[self.unit_1], function(memo, v) return memo + 0.5*_G[v].w end, 0))/2, self.y - fat_font.h/8, 0,
-  self.spring.x*self.sx, self.spring.x*self.sy)
-    graphics.print(self.unit_1:capitalize(), fat_font, x, self.y, 0, 1, 1, nil, fat_font.h/2, character_colors[self.unit_1])
-    x = x + fat_font:get_text_width(self.unit_1 .. 'w')
-    for i, class in ipairs(character_classes[self.unit_1]) do
-      _G[class]:draw(x, self.y, 0, 0.4, 0.4, nil, 20, class_colors[class])
-      x = x + 0.5*_G[class].w
-    end
-  graphics.pop()
-
-  -- +
-  graphics.push(x + fat_font:get_text_width('+')/2, self.y, self.plus_r, self.spring.x*self.sx, self.spring.x*self.sy)
-    graphics.print('+', fat_font, x, self.y, 0, 1, 1, nil, fat_font.h/2, fg[0])
-  graphics.pop()
-
-  -- Unit 2 + class symbols
-  x = x + fat_font:get_text_width('+l')
-  graphics.push(x + (fat_font:get_text_width(self.unit_2:capitalize() .. 'w') + table.reduce(character_classes[self.unit_2], function(memo, v) return memo + 0.5*_G[v].w end, 0))/2, self.y - fat_font.h/8, 0,
-  self.spring.x*self.sx, self.spring.x*self.sy)
-    graphics.print(self.unit_2:capitalize(), fat_font, x, self.y, 0, 1, 1, nil, fat_font.h/2, character_colors[self.unit_2])
-    x = x + fat_font:get_text_width(self.unit_2 .. 'w')
-    for i, class in ipairs(character_classes[self.unit_2]) do
-      _G[class]:draw(x, self.y, 0, 0.4, 0.4, nil, 20, class_colors[class])
-      x = x + 0.5*_G[class].w
-    end
-  graphics.pop()
 end

@@ -191,7 +191,7 @@ function init()
     ['outlaw'] = function(dmg) return '[fg]throws a fan of [yellow]5[] knives, each dealing [yellow]' .. dmg .. '[fg] damage' end,
     ['blade'] = function(dmg) return '[fg]throws multiple blades that deal [yellow]' .. dmg .. ' AoE[fg] damage' end,
     ['elementor'] = function(dmg) return '[fg]deals [yellow]' .. dmg .. ' AoE[fg] damage to a random target' end,
-    ['saboteur'] = function(dmg) return '[fg]calls [yellow]4[] saboteus to seek targets and deal [yellow]' .. dmg .. ' AoE[fg] damage' end,
+    ['saboteur'] = function(dmg) return '[fg]calls [yellow]2[] saboteurs to seek targets and deal [yellow]' .. dmg .. ' AoE[fg] damage' end,
     ['stormweaver'] = function(dmg) return '[fg]infuses all allied projectiles with chain lightning that deals [yellow]+' .. dmg .. '[fg] damage on hit' end,
     ['sage'] = function(dmg) return '[fg]shoots a slow projectile that draws enemies in' end,
     ['squire'] = function(dmg) return '[yellow]+10 dmg[fg] & [yellow]+25 def[fg] to adjacent units, heal them for [yellow]10%[fg] max hp every 8 seconds' end, 
@@ -373,13 +373,39 @@ function init()
     [25] = {0, 55, 45},
   }
 
-  gold = 100
+  level_to_gold_gained = {
+    [1] = {1, 1},
+    [2] = {1, 2},
+    [3] = {2, 3},
+    [4] = {2, 3},
+    [5] = {3, 5},
+    [6] = {3, 5},
+    [7] = {4, 7}, 
+    [8] = {4, 7},
+    [9] = {5, 8},
+    [10] = {5, 8},
+    [11] = {5, 8},
+    [12] = {6, 10},
+    [13] = {6, 10},
+    [14] = {6, 10},
+    [15] = {7, 11},
+    [16] = {8, 12},
+    [17] = {8, 12},
+    [18] = {8, 12}, 
+    [19] = {8, 12},
+    [20] = {10, 14}, 
+    [21] = {10, 14},
+    [22] = {11, 15},
+    [23] = {11, 15},
+    [24] = {12, 18},
+    [25] = {12, 18},
+  }
+
+  gold = 2
 
   main = Main()
   main:add(BuyScreen'buy_screen')
-  main:go_to('buy_screen', 1, {
-    {character = 'vagrant', level = 1, reserve = {0, 0}}, {character = 'swordsman', level = 1, reserve = {0, 0}},
-  })
+  main:go_to('buy_screen', 0, {})
 end
 
 

@@ -365,3 +365,33 @@ I'm planning will probably help with this, especially the idea of everything sim
 
 Finished buy screen. Now the only two things left is are redoing the first screen to take advantage of all the UI built for the buy screen, balance/progression and then fixing smaller details and finishing everything up.
 I can probably finish it all before day 30 which would be great.
+
+# Day 26 - 14/03/21
+
+The game is finally playable from start to finish. It is pretty fun as it is but it's clear that a few things need to be added so it can be even better. I'll add these after I release the demo with the game in the current
+state since these additions will take some time and I don't want to delay the demo's release any more than necessary.
+
+#### Enemy Modifiers
+
+Enemies right now feel pretty samey, and a few small modifiers would help a lot:
+
+* Grant nearby enemies a speed boost on death
+* Grant nearby enemies a damage boost on death
+* Explode into projectiles on death
+* Charge up and headbutt towards the player at increased speed and damage
+* Immune to knockback
+
+#### Mini Boss
+
+Every 3rd level there should be a difficult increase in the multiplier for enemy stats as well as a mini boss. This mini boss has significantly increased HP and damage and can spawn enemies of his own on top of the ones
+spawned by the level. He can also grant modifiers to enemies. Upon completing such a level, the player will be granted the chance to choose 1 out of 3 passive items.
+
+#### Other Ideas
+
+* Show a unit DPS list like Underlord's to the right side of the screen
+* About 20-30 passive items that can be collected every 3 levels
+* Lv.3 effects for every character
+* New classes and characters (I'm not in idea guy mode ATM so I can't think of much, but it will come to me eventually):
+  * Trapper: releases +1 trap
+    * Plague Doctor [trapper, nuker]: releases an area that deals 6 AoE DoT
+    * Fisherman [trapper, warrior]: throws a net that entangles enemies and prevents them from moving

@@ -204,9 +204,9 @@ function Unit:calculate_stats(first_run)
   elseif self:is(Seeker) then
     local x = self.level
     local y = {0, 1, 4, 2, 3, 6, 3, 4, 8, 4, 5, 10, 5, 6, 12, 7, 8, 15, 9, 10, 18, 14, 15, 24, 25}
-    self.base_hp = 50 + 20*y[x]
-    self.base_dmg = 10 + 3*y[x]
-    self.base_mvspd = 70 + 2*y[x]
+    self.base_hp = 50 + 40*y[x]
+    self.base_dmg = 10 + 20*y[x]
+    self.base_mvspd = 70 + 7*y[x]
   elseif self:is(Saboteur) then
     self.base_hp = 100*math.pow(2, self.level-1)
     self.base_dmg = 10*math.pow(2, self.level-1)

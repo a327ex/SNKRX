@@ -142,7 +142,7 @@ function Player:init(args)
         SpawnEffect{group = main.current.effects, x = self.x, y = self.y, action = function(x, y)
           Saboteur{group = main.current.main, x = x, y = y, parent = self, conjurer_buff_m = self.conjurer_buff_m or 1}
         end}
-      end, 4)
+      end, 2)
     end)
 
   elseif self.character == 'stormweaver' then
@@ -300,7 +300,6 @@ function Player:init(args)
     end)
   end
 
-  print(self.character)
   self:calculate_stats(true)
 
   if self.leader then
@@ -500,11 +499,13 @@ function Player:hit(damage)
   if self.dead then return end
   self.hfx:use('hit', 0.25, 200, 10)
   self:show_hp()
+
   
   local actual_damage = self:calculate_damage(damage)
   self.hp = self.hp - actual_damage
   _G[random:table{'player_hit1', 'player_hit2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
   camera:shake(4, 0.5)
+  main.current.damage_taken = main.current.damage_taken + actual_damage
 
   if self.character == 'psykeeper' then self.psykeeper_heal = self.psykeeper_heal + actual_damage end
 
@@ -513,6 +514,12 @@ function Player:hit(damage)
     self.dead = true
     for i = 1, random:int(4, 6) do HitParticle{group = main.current.effects, x = self.x, y = self.y, color = self.color} end
     HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 12}:scale_down(0.3):change_color(0.5, self.color)
+    if self.leader and #self.followers == 0 then
+      main.current:die()
+    else
+      if self.leader then self:recalculate_followers()
+      else self.parent:recalculate_followers() end
+    end
   end
 end
 
@@ -542,6 +549,35 @@ end
 
 function Player:chronomancer_buff(duration)
   self:show_chronomancer(duration or 2)
+end
+
+
+function Player:recalculate_followers()
+  if self.dead then
+    local new_leader = table.remove(self.followers, 1)
+    new_leader.leader = true
+    new_leader.previous_positions = {}
+    new_leader.followers = self.followers
+    new_leader.t:every(0.01, function()
+      table.insert(new_leader.previous_positions, 1, {x = new_leader.x, y = new_leader.y, r = new_leader.r})
+      if #new_leader.previous_positions > 256 then new_leader.previous_positions[257] = nil end
+    end)
+    main.current.player = new_leader
+    for i, follower in ipairs(self.followers) do
+      follower.parent = new_leader
+      follower.follower_index = i
+    end
+  else
+    for i = #self.followers, 1, -1 do
+      if self.followers[i].dead then
+        table.remove(self.followers, i)
+        break
+      end
+    end
+    for i, follower in ipairs(self.followers) do
+      follower.follower_index = i
+    end
+  end
 end
 
 
@@ -990,7 +1026,7 @@ function Pet:init(args)
   self:set_as_rectangle(8, 8, 'dynamic', 'projectile')
   self:set_restitution(0.5)
   self.hfx:add('hit', 1)
-  self.color = orange[0]
+  self.color = character_colors.hunter
   self.pierce = 6
   pet1:play{pitch = random:float(0.95, 1.05), volume = 0.35}
 end
