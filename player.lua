@@ -188,8 +188,8 @@ function Player:init(args)
       local followers
       local leader = (self.leader and self) or self.parent
       if self.leader then followers = self.followers else followers = self.parent.followers end
-      local next_character = followers[self.follower_index + 1]
-      local previous_character = followers[self.follower_index - 1]
+      local next_character = followers[(self.follower_index or 0) + 1]
+      local previous_character = followers[(self.follower_index or 0) - 1]
       if next_character then next_character:squire_buff(8) end
       if previous_character then previous_character:squire_buff(8) end
       self.t:after(8, function() self.applying_buff = false end, 'squire_buff_apply')
@@ -250,8 +250,8 @@ function Player:init(args)
       local followers
       local leader = (self.leader and self) or self.parent
       if self.leader then followers = self.followers else followers = self.parent.followers end
-      local next_character = followers[self.follower_index + 1]
-      local previous_character = followers[self.follower_index - 1]
+      local next_character = followers[(self.follower_index or 0) + 1]
+      local previous_character = followers[(self.follower_index or 0) - 1]
       if next_character then next_character:chronomancer_buff(2) end
       if previous_character then previous_character:chronomancer_buff(2) end
     end)
@@ -320,8 +320,8 @@ function Player:update(dt)
     local followers
     local leader = (self.leader and self) or self.parent
     if self.leader then followers = self.followers else followers = self.parent.followers end
-    local next_character = followers[self.follower_index + 1]
-    local previous_character = followers[self.follower_index - 1]
+    local next_character = followers[(self.follower_index or 0) + 1]
+    local previous_character = followers[(self.follower_index or 0) - 1]
     if self.applying_buff then
       if next_character then
         next_character.squire_dmg_a = 10
@@ -346,8 +346,8 @@ function Player:update(dt)
     local followers
     local leader = (self.leader and self) or self.parent
     if self.leader then followers = self.followers else followers = self.parent.followers end
-    local next_character = followers[self.follower_index + 1]
-    local previous_character = followers[self.follower_index - 1]
+    local next_character = followers[(self.follower_index or 0) + 1]
+    local previous_character = followers[(self.follower_index or 0) - 1]
     if next_character then next_character.chronomancer_aspd_m = 1.25 end
     if previous_character then previous_character.chronomancer_aspd_m = 1.25 end
   end
@@ -409,21 +409,23 @@ function Player:update(dt)
     if input.move_right.down then self.r = self.r + 1.66*math.pi*dt end
     self:set_velocity(self.v*math.cos(self.r), self.v*math.sin(self.r))
 
-    local vx, vy = self:get_velocity()
-    local hd = math.remap(math.abs(self.x - gw/2), 0, 192, 1, 0)
-    local vd = math.remap(math.abs(self.y - gh/2), 0, 108, 1, 0)
-    camera.x = camera.x + math.remap(vx, -100, 100, -24*hd, 24*hd)*dt
-    camera.y = camera.y + math.remap(vy, -100, 100, -8*vd, 8*vd)*dt
-    if input.move_right.down then camera.r = math.lerp_angle_dt(0.01, dt, camera.r, math.pi/256)
-    elseif input.move_left.down then camera.r = math.lerp_angle_dt(0.01, dt, camera.r, -math.pi/256)
-    elseif input.move_down.down then camera.r = math.lerp_angle_dt(0.01, dt, camera.r, math.pi/256)
-    elseif input.move_up.down then camera.r = math.lerp_angle_dt(0.01, dt, camera.r, -math.pi/256)
-    else camera.r = math.lerp_angle_dt(0.005, dt, camera.r, 0) end
+    if not main.current.won then
+      local vx, vy = self:get_velocity()
+      local hd = math.remap(math.abs(self.x - gw/2), 0, 192, 1, 0)
+      local vd = math.remap(math.abs(self.y - gh/2), 0, 108, 1, 0)
+      camera.x = camera.x + math.remap(vx, -100, 100, -24*hd, 24*hd)*dt
+      camera.y = camera.y + math.remap(vy, -100, 100, -8*vd, 8*vd)*dt
+      if input.move_right.down then camera.r = math.lerp_angle_dt(0.01, dt, camera.r, math.pi/256)
+      elseif input.move_left.down then camera.r = math.lerp_angle_dt(0.01, dt, camera.r, -math.pi/256)
+      elseif input.move_down.down then camera.r = math.lerp_angle_dt(0.01, dt, camera.r, math.pi/256)
+      elseif input.move_up.down then camera.r = math.lerp_angle_dt(0.01, dt, camera.r, -math.pi/256)
+      else camera.r = math.lerp_angle_dt(0.005, dt, camera.r, 0) end
+    end
 
     self:set_angle(self.r)
 
   else
-    local target_distance = 10.4*self.follower_index
+    local target_distance = 10.4*(self.follower_index or 0)
     local distance_sum = 0
     local p
     local previous = self.parent
@@ -485,9 +487,9 @@ function Player:on_collision_enter(other, contact)
 
   elseif table.any(main.current.enemies, function(v) return other:is(v) end) then
     other:push(random:float(25, 35), self:angle_to_object(other))
-    if self.character == 'vagrant' or self.character == 'psykeeper' then other:hit(40)
-    else other:hit(20) end
-    self:hit(20)
+    if self.character == 'vagrant' or self.character == 'psykeeper' then other:hit(2*self.dmg)
+    else other:hit(self.dmg) end
+    self:hit(other.dmg)
     HitCircle{group = main.current.effects, x = x, y = y, rs = 6, color = fg[0], duration = 0.1}
     for i = 1, 2 do HitParticle{group = main.current.effects, x = x, y = y, color = self.color} end
     for i = 1, 2 do HitParticle{group = main.current.effects, x = x, y = y, color = other.color} end
@@ -500,7 +502,6 @@ function Player:hit(damage)
   self.hfx:use('hit', 0.25, 200, 10)
   self:show_hp()
 
-  
   local actual_damage = self:calculate_damage(damage)
   self.hp = self.hp - actual_damage
   _G[random:table{'player_hit1', 'player_hit2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -510,6 +511,7 @@ function Player:hit(damage)
   if self.character == 'psykeeper' then self.psykeeper_heal = self.psykeeper_heal + actual_damage end
 
   if self.hp <= 0 then
+    hit4:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     slow(0.25, 1)
     self.dead = true
     for i = 1, random:int(4, 6) do HitParticle{group = main.current.effects, x = self.x, y = self.y, color = self.color} end
@@ -978,7 +980,7 @@ function Turret:init(args)
   self:set_restitution(0.5)
   self.hfx:add('hit', 1)
   self.color = orange[0]
-  self.attack_sensor = Circle(self.x, self.y, 96)
+  self.attack_sensor = Circle(self.x, self.y, 256)
   turret_deploy:play{pitch = 1.2, volume = 0.2}
   
   self.t:every({3.5, 4.5}, function()

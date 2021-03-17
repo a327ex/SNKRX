@@ -449,6 +449,17 @@ global_text_tags = {
     graphics.set_color(c.color)
   end},
 
+  cbyc2 = TextTag{init = function(c, i, text)
+    c.color = invisible
+    text.t:after((i-1)*0.15, function()
+      c.color = yellow[0]
+      camera:shake(3, 0.075)
+      pop1:play{pitch = random:float(0.95, 1.05), volume = 0.35}
+    end)
+  end, draw = function(c, i, text)
+    graphics.set_color(c.color)
+  end},
+
   nudge_down = TextTag{init = function(c, i, text)
     c.oy = -4
     text.t:tween(0.1, c, {oy = 0}, math.linear)

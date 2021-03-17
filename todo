@@ -1,17 +1,26 @@
-
-
-
--- POST DEMO --
-
 Mini Boss every 3rd level
 Show a unit DPS list like Underlord's to the right side of the screen
 About 20-30 passive items that can be collected every 3 levels
 Lv.3 effects for every character
 
+Boss ideas
+  Pretends to be dead, grants speed buffs to enemies after death, especially if the round has gone on for too long which means the player is surviving with 1 unit
+
 Classes and characters
   Trapper: releases +1 trap
     Plague Doctor [trapper, nuker]: releases an area that deals 6 AoE DoT
     Fisherman [trapper, warrior]: throws a net that entangles enemies and prevents them from moving
+  
+  Lich [mage, enchanter]: nearby enemies have decreased movement speed
+
+Items
+  Resonance: hitting walls has a chance of releasing projectiles
+  Ouroboros Technique: rotating around yourself makes every unit release projectiles
+  AoE 1: all units that deal AoE damage have increased stat
+  AoE 2: increased stat if all your units that deal damage deal AoE damage
+  Proj 1: all units that release projectiles have increased stat
+  Proj 2: increased stat if all your units that deal damage release projectiles
+  Wallrider: hitting walls grants a speed buff for a small duration
 
 Enemy modifiers
   Grant nearby enemies a speed boost on death
@@ -20,3 +29,16 @@ Enemy modifiers
   Charge up and headbutt towards the player at increased speed and damage
   Immune to knockback
 
+UI
+  Highlight units of a class when hovering over the class icon in the "sets" section
+  Add stat details to each unit when hovering over it in the "party" section
+
+Balance
+  More damage to AoE units with big cooldowns
+  Warriors that deal AoE damage should deal extra damage based on number of enemies hit
+
+Bugs
+  Squire and Chronomancer don't affect leader
+  Sage's pull force doesn't increase with unit level
+  Cleric's healing amount doesn't increase with unit level
+  Squire and Chronomancer's buffs don't increase with unit level

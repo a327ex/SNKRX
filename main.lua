@@ -37,7 +37,8 @@ function init()
   arrow_hit_wall2 = Sound('Arrow Impact wood 1.ogg', s)
   hit1 = Sound('Player Takes Damage 17.ogg', s)
   hit2 = Sound('Body Head (Headshot) 1.ogg', s)
-  hit3 = Sound('Kick 16.ogg', s)
+  hit3 = Sound('Kick 16_1.ogg', s)
+  hit4 = Sound('Kick 16_2.ogg', s)
   proj_hit_wall1 = Sound('Player Takes Damage 2.ogg', s)
   enemy_die1 = Sound('Bloody punches 7.ogg', s)
   enemy_die2 = Sound('Bloody punches 10.ogg', s)
@@ -77,6 +78,7 @@ function init()
   turret_deploy = Sound('321215__hybrid-v__sci-fi-weapons-deploy.ogg', s)
   rogue_crit1 = Sound('Dagger Stab (Flesh) 4.ogg', s)
   rogue_crit2 = Sound('Sword hits another sword 6.ogg', s)
+  cascade = Sound('Kubbi - Ember - 04 Cascade.ogg', {tags = {music}})
 
   warrior = Image('warrior')
   ranger = Image('ranger')
@@ -376,29 +378,29 @@ function init()
   level_to_gold_gained = {
     [1] = {2, 2},
     [2] = {2, 2},
-    [3] = {2, 3},
+    [3] = {4, 6},
     [4] = {2, 3},
     [5] = {3, 5},
-    [6] = {3, 5},
+    [6] = {6, 10},
     [7] = {4, 7}, 
     [8] = {4, 7},
-    [9] = {5, 8},
+    [9] = {10, 16},
     [10] = {5, 8},
     [11] = {5, 8},
-    [12] = {6, 10},
+    [12] = {12, 20},
     [13] = {6, 10},
     [14] = {6, 10},
-    [15] = {7, 11},
+    [15] = {14, 22},
     [16] = {8, 12},
     [17] = {8, 12},
-    [18] = {8, 12}, 
+    [18] = {16, 24}, 
     [19] = {8, 12},
     [20] = {10, 14}, 
-    [21] = {10, 14},
+    [21] = {20, 28},
     [22] = {11, 15},
     [23] = {11, 15},
-    [24] = {12, 18},
-    [25] = {12, 18},
+    [24] = {24, 36},
+    [25] = {100, 100},
   }
 
   gold = 2
@@ -411,6 +413,23 @@ end
 
 function update(dt)
   main:update(dt)
+
+  if input.s.pressed then
+    if sfx.volume == 0.5 then
+      sfx.volume = 0
+    elseif sfx.volume == 0 then
+      sfx.volume = 0.5
+    end
+  end
+
+  if input.m.pressed then
+    print(music.volume)
+    if music.volume == 0.5 then
+      music.volume = 0
+    elseif music.volume == 0 then
+      music.volume = 0.5
+    end
+  end
 end
 
 

@@ -406,4 +406,10 @@ Mostly done with balance tuning. Now all that's left are some final details:
 * Win screen
 * W to wishlist
 * R to restart
-* Unit death sound
+* Allied unit death sound
+
+# Day 28 - 16/03/21
+
+The demo is finally 100% complete. Now tomorrow I'll spend some time recording gameplay and hopefully finishing the trailer. After that I can start working on the steam page.
+If I have it done by tomorrow and Valve takes 5 business days to approve the store page I should have everything ready by the 25th. And then I can release the game 14 days after that, which would be the 8th of April.
+I definitely want to release it around that time, before the 15th because then I will have completed the game in less than 60 days which is my limit, although I should probably aim for 40 days going forward.

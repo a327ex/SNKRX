@@ -32,6 +32,7 @@ function BuyScreen:on_enter(from, level, units)
   camera.x, camera.y = gw/2, gh/2
 
   if self.level == 0 then
+    cascade_instance = cascade:play{volume = 0.5, loop = true}
     self.level = 1
     self.first_screen = true
   end
@@ -60,6 +61,8 @@ end
 
 function BuyScreen:update(dt)
   self:update_game_object(dt*slow_amount)
+  cascade_instance.pitch = 1
+
   self.main:update(dt*slow_amount)
   self.effects:update(dt*slow_amount)
   self.ui:update(dt*slow_amount)
@@ -180,9 +183,14 @@ WishlistButton = Object:extend()
 WishlistButton:implement(GameObject)
 function WishlistButton:init(args)
   self:init_game_object(args)
-  self.shape = Rectangle(self.x, self.y, 110, 18)
   self.interact_with_mouse = true
-  self.text = Text({{text = '[bg10]wishlist on steam', font = pixul_font, alignment = 'center'}}, global_text_tags)
+  if self.w_to_wishlist then
+    self.shape = Rectangle(self.x, self.y, 85, 18)
+    self.text = Text({{text = '[bg10]w to wishlist', font = pixul_font, alignment = 'center'}}, global_text_tags)
+  else
+    self.shape = Rectangle(self.x, self.y, 110, 18)
+    self.text = Text({{text = '[bg10]wishlist on steam', font = pixul_font, alignment = 'center'}}, global_text_tags)
+  end
 end
 
 
@@ -194,7 +202,7 @@ function WishlistButton:update(dt)
     self.spring:pull(0.2, 200, 10)
     self.selected = true
     ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-    system.open_url'https://store.steampowered.com/app/760330/BYTEPATH/'
+    system.open_url'https://store.steampowered.com/app/915310/SNKRX/'
   end
 end
 
@@ -211,13 +219,21 @@ function WishlistButton:on_mouse_enter()
   ui_hover1:play{pitch = random:float(1.3, 1.5), volume = 0.5}
   pop2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
   self.selected = true
-  self.text:set_text{{text = '[fgm5]wishlist on steam', font = pixul_font, alignment = 'center'}}
+  if self.w_to_wishlist then
+    self.text:set_text{{text = '[fgm5]w to wishlist', font = pixul_font, alignment = 'center'}}
+  else
+    self.text:set_text{{text = '[fgm5]wishlist on steam', font = pixul_font, alignment = 'center'}}
+  end
   self.spring:pull(0.2, 200, 10)
 end
 
 
 function WishlistButton:on_mouse_exit()
-  self.text:set_text{{text = '[bg10]wishlist on steam', font = pixul_font, alignment = 'center'}}
+  if self.w_to_wishlist then
+    self.text:set_text{{text = '[bg10]w to wishlist', font = pixul_font, alignment = 'center'}}
+  else
+    self.text:set_text{{text = '[bg10]wishlist on steam', font = pixul_font, alignment = 'center'}}
+  end
   self.selected = false
 end
 
