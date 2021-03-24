@@ -433,4 +433,18 @@ and then take 1 day to make a trailer.
 
 As for feedback given from the demo:
 
-
+* Enemy spawn points should have some markers before enemy spawns, or should avoid spawning near the player at all
+* UI is generally hard to figure out at first, not a problem since it's meant to be played many times :)
+  * Confusion between what's being purchased, is it the class or the character or something else
+  * GO button is grayed out and thus doesn't say it's meant to be clicked on
+  * 28/20 enemies or 4/3 wave confuses players and makes them think the level goals are bugged
+  * Hovering over a party member should show which set they belong to and vice-versa
+* Music for first 9-15 levels should be calm rather than upbeat
+* Prevent spawning of units that don't attack on first level
+* Prevent spawning of units that cost 3 on first level
+* Not enough variety in units nor enemies so your snake doesn't matter
+* Re-ordering of units
+* Crash:
+  * Error: engine/game/hitfx.lua:46: attempt to index field 'parent'
+    * engine/game/hitfx.lua:46: in function 'use' love.js:9:40605
+    * enemies.lua:56: in function 'on_collision_enter' love.js:9:40605
