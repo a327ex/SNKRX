@@ -1,3 +1,4 @@
+web = true
 require 'engine'
 require 'shared'
 require 'arena'
@@ -423,7 +424,6 @@ function update(dt)
   end
 
   if input.m.pressed then
-    print(music.volume)
     if music.volume == 0.5 then
       music.volume = 0
     elseif music.volume == 0 then
@@ -443,7 +443,7 @@ end
 function love.run()
   return engine_run({
     game_name = 'SNAKRX',
-    window_width = 480*3,
-    window_height = 270*3,
+    window_width = 480*2,
+    window_height = 270*2,
   })
 end

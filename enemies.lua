@@ -58,8 +58,8 @@ function Seeker:on_collision_enter(other, contact)
 
   elseif table.any(main.current.enemies, function(v) return other:is(v) end) then
     if self.being_pushed and math.length(self:get_velocity()) > 60 then
-      other:hit(math.floor(self.dmg/2))
-      self:hit(self.dmg)
+      other:hit(math.floor(self.dmg/4))
+      self:hit(math.floor(self.dmg/2))
       other:push(random:float(10, 15), other:angle_to_object(self))
       HitCircle{group = main.current.effects, x = x, y = y, rs = 6, color = fg[0], duration = 0.1}
       for i = 1, 2 do HitParticle{group = main.current.effects, x = x, y = y, color = self.color} end

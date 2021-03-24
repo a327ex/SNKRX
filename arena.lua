@@ -12,6 +12,7 @@ function Arena:on_enter(from, level, units)
   self.hfx:add('condition2', 1)
   self.level = level or 1
   self.units = units
+  self.logo = true
 
   self.floor = Group()
   self.main = Group():set_as_physics_world(32, 0, 0, {'player', 'enemy', 'projectile', 'enemy_projectile'})
@@ -59,114 +60,128 @@ function Arena:on_enter(from, level, units)
 
   for i, unit in ipairs(units) do
     if i == 1 then
-      self.player = Player{group = self.main, x = gw/2, y = gh/2, leader = true, character = unit.character, level = unit.level}
+      self.player = Player{group = self.main, x = gw/2, y = gh/2 + 16, leader = true, character = unit.character, level = unit.level}
     else
       self.player:add_follower(Player{group = self.main, character = unit.character, level = unit.level})
     end
   end
 
-  -- Set win condition and enemy spawns
-  self.win_condition = random:table{'time', 'enemy_kill', 'wave'}
-  if self.win_condition == 'wave' then
-    self.level_to_max_waves = {
-      1, 2, random:int(2, 3),
-      3, 3, 3, random:int(3, 4),
-      4, 4, 4, 4, random:int(4, 5),
-      5, 5, 5, 5, 5, random:int(5, 6),
-      6, 7, 8, 9, 9, 10, 12
-    }
-    self.max_waves = self.level_to_max_waves[self.level]
-    self.wave = 0
-    self.start_time = 3
-    self.t:after(1, function()
-      self.t:every(1, function()
-        if self.start_time > 1 then alert1:play{volume = 0.5} end
-        self.start_time = self.start_time - 1
-        self.hfx:use('condition1', 0.25, 200, 10)
-      end, 3, function()
-        alert1:play{pitch = 1.2, volume = 0.5}
-        camera:shake(4, 0.25)
-        SpawnEffect{group = self.effects, x = gw/2, y = gh/2 - 48}
-        self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 0 end, function()
-          self.wave = self.wave + 1
-          if self.wave > self.max_waves then return end
-          self.hfx:use('condition1', 0.25, 200, 10)
-          self.hfx:pull('condition2', 0.0625)
-          self.t:after(0.5, function()
-            local spawn_type = random:table{'left', 'middle', 'right'}
-            local spawn_points = {left = {x = self.x1 + 32, y = gh/2}, middle = {x = gw/2, y = gh/2}, right = {x = self.x2 - 32, y = gh/2}}
-            self:spawn_n_enemies(spawn_points[spawn_type], nil, 8 + (self.wave-1)*2)
-          end)
-        end, self.max_waves+1)
-      end)
-      self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 0 and self.wave > self.max_waves end, function() self.can_quit = true end)
-    end)
+  if self.level == 1000 then
+    self.level_1000_text = Text2{group = self.ui, x = gw/2, y = gh/2, lines = {{text = '[fg, wavy_mid]SNKRX', font = fat_font, alignment = 'center'}}}
+    -- self.level_1000_text2 = Text2{group = self.ui, x = gw/2, y = gh/2 + 64, lines = {{text = '[fg, wavy_mid]SNKRX', font = pixul_font, alignment = 'center'}}}
+    -- Wall{group = self.main, vertices = math.to_rectangle_vertices(gw/2 - 0.45*self.level_1000_text.w, gh/2 - 0.3*self.level_1000_text.h, gw/2 + 0.45*self.level_1000_text.w, gh/2 - 3), snkrx = true, color = bg[-1]}
 
-  elseif self.win_condition == 'enemy_kill' then
-    self.level_to_enemies_to_kill = {
-      8, 12, random:int(14, 16),
-      16, 16, 18, random:int(18, 20),
-      20, 20, 20, 20, random:int(20, 22),
-      22, 22, 22, 22, 22, random:int(22, 24),
-      24, 26, 28, 30, 30, 32, 40
-    }
-    self.enemies_killed = 0
-    self.enemies_to_kill = self.level_to_enemies_to_kill[self.level]
-    self.enemy_spawn_delay = 8
-    self.enemies_spawned = 0
-    self.start_time = 3
-    self.t:after(1, function()
-      self.t:every(1, function()
-        if self.start_time > 1 then alert1:play{volume = 0.5} end
-        self.start_time = self.start_time - 1
-        self.hfx:use('condition1', 0.25, 200, 10)
-      end, 3, function()
-        alert1:play{pitch = 1.2, volume = 0.5}
-        camera:shake(4, 0.25)
-        SpawnEffect{group = self.effects, x = gw/2, y = gh/2 - 48}
-        self:spawn_distributed_enemies()
-        self.t:every(2, function()
-          if love.timer.getTime() - self.last_spawn_enemy_time >= self.enemy_spawn_delay and #self.main:get_objects_by_class(self.enemies) < self.enemies_to_kill and not self.transitioning then
-            self:spawn_distributed_enemies()
-          end
-        end, nil, nil, 'spawn_enemies')
-      end)
-    end)
-    self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 0 and self.enemies_killed >= self.enemies_to_kill end, function() self.can_quit = true end)
-
-  elseif self.win_condition == 'time' then
-    self.level_to_time_left = {
-      20, 20, random:int(20, 25),
-      25, 25, 25, random:int(25, 30),
-      30, 30, 30, 30, random:int(30, 35),
-      35, 35, 35, 35, 35, random:int(35, 40),
-      40, 45, 50, 55, 55, 60, 80
-    }
-    self.time_left = self.level_to_time_left[self.level]
-    self.start_time = 3
-    self.t:after(1, function()
-      self.t:every(1, function()
-        if self.start_time > 1 then alert1:play{volume = 0.5} end
-        self.start_time = self.start_time - 1
-        self.hfx:use('condition1', 0.25, 200, 10)
-      end, 3, function()
-        alert1:play{pitch = 1.2, volume = 0.5}
-        camera:shake(4, 0.25)
-        SpawnEffect{group = self.effects, x = gw/2, y = gh/2 - 48}
+  else
+    -- Set win condition and enemy spawns
+    self.win_condition = random:table{'time', 'enemy_kill', 'wave'}
+    if self.level == 18 and self.trailer then self.win_condition = 'wave' end
+    if self.win_condition == 'wave' then
+      self.level_to_max_waves = {
+        1, 2, random:int(2, 3),
+        3, 3, 3, random:int(3, 4),
+        4, 4, 4, 4, random:int(4, 5),
+        5, 5, 5, 5, 5, random:int(5, 6),
+        6, 7, 8, 9, 9, 10, 12
+      }
+      self.max_waves = self.level_to_max_waves[self.level]
+      self.wave = 0
+      self.start_time = 3
+      self.t:after(1, function()
         self.t:every(1, function()
-          self.time_left = self.time_left - 1
+          if self.start_time > 1 then alert1:play{volume = 0.5} end
+          self.start_time = self.start_time - 1
           self.hfx:use('condition1', 0.25, 200, 10)
-          self.hfx:pull('condition2', 0.0625)
-        end, self.time_left)
-
-        self.t:every_immediate(2, function()
-          if #self.main:get_objects_by_classes(self.enemies) <= 0 or love.timer.getTime() - self.last_spawn_enemy_time >= 8 and not self.transitioning then
-            self:spawn_distributed_enemies()
-          end
-        end, self.time_left/2)
+        end, 3, function()
+          alert1:play{pitch = 1.2, volume = 0.5}
+          camera:shake(4, 0.25)
+          SpawnEffect{group = self.effects, x = gw/2, y = gh/2 - 48}
+          self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 0 end, function()
+            self.wave = self.wave + 1
+            if self.wave > self.max_waves then return end
+            self.hfx:use('condition1', 0.25, 200, 10)
+            self.hfx:pull('condition2', 0.0625)
+            self.t:after(0.5, function()
+              local spawn_type = random:table{'left', 'middle', 'right'}
+              local spawn_points = {left = {x = self.x1 + 32, y = gh/2}, middle = {x = gw/2, y = gh/2}, right = {x = self.x2 - 32, y = gh/2}}
+              self:spawn_n_enemies(spawn_points[spawn_type], nil, 8 + (self.wave-1)*2)
+            end)
+          end, self.max_waves+1)
+        end)
+        self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 0 and self.wave > self.max_waves end, function() self.can_quit = true end)
       end)
-    end)
-    self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 0 and self.time_left <= 0 end, function() self.can_quit = true end)
+
+    elseif self.win_condition == 'enemy_kill' then
+      self.level_to_enemies_to_kill = {
+        8, 12, random:int(14, 16),
+        16, 16, 18, random:int(18, 20),
+        20, 20, 20, 20, random:int(20, 22),
+        22, 22, 22, 22, 22, random:int(22, 24),
+        24, 26, 28, 30, 30, 32, 40
+      }
+      self.enemies_killed = 0
+      self.enemies_to_kill = self.level_to_enemies_to_kill[self.level]
+      self.enemy_spawn_delay = 8
+      self.enemies_spawned = 0
+      self.start_time = 3
+      self.t:after(1, function()
+        self.t:every(1, function()
+          if self.start_time > 1 then alert1:play{volume = 0.5} end
+          self.start_time = self.start_time - 1
+          self.hfx:use('condition1', 0.25, 200, 10)
+        end, 3, function()
+          alert1:play{pitch = 1.2, volume = 0.5}
+          camera:shake(4, 0.25)
+          SpawnEffect{group = self.effects, x = gw/2, y = gh/2 - 48}
+          self:spawn_distributed_enemies()
+          self.t:every(2, function()
+            if love.timer.getTime() - self.last_spawn_enemy_time >= self.enemy_spawn_delay and #self.main:get_objects_by_class(self.enemies) < self.enemies_to_kill and not self.transitioning then
+              self:spawn_distributed_enemies()
+            end
+          end, nil, nil, 'spawn_enemies')
+        end)
+      end)
+      self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 0 and self.enemies_killed >= self.enemies_to_kill end, function() self.can_quit = true end)
+
+    elseif self.win_condition == 'time' then
+      self.level_to_time_left = {
+        20, 20, random:int(20, 25),
+        25, 25, 25, random:int(25, 30),
+        30, 30, 30, 30, random:int(30, 35),
+        35, 35, 35, 35, 35, random:int(35, 40),
+        40, 45, 50, 55, 55, 60, 80
+      }
+      self.time_left = self.level_to_time_left[self.level]
+      self.start_time = 3
+      self.t:after(1, function()
+        self.t:every(1, function()
+          if self.start_time > 1 then alert1:play{volume = 0.5} end
+          self.start_time = self.start_time - 1
+          self.hfx:use('condition1', 0.25, 200, 10)
+        end, 3, function()
+          alert1:play{pitch = 1.2, volume = 0.5}
+          camera:shake(4, 0.25)
+          SpawnEffect{group = self.effects, x = gw/2, y = gh/2 - 48}
+          self.t:every(1, function()
+            self.time_left = self.time_left - 1
+            self.hfx:use('condition1', 0.25, 200, 10)
+            self.hfx:pull('condition2', 0.0625)
+          end, self.time_left)
+
+          self.t:every_immediate(2, function()
+            if #self.main:get_objects_by_classes(self.enemies) <= 0 or love.timer.getTime() - self.last_spawn_enemy_time >= 8 and not self.transitioning then
+              self:spawn_distributed_enemies()
+            end
+          end, self.time_left/2)
+        end)
+      end)
+      self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 0 and self.time_left <= 0 end, function() self.can_quit = true end)
+    end
+
+    if self.level == 18 and self.trailer then
+      Text2{group = self.ui, x = gw/2, y = gh/2 - 24, lines = {{text = '[fg, wavy]SNKRX', font = fat_font, alignment = 'center'}}}
+      Text2{group = self.ui, x = gw/2, y = gh/2, sx = 0.5, sy = 0.5, lines = {{text = '[fg, wavy_mid]try the demo & wishlist!', font = fat_font, alignment = 'center'}}}
+      Text2{group = self.ui, x = gw/2, y = gh/2 + 24, sx = 0.5, sy = 0.5, lines = {{text = '[light_bg, wavy_mid]music: kubbi - ember', font = fat_font, alignment = 'center'}}}
+    end
   end
 
   if self.level == 1 then
@@ -298,7 +313,7 @@ function Arena:update(dt)
   end
 
   self:update_game_object(dt*slow_amount)
-  cascade_instance.pitch = math.clamp(slow_amount*self.main_slow_amount, 0.05, 1)
+  -- cascade_instance.pitch = math.clamp(slow_amount*self.main_slow_amount, 0.05, 1)
 
   if input.k.pressed then
     local enemies = self.main:get_objects_by_classes(self.enemies)
@@ -383,6 +398,7 @@ function Arena:draw()
   self.main:draw()
   self.post_main:draw()
   self.effects:draw()
+  if self.level == 18 and self.trailer then graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent) end
   self.ui:draw()
 
   camera:attach()

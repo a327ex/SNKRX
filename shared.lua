@@ -14,7 +14,7 @@ function shared_init()
     purple = ColorRamp(Color'#8e559e', 0.025),
   }
   for name, color in pairs(colors) do _G[name] = color end
-  modal_transparent = Color(0.1, 0.1, 0.1, 0.5)
+  modal_transparent = Color(0.1, 0.1, 0.1, 0.6)
   fg_transparent = Color(fg[0].r, fg[0].g, fg[0].b, 0.5)
 
   graphics.set_background_color(bg[0])
@@ -433,6 +433,7 @@ global_text_tags = {
   light_bg = TextTag{draw = function(c, i, text) graphics.set_color(bg[5]) end},
   fg = TextTag{draw = function(c, i, text) graphics.set_color(fg[0]) end},
   fgm5 = TextTag{draw = function(c, i, text) graphics.set_color(fg[-5]) end},
+  fgm10 = TextTag{draw = function(c, i, text) graphics.set_color(fg[-10]) end},
   wavy = TextTag{update = function(c, dt, i, text) c.oy = 2*math.sin(4*time + i) end},
   wavy_mid = TextTag{update = function(c, dt, i, text) c.oy = 0.75*math.sin(3*time + i) end},
   wavy_mid2 = TextTag{update = function(c, dt, i, text) c.oy = 0.5*math.sin(3*time + i) end},
@@ -474,6 +475,7 @@ Text2:implement(GameObject)
 function Text2:init(args)
   self:init_game_object(args)
   self.text = Text(args.lines, global_text_tags)
+  self.w, self.h = self.text.w, self.text.h
 end
 
 
@@ -484,7 +486,14 @@ end
 
 
 function Text2:draw()
-  self.text:draw(self.x, self.y, self.r, self.sx, self.sy)
+  self.text:draw(self.x, self.y, self.r, self.spring.x*self.sx, self.spring.x*self.sy)
+end
+
+
+function Text2:pull(...)
+  self.spring:pull(...)
+  self.r = random:table{-math.pi/24, math.pi/24}
+  self.t:tween(0.2, self, {r = 0}, math.linear)
 end
 
 

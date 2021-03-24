@@ -469,6 +469,9 @@ function Player:on_collision_enter(other, contact)
 
   if other:is(Wall) then
     if self.leader then
+      if other.snkrx then
+        main.current.level_1000_text:pull(0.2, 200, 10)
+      end
       self.hfx:use('hit', 0.5, 200, 10, 0.1)
       camera:spring_shake(2, math.pi - self.r)
       self:bounce(contact:getNormal())

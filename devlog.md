@@ -413,3 +413,24 @@ Mostly done with balance tuning. Now all that's left are some final details:
 The demo is finally 100% complete. Now tomorrow I'll spend some time recording gameplay and hopefully finishing the trailer. After that I can start working on the steam page.
 If I have it done by tomorrow and Valve takes 5 business days to approve the store page I should have everything ready by the 25th. And then I can release the game 14 days after that, which would be the 8th of April.
 I definitely want to release it around that time, before the 15th because then I will have completed the game in less than 60 days which is my limit, although I should probably aim for 40 days going forward.
+
+# Week 5 - 17/03/21 to 24/03/21
+
+This latest week I did everything necessary to get the game into a playable state as well as all the work needed for a Steam page. Most of it was spent making the trailer, but I feel like the more trailers I make
+the faster I get at making them. This time it took like 3-4 days out of laziness, but I can easily see it being a 1 day job in the future.
+
+I also tested the demo out with a few people and the results were underwhelming. No one seemed to play it for too much time, which I suspected would happen given that the longer term loop of the game isn't in yet.
+More interestingly though, all of the feedback I was given about things that needed to be changed were things that I knew needed to be changed/added for the game's release, which means that I have a pretty good idea of where
+the game is from other people's perspective.
+
+The web build has a few bugs that I can't fix like sound effects not playing randomly, and since my strategy was doing a web demo coupled with the page's release, I've decided to change it. Both because of these bugs and the
+underwhelming response I feel like releasing a demo at this point will damage the game more than help it. I have ~3 weeks until release date (13th of April) from now, and that should be enough to add enough things into the game
+to make it significantly better.
+
+Going forward I think the Steam page reveal demo strategy probably isn't a good idea for these 1 month games. They're small enough already as they are and releasing them in an ever more crude state is probably a waste of time.
+The only thing I need to schedule better for next releases is my trailer making timing. If I want to release a game in 1 month I need to have a trailer by day 15 at the latest, which means I need to work on the game for 2 weeks
+and then take 1 day to make a trailer.
+
+As for feedback given from the demo:
+
+

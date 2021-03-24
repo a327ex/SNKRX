@@ -1,3 +1,40 @@
+Trailer:
+1
+  01:31
+  03:37
+  05:45
+  06:44
+  07:50
+  14:07
+2
+  01:01
+  05:21
+  08:02
+  10:40
+  11:55
+  27:00 wall bump
+  27:17
+3
+  00:23
+  12:12
+4
+  02:30
+5
+  01:00
+  03:36
+  07:07
+6
+  00:14
+  03:45
+  04:29
+  06:19
+  09:40
+  10:27
+  12:51
+  13:51
+  15:12 fast buy
+
+
 Mini Boss every 3rd level
 Show a unit DPS list like Underlord's to the right side of the screen
 About 20-30 passive items that can be collected every 3 levels
@@ -42,3 +79,10 @@ Bugs
   Sage's pull force doesn't increase with unit level
   Cleric's healing amount doesn't increase with unit level
   Squire and Chronomancer's buffs don't increase with unit level
+
+Engine improvements for after SNKRX release
+  on_hit:
+    on_collision_enter/exit are automatically called and automatically call on_hit/on_leave for each object
+    This enables the definition of on_hit on each object and the question of where the logic should stay is solved/dodged
+    Spurred by Wall needing to have its own on_hit function to do something when the player hits it, without having to change player code for all Walls,
+    Defining on_hit on the Wall creation call for that specific Wall, and thus that specific Wall will have this behavior while other walls won't

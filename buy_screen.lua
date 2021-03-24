@@ -170,9 +170,9 @@ function BuyScreen:set_party_and_sets()
   local classes = get_classes(self.units)
   for i, class in ipairs(classes) do
     local x, y
-    if #classes <= 8 then x, y = math.index_to_coordinates(i, 2)
+    if #classes <= 6 then x, y = math.index_to_coordinates(i, 2)
     else x, y = math.index_to_coordinates(i, 3) end
-    table.insert(self.sets, ClassIcon{group = self.main, x = (#classes <= 8 and 319 or 308) + (x-1)*20, y = 45 + (y-1)*56, class = class, units = self.units, parent = self})
+    table.insert(self.sets, ClassIcon{group = self.main, x = (#classes <= 6 and 319 or 308) + (x-1)*20, y = 45 + (y-1)*56, class = class, units = self.units, parent = self})
   end
 end
 
@@ -319,12 +319,26 @@ function RerollButton:update(dt)
   self:update_game_object(dt)
 
   if self.selected and input.m1.pressed then
-    ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-    self.parent:set_cards(random:int(1, 25), true)
-    self.selected = true
-    self.spring:pull(0.2, 200, 10)
-    gold = gold - 2
-    self.parent.shop_text:set_text{{text = '[wavy_mid, fg]shop [fg]- [fg, nudge_down]gold: [yellow, nudge_down]' .. gold, font = pixul_font, alignment = 'center'}}
+    if gold < 2 then
+      self.spring:pull(0.2, 200, 10)
+      self.selected = true
+      error1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      if not self.info_text then
+        self.info_text = InfoText{group = main.current.ui}
+        self.info_text:activate({
+          {text = '[fg]not enough gold', font = pixul_font, alignment = 'center'},
+        }, nil, nil, nil, nil, 16, 4, nil, 2)
+        self.info_text.x, self.info_text.y = gw/2, gh/2 + 10
+      end
+      self.t:after(2, function() self.info_text:deactivate(); self.info_text.dead = true; self.info_text = nil end, 'info_text')
+    else
+      ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      self.parent:set_cards(random:int(1, 25), true)
+      self.selected = true
+      self.spring:pull(0.2, 200, 10)
+      gold = gold - 2
+      self.parent.shop_text:set_text{{text = '[wavy_mid, fg]shop [fg]- [fg, nudge_down]gold: [yellow, nudge_down]' .. gold, font = pixul_font, alignment = 'center'}}
+    end
   end
 end
 
