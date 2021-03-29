@@ -31,6 +31,9 @@ function BuyScreen:on_enter(from, level, units)
   self.units = units
   camera.x, camera.y = gw/2, gh/2
 
+  steam.friends.setRichPresence('steam_display', '#StatusFull')
+  steam.friends.setRichPresence('text', 'Shop - Level ' .. self.level)
+
   if self.level == 0 then
     cascade_instance = cascade:play{volume = 0.5, loop = true}
     self.level = 1
@@ -55,7 +58,7 @@ function BuyScreen:on_enter(from, level, units)
 
   if not self.first_screen then RerollButton{group = self.main, x = 150, y = 18, parent = self} end
   GoButton{group = self.main, x = gw - 30, y = gh - 20, parent = self}
-  WishlistButton{group = self.main, x = gw - 147, y = gh - 20, parent = self}
+  -- WishlistButton{group = self.main, x = gw - 147, y = gh - 20, parent = self}
 end
 
 

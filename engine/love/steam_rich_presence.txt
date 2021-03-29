@@ -1,0 +1,10 @@
+"lang"
+{
+    "english"
+    {
+        "tokens"
+        {
+            "#StatusFull" "%text%"
+        }
+    }
+}

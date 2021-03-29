@@ -1,84 +1,136 @@
-Trailer:
-1
-  01:31
-  03:37
-  05:45
-  06:44
-  07:50
-  14:07
-2
-  01:01
-  05:21
-  08:02
-  10:40
-  11:55
-  27:00 wall bump
-  27:17
-3
-  00:23
-  12:12
-4
-  02:30
-5
-  01:00
-  03:36
-  07:07
-6
-  00:14
-  03:45
-  04:29
-  06:19
-  09:40
-  10:27
-  12:51
-  13:51
-  15:12 fast buy
+1. Enemy spawn points should have some markers before enemy spawns, or should avoid spawning near the player at all
+2. Prevent spawning of units that cost 3 on first level
+3. Prevent spawning of units that don't attack on first level
 
+4. Rework position based units so that position in the snake doesn't matter
+  Chronomancer: +10%/20%/30% attack speed to all allies
+  Psykeeper: stores damage taken by all allies up to 20% max HP and redistributes it as healing
+  Squire: +5%/10%/15% damage and defense to all allies
 
-Mini Boss every 3rd level
-Show a unit DPS list like Underlord's to the right side of the screen
-About 20-30 passive items that can be collected every 3 levels
-Lv.3 effects for every character
+5. Stat details to each unit when hovering over it in the party section
 
-Boss ideas
-  Pretends to be dead, grants speed buffs to enemies after death, especially if the round has gone on for too long which means the player is surviving with 1 unit
+6. Mini boss every 3rd level
+  This is just a special enemy with more HP and ability to buff nearby enemies with modifiers, no additional AI or attack patterns
+  ... aiming for ~5 different modifier combos that the boss uses
 
-Classes and characters
-  Trapper: releases +1 trap
-    Plague Doctor [trapper, nuker]: releases an area that deals 6 AoE DoT
-    Fisherman [trapper, warrior]: throws a net that entangles enemies and prevents them from moving
-  
-  Lich [mage, enchanter]: nearby enemies have decreased movement speed
-
-Items
-  Resonance: hitting walls has a chance of releasing projectiles
-  Ouroboros Technique: rotating around yourself makes every unit release projectiles
-  AoE 1: all units that deal AoE damage have increased stat
-  AoE 2: increased stat if all your units that deal damage deal AoE damage
-  Proj 1: all units that release projectiles have increased stat
-  Proj 2: increased stat if all your units that deal damage release projectiles
-  Wallrider: hitting walls grants a speed buff for a small duration
-
-Enemy modifiers
+7. Enemy modifiers
   Grant nearby enemies a speed boost on death
   Grant nearby enemies a damage boost on death
   Explode into projectiles on death
   Charge up and headbutt towards the player at increased speed and damage
-  Immune to knockback
+  Resistance to knockback
+  ... aiming for about 8-10 of these
 
-UI
-  Highlight units of a class when hovering over the class icon in the "sets" section
-  Add stat details to each unit when hovering over it in the "party" section
+8. Additional characters and classes
+9. Lv.3 effects for every character
+  Classes
+    Ranger: chance to release a barrage on attack
+    Warrior: increased defense
+    Mage: decreased enemy defense
+    Nuker: increased area damage and size
+    Rogue: chance to crit
+    Healer: increased healing effectiveness
+    Enchanter: increased damage
+    Conjurer: increased summon damage and duration
+    Psyker: increased damage and health based on number of active sets
+    Trapper: release extra traps
+    Forcer: increased knockback force
+    Swarmer: increased critter health
+    Voider: increased damage over time
+  Characters
+    Vagrant [psyker, ranger, warrior]: shoots a projectile - Lv.3: Champion - gains increased damage and attack speed based on number of active sets
+    Swordsman [warrior]: deals AoE damage, deals extra damage for each unit hit - Lv.3: Cleave - damage is doubled
+    Wizard [mage]: shoots a projectile that deals AoE damage - Lv.3: Magic Missile - the projectile chains 5 times, each dealing AoE damage on impact
+    Archer [ranger]: shoots an arrow that pierces - Lv.3: Bounce Shot - the arrow ricochets on walls 3 times
+    Scout [rogue]: throws a knife that chains 3 times - Lv.3: Replica - each chain grants +15% damage and the last chain splits
+    Cleric [healer]: heals a unit when its health drops below half HP - Lv.3: Mass Heal - heals all units instead of one
+    Outlaw [warrior, rogue]: throws a fan of 5 knives - Lv.3: Fatal Roulette - every 3rd attack throw a nova of 15 knives instead
+    Blade [warrior, nuker]: throws multiple blades that deal AoE damage - Lv.3: Blade Resonance - deal additional damage based on number of enemies hit
+    Elementor [mage, nuker]: deals AoE damage to a random target in a large area - Lv.3: Windfield - slows enemies hit
+    Saboteur [rogue, conjurer, nuker]: calls saboteurs to seek targets and deal AoE damage - Lv.3: Chain Reaction - should an enemy die from a saboteur explosion, it also explodes
+    Stormweaver [enchanter]: infuses all allied projectiles with chain lightning that deals extra damage - Lv.3: Lightning Spire - cast a spire of lightning periodically
+    Sage [nuker]: shoots a slow moving projectile that pulls enemies in - Lv.3: Dimension Compression - when the projectile expires deal massive damage to all enemies under its influence
+    Squire [warrior, enchanter]: increased damage and defense to all allies - Lv.3: Repair - you can reroll your item choice once every 3 levels, these opportunities stack if unused
+    Cannoneer [ranger, nuker]: shoots a projectile that deals AoE damage - Lv.3: Cannon Barrage - showers the hit area in additional cannon shots that deal AoE damage
+    Dual Gunner [ranger, rogue]: shoots two parallel projectiles - Lv.3: Gun Kata - every 5th attack shoots projectiles in a rapid succession for a duration, targetting all nearby enemies
+    Hunter [ranger, conjurer]: shoots an arrow that summons a pet - Lv.3: Feral Pack - summons 3 pets
+    Chronomancer [mage, enchanter]: increased attack speed to all allies - Lv.3: Quicken - enemies take DoT faster
+    Spellblade [mage, rogue]: throws knives that spiral outwards and pierce - Lv.3: Spiralism - faster projectile speed and tighter turns
+    Psykeeper [healer, psyker]: stores damage taken by all allies and redistributes it as healing - Lv.3: Crucio - also redistributes it as damage to all enemies
+    Engineer [conjurer]: drops sentries that shoot bursts of projectils - Lv.3: Upgrade - every 3rd sentry dropped, upgrade all sentries temporarily, giving increased damage and attack speed
+    Plague Doctor [nuker, voider]: creates an area that deals DoT - Lv.3: Pandemic - inflicts enemies with a contagion that deals additional DoT, if they die from it it passes to a nearby enemy
+    Fisherman [trapper, warrior]: throws a net that entangles enemies and prevents them from moving - Lv.3: Electric Net - enemies caught take DoT
+    Juggernaut [forcer, warrior]: creates a small area that deals AoE damage and pushes enemies away - Lv.3: Brutal Impact - enemies pushed away are instantly killed if they hit a wall
+    Lich [mage]: launches a chain frost that chains 7 times, dealing damage and slowing enemies it hits - Lv.3: Piercing Frost - chain frost ignores enemy defenses
+    Cryomancer [mage, voider]: nearby enemies take damage over time and have decreased movement speed - Lv.3: Frostbite - enemies killed by the cryomancer freeze nearby enemies, frozen enemies can't move and take increased damage
+    Pyromancer [mage, nuker, voider]: nearby enemies take damage over time and deal decreased damage - Lv.3: Ignite - enemies killed by the pyromancer explode, dealing AoE damage
+    Corruptor [ranger, swarmer]: spawn 3 small critters if the corruptor kills an enemy - Lv.3: Infestation - spawn 3 small critters if the corruptor hits an enemy
+    Beastmaster [rogue, swarmer]: spawn 2 small critters if the beastmaster crits - Lv.3: Call of the Wild - spawn 2 small critters if the beastmaster gets hit
+    Launcher [trapper, forcer]: creates a trap that launches enemies that trigger it - Lv.3: Kineticism - enemies launched that hit other enemies transfer their kinetic energy
+    Spiker [trapper, rogue]: creates a trap that crits when triggered - Lv.3: Caltrops - slows enemies hit and deals DoT
+    Assassin [rogue, voider]: throws a piercing knife that inflicts poison - Lv.3: Toxic Delivery - poison inflicted from crits deals more damage
+    Host [conjurer, swarmer]: creates overlords that periodically spawn small critters - Lv.3: Invasion - increased critter spawn rate
+    Carver [conjurer, healer]: carves a statue that periodically heals in an area - Lv.3: World Tree - carves a tree that heals in a bigger area and removes all buffs from enemies
+    Bane [swarmer, voider]: spawn a small critter periodically that explodes and deals DoT - Lv.3: Baneling Swarm - spawn 4 banelings instead
+    Psykino [mage, psyker, forcer]: quickly pulls enemies together and then releases them with a force - Lv.3: Magnetic Force - enemies pulled together are forced to collide with each other before being released
+    Arbalester [ranger, forcer]: launches a massive arrow that pushes enemies back, ignoring knockback resistances - Lv.3: Ballista Sinistra - enemies hit by the arrow have massively decreased defense
+    Pirate [warrior, forcer]: launches a hook that captures nearby enemies and pulls them towards you - Lv.3: Jolly Roger - place a flag that grants gold based on number of enemies killed under its effect
+    Sapper [trapper, enchanter, healer]: creates a trap that steals health from enemies that trigger it and grants increased movement speed - Lv.3: when a sapper trap is triggered other nearby traps are triggered
+    Priest [healer]: heals all units periodically - Lv.3: Divine Intervention - at the start of the round pick 3 units at random and grants them a buff that prevents them from dying once
+    Burrower [trapper, swarmer]: creates a trap that contains 6 small critters which are released when triggered - Lv.3: Zergling Rush - triples the number of critters released
+    Flagellant [psyker, enchanter]: periodically deals damage to self and grants a damage buff to all allies - Lv.3: Zealotry - deals damage to all allies instead and also grants a massive damage buff
+  Sets
+    Ranger = 8/8
+    Warrior = 8/8
+    Mage = 8/8
+    Rogue = 8/8
+    Nuker = 7/7
+    Conjurer = 5/5
+    Forcer = 5/5
+    Voider = 5/5
+    Psyker = 4/4
+    Healer = 5/5
+    Enchanter = 5/5
+    Trapper = 5/5
+    Swarmer = 5/5
 
-Balance
-  More damage to AoE units with big cooldowns
-  Warriors that deal AoE damage should deal extra damage based on number of enemies hit
+10. Items
+  Ouroboros Technique R: rotating around yourself to the right makes every unit periodically release projectiles
+  Ouroboros Technique L: rotating around yourself to the left grants +25% defense to all units
+  Resonance: hitting walls has a chance of releasing projectiles
+  Wall Rider: hitting walls grants a speed buff for a small duration
+  Force Push: +25% knockback force
+  Heavy Impact: if knockbacked enemies hit walls they take damage according to the knockback force
+  Centipede: +20% movement speed
+  Intimidation: enemies spawn with -20% max HP
+  Crucio: taking damage shares 2x the amount of HP you lost across all enemies
+  Amplify: all units that deal AoE damage gain +25% AoE damage
+  Amplify X: +25% AoE damage if all your units only deal AoE damage (excluding supports)
+  Ballista: all units that release projectiles and don't deal AoE damage gain +25% damage
+  Ballista X: +25% damage if all your units only release projectiles and don't deal AoE damage (excluding supports)
+  Point Blank: projectiles deal increased damage based on distance not travelled, +100% at 0 distance and -50% at max distance
+  Longshot: projectiles deal increased damage based on distance travelled, -50% at 0 distance and +100% at max distance
+  Chain Reaction: projectiles that chain gain 25% damage with each chain
+  Call of the Void: +25% DoT damage
+  ... more ideas will come later I'm sure, aiming for 30 total items
 
-Bugs
-  Squire and Chronomancer don't affect leader
-  Sage's pull force doesn't increase with unit level
-  Cleric's healing amount doesn't increase with unit level
-  Squire and Chronomancer's buffs don't increase with unit level
+11. Steam integration: achievements, etc
+12. Hovering over a party member should show which set they belong to and vice-versa
+13. Show a unit DPS list like Underlord's to the right side of the screen
+14. Warriors that deal AoE damage should deal extra damage based on number of enemies hit
+15. GO button is grayed out and thus doesn't say it's meant to be clicked on
+16. 28/20 enemies or 4/3 wave confuses players and makes them think the level goals are bugged
+17. Music for first 9-15 levels should be calm rather than upbeat
+18. Crash: Error: engine/game/hitfx.lua:46: attempt to index field 'parent', engine/game/hitfx.lua:46: in function 'use' love.js:9:40605, enemies.lua:56: in function 'on_collision_enter' love.js:9:40605
+19. Sage's pull force doesn't increase with unit level
+20. Cleric's healing amount doesn't increase with unit level
+21. Squire and Chronomancer's buffs don't increase with unit level
+
+Boss ideas
+  Pretends to be dead, grants speed buffs to enemies after death, especially if the round has gone on for too long which means the player is surviving with 1 unit
+
+Map modifiers
+  Wall spikes: walls damage you when you hit it
 
 Engine improvements for after SNKRX release
   on_hit:
@@ -86,3 +138,7 @@ Engine improvements for after SNKRX release
     This enables the definition of on_hit on each object and the question of where the logic should stay is solved/dodged
     Spurred by Wall needing to have its own on_hit function to do something when the player hits it, without having to change player code for all Walls,
     Defining on_hit on the Wall creation call for that specific Wall, and thus that specific Wall will have this behavior while other walls won't
+  release tool:
+    Build a command line tool that creates projects and builds them up for release automatically on Windows, Web and Steam
+    All the steps for this are listed on the readme and everything about it that can be automated should
+    Ideally the user should run one command for creating a project and one for building it for each platform

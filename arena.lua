@@ -12,7 +12,9 @@ function Arena:on_enter(from, level, units)
   self.hfx:add('condition2', 1)
   self.level = level or 1
   self.units = units
-  self.logo = true
+
+  steam.friends.setRichPresence('steam_display', '#StatusFull')
+  steam.friends.setRichPresence('text', 'Arena - Level ' .. self.level)
 
   self.floor = Group()
   self.main = Group():set_as_physics_world(32, 0, 0, {'player', 'enemy', 'projectile', 'enemy_projectile'})
@@ -179,7 +181,7 @@ function Arena:on_enter(from, level, units)
 
     if self.level == 18 and self.trailer then
       Text2{group = self.ui, x = gw/2, y = gh/2 - 24, lines = {{text = '[fg, wavy]SNKRX', font = fat_font, alignment = 'center'}}}
-      Text2{group = self.ui, x = gw/2, y = gh/2, sx = 0.5, sy = 0.5, lines = {{text = '[fg, wavy_mid]try the demo & wishlist!', font = fat_font, alignment = 'center'}}}
+      Text2{group = self.ui, x = gw/2, y = gh/2, sx = 0.5, sy = 0.5, lines = {{text = '[fg, wavy_mid]wishlist now!', font = fat_font, alignment = 'center'}}}
       Text2{group = self.ui, x = gw/2, y = gh/2 + 24, sx = 0.5, sy = 0.5, lines = {{text = '[light_bg, wavy_mid]music: kubbi - ember', font = fat_font, alignment = 'center'}}}
     end
   end
@@ -187,7 +189,7 @@ function Arena:on_enter(from, level, units)
   if self.level == 1 then
     local t1 = Text2{group = self.floor, x = gw/2, y = gh/2 + 2, sx = 0.6, sy = 0.6, lines = {{text = '[light_bg]<- or a         -> or d', font = fat_font, alignment = 'center'}}}
     local t2 = Text2{group = self.floor, x = gw/2, y = gh/2 + 18, lines = {{text = '[light_bg]turn left                                      turn right', font = pixul_font, alignment = 'center'}}}
-    local t3 = Text2{group = self.floor, x = gw/2, y = gh/2 + 46, sx = 0.6, sy = 0.6, lines = {{text = '[light_bg]s - mute sfx', font = fat_font, alignment = 'center'}}}
+    local t3 = Text2{group = self.floor, x = gw/2, y = gh/2 + 46, sx = 0.6, sy = 0.6, lines = {{text = '[light_bg]n - mute sfx', font = fat_font, alignment = 'center'}}}
     local t4 = Text2{group = self.floor, x = gw/2, y = gh/2 + 68, sx = 0.6, sy = 0.6, lines = {{text = '[light_bg]m - mute music', font = fat_font, alignment = 'center'}}}
     t1.t:after(8, function() t1.t:tween(0.2, t1, {sy = 0}, math.linear, function() t1.sy = 0 end) end)
     t2.t:after(8, function() t2.t:tween(0.2, t2, {sy = 0}, math.linear, function() t2.sy = 0 end) end)
@@ -256,7 +258,7 @@ function Arena:update(dt)
         self.paused = true
         self.paused_t1 = Text2{group = self.ui, x = gw/2, y = gh/2 - 68, sx = 0.6, sy = 0.6, lines = {{text = '[bg10]<- or a         -> or d', font = fat_font, alignment = 'center'}}}
         self.paused_t2 = Text2{group = self.ui, x = gw/2, y = gh/2 - 52, lines = {{text = '[bg10]turn left                                      turn right', font = pixul_font, alignment = 'center'}}}
-        self.paused_t3 = Text2{group = self.ui, x = gw/2, y = gh/2 - 22, sx = 0.6, sy = 0.6, lines = {{text = '[bg10]s - mute sfx', font = fat_font, alignment = 'center'}}}
+        self.paused_t3 = Text2{group = self.ui, x = gw/2, y = gh/2 - 22, sx = 0.6, sy = 0.6, lines = {{text = '[bg10]n - mute sfx', font = fat_font, alignment = 'center'}}}
         self.paused_t4 = Text2{group = self.ui, x = gw/2, y = gh/2 + 0, sx = 0.6, sy = 0.6, lines = {{text = '[bg10]m - mute music', font = fat_font, alignment = 'center'}}}
         self.paused_t5 = Text2{group = self.ui, x = gw/2, y = gh/2 + 22, sx = 0.6, sy = 0.6, lines = {{text = '[bg10]esc - resume game', font = fat_font, alignment = 'center'}}}
         self.paused_t6 = Text2{group = self.ui, x = gw/2, y = gh/2 + 44, sx = 0.6, sy = 0.6, lines = {{text = '[bg10]r - restart run', font = fat_font, alignment = 'center'}}}

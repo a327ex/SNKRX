@@ -448,3 +448,140 @@ As for feedback given from the demo:
   * Error: engine/game/hitfx.lua:46: attempt to index field 'parent'
     * engine/game/hitfx.lua:46: in function 'use' love.js:9:40605
     * enemies.lua:56: in function 'on_collision_enter' love.js:9:40605
+
+# Week 6 - 24/03/21 to 31/03/21
+
+Spent most of this week relaxing and ideaguying the next things I need to do. The reaction to the demo was already underwhelming but the reaction to the game reveal itself from the Internet at large was also fairly underwhelming.
+For BYTEPATH it was also like this and the 2 weeks of building wishlists were basically dead and I was only able to gain traction on release day, but for this game it seems even worse. Hopefully by the time release day comes people
+will respond better, otherwise this is a big GG and this game will just be played by like 100 people at most.
+
+This also further solidifies my previous thoughts that the 2 weeks delay from steam up to release is best thought of as non-existent. For this game I tried a 2 step process, work on a demo and release that with the game's reveal
+and steam page, and then finish the rest of the game after that. But the amount of work needed to do a proper reveal with trailers and playable demo was pretty large, and it didn't really amount to anything. The demo was too unfinished
+(and I knew it was) for any feedback to matter, and people just didn't respond at all to the game's reveal.
+
+So a better plan for future games might be to just make a game in 1-2 months, and then spend 1 week or so doing everything needed to put the page up, do it, and then move on to the next game while waiting the 2 weeks before
+release is possible. This also works better because it's very hard to switch from marketing mode back to development mode on the same project, whereas switching to a new project while waiting for those 2 weeks is probably
+more feasible.
+
+Whatever way it goes, here's my plan for what to do until release:
+
+1. Enemy spawn points should have some markers before enemy spawns, or should avoid spawning near the player at all
+2. Prevent spawning of units that cost 3 on first level
+3. Prevent spawning of units that don't attack on first level
+4. Rework position based units so that position in the snake doesn't matter
+  * Chronomancer: +10%/20%/30% attack speed to all allies
+  * Psykeeper: stores damage taken by all allies up to 20% max HP and redistributes it as healing
+  * Squire: +5%/10%/15% damage and defense to all allies
+5. Stat details to each unit when hovering over it in the party section
+6. Mini boss every 3rd level
+  * This is just a special enemy with more HP and ability to buff nearby enemies with modifiers, no additional AI or attack patterns
+  * ... aiming for ~5 different modifier combos that the boss uses
+7. Enemy modifiers
+  * Grant nearby enemies a speed boost on death
+  * Grant nearby enemies a damage boost on death
+  * Explode into projectiles on death
+  * Charge up and headbutt towards the player at increased speed and damage
+  * Resistance to knockback
+  * ... aiming for about 8-10 of these
+8. Additional characters and classes
+9. Lv.3 effects for every character
+  * Classes
+    * Ranger: chance to release a barrage on attack
+    * Warrior: increased defense
+    * Mage: decreased enemy defense
+    * Nuker: increased area damage and size
+    * Rogue: chance to crit
+    * Healer: increased healing effectiveness
+    * Enchanter: increased damage
+    * Conjurer: increased summon damage and duration
+    * Psyker: increased damage and health based on number of active sets
+    * Trapper: release extra traps
+    * Forcer: increased knockback force
+    * Swarmer: increased critter health
+    * Voider: increased damage over time
+  * Characters
+    * Vagrant [psyker, ranger, warrior]: shoots a projectile - Lv.3: Champion - gains increased damage and attack speed based on number of active sets
+    * Swordsman [warrior]: deals AoE damage, deals extra damage for each unit hit - Lv.3: Cleave - damage is doubled
+    * Wizard [mage]: shoots a projectile that deals AoE damage - Lv.3: Magic Missile - the projectile chains 5 times, each dealing AoE damage on impact
+    * Archer [ranger]: shoots an arrow that pierces - Lv.3: Bounce Shot - the arrow ricochets on walls 3 times
+    * Scout [rogue]: throws a knife that chains 3 times - Lv.3: Replica - each chain grants +15% damage and the last chain splits
+    * Cleric [healer]: heals a unit when its health drops below half HP - Lv.3: Mass Heal - heals all units instead of one
+    * Outlaw [warrior, rogue]: throws a fan of 5 knives - Lv.3: Fatal Roulette - every 3rd attack throw a nova of 15 knives instead
+    * Blade [warrior, nuker]: throws multiple blades that deal AoE damage - Lv.3: Blade Resonance - deal additional damage based on number of enemies hit
+    * Elementor [mage, nuker]: deals AoE damage to a random target in a large area - Lv.3: Windfield - slows enemies hit
+    * Saboteur [rogue, conjurer, nuker]: calls saboteurs to seek targets and deal AoE damage - Lv.3: Chain Reaction - should an enemy die from a saboteur explosion, it also explodes
+    * Stormweaver [enchanter]: infuses all allied projectiles with chain lightning that deals extra damage - Lv.3: Lightning Spire - cast a spire of lightning periodically
+    * Sage [nuker]: shoots a slow moving projectile that pulls enemies in - Lv.3: Dimension Compression - when the projectile expires deal massive damage to all enemies under its influence
+    * Squire [warrior, enchanter]: increased damage and defense to all allies - Lv.3: Repair - you can reroll your item choice once every 3 levels, these opportunities stack if unused
+    * Cannoneer [ranger, nuker]: shoots a projectile that deals AoE damage - Lv.3: Cannon Barrage - showers the hit area in additional cannon shots that deal AoE damage
+    * Dual Gunner [ranger, rogue]: shoots two parallel projectiles - Lv.3: Gun Kata - every 5th attack shoots projectiles in a rapid succession for a duration, targetting all nearby enemies
+    * Hunter [ranger, conjurer]: shoots an arrow that summons a pet - Lv.3: Feral Pack - summons 3 pets
+    * Chronomancer [mage, enchanter]: increased attack speed to all allies - Lv.3: Quicken - enemies take DoT faster
+    * Spellblade [mage, rogue]: throws knives that spiral outwards and pierce - Lv.3: Spiralism - faster projectile speed and tighter turns
+    * Psykeeper [healer, psyker]: stores damage taken by all allies and redistributes it as healing - Lv.3: Crucio - also redistributes it as damage to all enemies
+    * Engineer [conjurer]: drops sentries that shoot bursts of projectils - Lv.3: Upgrade - every 3rd sentry dropped, upgrade all sentries temporarily, giving increased damage and attack speed
+    * Plague Doctor [nuker, voider]: creates an area that deals DoT - Lv.3: Pandemic - inflicts enemies with a contagion that deals additional DoT, if they die from it it passes to a nearby enemy
+    * Fisherman [trapper, warrior]: throws a net that entangles enemies and prevents them from moving - Lv.3: Electric Net - enemies caught take DoT
+    * Juggernaut [forcer, warrior]: creates a small area that deals AoE damage and pushes enemies away - Lv.3: Brutal Impact - enemies pushed away are instantly killed if they hit a wall
+    * Lich [mage]: launches a chain frost that chains 7 times, dealing damage and slowing enemies it hits - Lv.3: Piercing Frost - chain frost ignores enemy defenses
+    * Cryomancer [mage, voider]: nearby enemies take damage over time and have decreased movement speed - Lv.3: Frostbite - enemies killed by the cryomancer freeze nearby enemies, frozen enemies can't move and take increased damage
+    * Pyromancer [mage, nuker, voider]: nearby enemies take damage over time and deal decreased damage - Lv.3: Ignite - enemies killed by the pyromancer explode, dealing AoE damage
+    * Corruptor [ranger, swarmer]: spawn 3 small critters if the corruptor kills an enemy - Lv.3: Infestation - spawn 3 small critters if the corruptor hits an enemy
+    * Beastmaster [rogue, swarmer]: spawn 2 small critters if the beastmaster crits - Lv.3: Call of the Wild - spawn 2 small critters if the beastmaster gets hit
+    * Launcher [trapper, forcer]: creates a trap that launches enemies that trigger it - Lv.3: Kineticism - enemies launched that hit other enemies transfer their kinetic energy
+    * Spiker [trapper, rogue]: creates a trap that crits when triggered - Lv.3: Caltrops - slows enemies hit and deals DoT
+    * Assassin [rogue, voider]: throws a piercing knife that inflicts poison - Lv.3: Toxic Delivery - poison inflicted from crits deals more damage
+    * Host [conjurer, swarmer]: creates overlords that periodically spawn small critters - Lv.3: Invasion - increased critter spawn rate
+    * Carver [conjurer, healer]: carves a statue that periodically heals in an area - Lv.3: World Tree - carves a tree that heals in a bigger area and removes all buffs from enemies
+    * Bane [swarmer, voider]: spawn a small critter periodically that explodes and deals DoT - Lv.3: Baneling Swarm - spawn 4 banelings instead
+    * Psykino [mage, psyker, forcer]: quickly pulls enemies together and then releases them with a force - Lv.3: Magnetic Force - enemies pulled together are forced to collide with each other before being released
+    * Arbalester [ranger, forcer]: launches a massive arrow that pushes enemies back, ignoring knockback resistances - Lv.3: Ballista Sinistra - enemies hit by the arrow have massively decreased defense
+    * Pirate [warrior, forcer]: launches a hook that captures nearby enemies and pulls them towards you - Lv.3: Jolly Roger - place a flag that grants gold based on number of enemies killed under its effect
+    * Sapper [trapper, enchanter, healer]: creates a trap that steals health from enemies that trigger it and grants increased movement speed - Lv.3: when a sapper trap is triggered other nearby traps are triggered
+    * Priest [healer]: heals all units periodically - Lv.3: Divine Intervention - at the start of the round pick 3 units at random and grants them a buff that prevents them from dying once
+    * Burrower [trapper, swarmer]: creates a trap that contains 6 small critters which are released when triggered - Lv.3: Zergling Rush - triples the number of critters released
+    * Flagellant [psyker, enchanter]: periodically deals damage to self and grants a damage buff to all allies - Lv.3: Zealotry - deals damage to all allies instead and also grants a massive damage buff
+  * Sets
+    * Ranger = 8/8
+    * Warrior = 8/8
+    * Mage = 8/8
+    * Rogue = 8/8
+    * Nuker = 7/7
+    * Conjurer = 5/5
+    * Forcer = 5/5
+    * Voider = 5/5
+    * Psyker = 4/4
+    * Healer = 5/5
+    * Enchanter = 5/5
+    * Trapper = 5/5
+    * Swarmer = 5/5
+10. Items
+  * Ouroboros Technique R: rotating around yourself to the right makes every unit periodically release projectiles
+  * Ouroboros Technique L: rotating around yourself to the left grants +25% defense to all units
+  * Resonance: hitting walls has a chance of releasing projectiles
+  * Wall Rider: hitting walls grants a speed buff for a small duration
+  * Force Push: +25% knockback force
+  * Heavy Impact: if knockbacked enemies hit walls they take damage according to the knockback force
+  * Centipede: +20% movement speed
+  * Intimidation: enemies spawn with -20% max HP
+  * Crucio: taking damage shares 2x the amount of HP you lost across all enemies
+  * Amplify: all units that deal AoE damage gain +25% AoE damage
+  * Amplify X: +25% AoE damage if all your units only deal AoE damage (excluding supports)
+  * Ballista: all units that release projectiles and don't deal AoE damage gain +25% damage
+  * Ballista X: +25% damage if all your units only release projectiles and don't deal AoE damage (excluding supports)
+  * Point Blank: projectiles deal increased damage based on distance not travelled, +100% at 0 distance and -50% at max distance
+  * Longshot: projectiles deal increased damage based on distance travelled, -50% at 0 distance and +100% at max distance
+  * Chain Reaction: projectiles that chain gain 25% damage with each chain
+  * Call of the Void: +25% DoT damage
+  * ... more ideas will come later I'm sure, aiming for 30 total items
+11. Steam integration: achievements, etc
+12. Hovering over a party member should show which set they belong to and vice-versa
+13. Show a unit DPS list like Underlord's to the right side of the screen
+14. Warriors that deal AoE damage should deal extra damage based on number of enemies hit
+15. GO button is grayed out and thus doesn't say it's meant to be clicked on
+16. 28/20 enemies or 4/3 wave confuses players and makes them think the level goals are bugged
+17. Music for first 9-15 levels should be calm rather than upbeat
+18. Crash: Error: engine/game/hitfx.lua:46: attempt to index field 'parent', engine/game/hitfx.lua:46: in function 'use' love.js:9:40605, enemies.lua:56: in function 'on_collision_enter' love.js:9:40605
+19. Sage's pull force doesn't increase with unit level
+20. Cleric's healing amount doesn't increase with unit level
+21. Squire and Chronomancer's buffs don't increase with unit level

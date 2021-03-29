@@ -1,4 +1,4 @@
 #!/bin/bash
 
-cd E:/a327ex/SNKRX # change to the directory of the current project
+cd E:/a327ex/SNKRX
 engine/love/love.exe --console .

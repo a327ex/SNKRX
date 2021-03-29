@@ -1,4 +1,3 @@
-web = true
 require 'engine'
 require 'shared'
 require 'arena'
@@ -16,6 +15,8 @@ function init()
   input:bind('move_up', {'w', 'up'})
   input:bind('move_down', {'s', 'down'})
   input:bind('enter', {'space', 'return'})
+
+  music.volume = 0
 
   local s = {tags = {sfx}}
   ui_hover1 = Sound('bamboo_hit_by_lord.ogg', s)
@@ -409,13 +410,26 @@ function init()
   main = Main()
   main:add(BuyScreen'buy_screen')
   main:go_to('buy_screen', 0, {})
+  --[[
+  main:add(Arena'arena')
+  main:go_to('arena', 18, {
+    {character = 'scout', level = 3},
+    {character = 'engineer', level = 3},
+    {character = 'wizard', level = 3},
+    {character = 'swordsman', level = 3},
+    {character = 'outlaw', level = 3},
+    {character = 'archer', level = 3},
+    {character = 'cannoneer', level = 3},
+    {character = 'spellblade', level = 3},
+  })
+  ]]--
 end
 
 
 function update(dt)
   main:update(dt)
 
-  if input.s.pressed then
+  if input.n.pressed then
     if sfx.volume == 0.5 then
       sfx.volume = 0
     elseif sfx.volume == 0 then
@@ -430,6 +444,13 @@ function update(dt)
       music.volume = 0.5
     end
   end
+
+  if input.k.pressed then
+    print(steam.user.getPlayerSteamLevel())
+    print(steam.user.getSteamID())
+    print(steam.friends.getFriendPersonaName(steam.user.getSteamID()))
+    print(steam.utils.getAppID())
+  end
 end
 
 
@@ -442,8 +463,8 @@ end
 
 function love.run()
   return engine_run({
-    game_name = 'SNAKRX',
-    window_width = 480*2,
-    window_height = 270*2,
+    game_name = 'SNKRX',
+    window_width = 480*3,
+    window_height = 270*3,
   })
 end

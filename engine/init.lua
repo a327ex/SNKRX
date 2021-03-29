@@ -46,6 +46,7 @@ end
 function engine_run(config)
   if not web then
     love.filesystem.setIdentity(config.game_name)
+    steam.init()
 
     local _, _, flags = love.window.getMode()
     local window_width, window_height = love.window.getDesktopDimensions(flags.display)
@@ -112,6 +113,7 @@ function engine_run(config)
       for name, a, b, c, d, e, f in love.event.poll() do
         if name == "quit" then
           if not love.quit or not love.quit() then
+            steam.shutdown()
             return a or 0
           end
         elseif name == "keypressed" then input.keyboard_state[a] = true; input.last_key_pressed = a
@@ -128,6 +130,7 @@ function engine_run(config)
 
     if love.timer then dt = love.timer.step() end
 
+    steam.runCallbacks()
     accumulator = accumulator + dt
     while accumulator >= fixed_dt do
       frame = frame + 1

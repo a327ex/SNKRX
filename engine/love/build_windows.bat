@@ -1,4 +1,4 @@
-call "C:\Program Files\7-Zip\7z.exe" a -r %1.zip -w ..\..\ -xr!engine/love -xr!builds -xr!.git -xr!*.moon -xr!conf.lua
+call "C:\Program Files\7-Zip\7z.exe" a -r %1.zip -w ..\..\ -xr!engine/love -xr!builds -xr!steam -xr!.git -xr!*.moon -xr!conf.lua
 rename %1.zip %1.love
 copy /b "love.exe"+"%1.love" "%1.exe"
 del %1.love
