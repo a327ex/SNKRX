@@ -585,3 +585,173 @@ Whatever way it goes, here's my plan for what to do until release:
 19. Sage's pull force doesn't increase with unit level
 20. Cleric's healing amount doesn't increase with unit level
 21. Squire and Chronomancer's buffs don't increase with unit level
+
+## Formatted Class/Character Data
+
+The game reflects this data and not the other way around.
+
+### Character Classes and Descriptions
+
+| Character | Classes | Description | 
+| --- | --- | --- |
+| Vagrant | psyker, ranger, warrior | shoots a projectile |
+| Swordsman | warrior | deals AoE damage and deals extra damage for each unit hit |
+| Wizard | mage | shoots a projectile that deals AoE damage |
+| Archer | ranger | shoots an arrow that pierces |
+| Scout | rogue | throws a knife that chains 3 times |
+| Cleric | healer | heals a unit when its health drops below half HP |
+| Outlaw | warrior, rogue | throws a fan of 5 knives |
+| Blade | warrior, nuker | throws multiple blades that deal AoE damage |
+| Elementor | mage, nuker | deals AoE damage in a large area centered on a random target |
+| Saboteur | rogue, conjurer, nuker | calls saboteurs to seek targets and deal AoE damage |
+| Stormweaver | enchanter | infuses all allied projectiles with chain lightning that deals extra damage |
+| Sage | nuker | shoots a slow moving projectile that pulls enemies in |
+| Squire | warrior, enchanter | increased damage and defense to all allies |
+| Cannoneer | ranger, nuker | shoots a projectile that deals AoE damage |
+| Dual Gunner | ranger, rogue | shoots two parallel projectiles |
+| Hunter | ranger, conjurer | shoots an arrow that has a chance to summon a pet |
+| Chronomancer | mage, enchanter | increased attack speed to all allies |
+| Spellblade | mage, rogue | throws knives that spiral outwards and pierce |
+| Psykeeper | healer, psyker | stores damage taken by all allies and redistributes it as healing |
+| Engineer | conjurer | drops sentries that shoot bursts of projectiles |
+| Plague Doctor | nuker, voider | creates an area that deals DoT |
+| Fisherman | trapper, warrior | throws a net that entangles enemies and prevents them from moving |
+| Juggernaut | forcer, warrior | creates a small area that deals AoE damage and pushes enemies away |
+| Lich | mage | launches a chain frost that chains 7 times, dealing damage and slowing enemies it hits |
+| Cryomancer | mage, voider | nearby enemies take DoT and have decreased movement speed |
+| Pyromancer | mage, nuker, voider | nearby enemies take DoT and deal decreased damage |
+| Corruptor | ranger, swarmer | spawn 3 small critters if the corruptor kills an enemy |
+| Beastmaster | rogue, swarmer | spawn 2 small critters if the beastmaster crits |
+| Launcher | trapper, forcer | creates a trap that launches enemies that trigger it |
+| Spiker | trapper, rogue | creates a trap that crits when triggered |
+| Assassin | rogue, voider | throws a piercing knife that inflicts poison |
+| Host | conjurer, swarmer | creates overlords that periodically spawn small critters |
+| Carver | conjurer, healer | carves a statue that periodically heals in an area |
+| Bane | swarmer, voider | periodically spawn a small critter that explodes and deals DoT |
+| Psykino | mage, psyker, forcer | quickly pulls enemies together and then release them with a force |
+| Arbalester | ranger, forcer | launches a massive arrow that pushes enemies back, ignoring knockback resistances |
+| Pirate | warrior, forcer | launches a hook that captures nearby enemies and pulls them towards you |
+| Sapper | trapper, enchanter, healer | creates a trap that steals health from enemies and grants you increased movement speed |
+| Priest | healer | heals all units periodically |
+| Burrower | trapper, swarmer | creates a trap that contains 6 small critters |
+| Flagellant | psyker, enchanter | periodically deals damage to self and grants a damage buff to all allies |
+
+### Character Lv.3 Effects
+
+| Character | Lv.3 Effect Name | Lv.3 Effect Description |
+| --- | --- | --- |
+| Vagrant | Champion | gains increased damage and attack speed based on number of active sets |
+| Swordsman | Cleave | damage is doubled |
+| Wizard | Magic Missile | the projectile chains 5 times, each dealing AoE damge on impact |
+| Archer | Bounce Shot | the arrow ricochets off walls 3 times |
+| Scout | Replica | each chain grants increased damage and the last chain splits |
+| Cleric | Mass Heal | heals all units instead |
+| Outlaw | Fatal Roulette | every 3rd attack throws a nova of 15 knives instead |
+| Blade | Blade Resonance | deal additional damage based on number of enemies hit |
+| Elementor | Windfield | slows enemies hit |
+| Saboteur | Chain Reaction | if an enemy dies from a saboteur explosion it also explodes | 
+| Stormweaver | Lightning Spire | cast a spire of lightning periodically |
+| Sage | Dimension Compression | when the projectile expires deal damage to all enemies under its influence |
+| Squire | Repair | you can reroll your item choices once, these opportunities stack if unused |
+| Cannoneer | Cannon Barrage | showers the area in additional cannon shots that deal AoE damage |
+| Dual Gunner | Gun Kata | every 5th attack shoots projectiles in a rapid succession for a duration targetting all nearby enemies |
+| Hunter | Feral Pack | summons 3 pets |
+| Chronomancer | Quicken | enemies take DoT faster |
+| Spellblade | Spiralism | faster projectile speed and tighter turns |
+| Psykeeper | Crucio | also redistributes damage taken as damage to all enemies |
+| Engineer | Upgrade | every 3rd sentry dropped, upgrade all sentries, giving increased damage and attack speed |
+| Plague Doctor | Pandemic | inflicts enemies with a contagion that deals additional DoT, if they die from it it passes to a nearby enemy |
+| Fisherman | Electric Net | enemies caught take DoT |
+| Juggernaut | Brutal Impact | enemies pushed away are instantly killed if they hit a wall |
+| Lich | Piercing Frost | chain frost ignores enemy defenses |
+| Cryomancer | Frostbite | enemies killed by the cryomancer freeze nearby enemies, frozen enemies can't move and take increased damage |
+| Pyromancer | Ignite | enemies killed by the pyromancer explode, dealing AoE damage |
+| Corruptor | Infestation | spawn 3 small critters if the corruptor hits an enemy |
+| Beastmaster | Call of the Wild | spawn 2 small critters if the beastmaster gets hit |
+| Launcher | Kineticism | enemies launched that hit other enemies transfer their kinetic energy |
+| Spiker | Caltrops | slows enemies hit and deals DoT |
+| Assassin | Toxic Delivery | poison inflicted from crits deals more damage |
+| Host | Invasion | increased critter spawn rate |
+| Carver | World Tree | carves a tree that heals in a bigger are and removes all buffs from enemies |
+| Bane | Baneling Swarm | spawn 4 banelings |
+| Psykino | Magnetic Force | enemies pulled together are forced to collide with each other multiple times |
+| Arbalester | Ballista Sinistra | enemies hit by the arrow have massively decreased defense |
+| Pirate | Jolly Roger | place a flag that grants gold based on number of enemies killed under its effect |
+| Sapper | Chain Reaction | when a sapper trap is triggered other nearby traps are also triggered |
+| Priest | Divine Intervention | at the start of the round pick 3 units at random and grants them a buff that prevents them from dying once |
+| Burrower | Zergling Rush | triples the number of critters released |
+| Flagellant | Zealotry | deals damage to all allies instead for a massively increased damage buff |
+
+### Classes
+
+| Class | Set Color | Set Numbers | Total Units | Set Effect |
+| --- | --- | --- | --- | --- |
+| Ranger | green | 3/6 | 8 | +10/20% chance to release a barrage to allied rangers |
+| Warrior | yellow | 3/6 | 8 | +25/50 defense to allied warriors |
+| Mage | blue | 3/6 | 8 | -15/30 enemy defense |
+| Rogue | red | 3/6 | 8 | +10/20% chance to crit to allied rogues, dealing 4x damage |
+| Healer | green | 2/4 | 5 | +15/30% healing effectiveness |
+| Enchanter | blue/red | 2/4 | 5 | +15/25% damage to all allies |
+| Nuker | blue/purple | 3/6 | 7 | +15/25% area damage and size to allied nukers |
+| Conjurer | orange | 2/4 | 5 | +25/50% summon damage and duration |
+| Psyker | white | 2/4 | 4 | +5/10% damage and health per active set to allied psykers |
+| Trapper | orange | 2/4 | 5 | +1/2 extra traps released |
+| Forcer | yellow | 2/4 | 5 | +25/50% knockback force to all allies |
+| Swarmer | green/purple/orange | 2/4 | 5 | +1/3 health to critters |
+| Voider | purple | 2/4 | 5 | +15/25% DoT to allied voiders |
+
+### Class Stat Multipliers
+
+| Class     | HP   | DMG  | ASPD | Area DMG | Area Size | DoT DMG | DEF  | MVSPD |
+| ---       | ---  | ---  | ---  | ---      | ---       | ---     | ---  | ---   |
+| Ranger    | 1    | 1.2  | 1.5  | 1        | 1         | 1.1     | 0.9  | 1.2   |
+| Warrior   | 1.4  | 1.1  | 0.9  | 1        | 1         | 1       | 1.25 | 0.9   |
+| Mage      | 0.6  | 1.4  | 1    | 1.25     | 1.2       | 1.25    | 0.75 | 1     |
+| Rogue     | 0.8  | 1.3  | 1.1  | 0.6      | 0.6       | 1.4     | 0.8  | 1.4   |
+| Healer    | 1.2  | 1    | 0.5  | 1        | 1         | 1       | 1.20 | 1     |
+| Enchanter | 1.2  | 1    | 1    | 1        | 1         | 1       | 1.2  | 1.2   |
+| Nuker     | 0.9  | 1    | 0.75 | 1.5      | 1.3       | 0.75    | 1    | 1     |
+| Conjurer  | 1    | 1    | 1    | 1        | 1         | 1       | 1    | 1     |
+| Psyker    | 1.5  | 1    | 1    | 1        | 1         | 1       | 0.5  | 1     |
+| Trapper   | 1    | 1    | 1    | 1        | 1         | 1.1     | 0.75 | 1     |
+| Forcer    | 1.25 | 1.1  | 0.9  | 0.75     | 0.75      | 1       | 1.2  | 1     |
+| Swarmer   | 1.2  | 1    | 1.25 | 1        | 1         | 1       | 0.75 | 0.5   |
+| Voider    | 0.75 | 1.3  | 1    | 0.8      | 0.75      | 2       | 0.6  | 0.8   |
+
+# Node Refactor
+
+As I work on this project the inevitable conclusion that I came to in regards to the codebase is that everything can be conceptually simplified if every entity becomes a Node. Before I switch to execution mode for the next month to
+finish this game I should take this moment to expand on the refactor that I'll work on right after this project is done.
+
+A node is an object that has a parent and children. Nodes can be added to other nodes and it will form a tree, or a graph, since nodes can also link back to one another arbitrarily. Every object in the game is going to be turned
+into a node, which means that everything will start from a root node and be initialize/updated/drawn from there.
+
+```lua
+root = Node()
+root:append(Node():tag'player')
+```
+
+Here a root node is created and a child tagged with the unique identifier `player` attached to it. This means that in the node's `children` list, the first node will be this `player` node.
+Each tag should be unique so that we can refer to nodes in the graph by their names, and in this case we would refer to the child node by saying `root.player`.
+Similarly, `root.player.parent` automatically is set to refer back to `root`.
+
+This simple setup eliminates the need for different types of container objects, which right now in Anchor are `Group`, `State` and `GameObject`. All of those objects have disparate/repeated ways
+of handling updates/draws, when in reality they're all doing the same thing and that similarity should be conceptually reflected at the engine level.
+
+```lua
+root:append(Node(Timer, State):tag'arena':init(arena_init):update(arena_update):on_enter(arena_on_enter))
+```
+
+The above code shows the main way of adding functionality to a node. Instead of defining new classes for different behaviors I prefer doing everything locally, which means defining the entire class exactly
+where the instance is created. In this case, it means passing the expected behaviors as functions. In this case we have `init`, `update` and `on_enter` who expect functions to be defined and passed in, and
+for brevity's sake I just passed in the variables `arena_init`, `arena_update` and `arena_on_enter`. In a real use case these would be functions defined here directly instead of variables holding a function.
+
+A Node object expects `init` and `update` by default, but not `on_enter`. This is where the variables being passed in to the `Node()` call come in. The primary way of altering what functions a node expects
+to be passed to it will happen through mixins, which are what are being passed to the node at first.
+
+In this case, the `State` mixin changes the node such that it expects an `on_enter` function, which is called whenever the node's `active` variable becomes true (this variable is also controlled by the State mixin).
+This is useful for both high level state changes, such as changing between levels, but also for low level ones, such as changing between animation states.
+In this example we can see a real use case of how this node system ties everything conceptually together, as we get the same mixin code being used seamlessly for two completely different tasks.
+
+Mixins always will derive from Object and be created according to how classic says they should be. I'll only change it so that name collisions are detected and the program exits. This will be the main way to build
+objects and the last thing I need is random bugs because a function or variable from one mixin overwrote the other.
