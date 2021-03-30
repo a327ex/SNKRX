@@ -1,4 +1,4 @@
-1. Enemy spawn points should have some markers before enemy spawns, or should avoid spawning near the player at all
+* 1. Enemy spawn points should have some markers before enemy spawns, or should avoid spawning near the player at all
 2. Prevent spawning of units that cost 3 on first level
 3. Prevent spawning of units that don't attack on first level
 

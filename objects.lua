@@ -1,3 +1,42 @@
+SpawnMarker = Object:extend()
+SpawnMarker:implement(GameObject)
+function SpawnMarker:init(args)
+  self:init_game_object(args)
+  self.color = red[0]
+  self.r = random:float(0, 2*math.pi)
+  self.spring:pull(random:float(0.4, 0.6), 200, 10)
+  self.t:after(0.75, function() self.dead = true end)
+  self.m = 1
+  self.n = 0
+  pop3:play{pitch = 1, volume = 0.15}
+  self.t:every({0.11, 0.14}, function()
+    self.hidden = not self.hidden
+    self.m = self.m*random:float(0.84, 0.87)
+  end, nil, nil, 'blink')
+end
+
+
+function SpawnMarker:update(dt)
+  self:update_game_object(dt)
+  self.t:set_every_multiplier('blink', self.m)
+end
+
+
+function SpawnMarker:draw()
+  if self.hidden then return end
+  graphics.push(self.x, self.y, self.r, self.spring.x, self.spring.x)
+    graphics.push(self.x, self.y, self.r + math.pi/4)
+      graphics.rectangle(self.x, self.y, 24, 6, 4, 4, self.color)
+    graphics.pop()
+    graphics.push(self.x, self.y, self.r + 3*math.pi/4)
+      graphics.rectangle(self.x, self.y, 24, 6, 4, 4, self.color)
+    graphics.pop()
+  graphics.pop()
+end
+
+
+
+
 LightningLine = Object:extend()
 LightningLine:implement(GameObject)
 function LightningLine:init(args)

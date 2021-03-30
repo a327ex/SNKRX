@@ -755,3 +755,7 @@ In this example we can see a real use case of how this node system ties everythi
 
 Mixins always will derive from Object and be created according to how classic says they should be. I'll only change it so that name collisions are detected and the program exits. This will be the main way to build
 objects and the last thing I need is random bugs because a function or variable from one mixin overwrote the other.
+
+# Day 42 - 30/03/21
+
+Added a spawn marker so that it's easier for the player to tell where enemies are spawning and to give a chance to avoid unfair deaths. Slowly getting back into it now...
