@@ -1,25 +1,23 @@
 * 1. Enemy spawn points should have some markers before enemy spawns, or should avoid spawning near the player at all
-2. Prevent spawning of units that cost 3 on first level
-3. Prevent spawning of units that don't attack on first level
+* 2. Prevent spawning of units that cost 3 on first level
+* 3. Prevent spawning of units that don't attack on first level
 
-4. Rework position based units so that position in the snake doesn't matter
-  Chronomancer: +10%/20%/30% attack speed to all allies
-  Psykeeper: stores damage taken by all allies up to 20% max HP and redistributes it as healing
-  Squire: +5%/10%/15% damage and defense to all allies
+* 4. Rework position based units so that position in the snake doesn't matter
+  * Chronomancer: +10%/20%/30% attack speed to all allies
+  * Psykeeper: stores damage taken by all allies up to 50% its max HP and redistributes it as healing
+  * Squire: +5%/10%/15% damage and defense to all allies
 
-5. Stat details to each unit when hovering over it in the party section
+7. Enemy modifiers
+  * green - Grant nearby enemies a speed boost on death
+  * blue - Explode into projectiles on death
+  * orange - Charge up and headbutt towards the player at increased speed and damage
+  yellow - Resistance to knockback
+  white - Remain static and shoot projectiles
+  purple - Explodes into critters on death
 
 6. Mini boss every 3rd level
   This is just a special enemy with more HP and ability to buff nearby enemies with modifiers, no additional AI or attack patterns
   ... aiming for ~5 different modifier combos that the boss uses
-
-7. Enemy modifiers
-  Grant nearby enemies a speed boost on death
-  Grant nearby enemies a damage boost on death
-  Explode into projectiles on death
-  Charge up and headbutt towards the player at increased speed and damage
-  Resistance to knockback
-  ... aiming for about 8-10 of these
 
 8. Additional characters and classes
 9. Lv.3 effects for every character
@@ -114,6 +112,9 @@
   Call of the Void: +25% DoT damage
   ... more ideas will come later I'm sure, aiming for 30 total items
 
+5. Stat and description details to each unit when hovering over it in the party section
+6. Classes line on each unit's shop card, as well as on party section
+
 11. Steam integration: achievements, etc
 12. Hovering over a party member should show which set they belong to and vice-versa
 13. Show a unit DPS list like Underlord's to the right side of the screen
@@ -128,6 +129,7 @@
 
 Boss ideas
   Pretends to be dead, grants speed buffs to enemies after death, especially if the round has gone on for too long which means the player is surviving with 1 unit
+  Uses Psykino's tech to pull enemies together into a point and have that point move around and bounce on edges, thus having a ball of enemies moving around that occasionally explodes
 
 Map modifiers
   Wall spikes: walls damage you when you hit it

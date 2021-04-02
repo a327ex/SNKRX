@@ -31,6 +31,7 @@ function Arena:on_enter(from, level, units)
   self.main:disable_collision_between('enemy_projectile', 'enemy_projectile')
   self.main:enable_trigger_between('projectile', 'enemy')
   self.main:enable_trigger_between('enemy_projectile', 'player')
+  self.main:enable_trigger_between('player', 'enemy_projectile')
 
   self.damage_dealt = 0
   self.damage_taken = 0

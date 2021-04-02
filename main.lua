@@ -24,6 +24,7 @@ function init()
   ui_switch2 = Sound('Switch 3.ogg', s)
   ui_transition1 = Sound('Wind Bolt 8.ogg', s)
   ui_transition2 = Sound('Wind Bolt 12.ogg', s)
+  headbutt1 = Sound('Wind Bolt 14.ogg', s)
   error1 = Sound('Error 2.ogg', s)
   coins1 = Sound('Coins 7.ogg', s)
   coins2 = Sound('Coins 8.ogg', s)
@@ -58,6 +59,7 @@ function init()
   confirm1 = Sound('80921__justinbw__buttonchime02up.ogg', s)
   heal1 = Sound('Buff 3.ogg', s)
   spawn1 = Sound('Buff 13.ogg', s)
+  buff1 = Sound('Buff 14.ogg', s)
   spawn_mark1 = Sound('Bonus 2.ogg', s)
   spawn_mark2 = Sound('Bonus.ogg', s)
   alert1 = Sound('Click.ogg', s)
@@ -282,6 +284,8 @@ function init()
     [3] = {'blade', 'outlaw', 'elementor', 'psykeeper', 'spellblade', 'engineer'},
   }
 
+  non_attacking_characters = {'cleric', 'stormweaver', 'squire', 'chronomancer', 'sage'}
+
   character_tiers = {
     ['vagrant'] = 1,
     ['swordsman'] = 1,
@@ -352,7 +356,7 @@ function init()
   }
 
   level_to_tier_weights = {
-    [1] = {85, 10, 5},
+    [1] = {90, 10, 0},
     [2] = {80, 15, 5},
     [3] = {75, 20, 5},
     [4] = {70, 20, 10},

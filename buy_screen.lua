@@ -31,14 +31,14 @@ function BuyScreen:on_enter(from, level, units)
   self.units = units
   camera.x, camera.y = gw/2, gh/2
 
-  steam.friends.setRichPresence('steam_display', '#StatusFull')
-  steam.friends.setRichPresence('text', 'Shop - Level ' .. self.level)
-
   if self.level == 0 then
     cascade_instance = cascade:play{volume = 0.5, loop = true}
     self.level = 1
     self.first_screen = true
   end
+
+  steam.friends.setRichPresence('steam_display', '#StatusFull')
+  steam.friends.setRichPresence('text', 'Shop - Level ' .. self.level)
 
   self.main = Group()
   self.effects = Group()
@@ -153,9 +153,19 @@ end
 function BuyScreen:set_cards(level, dont_spawn_effect)
   if self.cards then for i = 1, 3 do if self.cards[i] then self.cards[i]:die(dont_spawn_effect) end end end
   self.cards = {}
-  self.cards[1] = ShopCard{group = self.main, x = 60, y = 75, w = 80, h = 90, unit = random:table(tier_to_characters[random:weighted_pick(unpack(level_to_tier_weights[level or self.level]))]), parent = self, i = 1}
-  self.cards[2] = ShopCard{group = self.main, x = 140, y = 75, w = 80, h = 90, unit = random:table(tier_to_characters[random:weighted_pick(unpack(level_to_tier_weights[level or self.level]))]), parent = self, i = 2}
-  self.cards[3] = ShopCard{group = self.main, x = 220, y = 75, w = 80, h = 90, unit = random:table(tier_to_characters[random:weighted_pick(unpack(level_to_tier_weights[level or self.level]))]), parent = self, i = 3}
+  local all_units = {}
+  local unit_1
+  local unit_2
+  local unit_3
+  repeat 
+    unit_1 = random:table(tier_to_characters[random:weighted_pick(unpack(level_to_tier_weights[level or self.level]))])
+    unit_2 = random:table(tier_to_characters[random:weighted_pick(unpack(level_to_tier_weights[level or self.level]))])
+    unit_3 = random:table(tier_to_characters[random:weighted_pick(unpack(level_to_tier_weights[level or self.level]))])
+    all_units = {unit_1, unit_2, unit_3}
+  until not table.all(all_units, function(v) return table.any(non_attacking_characters, function(u) return v == u end) end)
+  self.cards[1] = ShopCard{group = self.main, x = 60, y = 75, w = 80, h = 90, unit = unit_1, parent = self, i = 1}
+  self.cards[2] = ShopCard{group = self.main, x = 140, y = 75, w = 80, h = 90, unit = unit_2, parent = self, i = 2}
+  self.cards[3] = ShopCard{group = self.main, x = 220, y = 75, w = 80, h = 90, unit = unit_3, parent = self, i = 3}
 end
 
 

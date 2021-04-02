@@ -48,11 +48,11 @@ function LightningLine:init(args)
   self.max_offset = 8
   self:generate()
   self.t:tween(0.1, self, {w = 1}, math.linear, function() self.dead = true end)
-  self.color = blue[0]
+  self.color = args.color or blue[0]
   HitCircle{group = main.current.effects, x = self.src.x, y = self.src.y, rs = 6, color = fg[0], duration = 0.1}
-  for i = 1, 2 do HitParticle{group = main.current.effects, x = self.src.x, y = self.src.y, color = blue[0]} end
+  for i = 1, 2 do HitParticle{group = main.current.effects, x = self.src.x, y = self.src.y, color = self.color} end
   HitCircle{group = main.current.effects, x = self.dst.x, y = self.dst.y, rs = 6, color = fg[0], duration = 0.1}
-  HitParticle{group = main.current.effects, x = self.dst.x, y = self.dst.y, color = blue[0]}
+  HitParticle{group = main.current.effects, x = self.dst.x, y = self.dst.y, color = self.color}
 end
 
 
@@ -214,20 +214,6 @@ function Unit:show_infused(n)
 end
 
 
-function Unit:show_squire(n)
-  self.effect_bar.hidden = false
-  self.effect_bar.color = purple[0]
-  self.t:after(n or 4, function() self.effect_bar.hidden = false end, 'effect_bar')
-end
-
-
-function Unit:show_chronomancer(n)
-  self.effect_bar.hidden = false
-  self.effect_bar.color = purple[0]
-  self.t:after(n or 2, function() self.effect_bar.hidden = false end, 'effect_bar')
-end
-
-
 function Unit:calculate_damage(dmg)
   if self.def >= 0 then dmg = dmg*(100/(100+self.def))
   else dmg = dmg*(2 - 100/(100+self.def)) end
@@ -300,6 +286,7 @@ function Unit:calculate_stats(first_run)
   self.def = (self.base_def + self.class_def_a + self.buff_def_a)*self.class_def_m*self.buff_def_m
 
   for _, class in ipairs(self.classes) do self.class_mvspd_m = self.class_mvspd_m*class_stat_multipliers[class].mvspd end
+  self.max_v = (self.base_mvspd + self.class_mvspd_a + self.buff_mvspd_a)*self.class_mvspd_m*self.buff_mvspd_m
   self.v = (self.base_mvspd + self.class_mvspd_a + self.buff_mvspd_a)*self.class_mvspd_m*self.buff_mvspd_m
 end
 

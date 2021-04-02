@@ -46,7 +46,7 @@ function Physics:steering_update(dt)
       self.side = self.heading:perpendicular()
     end
     self.apply_force_f:set(0, 0)
-    self.apply_impulse_f:set(0, 0)
+    -- self.apply_impulse_f:set(0, 0)
   end
 end
 

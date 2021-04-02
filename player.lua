@@ -81,13 +81,10 @@ function Player:init(args)
 
     self.last_heal_time = love.timer.getTime()
     self.t:every(2, function()
-      local followers
-      local leader = (self.leader and self) or self.parent
-      if self.leader then followers = self.followers else followers = self.parent.followers end
-      if (table.any(followers, function(v) return v.hp <= 0.5*v.max_hp end) or (leader.hp <= 0.5*leader.max_hp)) and love.timer.getTime() - self.last_heal_time > 6 then
+      local all_units = self:get_all_units()
+      if table.any(all_units, function(v) return v.hp <= 0.5*v.max_hp end) and love.timer.getTime() - self.last_heal_time > 6 then
         self.last_heal_time = love.timer.getTime()
-        if self.leader then self:heal(0.1*self.max_hp*(self.heal_effect_m or 1)) else self.parent:heal(0.1*self.parent.max_hp*(self.heal_effect_m or 1)) end
-        for _, f in ipairs(followers) do f:heal(0.1*f.max_hp*(self.heal_effect_m or 1)) end
+        for _, unit in ipairs(all_units) do unit:heal(0.1*unit.max_hp*(self.heal_effect_m or 1)) end
         heal1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       end
     end)
@@ -183,21 +180,6 @@ function Player:init(args)
     self.visual_shape = 'rectangle'
     self.classes = character_classes.squire
 
-    self.t:every(8, function()
-      self.applying_buff = true
-      local followers
-      local leader = (self.leader and self) or self.parent
-      if self.leader then followers = self.followers else followers = self.parent.followers end
-      local next_character = followers[(self.follower_index or 0) + 1]
-      local previous_character = followers[(self.follower_index or 0) - 1]
-      if next_character then next_character:squire_buff(8) end
-      if previous_character then previous_character:squire_buff(8) end
-      self.t:after(8, function() self.applying_buff = false end, 'squire_buff_apply')
-      heal1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-      if next_character then next_character:heal(0.1*next_character.max_hp*(self.heal_effect_m or 1)) end
-      if previous_character then previous_character:heal(0.1*previous_character.max_hp*(self.heal_effect_m or 1)) end
-    end)
-
   elseif self.character == 'cannoneer' then
     self.color = character_colors.cannoneer
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
@@ -246,16 +228,6 @@ function Player:init(args)
     self.visual_shape = 'rectangle'
     self.classes = character_classes.chronomancer
 
-    self.t:every(2, function()
-      local followers
-      local leader = (self.leader and self) or self.parent
-      if self.leader then followers = self.followers else followers = self.parent.followers end
-      local next_character = followers[(self.follower_index or 0) + 1]
-      local previous_character = followers[(self.follower_index or 0) - 1]
-      if next_character then next_character:chronomancer_buff(2) end
-      if previous_character then previous_character:chronomancer_buff(2) end
-    end)
-
   elseif self.character == 'spellblade' then
     self.color = character_colors.spellblade
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
@@ -271,21 +243,6 @@ function Player:init(args)
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
     self.classes = character_classes.psykeeper
-
-    self.psykeeper_heal = 0
-    self.t:every(8, function()
-      local followers
-      local leader = (self.leader and self) or self.parent
-      if self.leader then followers = self.followers else followers = self.parent.followers end
-
-      if self.psykeeper_heal > 0 then
-        local heal_amount = math.floor(self.psykeeper_heal/(#followers+1))
-        if self.leader then self:heal(heal_amount*(self.heal_effect_m or 1)) else self.parent:heal(heal_amount*(self.heal_effect_m or 1)) end
-        for _, f in ipairs(followers) do f:heal(heal_amount*(self.heal_effect_m or 1)) end
-        heal1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-        self.psykeeper_heal = 0
-      end
-    end)
 
   elseif self.character == 'engineer' then
     self.color = character_colors.engineer
@@ -317,39 +274,16 @@ function Player:update(dt)
   self:update_game_object(dt)
 
   if self.character == 'squire' then
-    local followers
-    local leader = (self.leader and self) or self.parent
-    if self.leader then followers = self.followers else followers = self.parent.followers end
-    local next_character = followers[(self.follower_index or 0) + 1]
-    local previous_character = followers[(self.follower_index or 0) - 1]
-    if self.applying_buff then
-      if next_character then
-        next_character.squire_dmg_a = 10
-        next_character.squire_def_a = 25
-      end
-      if previous_character then
-        previous_character.squire_dmg_a = 10
-        previous_character.squire_def_a = 25
-      end
-    else
-      if next_character then
-        next_character.squire_dmg_a = 0
-        next_character.squire_def_a = 0
-      end
-      if previous_character then
-        previous_character.squire_dmg_a = 0
-        previous_character.squire_def_a = 0
-      end
+    local all_units = self:get_all_units()
+    for _, unit in ipairs(all_units) do
+      unit.squire_dmg_m = 1 + 0.05*self.level
+      unit.squire_def_m = 1 + 0.05*self.level
     end
-
   elseif self.character == 'chronomancer' then
-    local followers
-    local leader = (self.leader and self) or self.parent
-    if self.leader then followers = self.followers else followers = self.parent.followers end
-    local next_character = followers[(self.follower_index or 0) + 1]
-    local previous_character = followers[(self.follower_index or 0) - 1]
-    if next_character then next_character.chronomancer_aspd_m = 1.25 end
-    if previous_character then previous_character.chronomancer_aspd_m = 1.25 end
+    local all_units = self:get_all_units()
+    for _, unit in ipairs(all_units) do
+      unit.chronomancer_aspd_m = 1 + 0.10*self.level
+    end
   end
 
   if table.any(self.classes, function(v) return v == 'ranger' end) then
@@ -391,10 +325,10 @@ function Player:update(dt)
     else self.enchanter_dmg_m = 1 end
   end
 
-  self.buff_dmg_a = (self.squire_dmg_a or 0)
-  self.buff_def_a = (self.squire_def_a or 0) + (self.warrior_def_a or 0)
+  self.buff_def_a = (self.warrior_def_a or 0)
   self.buff_aspd_m = (self.chronomancer_aspd_m or 1)
-  self.buff_dmg_m = (main.current.enchanter_dmg_m or 1)
+  self.buff_dmg_m = (self.squire_dmg_m or 1)*(main.current.enchanter_dmg_m or 1)
+  self.buff_def_m = (self.squire_def_m or 1)
   self.buff_area_size_m = (self.nuker_area_size_m or 1)
   self.buff_area_dmg_m = (self.nuker_area_dmg_m or 1)
   self:calculate_stats()
@@ -492,7 +426,9 @@ function Player:on_collision_enter(other, contact)
     other:push(random:float(25, 35), self:angle_to_object(other))
     if self.character == 'vagrant' or self.character == 'psykeeper' then other:hit(2*self.dmg)
     else other:hit(self.dmg) end
-    self:hit(other.dmg)
+    if other.headbutting then
+      self:hit((4 + math.floor(other.level/3))*other.dmg)
+    else self:hit(other.dmg) end
     HitCircle{group = main.current.effects, x = x, y = y, rs = 6, color = fg[0], duration = 0.1}
     for i = 1, 2 do HitParticle{group = main.current.effects, x = x, y = y, color = self.color} end
     for i = 1, 2 do HitParticle{group = main.current.effects, x = x, y = y, color = other.color} end
@@ -511,7 +447,18 @@ function Player:hit(damage)
   camera:shake(4, 0.5)
   main.current.damage_taken = main.current.damage_taken + actual_damage
 
-  if self.character == 'psykeeper' then self.psykeeper_heal = self.psykeeper_heal + actual_damage end
+  local psykeeper = self:get_unit'psykeeper'
+  if psykeeper then
+    psykeeper.stored_heal = psykeeper.stored_heal + actual_damage
+    if psykeeper.stored_heal > (0.1*self.level*psykeeper.max_hp) then
+      local all_units = self:get_all_units()
+      for _, unit in ipairs(all_units) do
+        unit:heal(psykeeper.stored_heal*(self.heal_effect_m or 1))
+      end
+      psykeeper.stored_heal = 0
+      heal1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    end
+  end
 
   if self.hp <= 0 then
     hit4:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -542,18 +489,23 @@ end
 
 function Player:chain_infuse(duration)
   self.chain_infused = true
-  self:show_infused(duration or 2)
   self.t:after(duration or 2, function() self.chain_infused = false end, 'chain_infuse')
 end
 
 
-function Player:squire_buff(duration)
-  self:show_squire(duration or 2)
+function Player:get_all_units()
+  local followers
+  local leader = (self.leader and self) or self.parent
+  if self.leader then followers = self.followers else followers = self.parent.followers end
+  return {leader, unpack(followers)}
 end
 
 
-function Player:chronomancer_buff(duration)
-  self:show_chronomancer(duration or 2)
+function Player:get_unit(character)
+  local all_units = self:get_all_units()
+  for _, unit in ipairs(all_units) do
+    if unit.character == character then return unit end
+  end
 end
 
 
