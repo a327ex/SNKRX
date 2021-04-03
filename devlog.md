@@ -760,7 +760,7 @@ objects and the last thing I need is random bugs because a function or variable 
 
 Added a spawn marker so that it's easier for the player to tell where enemies are spawning and to give a chance to avoid unfair deaths. Slowly getting back into it now...
 
-# Day 44 - 01/04/21
+# Day 43-44 - 31/03/21-01/04/21
 
 * Added a spawn marker before enemies spawn to help with avoiding enemies spawning on top of the player
 * Prevent spawning of units that cost 3 or more gold on the first level
@@ -773,3 +773,10 @@ Added a spawn marker so that it's easier for the player to tell where enemies ar
   * green - Grant nearby enemies a speed boost on death
   * blue - Explode into projectiles on death
   * orange - Charge up and headbutt towards the player at increased speed and damage
+
+# Day 45 - 02/04/21
+
+* Added more enemy modifiers
+  * yellow - Resistance to knockback and increased HP
+  * white - Remain static and shoot projectiles
+  * purple - Explodes into critters on death

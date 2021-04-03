@@ -13,12 +13,16 @@ function Seeker:init(args)
   self:calculate_stats(true)
   self:set_as_steerable(self.v, 2000, 4*math.pi, 4)
 
+  self.spawner = random:bool(25)
+
+  --[[
   if random:bool(35) then
     local n = random:int(1, 3)
     self.speed_booster = n == 1
     self.exploder = n == 2
     self.headbutter = n == 3
   end
+  ]]--
 
   if self.speed_booster then
     self.color = green[0]:clone()
@@ -46,8 +50,25 @@ function Seeker:init(args)
     end)
   elseif self.tank then
     self.color = yellow[0]:clone()
+    self.buff_hp_m = 1.5 + (0.05*self.level)
+    self:calculate_stats()
+    self.hp = self.max_hp
   elseif self.shooter then
-    self.color = white[0]:clone()
+    self.color = fg[0]:clone()
+    self.t:after({2, 4}, function()
+      self.shooting = true
+      self.t:every({3, 5}, function()
+        for i = 1, 3 do
+          self.t:after((1 - self.level*0.01)*0.15*(i-1), function()
+            shoot1:play{pitch = random:float(0.95, 1.05), volume = 0.1}
+            self.hfx:use('hit', 0.25, 200, 10, 0.1)
+            local r = self.r
+            HitCircle{group = main.current.effects, x = self.x + 0.8*self.shape.w*math.cos(r), y = self.y + 0.8*self.shape.w*math.sin(r), rs = 6}
+            EnemyProjectile{group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), color = fg[0], r = r, v = 150 + 5*self.level, dmg = 2*self.dmg}
+          end)
+        end
+      end, nil, nil, 'shooter')
+  end)
   elseif self.spawner then
     self.color = purple[0]:clone()
   end
@@ -71,6 +92,10 @@ function Seeker:update(dt)
   end
   self:calculate_stats()
 
+  if self.shooter then
+    self.t:set_every_multiplier('shooter', (1 - self.level*0.02))
+  end
+
   if self.being_pushed then
     local v = math.length(self:get_velocity())
     if v < 25 then
@@ -80,7 +105,7 @@ function Seeker:update(dt)
       self:set_angular_damping(0)
     end
   else
-    if self.headbutt_charging then
+    if self.headbutt_charging or self.shooting then
       self:set_damping(10)
       self:rotate_towards_object(main.current.player, 0.5)
     elseif not self.headbutting then
@@ -135,7 +160,7 @@ function Seeker:on_collision_enter(other, contact)
 end
 
 
-function Seeker:hit(damage)
+function Seeker:hit(damage, projectile)
   if self.dead then return end
   self.hfx:use('hit', 0.25, 200, 10)
   self:show_hp()
@@ -170,11 +195,99 @@ function Seeker:hit(damage)
         end
       end)
     end
+
+    if self.spawner then
+      critter1:play{pitch = random:float(0.95, 1.05), volume = 0.35}
+      trigger:after(0.01, function()
+        for i = 1, random:int(3, 6) do
+          EnemyCritter{group = main.current.main, x = self.x, y = self.y, color = purple[0], r = random:float(0, 2*math.pi), v = 5 + 0.1*self.level, dmg = self.dmg, projectile = projectile}
+        end
+      end)
+    end
   end
 end
 
 
 function Seeker:push(f, r)
+  local n = 1
+  if self.tank then n = 0.4 - 0.01*self.level end
+  self.push_force = n*f
+  self.being_pushed = true
+  self.steering_enabled = false
+  self:apply_impulse(n*f*math.cos(r), n*f*math.sin(r))
+  self:apply_angular_impulse(random:table{random:float(-12*math.pi, -4*math.pi), random:float(4*math.pi, 12*math.pi)})
+  self:set_damping(1.5*(1/n))
+  self:set_angular_damping(1.5*(1/n))
+end
+
+
+function Seeker:speed_boost(duration)
+  self.speed_boosting = love.timer.getTime()
+  self.t:after(duration, function() self.speed_boosting = false end, 'speed_boost')
+end
+
+
+
+
+EnemyCritter = Object:extend()
+EnemyCritter:implement(GameObject)
+EnemyCritter:implement(Physics)
+EnemyCritter:implement(Unit)
+function EnemyCritter:init(args)
+  self:init_game_object(args)
+  self:init_unit()
+  self:set_as_rectangle(7, 4, 'dynamic', 'enemy_projectile')
+  self:set_restitution(0.5)
+
+  self.classes = {'enemy_critter'}
+  self:calculate_stats(true)
+  self:set_as_steerable(self.v, 400, math.pi, 1)
+  self:push(args.v, args.r)
+  self.invulnerable_to = args.projectile
+  self.t:after(0.5, function() self.invulnerable_to = nil end)
+end
+
+
+function EnemyCritter:update(dt)
+  self:update_game_object(dt)
+
+  if self.being_pushed then
+    local v = math.length(self:get_velocity())
+    if v < 50 then
+      self.being_pushed = false
+      self.steering_enabled = true
+      self:set_damping(0)
+      self:set_angular_damping(0)
+    end
+  else
+    local player = main.current.player
+    self:seek_point(player.x, player.y)
+    self:wander(50, 200, 50)
+    self:steering_separate(8, main.current.enemies)
+    self:rotate_towards_velocity(1)
+  end
+  self.r = self:get_angle()
+end
+
+
+function EnemyCritter:draw()
+  graphics.push(self.x, self.y, self.r, self.hfx.hit.x, self.hfx.hit.x)
+    graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 2, 2, self.hfx.hit.f and fg[0] or self.color)
+  graphics.pop()
+end
+
+
+function EnemyCritter:hit(damage, projectile)
+  if self.dead then return end
+  if projectile == self.invulnerable_to then return end
+  self.hfx:use('hit', 0.25, 200, 10)
+  self.hp = self.hp - damage
+  self:show_hp()
+  if self.hp <= 0 then self:die() end
+end
+
+
+function EnemyCritter:push(f, r)
   self.push_force = f
   self.being_pushed = true
   self.steering_enabled = false
@@ -185,9 +298,40 @@ function Seeker:push(f, r)
 end
 
 
-function Seeker:speed_boost(duration)
-  self.speed_boosting = love.timer.getTime()
-  self.t:after(duration, function() self.speed_boosting = false end, 'speed_boost')
+function EnemyCritter:die(x, y, r, n)
+  if self.dead then return end
+  x = x or self.x
+  y = y or self.y
+  n = n or random:int(2, 3)
+  for i = 1, n do HitParticle{group = main.current.effects, x = x, y = y, r = random:float(0, 2*math.pi), color = self.color} end
+  HitCircle{group = main.current.effects, x = x, y = y}:scale_down()
+  self.dead = true
+  _G[random:table{'enemy_die1', 'enemy_die2'}]:play{pitch = random:float(0.9, 1.1), volume = 0.5}
+  critter2:play{pitch = random:float(0.95, 1.05), volume = 0.2}
+end
+
+
+function EnemyCritter:on_collision_enter(other, contact)
+  local x, y = contact:getPositions()
+  local nx, ny = contact:getNormal()
+  local r = 0
+  if nx == 0 and ny == -1 then r = -math.pi/2
+  elseif nx == 0 and ny == 1 then r = math.pi/2
+  elseif nx == -1 and ny == 0 then r = math.pi
+  else r = 0 end
+
+  if other:is(Wall) then
+    self.hfx:use('hit', 0.15, 200, 10, 0.1)
+    self:bounce(contact:getNormal())
+  end
+end
+
+
+function EnemyCritter:on_trigger_enter(other, contact)
+  if other:is(Player) then
+    self:die(self.x, self.y, nil, random:int(2, 3))
+    other:hit(self.dmg)
+  end
 end
 
 

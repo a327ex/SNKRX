@@ -236,6 +236,12 @@ function Unit:calculate_stats(first_run)
     self.base_hp = 100*math.pow(2, self.level-1)
     self.base_dmg = 10*math.pow(2, self.level-1)
     self.base_mvspd = 75
+  elseif self:is(EnemyCritter) then
+    local x = self.level
+    local y = {0, 1, 4, 2, 3, 6, 3, 5, 9, 4, 6, 11, 7, 9, 15, 8, 10, 18, 9, 11, 21, 14, 15, 24, 25}
+    self.base_hp = 25 + 30*y[x]
+    self.base_dmg = 10 + 3*y[x]
+    self.base_mvspd = 60 + 3*y[x]
   end
   self.base_aspd_m = 1
   self.base_area_dmg_m = 1

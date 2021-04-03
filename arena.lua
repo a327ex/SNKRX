@@ -36,7 +36,7 @@ function Arena:on_enter(from, level, units)
   self.damage_dealt = 0
   self.damage_taken = 0
   self.main_slow_amount = 1
-  self.enemies = {Seeker}
+  self.enemies = {Seeker, EnemyCritter}
   self.color = self.color or fg[0]
 
   -- Spawn solids and player

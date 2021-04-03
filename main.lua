@@ -25,6 +25,8 @@ function init()
   ui_transition1 = Sound('Wind Bolt 8.ogg', s)
   ui_transition2 = Sound('Wind Bolt 12.ogg', s)
   headbutt1 = Sound('Wind Bolt 14.ogg', s)
+  critter1 = Sound('Critters eating 2.ogg', s)
+  critter2 = Sound('Crickets Chirping 4.ogg', s)
   error1 = Sound('Error 2.ogg', s)
   coins1 = Sound('Coins 7.ogg', s)
   coins2 = Sound('Coins 8.ogg', s)
@@ -261,6 +263,7 @@ function init()
     ['enchanter'] = {hp = 1.2, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1.2, mvspd = 1.2},
     ['psy'] = {hp = 1.5, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 0.5, mvspd = 1},
     ['seeker'] = {hp = 0.5, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 0.3},
+    ['enemy_critter'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 0.5},
     ['saboteur'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 1.4},
   }
 

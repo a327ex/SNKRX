@@ -823,7 +823,7 @@ function Projectile:on_trigger_enter(other, contact)
       hit3:play{pitch = random:float(0.95, 1.05), volume = 0.35}
     end
 
-    other:hit(self.dmg)
+    other:hit(self.dmg, self)
 
     if self.character == 'hunter' and random:bool(40) then
       trigger:after(0.01, function()
