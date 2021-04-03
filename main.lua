@@ -27,6 +27,7 @@ function init()
   headbutt1 = Sound('Wind Bolt 14.ogg', s)
   critter1 = Sound('Critters eating 2.ogg', s)
   critter2 = Sound('Crickets Chirping 4.ogg', s)
+  force1 = Sound('Magical Impact 18.ogg', s)
   error1 = Sound('Error 2.ogg', s)
   coins1 = Sound('Coins 7.ogg', s)
   coins2 = Sound('Coins 8.ogg', s)
@@ -263,6 +264,7 @@ function init()
     ['enchanter'] = {hp = 1.2, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1.2, mvspd = 1.2},
     ['psy'] = {hp = 1.5, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 0.5, mvspd = 1},
     ['seeker'] = {hp = 0.5, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 0.3},
+    ['mini_boss'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 0.3},
     ['enemy_critter'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 0.5},
     ['saboteur'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 1.4},
   }
@@ -414,6 +416,14 @@ function init()
     [25] = {100, 100},
   }
 
+  boss_by_level = {
+    [6] = 'speed_booster',
+    [12] = 'exploder',
+    [18] = 'swarmer',
+    [24] = 'bouncer',
+    [25] = 'orbitter',
+  }
+
   gold = 2
 
   main = Main()
@@ -452,13 +462,6 @@ function update(dt)
     elseif music.volume == 0 then
       music.volume = 0.5
     end
-  end
-
-  if input.k.pressed then
-    print(steam.user.getPlayerSteamLevel())
-    print(steam.user.getSteamID())
-    print(steam.friends.getFriendPersonaName(steam.user.getSteamID()))
-    print(steam.utils.getAppID())
   end
 end
 

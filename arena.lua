@@ -73,7 +73,37 @@ function Arena:on_enter(from, level, units)
     self.level_1000_text = Text2{group = self.ui, x = gw/2, y = gh/2, lines = {{text = '[fg, wavy_mid]SNKRX', font = fat_font, alignment = 'center'}}}
     -- self.level_1000_text2 = Text2{group = self.ui, x = gw/2, y = gh/2 + 64, lines = {{text = '[fg, wavy_mid]SNKRX', font = pixul_font, alignment = 'center'}}}
     -- Wall{group = self.main, vertices = math.to_rectangle_vertices(gw/2 - 0.45*self.level_1000_text.w, gh/2 - 0.3*self.level_1000_text.h, gw/2 + 0.45*self.level_1000_text.w, gh/2 - 3), snkrx = true, color = bg[-1]}
-
+  
+  elseif self.level == 6 or self.level == 12 or self.level == 18 or self.level == 24 or self.level == 25 then
+    self.boss_level = true
+    self.start_time = 3
+    self.t:after(1, function()
+      self.t:every(1, function()
+        if self.start_time > 1 then alert1:play{volume = 0.5} end
+        self.start_time = self.start_time - 1
+        self.hfx:use('condition1', 0.25, 200, 10)
+      end, 3, function()
+        alert1:play{pitch = 1.2, volume = 0.5}
+        camera:shake(4, 0.25)
+        SpawnEffect{group = self.effects, x = gw/2, y = gh/2 - 48}
+        SpawnEffect{group = self.effects, x = gw/2, y = gh/2, action = function(x, y)
+          spawn1:play{pitch = random:float(0.8, 1.2), volume = 0.15}
+          self.boss = Seeker{group = self.main, x = x, y = y, character = 'seeker', level = self.level, boss = boss_by_level[self.level]}
+        end}
+        self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 1 end, function()
+          self.hfx:use('condition1', 0.25, 200, 10)
+          self.hfx:pull('condition2', 0.0625)
+          self.t:after(0.5, function()
+            local spawn_type = random:table{'left', 'middle', 'right'}
+            local spawn_points = {left = {x = self.x1 + 32, y = gh/2}, middle = {x = gw/2, y = gh/2}, right = {x = self.x2 - 32, y = gh/2}}
+            local p = spawn_points[spawn_type]
+            SpawnMarker{group = self.effects, x = p.x, y = p.y}
+            self.t:after(0.75, function() self:spawn_n_enemies(p, nil, 8 + math.floor(self.level/2)) end)
+          end)
+        end)
+      end)
+      self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 0 end, function() self.can_quit = true end)
+    end)
   else
     -- Set win condition and enemy spawns
     self.win_condition = random:table{'time', 'enemy_kill', 'wave'}
@@ -254,6 +284,13 @@ end
 
 
 function Arena:update(dt)
+  if input.k.pressed then
+    SpawnEffect{group = self.effects, x = gw/2, y = gh/2, action = function(x, y)
+      spawn1:play{pitch = random:float(0.8, 1.2), volume = 0.15}
+      Seeker{group = self.main, x = x, y = y, character = 'seeker', level = self.level, boss = 'forcer'}
+    end}
+  end
+
   if input.escape.pressed and not self.transitioning then
     if not self.paused then
       trigger:tween(0.25, _G, {slow_amount = 0}, math.linear, function()
@@ -319,11 +356,6 @@ function Arena:update(dt)
 
   self:update_game_object(dt*slow_amount)
   -- cascade_instance.pitch = math.clamp(slow_amount*self.main_slow_amount, 0.05, 1)
-
-  if input.k.pressed then
-    local enemies = self.main:get_objects_by_classes(self.enemies)
-    for _, enemy in ipairs(enemies) do enemy:hit(1000000000000) end
-  end
 
   if self.enchanter_level == 1 then self.enchanter_dmg_m = 1.25
   else self.enchanter_dmg_m = 1 end
@@ -413,33 +445,41 @@ function Arena:draw()
     graphics.pop()
   end
 
-  if self.win_condition then
-    if self.win_condition == 'time' then
-      if self.start_time <= 0 then
-        graphics.push(self.x2 - 66, self.y1 - 9, 0, self.hfx.condition2.x, self.hfx.condition2.x)
-          graphics.print_centered('time left:', fat_font, self.x2 - 66, self.y1 - 9, 0, 0.6, 0.6, nil, nil, fg[0])
-        graphics.pop()
-        graphics.push(self.x2 - 18 + fat_font:get_text_width(tostring(self.time_left))/2, self.y1 - 8, 0, self.hfx.condition1.x, self.hfx.condition1.x)
-          graphics.print(tostring(self.time_left), fat_font, self.x2 - 18, self.y1 - 8, 0, 0.75, 0.75, nil, fat_font.h/2, self.hfx.condition1.f and fg[0] or yellow[0])
-        graphics.pop()
-      end
-    elseif self.win_condition == 'wave' then
-      if self.start_time <= 0 then
-        graphics.push(self.x2 - 50, self.y1 - 10, 0, self.hfx.condition2.x, self.hfx.condition2.x)
-          graphics.print_centered('wave:', fat_font, self.x2 - 50, self.y1 - 10, 0, 0.6, 0.6, nil, nil, fg[0])
-        graphics.pop()
-        graphics.push(self.x2 - 25 + fat_font:get_text_width(self.wave .. '/' .. self.max_waves)/2, self.y1 - 8, 0, self.hfx.condition1.x, self.hfx.condition1.x)
-          graphics.print(self.wave .. '/' .. self.max_waves, fat_font, self.x2 - 25, self.y1 - 8, 0, 0.75, 0.75, nil, fat_font.h/2, self.hfx.condition1.f and fg[0] or yellow[0])
-        graphics.pop()
-      end
-    elseif self.win_condition == 'enemy_kill' then
-      if self.start_time <= 0 then
-        graphics.push(self.x2 - 106, self.y1 - 10, 0, self.hfx.condition2.x, self.hfx.condition2.x)
-          graphics.print_centered('enemies killed:', fat_font, self.x2 - 106, self.y1 - 10, 0, 0.6, 0.6, nil, nil, fg[0])
-        graphics.pop()
-        graphics.push(self.x2 - 41 + fat_font:get_text_width(self.enemies_killed .. '/' .. self.enemies_to_kill)/2, self.y1 - 8, 0, self.hfx.condition1.x, self.hfx.condition1.x)
-          graphics.print(self.enemies_killed .. '/' .. self.enemies_to_kill, fat_font, self.x2 - 41, self.y1 - 8, 0, 0.75, 0.75, nil, fat_font.h/2, self.hfx.condition1.f and fg[0] or yellow[0])
-        graphics.pop()
+  if self.boss_level then
+    if self.start_time <= 0 then
+      graphics.push(self.x2 - 106, self.y1 - 10, 0, self.hfx.condition2.x, self.hfx.condition2.x)
+        graphics.print_centered('kill the elite', fat_font, self.x2 - 106, self.y1 - 10, 0, 0.6, 0.6, nil, nil, fg[0])
+      graphics.pop()
+    end
+  else
+    if self.win_condition then
+      if self.win_condition == 'time' then
+        if self.start_time <= 0 then
+          graphics.push(self.x2 - 66, self.y1 - 9, 0, self.hfx.condition2.x, self.hfx.condition2.x)
+            graphics.print_centered('time left:', fat_font, self.x2 - 66, self.y1 - 9, 0, 0.6, 0.6, nil, nil, fg[0])
+          graphics.pop()
+          graphics.push(self.x2 - 18 + fat_font:get_text_width(tostring(self.time_left))/2, self.y1 - 8, 0, self.hfx.condition1.x, self.hfx.condition1.x)
+            graphics.print(tostring(self.time_left), fat_font, self.x2 - 18, self.y1 - 8, 0, 0.75, 0.75, nil, fat_font.h/2, self.hfx.condition1.f and fg[0] or yellow[0])
+          graphics.pop()
+        end
+      elseif self.win_condition == 'wave' then
+        if self.start_time <= 0 then
+          graphics.push(self.x2 - 50, self.y1 - 10, 0, self.hfx.condition2.x, self.hfx.condition2.x)
+            graphics.print_centered('wave:', fat_font, self.x2 - 50, self.y1 - 10, 0, 0.6, 0.6, nil, nil, fg[0])
+          graphics.pop()
+          graphics.push(self.x2 - 25 + fat_font:get_text_width(self.wave .. '/' .. self.max_waves)/2, self.y1 - 8, 0, self.hfx.condition1.x, self.hfx.condition1.x)
+            graphics.print(self.wave .. '/' .. self.max_waves, fat_font, self.x2 - 25, self.y1 - 8, 0, 0.75, 0.75, nil, fat_font.h/2, self.hfx.condition1.f and fg[0] or yellow[0])
+          graphics.pop()
+        end
+      elseif self.win_condition == 'enemy_kill' then
+        if self.start_time <= 0 then
+          graphics.push(self.x2 - 106, self.y1 - 10, 0, self.hfx.condition2.x, self.hfx.condition2.x)
+            graphics.print_centered('enemies killed:', fat_font, self.x2 - 106, self.y1 - 10, 0, 0.6, 0.6, nil, nil, fg[0])
+          graphics.pop()
+          graphics.push(self.x2 - 41 + fat_font:get_text_width(self.enemies_killed .. '/' .. self.enemies_to_kill)/2, self.y1 - 8, 0, self.hfx.condition1.x, self.hfx.condition1.x)
+            graphics.print(self.enemies_killed .. '/' .. self.enemies_to_kill, fat_font, self.x2 - 41, self.y1 - 8, 0, 0.75, 0.75, nil, fat_font.h/2, self.hfx.condition1.f and fg[0] or yellow[0])
+          graphics.pop()
+        end
       end
     end
   end

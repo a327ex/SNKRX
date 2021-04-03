@@ -780,3 +780,9 @@ Added a spawn marker so that it's easier for the player to tell where enemies ar
   * yellow - Resistance to knockback and increased HP
   * white - Remain static and shoot projectiles
   * purple - Explodes into critters on death
+
+# Day 46 - 03/04/21
+
+* Adding mini bosses
+  * Speed Booster - grants speed boost to nearby enemies
+  * Forcer - pulls enemies together into a point and pushes them out

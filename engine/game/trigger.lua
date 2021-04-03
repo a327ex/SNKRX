@@ -231,8 +231,9 @@ function Trigger:update(dt)
       trigger.last_condition = condition
 
     elseif trigger.type == "during" then
-      trigger.action()
+      trigger.action(dt)
       if trigger.timer > trigger.delay then
+        trigger.after()
         self.triggers[tag] = nil
       end
 

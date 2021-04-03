@@ -5,15 +5,80 @@ Seeker:implement(Unit)
 function Seeker:init(args)
   self:init_game_object(args)
   self:init_unit()
-  self:set_as_rectangle(14, 6, 'dynamic', 'enemy')
-  self:set_restitution(0.5)
 
-  self.color = red[0]:clone()
-  self.classes = {'seeker'}
-  self:calculate_stats(true)
-  self:set_as_steerable(self.v, 2000, 4*math.pi, 4)
+  if self.boss then
+    self:set_as_rectangle(18, 7, 'dynamic', 'enemy')
+    self:set_restitution(0.5)
+    self.classes = {'mini_boss'}
+    self:calculate_stats(true)
+    self:set_as_steerable(self.v, 1000, 2*math.pi, 2)
 
-  self.spawner = random:bool(25)
+    if self.boss == 'speed_booster' then
+      self.color = green[0]:clone()
+      self.t:every(5, function()
+        local enemies = self:get_objects_in_shape(Circle(self.x, self.y, 128), main.current.enemies)
+        if #enemies > 0 then
+          buff1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+          HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = green[0], duration = 0.1}
+          for _, enemy in ipairs(enemies) do
+            LightningLine{group = main.current.effects, src = self, dst = enemy, color = green[0]}
+            enemy:speed_boost(3 + self.level*0.1)
+          end
+        end
+      end)
+
+    elseif self.boss == 'forcer' then
+      self.color = yellow[0]:clone()
+      self.t:every(6, function()
+        local enemies = main.current.main:get_objects_by_classes(main.current.enemies)
+        local x, y = 0, 0
+        if #enemies > 0 then
+          for _, enemy in ipairs(enemies) do
+            x = x + enemy.x
+            y = y + enemy.y
+          end
+          x = x/#enemies
+          y = y/#enemies
+        else
+          x, y = player.x, player.y
+        end
+        self.px, self.py = x + random:float(-16, 16), y + random:float(-16, 16)
+        self.pull_sensor = Circle(self.px, self.py, 160)
+        self.prs = 0
+        self.t:tween(0.05, self, {prs = 4}, math.cubic_in_out, function() self.spring:pull(0.15) end)
+        self.t:after(2 - 0.05*7, function()
+          self.t:every_immediate(0.05, function() self.phidden = not self.phidden end, 7)
+        end)
+        self.color_transparent = Color(yellow[0].r, yellow[0].g, yellow[0].b, 0.08)
+        self.t:every(0.08, function() HitParticle{group = main.current.effects, x = self.px, y = self.py, color = yellow[0]} end, math.floor(2/0.08))
+        self.vr = 0
+        self.dvr = random:float(-math.pi/4, math.pi/4)
+
+        force1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+        self.t:during(2, function(dt)
+          local enemies = self:get_objects_in_shape(self.pull_sensor, main.current.enemies)
+          for _, enemy in ipairs(enemies) do
+            enemy:apply_steering_force(math.remap(enemy:distance_to_point(self.px, self.py), 0, 160, 400, 200), enemy:angle_to_point(self.px, self.py))
+          end
+          self.vr = self.vr + self.dvr*dt
+        end, function()
+          wizard1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+          local enemies = self:get_objects_in_shape(self.pull_sensor, main.current.enemies)
+          for _, enemy in ipairs(enemies) do
+            enemy:push(random:float(40, 80), enemy:angle_to_object(main.current.player), true)
+          end
+          self.px, self.py = nil, nil
+        end)
+      end)
+    end
+  else
+    self:set_as_rectangle(14, 6, 'dynamic', 'enemy')
+    self:set_restitution(0.5)
+    self.color = red[0]:clone()
+    self.classes = {'seeker'}
+    self:calculate_stats(true)
+    self:set_as_steerable(self.v, 2000, 4*math.pi, 4)
+  end
 
   --[[
   if random:bool(35) then
@@ -99,6 +164,7 @@ function Seeker:update(dt)
   if self.being_pushed then
     local v = math.length(self:get_velocity())
     if v < 25 then
+      if self.push_invulnerable then self.push_invulnerable = false end
       self.being_pushed = false
       self.steering_enabled = true
       self:set_damping(0)
@@ -110,8 +176,25 @@ function Seeker:update(dt)
       self:rotate_towards_object(main.current.player, 0.5)
     elseif not self.headbutting then
       local player = main.current.player
-      self:seek_point(player.x, player.y)
-      self:wander(50, 100, 20)
+      if self.boss then
+        local enemies = main.current.main:get_objects_by_classes(main.current.enemies)
+        local x, y = 0, 0
+        if #enemies > 0 then
+          for _, enemy in ipairs(enemies) do
+            x = x + enemy.x
+            y = y + enemy.y
+          end
+          x = x/#enemies
+          y = y/#enemies
+        else
+          x, y = player.x, player.y
+        end
+        self:seek_point(x, y)
+        self:wander(10, 250, 3)
+      else
+        self:seek_point(player.x, player.y)
+        self:wander(50, 100, 20)
+      end
       self:steering_separate(16, main.current.enemies)
       self:rotate_towards_velocity(0.5)
     end
@@ -124,8 +207,22 @@ end
 
 function Seeker:draw()
   graphics.push(self.x, self.y, self.r, self.hfx.hit.x, self.hfx.hit.x)
-    graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 3, 3, self.hfx.hit.f and fg[0] or self.color)
+    if self.boss then
+      graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 4, 4, self.hfx.hit.f and fg[0] or self.color)
+    else
+      graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 3, 3, self.hfx.hit.f and fg[0] or self.color)
+    end
   graphics.pop()
+
+  if self.px and self.py then
+    if self.phidden then return end
+    graphics.push(self.px, self.py, self.vr, self.spring.x, self.spring.x)
+      graphics.circle(self.px, self.py, self.prs + random:float(-1, 1), yellow[0])
+      graphics.circle(self.px, self.py, self.pull_sensor.rs, self.color_transparent)
+      local lw = math.remap(self.pull_sensor.rs, 32, 256, 2, 4)
+      for i = 1, 4 do graphics.arc('open', self.px, self.py, self.pull_sensor.rs, (i-1)*math.pi/2 + math.pi/4 - math.pi/8, (i-1)*math.pi/2 + math.pi/4 + math.pi/8, yellow[0], lw) end
+    graphics.pop()
+  end
 end
 
 
@@ -163,6 +260,7 @@ end
 function Seeker:hit(damage, projectile)
   if self.dead then return end
   self.hfx:use('hit', 0.25, 200, 10)
+  if self.push_invulnerable then return end
   self:show_hp()
   
   local actual_damage = self:calculate_damage(damage)
@@ -208,9 +306,11 @@ function Seeker:hit(damage, projectile)
 end
 
 
-function Seeker:push(f, r)
+function Seeker:push(f, r, push_invulnerable)
   local n = 1
   if self.tank then n = 0.4 - 0.01*self.level end
+  if self.boss then n = 0.1 end
+  self.push_invulnerable = push_invulnerable
   self.push_force = n*f
   self.being_pushed = true
   self.steering_enabled = false
