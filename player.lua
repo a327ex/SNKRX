@@ -874,8 +874,8 @@ function Area:init(args)
       enemy:hit(self.dmg)
     end
     HitCircle{group = main.current.effects, x = enemy.x, y = enemy.y, rs = 6, color = fg[0], duration = 0.1}
-    for i = 1, 2 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = self.color} end
-    for i = 1, 2 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = enemy.color} end
+    for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = self.color} end
+    for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = enemy.color} end
     if self.character == 'wizard' or self.character == 'elementor' then
       magic_hit1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     elseif self.character == 'swordsman' then

@@ -70,7 +70,86 @@ function Seeker:init(args)
           self.px, self.py = nil, nil
         end)
       end)
+
+    elseif self.boss == 'swarmer' then
+      self.color = purple[0]:clone()
+      self.t:every(4, function()
+        local enemies = table.select(main.current.main:get_objects_by_classes(main.current.enemies), function(v) return v.id ~= self.id and v:is(Seeker) end)
+        local enemy = random:table(enemies)
+        if enemy then
+          HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = purple[0], duration = 0.1}
+          LightningLine{group = main.current.effects, src = self, dst = enemy, color = purple[0]}
+          enemy:hit(10000)
+          critter1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+          critter3:play{pitch = random:float(0.95, 1.05), volume = 0.6}
+          for i = 1, random:int(4, 6) do EnemyCritter{group = main.current.main, x = enemy.x, y = enemy.y, color = purple[0], r = random:float(0, 2*math.pi), v = 5 + 0.1*enemy.level, dmg = enemy.dmg} end
+        end
+      end)
+
+    elseif self.boss == 'exploder' then
+      self.color = blue[0]:clone()
+      self.t:every(4, function()
+        local enemies = table.select(main.current.main:get_objects_by_classes(main.current.enemies), function(v) return v.id ~= self.id and v:is(Seeker) end)
+        local enemy = random:table(enemies)
+        if enemy then
+          HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = blue[0], duration = 0.1}
+          LightningLine{group = main.current.effects, src = self, dst = enemy, color = blue[0]}
+          enemy:hit(10000)
+          shoot1:play{pitch = random:float(0.95, 1.05), volume = 0.4}
+          for i = 1, 16 do EnemyProjectile{group = main.current.main, x = enemy.x, y = enemy.y, color = blue[0], r = (i-1)*math.pi/8, v = 150 + 5*enemy.level, dmg = 2*enemy.dmg} end
+        end
+      end)
+
+    elseif self.boss == 'randomizer' then
+      self.t:every_immediate(0.07, function() self.color = _G[random:table{'green', 'purple', 'yellow', 'blue'}][0]:clone() end)
+      self.t:every(2, function()
+        local attack = random:table{'explode', 'swarm', 'force', 'speed_boost'}
+        if attack == 'explode' then
+          local enemies = self:get_objects_in_shape(Circle(self.x, self.y, 128), {Seeker})
+          local enemy = random:table(enemies)
+          if enemy then
+            HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = blue[0], duration = 0.1}
+            LightningLine{group = main.current.effects, src = self, dst = enemy, color = blue[0]}
+            enemy:hit(10000)
+            shoot1:play{pitch = random:float(0.95, 1.05), volume = 0.4}
+            for i = 1, 16 do EnemyProjectile{group = main.current.main, x = enemy.x, y = enemy.y, color = blue[0], r = (i-1)*math.pi/8, v = 150 + 5*enemy.level, dmg = 2*enemy.dmg} end
+          end
+        elseif attack == 'swarm' then
+          local enemies = self:get_objects_in_shape(Circle(self.x, self.y, 128), {Seeker})
+          local enemy = random:table(enemies)
+          if enemy then
+            HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = purple[0], duration = 0.1}
+            LightningLine{group = main.current.effects, src = self, dst = enemy, color = purple[0]}
+            enemy:hit(10000)
+            critter1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+            critter3:play{pitch = random:float(0.95, 1.05), volume = 0.6}
+            for i = 1, random:int(4, 6) do EnemyCritter{group = main.current.main, x = enemy.x, y = enemy.y, color = purple[0], r = random:float(0, 2*math.pi), v = 5 + 0.1*enemy.level, dmg = enemy.dmg} end
+          end
+        elseif attack == 'force' then
+          local enemies = self:get_objects_in_shape(Circle(self.x, self.y, 64), {Seeker})
+          if #enemies > 0 then
+            wizard1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+            HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = yellow[0], duration = 0.1}
+            for _, enemy in ipairs(enemies) do
+              LightningLine{group = main.current.effects, src = self, dst = enemy, color = yellow[0]}
+              enemy:push(random:float(40, 80), enemy:angle_to_object(main.current.player), true)
+            end
+          end
+
+        elseif attack == 'speed_boost' then
+          local enemies = self:get_objects_in_shape(Circle(self.x, self.y, 128), {Seeker})
+          if #enemies > 0 then
+            buff1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+            HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = green[0], duration = 0.1}
+            for _, enemy in ipairs(enemies) do
+              LightningLine{group = main.current.effects, src = self, dst = enemy, color = green[0]}
+              enemy:speed_boost(3 + self.level*0.1)
+            end
+          end
+        end
+      end)
     end
+
   else
     self:set_as_rectangle(14, 6, 'dynamic', 'enemy')
     self:set_restitution(0.5)
@@ -344,7 +423,7 @@ function EnemyCritter:init(args)
   self:set_as_steerable(self.v, 400, math.pi, 1)
   self:push(args.v, args.r)
   self.invulnerable_to = args.projectile
-  self.t:after(0.5, function() self.invulnerable_to = nil end)
+  self.t:after(0.5, function() self.invulnerable_to = false end)
 end
 
 
@@ -379,6 +458,7 @@ end
 
 function EnemyCritter:hit(damage, projectile)
   if self.dead then return end
+  -- print(projectile == self.invulnerable_to)
   if projectile == self.invulnerable_to then return end
   self.hfx:use('hit', 0.25, 200, 10)
   self.hp = self.hp - damage

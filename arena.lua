@@ -287,7 +287,7 @@ function Arena:update(dt)
   if input.k.pressed then
     SpawnEffect{group = self.effects, x = gw/2, y = gh/2, action = function(x, y)
       spawn1:play{pitch = random:float(0.8, 1.2), volume = 0.15}
-      Seeker{group = self.main, x = x, y = y, character = 'seeker', level = self.level, boss = 'forcer'}
+      Seeker{group = self.main, x = x, y = y, character = 'seeker', level = self.level, boss = 'randomizer'}
     end}
   end
 

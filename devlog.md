@@ -785,4 +785,7 @@ Added a spawn marker so that it's easier for the player to tell where enemies ar
 
 * Adding mini bosses
   * Speed Booster - grants speed boost to nearby enemies
+  * Swarmer - explodes enemies into a swarm of critters
+  * Exploder - explodes enemies into projectiles
   * Forcer - pulls enemies together into a point and pushes them out
+  * Randomizer - randomly does the 4 ones above
