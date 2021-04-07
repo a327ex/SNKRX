@@ -3,9 +3,9 @@
 * 3. Prevent spawning of units that don't attack on first level
 
 * 4. Rework position based units so that position in the snake doesn't matter
-  * Chronomancer: +10%/20%/30% attack speed to all allies
+  * Chronomancer: +20% attack speed to all allies
   * Psykeeper: stores damage taken by all allies up to 50% its max HP and redistributes it as healing
-  * Squire: +5%/10%/15% damage and defense to all allies
+  * Squire: +10% damage and defense to all allies
 
 * 7. Enemy modifiers
   * green - Grant nearby enemies a speed boost on death
@@ -15,7 +15,7 @@
   * white - Remain static and shoot projectiles
   * purple - Explodes into critters on death
 
-6. Mini boss every 3rd level
+* 6. Mini boss every 3rd level
   * Speed Booster - grants speed boost to nearby enemies
   * Swarmer - explodes enemies into a swarm of critters
   * Exploder - explodes enemies into projectiles
@@ -126,14 +126,10 @@
 15. GO button is grayed out and thus doesn't say it's meant to be clicked on
 16. 28/20 enemies or 4/3 wave confuses players and makes them think the level goals are bugged
 17. Music for first 9-15 levels should be calm rather than upbeat
-18. Crash: Error: engine/game/hitfx.lua:46: attempt to index field 'parent', engine/game/hitfx.lua:46: in function 'use' love.js:9:40605, enemies.lua:56: in function 'on_collision_enter' love.js:9:40605
-19. Sage's pull force doesn't increase with unit level
-20. Cleric's healing amount doesn't increase with unit level
-21. Squire and Chronomancer's buffs don't increase with unit level
-
-Boss ideas
-  Pretends to be dead, grants speed buffs to enemies after death, especially if the round has gone on for too long which means the player is surviving with 1 unit
-  Uses Psykino's tech to pull enemies together into a point and have that point move around and bounce on edges, thus having a ball of enemies moving around that occasionally explodes
+* 18. Crash: Error: engine/game/hitfx.lua:46: attempt to index field 'parent', engine/game/hitfx.lua:46: in function 'use' love.js:9:40605, enemies.lua:56: in function 'on_collision_enter' love.js:9:40605
+* 19. Sage's pull force doesn't increase with unit level
+* 20. Cleric's healing amount doesn't increase with unit level
+* 21. Squire and Chronomancer's buffs don't increase with unit level
 
 Engine improvements for after SNKRX release
   Node refactor: described partly somewhere in the devlog

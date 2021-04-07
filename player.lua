@@ -276,13 +276,13 @@ function Player:update(dt)
   if self.character == 'squire' then
     local all_units = self:get_all_units()
     for _, unit in ipairs(all_units) do
-      unit.squire_dmg_m = 1 + 0.05*self.level
-      unit.squire_def_m = 1 + 0.05*self.level
+      unit.squire_dmg_m = 1.1
+      unit.squire_def_m = 1.1
     end
   elseif self.character == 'chronomancer' then
     local all_units = self:get_all_units()
     for _, unit in ipairs(all_units) do
-      unit.chronomancer_aspd_m = 1 + 0.10*self.level
+      unit.chronomancer_aspd_m = 1.2
     end
   end
 
@@ -834,13 +834,23 @@ function Projectile:on_trigger_enter(other, contact)
     end
 
     if self.parent.chain_infused then
+      --[[
+      local units = self.parent:get_all_units()
+      local stormweaver_level = 0
+      for _, unit in ipairs(units) do
+        if unit.character == 'stormweaver' then
+          stormweaver_level = unit.level
+          break
+        end
+      end
+      ]]--
       local src = other
       for i = 1, 2 do
         _G[random:table{'spark1', 'spark2', 'spark3'}]:play{pitch = random:float(0.9, 1.1), volume = 0.3}
         table.insert(self.infused_enemies_hit, src)
         local dst = src:get_random_object_in_shape(Circle(src.x, src.y, 64), main.current.enemies, self.infused_enemies_hit)
         if dst then
-          dst:hit(self.dmg/(i+1))
+          dst:hit(0.2*self.dmg)
           LightningLine{group = main.current.effects, src = src, dst = dst}
           src = dst 
         end

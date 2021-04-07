@@ -588,8 +588,6 @@ Whatever way it goes, here's my plan for what to do until release:
 
 ## Formatted Class/Character Data
 
-The game reflects this data and not the other way around.
-
 ### Character Classes and Descriptions
 
 | Character | Classes | Description | 
@@ -789,3 +787,12 @@ Added a spawn marker so that it's easier for the player to tell where enemies ar
   * Exploder - explodes enemies into projectiles
   * Forcer - pulls enemies together into a point and pushes them out
   * Randomizer - randomly does the 4 ones above
+
+# Day 47-48 - 04-05/04/21
+
+Nothing.
+
+# Day 49 - 06/04/21
+
+Updated all tables with text descriptions as well as stats and overall gameplay numbers for all classes and characters.
+Tomorrow I start implementing the remaining 4 classes and 20 characters as well as revising the existing ones.

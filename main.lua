@@ -98,7 +98,11 @@ function init()
   nuker = Image('nuker')
   conjurer = Image('conjurer')
   enchanter = Image('enchanter')
-  psy = Image('psy')
+  psyker = Image('psyker')
+  trapper = Image('trapper')
+  forcer = Image('forcer')
+  swarmer = Image('swarmer')
+  voider = Image('voider')
 
   class_colors = {
     ['warrior'] = yellow[0],
@@ -106,10 +110,14 @@ function init()
     ['healer'] = green[0],
     ['conjurer'] = orange[0],
     ['mage'] = blue[0],
-    ['nuker'] = purple[0],
+    ['nuker'] = red[0],
     ['rogue'] = red[0],
     ['enchanter'] = blue[0],
-    ['psy'] = fg[0],
+    ['psyker'] = fg[0],
+    ['trapper'] = orange[0],
+    ['forcer'] = yellow[0],
+    ['swarmer'] = purple[0],
+    ['voider'] = purple[0],
   }
 
   class_color_strings = {
@@ -118,10 +126,14 @@ function init()
     ['healer'] = 'green',
     ['conjurer'] = 'orange',
     ['mage'] = 'blue',
-    ['nuker'] = 'purple',
+    ['nuker'] = 'red',
     ['rogue'] = 'red',
     ['enchanter'] = 'blue',
-    ['psy'] = 'fg',
+    ['psyker'] = 'fg',
+    ['trapper'] = 'orange',
+    ['forcer'] = 'yellow',
+    ['swarmer'] = 'purple',
+    ['voider'] = 'purple',
   }
 
   character_colors = {
@@ -136,7 +148,7 @@ function init()
     ['elementor'] = blue[0],
     ['saboteur'] = orange[0],
     ['stormweaver'] = blue[0],
-    ['sage'] = purple[0],
+    ['sage'] = red[0],
     ['squire'] = yellow[0],
     ['cannoneer'] = orange[0],
     ['dual_gunner'] = green[0],
@@ -145,6 +157,27 @@ function init()
     ['spellblade'] = blue[0],
     ['psykeeper'] = fg[0],
     ['engineer'] = orange[0],
+    ['plague_doctor'] = purple[0],
+    ['fisherman'] = yellow[0],
+    ['juggernaut'] = yellow[0],
+    ['lich'] = blue[0],
+    ['cryomancer'] = blue[0],
+    ['pyromancer'] = red[0],
+    ['corruptor'] = purple[0],
+    ['beastmaster'] = red[0],
+    ['launcher'] = orange[0],
+    ['spiker'] = orange[0],
+    ['assassin'] = purple[0],
+    ['host'] = purple[0],
+    ['carver'] = green[0],
+    ['bane'] = purple[0],
+    ['psykino'] = fg[0],
+    ['arbalester'] = green[0],
+    ['barbarian'] = yellow[0],
+    ['sapper'] = blue[0],
+    ['priest'] = green[0],
+    ['burrower'] = orange[0],
+    ['flagellant'] = red[0],
   }
 
   character_color_strings = {
@@ -159,7 +192,7 @@ function init()
     ['elementor'] = 'blue',
     ['saboteur'] = 'orange',
     ['stormweaver'] = 'blue',
-    ['sage'] = 'purple',
+    ['sage'] = 'red',
     ['squire'] = 'yellow',
     ['cannoneer'] = 'orange',
     ['dual_gunner'] = 'green',
@@ -168,10 +201,31 @@ function init()
     ['spellblade'] = 'blue',
     ['psykeeper'] = 'fg',
     ['engineer'] = 'orange',
+    ['plague_doctor'] = 'purple',
+    ['fisherman'] = 'yellow',
+    ['juggernaut'] = 'yellow',
+    ['lich'] = 'blue',
+    ['cryomancer'] = 'blue',
+    ['pyromancer'] = 'red',
+    ['corruptor'] = 'purple',
+    ['beastmaster'] = 'red',
+    ['launcher'] = 'orange',
+    ['spiker'] = 'orange',
+    ['assassin'] = 'purple',
+    ['host'] = 'purple',
+    ['carver'] = 'green',
+    ['bane'] = 'purple',
+    ['psykino'] = 'fg',
+    ['arbalester'] = 'green',
+    ['barbarian'] = 'yellow',
+    ['sapper'] = 'blue',
+    ['priest'] = 'green',
+    ['burrower'] = 'orange',
+    ['flagellant'] = 'red',
   }
 
   character_classes = {
-    ['vagrant'] = {'ranger', 'warrior', 'psy'},
+    ['vagrant'] = {'psyker', 'ranger', 'warrior'},
     ['swordsman'] = {'warrior'},
     ['wizard'] = {'mage'},
     ['archer'] = {'ranger'},
@@ -182,45 +236,90 @@ function init()
     ['elementor'] = {'mage', 'nuker'},
     ['saboteur'] = {'rogue', 'conjurer', 'nuker'},
     ['stormweaver'] = {'enchanter'},
-    ['sage'] = {'mage', 'nuker'},
-    ['squire'] = {'warrior', 'healer', 'enchanter'},
+    ['sage'] = {'nuker'},
+    ['squire'] = {'warrior', 'enchanter'},
     ['cannoneer'] = {'ranger', 'nuker'},
     ['dual_gunner'] = {'ranger', 'rogue'},
-    ['hunter'] = {'ranger', 'conjurer'},
+    ['hunter'] = {'ranger', 'conjurer', 'forcer'},
     ['chronomancer'] = {'mage', 'enchanter'},
     ['spellblade'] = {'mage', 'rogue'},
-    ['psykeeper'] = {'healer', 'psy'},
+    ['psykeeper'] = {'healer', 'psyker'},
     ['engineer'] = {'conjurer'},
+    ['plague_doctor'] = {'nuker', 'voider'},
+    ['fisherman'] = {'trapper', 'warrior'},
+    ['juggernaut'] = {'forcer', 'warrior'},
+    ['lich'] = {'mage'},
+    ['cryomancer'] = {'mage', 'voider'},
+    ['pyromancer'] = {'mage', 'nuker', 'voider'},
+    ['corruptor'] = {'ranger', 'swarmer'},
+    ['beastmaster'] = {'rogue', 'swarmer'},
+    ['launcher'] = {'trapper', 'forcer'},
+    ['spiker'] = {'trapper', 'rogue'},
+    ['assassin'] = {'rogue', 'voider'},
+    ['host'] = {'conjurer', 'swarmer'},
+    ['carver'] = {'conjurer', 'healer'},
+    ['bane'] = {'swarmer', 'voider'},
+    ['psykino'] = {'mage', 'psyker', 'forcer'},
+    ['arbalester'] = {'ranger', 'forcer'},
+    ['barbarian'] = {'warrior'},
+    ['sapper'] = {'trapper', 'enchanter', 'healer'},
+    ['priest'] = {'healer'},
+    ['burrower'] = {'trapper', 'swarmer'},
+    ['flagellant'] = {'psyker', 'enchanter'},
   }
 
   character_descriptions = {
-    ['vagrant'] = function(dmg) return '[fg]shoots a projectile that deals [yellow]' .. dmg .. '[fg] damage' end,
-    ['swordsman'] = function(dmg) return '[fg]deals [yellow]' .. dmg .. '[fg] damage in an area around the unit' end,
-    ['wizard'] = function(dmg) return '[fg]shoots a projectile that deals [yellow]' .. dmg .. ' AoE[fg] damage' end,
-    ['archer'] = function(dmg) return '[fg]shoots an arrow that deals [yellow]' .. dmg .. '[fg] damage and pierces' end,
-    ['scout'] = function(dmg) return '[fg]throws a knife that deals [yellow]' .. dmg .. '[fg] damage and chains [yellow]3[fg] times' end,
-    ['cleric'] = function() return '[fg]heals every unit for [yellow]10%[fg] max hp when any one drops below [yellow]50%[fg] max hp' end,
-    ['outlaw'] = function(dmg) return '[fg]throws a fan of [yellow]5[] knives, each dealing [yellow]' .. dmg .. '[fg] damage' end,
-    ['blade'] = function(dmg) return '[fg]throws multiple blades that deal [yellow]' .. dmg .. ' AoE[fg] damage' end,
-    ['elementor'] = function(dmg) return '[fg]deals [yellow]' .. dmg .. ' AoE[fg] damage to a random target' end,
-    ['saboteur'] = function(dmg) return '[fg]calls [yellow]2[] saboteurs to seek targets and deal [yellow]' .. dmg .. ' AoE[fg] damage' end,
-    ['stormweaver'] = function(dmg) return '[fg]infuses all allied projectiles with chain lightning that deals [yellow]+' .. dmg .. '[fg] damage on hit' end,
-    ['sage'] = function(dmg) return '[fg]shoots a slow projectile that draws enemies in' end,
-    ['squire'] = function(dmg) return '[yellow]+10 dmg[fg] & [yellow]+25 def[fg] to adjacent units, heal them for [yellow]10%[fg] max hp every 8 seconds' end, 
-    ['cannoneer'] = function(dmg) return '[fg]shoots a projectile that deals [yellow]' .. dmg .. ' AoE[fg] damage' end,
-    ['dual_gunner'] = function() return '[fg]shoots two parallel projectiles' end,
-    ['hunter'] = function(dmg) return '[fg]shoots an arrow that deals [yellow]' .. dmg .. '[fg] damage and has a [yellow]20%[fg] chance to summon a pet' end,
-    ['chronomancer'] = function() return '[yellow]+25% aspd[fg] to adjacent units' end,
-    ['spellblade'] = function(dmg) return '[fg]throws knives that deal [yellow]' .. dmg .. '[fg] damage, pierce and spiral outwards' end,
-    ['psykeeper'] = function() return '[fg]all damage taken is stored and distributed as healing to all allies' end,
-    ['engineer'] = function(dmg) return '[fg]drops sentries that shoot bursts of projectiles, each dealing [yellow]' .. dmg .. '[fg] damage' end,
+    ['vagrant'] = function(lvl) return '[fg]shoots a projectile that deals [yellow]' .. get_character_stat('vagrant', lvl, 'dmg') .. '[fg] damage' end,
+    ['swordsman'] = function(lvl) return '[fg]deals [yellow]' .. get_character_stat('swordsman', lvl, 'dmg') .. '[fg] damage in an area around the unit, deals extra [yellow]' ..
+      math.round(get_character_stat('swordsman', lvl, 'dmg')/3, 2) .. '[fg] damage per unit hit' end,
+    ['wizard'] = function(lvl) return '[fg]shoots a projectile that deals [yellow]' .. get_character_stat('wizard', lvl, 'dmg') .. ' AoE[fg] damage' end,
+    ['archer'] = function(lvl) return '[fg]shoots an arrow that deals [yellow]' .. get_character_stat('archer', lvl, 'dmg') .. '[fg] damage and pierces' end,
+    ['scout'] = function(lvl) return '[fg]throws a knife that deals [yellow]' .. get_character_stat('scout', lvl, 'dmg') .. '[fg] damage and chains [yellow]3[fg] times' end,
+    ['cleric'] = function(lvl) return '[fg]heals a unit for [yellow]20%[fg] of its max hp when it drops below [yellow]50%[fg] max hp' end,
+    ['outlaw'] = function(lvl) return '[fg]throws a fan of [yellow]5[] knives, each dealing [yellow]' .. get_character_stat('outlaw', lvl, 'dmg') .. '[fg] damage' end,
+    ['blade'] = function(lvl) return '[fg]throws multiple blades that deal [yellow]' .. get_character_stat('blade', lvl, 'dmg') .. ' AoE[fg] damage' end,
+    ['elementor'] = function(lvl) return '[fg]deals [yellow]' .. get_character_stat('elementor', lvl, 'dmg') .. ' AoE[fg] damage in a large area centered on a random target' end,
+    ['saboteur'] = function(lvl) return '[fg]calls [yellow]2[] saboteurs to seek targets and deal [yellow]' .. get_character_stat('saboteur', lvl, 'dmg') .. ' AoE[fg] damage' end,
+    ['stormweaver'] = function(lvl) return '[fg]infuses all allied projectiles with chain lightning that deals [yellow]+20%[fg] damage on hit' end,
+    ['sage'] = function(lvl) return '[fg]shoots a slow projectile that draws enemies in' end,
+    ['squire'] = function(lvl) return '[yellow]+10% damage and defense to all allies' end, 
+    ['cannoneer'] = function(lvl) return '[fg]shoots a projectile that deals [yellow]' .. get_character_stat('cannoneer', lvl, 'dmg') .. ' AoE[fg] damage' end,
+    ['dual_gunner'] = function(lvl) return '[fg]shoots two parallel projectiles' end,
+    ['hunter'] = function(lvl) return '[fg]shoots an arrow that deals [yellow]' .. get_character_stat('hunter', lvl, 'dmg') .. '[fg] damage and has a [yellow]20%[fg] chance to summon a pet' end,
+    ['chronomancer'] = function(lvl) return '[yellow]+20% attack speed[fg] to all allies' end,
+    ['spellblade'] = function(lvl) return '[fg]throws knives that deal [yellow]' .. get_character_stat('spellblade', lvl, 'dmg') .. '[fg] damage, pierce and spiral outwards' end,
+    ['psykeeper'] = function(lvl) return '[fg]all damage taken is stored up to [yellow]50%[fg] max HP and distributed as healing to all allies' end,
+    ['engineer'] = function(lvl) return '[fg]drops sentries that shoot bursts of projectiles, each dealing [yellow]' .. get_character_stat('engineer', lvl, 'dmg') .. '[fg] damage' end,
+    ['plague_doctor'] = function(lvl) return '[fg]creates an area that deals [yellow]' .. get_character_stat('plague_doctor', lvl, 'dot_dmg') .. '[fg] damage per second' end,
+    ['fisherman'] = function(lvl) return '[fg]throws a net that entangles enemies and prevents them from moving for [yellow]2[fg] seconds' end,
+    ['juggernaut'] = function(lvl) return '[fg]creates a small area that deals [yellow]' .. get_character_stat('juggernaut', lvl, 'dmg') .. '[fg] damage and pushes enemies away with a strong force' end,
+    ['lich'] = function(lvl) return '[fg]launches a chain frost that jumps [yellow]7[fg] times, dealing [yellow]' ..
+      get_character_stat('lich', lvl, 'dmg') .. '[fg] damage and slowing enemies by [yellow]50%[fg] for [yellow]2[fg] seconds on hit' end,
+    ['cryomancer'] = function(lvl) return '[fg]nearby enemies take [yellow]' .. get_character_stat('cryomancer', lvl, 'dmg') .. '[fg] damage per second and have [yellow]25%[fg] decreased movement speed' end,
+    ['pyromancer'] = function(lvl) return '[fg]nearby enemies take [yellow]' .. get_character_stat('pyromancer', lvl, 'dmg') .. '[fg] damage per second and deal [yellow]25%[fg] decreased damage' end,
+    ['corruptor'] = function(lvl) return '[fg]spawn [yellow]3[fg] small critters if the corruptor kills an enemy' end,
+    ['beastmaster'] = function(lvl) return '[fg]spawn [yellow]2[fg] small critters if the beastmaster crits' end,
+    ['launcher'] = function(lvl) return '[fg]creates a trap that launches enemies that trigger it' end,
+    ['spiker'] = function(lvl) return '[fg]creates a trap that crits when triggered, dealing [yellow]' .. 4*get_character_stat('spiker', lvl, 'dmg') .. '[fg] damage' end,
+    ['assassin'] = function(lvl) return '[fg]throws a piercing knife that deals [yellow]' .. get_character_stat('assassin', lvl, 'dmg') .. '[fg] damage and inflicts poison that deals [yellow]' ..
+      get_character_stat('assassin', lvl, 'dot_dmg') .. '[fg] damage per second for [yellow]2[fg] seconds' end,
+    ['host'] = function(lvl) return '[fg]creates [yellow]2[fg] overlords that periodically spawn small critters' end,
+    ['carver'] = function(lvl) return '[fg]carves a statue that periodically heals for [yellow]20%[fg] max HP in an area around it' end,
+    ['bane'] = function(lvl) return '[fg]spawn a small critter that explodes and deals [yellow]' .. get_character_stat('bane', lvl, 'dot_dmg') .. '[fg] damage per second in an area' end,
+    ['psykino'] = function(lvl) return '[fg]quickly pulls enemies together and then release them with a force' end,
+    ['arbalester'] = function(lvl) return '[fg]launches a massive arrow that deals [yellow]' .. get_character_stat('arbalester', lvl, 'dmg') .. '[fg] damage and pushes enemies back, ignoring knockback resistances' end,
+    ['barbarian'] = function(lvl) return '[fg]creates a small area that deals [yellow]' .. 4*get_character_stat('barbarian', lvl, 'dmg') .. '[fg] damage and stuns for [yellow]2[fg] seconds' end,
+    ['sapper'] = function(lvl) return '[fg]creates a trap that steals [yellow]10%[fg] enemy HP and grants you [yellow]+25%[fg] movement speed' end,
+    ['priest'] = function(lvl) return '[fg]heals all allies for [yellow]20%[fg] their max HP' end,
+    ['burrower'] = function(lvl) return '[fg]creates a trap that contains [yellow]6[fg] small critters' end,
+    ['flagellant'] = function(lvl) return '[fg]deals damage to self and grants +20% damage to all allies' end,
   }
 
   get_character_stat_string = function(character, level)
     local group = Group():set_as_physics_world(32, 0, 0, {'player', 'enemy', 'projectile', 'enemy_projectile'})
     local mock = Player{group = group, leader = true, character = character, level = level, follower_index = 1}
     mock:update(0)
-    return '[red]HP: [red]' .. mock.max_hp .. '[fg], [red]DMG: [red]' .. mock.dmg .. '[fg], [green]ASPD: [green]' .. math.round(mock.aspd_m, 2) .. 'x[fg], [blue]AREA: [blue]' ..
+    return '[red]HP: [red]' .. mock.max_hp .. '[fg], [red]DMG: [red]' .. mock.dmg .. '[fg], [purple]DOT DMG: [purple]' .. mock.dot_dmg .. '[fg], [green]ASPD: [green]' .. math.round(mock.aspd_m, 2) .. 'x[fg], [blue]AREA: [blue]' ..
     math.round(mock.area_dmg_m*mock.area_size_m, 2) ..  'x[fg], [yellow]DEF: [yellow]' .. math.round(mock.def, 2) .. '[fg], [green]MVSPD: [green]' .. math.round(mock.v, 2) .. '[fg]'
   end
 
@@ -252,42 +351,72 @@ function init()
     ['spellblade'] = function(lvl) return get_character_stat_string('spellblade', lvl) end, 
     ['psykeeper'] = function(lvl) return get_character_stat_string('psykeeper', lvl) end, 
     ['engineer'] = function(lvl) return get_character_stat_string('engineer', lvl) end, 
+    ['plague_doctor'] = function(lvl) return get_character_stat_string('plague_doctor', lvl) end,
+    ['fisherman'] = function(lvl) return get_character_stat_string('fisherman', lvl) end,
+    ['juggernaut'] = function(lvl) return get_character_stat_string('juggernaut', lvl) end,
+    ['lich'] = function(lvl) return get_character_stat_string('lich', lvl) end,
+    ['cryomancer'] = function(lvl) return get_character_stat_string('cryomancer', lvl) end,
+    ['pyromancer'] = function(lvl) return get_character_stat_string('pyromancer', lvl) end,
+    ['corruptor'] = function(lvl) return get_character_stat_string('corruptor', lvl) end,
+    ['beastmaster'] = function(lvl) return get_character_stat_string('beastmaster', lvl) end,
+    ['launcher'] = function(lvl) return get_character_stat_string('launcher', lvl) end,
+    ['spiker'] = function(lvl) return get_character_stat_string('spiker', lvl) end,
+    ['assassin'] = function(lvl) return get_character_stat_string('assassin', lvl) end,
+    ['host'] = function(lvl) return get_character_stat_string('host', lvl) end,
+    ['carver'] = function(lvl) return get_character_stat_string('carver', lvl) end,
+    ['bane'] = function(lvl) return get_character_stat_string('bane', lvl) end,
+    ['psykino'] = function(lvl) return get_character_stat_string('psykino', lvl) end,
+    ['arbalester'] = function(lvl) return get_character_stat_string('arbalester', lvl) end,
+    ['barbarian'] = function(lvl) return get_character_stat_string('barbarian', lvl) end,
+    ['sapper'] = function(lvl) return get_character_stat_string('sapper', lvl) end,
+    ['priest'] = function(lvl) return get_character_stat_string('priest', lvl) end,
+    ['burrower'] = function(lvl) return get_character_stat_string('burrower', lvl) end,
+    ['flagellant'] = function(lvl) return get_character_stat_string('flagellant', lvl) end,
   }
 
   class_stat_multipliers = {
-    ['warrior'] = {hp = 1.4, dmg = 1.1, aspd = 0.9, area_dmg = 1, area_size = 1, def = 1.25, mvspd = 0.9},
-    ['ranger'] = {hp = 1, dmg = 1.2, aspd = 1.5, area_dmg = 1, area_size = 1, def = 0.9, mvspd = 1.2},
-    ['healer'] = {hp = 1.2, dmg = 1, aspd = 0.5, area_dmg = 1, area_size = 1, def = 1.2, mvspd = 1},
-    ['mage'] = {hp = 0.6, dmg = 1.4, aspd = 1, area_dmg = 1.25, area_size = 1.2, def = 0.75, mvspd = 1},
-    ['rogue'] = {hp = 0.8, dmg = 1.3, aspd = 1.1, area_dmg = 0.6, area_size = 0.6, def = 0.8, mvspd = 1.4},
-    ['nuker'] = {hp = 0.9, dmg = 1, aspd = 0.75, area_dmg = 1.5, area_size = 1.5, def = 1, mvspd = 1},
-    ['conjurer'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 1},
-    ['enchanter'] = {hp = 1.2, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1.2, mvspd = 1.2},
-    ['psy'] = {hp = 1.5, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 0.5, mvspd = 1},
+    ['ranger'] = {hp = 1, dmg = 1.2, aspd = 1.5, area_dmg = 1, area_size = 1, dot_dmg = 1.1, def = 0.9, mvspd = 1.2},
+    ['warrior'] = {hp = 1.4, dmg = 1.1, aspd = 0.9, area_dmg = 1, area_size = 1, dot_dmg = 1, def = 1.25, mvspd = 0.9},
+    ['mage'] = {hp = 0.6, dmg = 1.4, aspd = 1, area_dmg = 1.25, area_size = 1.2, dot_dmg = 1.25, def = 0.75, mvspd = 1},
+    ['rogue'] = {hp = 0.8, dmg = 1.3, aspd = 1.1, area_dmg = 0.6, area_size = 0.6, dot_dmg = 1.4, def = 0.8, mvspd = 1.4},
+    ['healer'] = {hp = 1.2, dmg = 1, aspd = 0.5, area_dmg = 1, area_size = 1, dot_dmg = 1, def = 1.2, mvspd = 1},
+    ['enchanter'] = {hp = 1.2, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, dot_dmg = 1, def = 1.2, mvspd = 1.2},
+    ['nuker'] = {hp = 0.9, dmg = 1, aspd = 0.75, area_dmg = 1.5, area_size = 1.5, dot_dmg = 0.75, def = 1, mvspd = 1},
+    ['conjurer'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, dot_dmg = 1, def = 1, mvspd = 1},
+    ['psyker'] = {hp = 1.5, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, dot_dmg = 1, def = 0.5, mvspd = 1},
+    ['trapper'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, dot_dmg = 1.1, def = 0.75, mvspd = 1},
+    ['forcer'] = {hp = 1.25, dmg = 1.1, aspd = 0.9, area_dmg = 0.75, area_size = 0.75, dot_dmg = 1, def = 1.2, mvspd = 1},
+    ['swarmer'] = {hp = 1.2, dmg = 1, aspd = 1.25, area_dmg = 1, area_size = 1, dot_dmg = 1, def = 0.75, mvspd = 0.5},
+    ['voider'] = {hp = 0.75, dmg = 1.3, aspd = 1, area_dmg = 0.8, area_size = 0.75, dot_dmg = 2, def = 0.6, mvspd = 0.8},
     ['seeker'] = {hp = 0.5, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 0.3},
     ['mini_boss'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 0.3},
     ['enemy_critter'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 0.5},
     ['saboteur'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 1.4},
   }
 
-  local ylb1 = function(lvl) return (lvl >= 1 and 'yellow' or 'light_bg') end
+  local ylb1 = function(lvl) return lvl >= 2 and 'fg' or (lvl >= 1 and 'yellow' or 'light_bg') end
   local ylb2 = function(lvl) return (lvl >= 2 and 'yellow' or 'light_bg') end
   class_descriptions = {
-    ['ranger'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']10%[' .. ylb2(lvl) .. ']/20% [fg]chance to release a barrage on attack to allied rangers' end,
-    ['warrior'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+25[' .. ylb2(lvl) .. ']/+50 [fg]defense to allied warriors' end,
-    ['mage'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']-15[' .. ylb2(lvl) .. ']/-30 [fg]enemy defense' end,
-    ['nuker'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+15%[' .. ylb2(lvl) .. ']/+25% [fg]area damage and size to allied nukers' end,
-    ['rogue'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']10%[' .. ylb2(lvl) .. ']/20% [fg]chance to crit to allied rogues, dealing [yellow]4x[] damage' end,
-    ['healer'] = function(lvl) return '[' .. ylb1(lvl) .. ']3 [fg]- [' .. ylb1(lvl) .. ']+25% [fg]healing effectiveness' end,
-    ['conjurer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2 [fg]- [' .. ylb1(lvl) .. ']+25% [fg]construct damage and duration' end,
-    ['enchanter'] = function(lvl) return '[' .. ylb1(lvl) .. ']3 [fg]- [' .. ylb1(lvl) .. ']+25% [fg]damage to all allies' end,
-    ['psy'] = function(lvl) return '[fg]damage taken by psy units is reflected to enemies at [yellow]2x[fg] its value' end,
+    ['ranger'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[' .. ylb2(lvl) .. ']/6 [fg]- [' .. ylb1(lvl) .. ']10%[' .. ylb2(lvl) .. ']/20% [fg]chance to release a barrage on attack to allied rangers' end,
+    ['warrior'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[' .. ylb2(lvl) .. ']/6 [fg]- [' .. ylb1(lvl) .. ']+25[' .. ylb2(lvl) .. ']/+50 [fg]defense to allied warriors' end,
+    ['mage'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[' .. ylb2(lvl) .. ']/6 [fg]- [' .. ylb1(lvl) .. ']-15[' .. ylb2(lvl) .. ']/-30 [fg]enemy defense' end,
+    ['rogue'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[' .. ylb2(lvl) .. ']/6 [fg]- [' .. ylb1(lvl) .. ']10%[' .. ylb2(lvl) .. ']/20% [fg]chance to crit to allied rogues, dealing [yellow]4x[] damage' end,
+    ['healer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+15%[' .. ylb2(lvl) .. ']/+30% [fg]healing effectiveness' end,
+    ['enchanter'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+15%[' .. ylb2(lvl) .. ']/+25% [fg]damage to all allies' end,
+    ['nuker'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[' .. ylb2(lvl) .. ']/6 [fg]- [' .. ylb1(lvl) .. ']+15%[' .. ylb2(lvl) .. ']/+25% [fg]area damage and size to allied nukers' end,
+    ['conjurer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+25%[' .. ylb2(lvl) .. ']/+50% [fg]summon damage and duration' end,
+    ['psyker'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+5%[' .. ylb2(lvl) .. ']/+10% [fg]damage and health per active set to allied psykers' end,
+    ['trapper'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+1[' .. ylb2(lvl) .. ']/+2 [fg]extra traps released' end,
+    ['forcer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+25%[' .. ylb2(lvl) .. ']/+50% [fg]knockback force to all allies' end,
+    ['swarmer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+1[' .. ylb2(lvl) .. ']/+3 [fg]hits to critters' end,
+    ['voider'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+15%[' .. ylb2(lvl) .. ']/+25% [fg]damage over time to allied voiders' end,
   }
 
   tier_to_characters = {
-    [1] = {'vagrant', 'swordsman', 'wizard', 'archer', 'cleric', 'scout'},
-    [2] = {'saboteur', 'hunter', 'cannoneer', 'stormweaver', 'squire', 'dual_gunner', 'chronomancer', 'sage', 'cannoneer'},
-    [3] = {'blade', 'outlaw', 'elementor', 'psykeeper', 'spellblade', 'engineer'},
+    [1] = {'vagrant', 'swordsman', 'wizard', 'archer', 'scout', 'cleric'},
+    [2] = {'saboteur', 'sage', 'squire', 'dual_gunner', 'hunter', 'chronomancer', 'fisherman', 'cryomancer', 'beastmaster', 'launcher', 'spiker', 'carver'}
+    [3] = {'outlaw', 'elementor', 'stormweaver', 'spellblade', 'psykeeper', 'engineer', 'juggernaut', 'pyromancer', 'corruptor', 'assassin', 'bane', 'arbalester', 'burrower', 'flagellant'}
+    [4] = {'priest', 'barbarian', 'psykino', 'lich', 'host', 'sapper', 'blade', 'plague_doctor', 'cannoneer'}
   }
 
   non_attacking_characters = {'cleric', 'stormweaver', 'squire', 'chronomancer', 'sage'}
@@ -300,19 +429,40 @@ function init()
     ['scout'] = 1,
     ['cleric'] = 1,
     ['outlaw'] = 3,
-    ['blade'] = 3,
+    ['blade'] = 4,
     ['elementor'] = 3,
     ['saboteur'] = 2,
-    ['stormweaver'] = 2,
+    ['stormweaver'] = 3,
     ['sage'] = 2,
     ['squire'] = 2,
-    ['cannoneer'] = 2,
+    ['cannoneer'] = 4,
     ['dual_gunner'] = 2,
     ['hunter'] = 2,
     ['chronomancer'] = 2,
     ['spellblade'] = 3,
     ['psykeeper'] = 3,
     ['engineer'] = 3,
+    ['plague_doctor'] = 4,
+    ['fisherman'] = 2,
+    ['juggernaut'] = 3,
+    ['lich'] = 4,
+    ['cryomancer'] = 2,
+    ['pyromancer'] = 3,
+    ['corruptor'] = 3,
+    ['beastmaster'] = 2,
+    ['launcher'] = 2,
+    ['spiker'] = 2,
+    ['assassin'] = 3,
+    ['host'] = 4,
+    ['carver'] = 2,
+    ['bane'] = 3,
+    ['psykino'] = 4,
+    ['arbalester'] = 3,
+    ['barbarian'] = 4,
+    ['sapper'] = 4,
+    ['priest'] = 4,
+    ['burrower'] = 3,
+    ['flagellant'] = 3,
   }
 
   get_number_of_units_per_class = function(units)
@@ -324,7 +474,11 @@ function init()
     local conjurers = 0
     local rogues = 0
     local enchanters = 0
-    local psys = 0
+    local psykers = 0
+    local trappers = 0
+    local forcers = 0
+    local swarmers = 0
+    local voiders = 0
     for _, unit in ipairs(units) do
       for _, unit_class in ipairs(character_classes[unit.character]) do
         if unit_class == 'ranger' then rangers = rangers + 1 end
@@ -335,10 +489,15 @@ function init()
         if unit_class == 'conjurer' then conjurers = conjurers + 1 end
         if unit_class == 'rogue' then rogues = rogues + 1 end
         if unit_class == 'enchanter' then enchanters = enchanters + 1 end
-        if unit_class == 'psy' then psys = psys + 1 end
+        if unit_class == 'psyker' then psykers = psykers + 1 end
+        if unit_class == 'trapper' then trappers = trappers + 1 end
+        if unit_class == 'forcer' then forcers = forcers + 1 end
+        if unit_class == 'swarmer' then swarmers = swarmers + 1 end
+        if unit_class == 'voider' then voiders = voiders + 1 end
       end
     end
-    return {ranger = rangers, warrior = warriors, healer = healers, mage = mages, nuker = nukers, conjurer = conjurers, rogue = rogues, enchanter = enchanters, psy = psys}
+    return {ranger = rangers, warrior = warriors, healer = healers, mage = mages, nuker = nukers, conjurer = conjurers, rogue = rogues,
+      enchanter = enchanters, psyker = psykers, trapper = trappers, forcer = forcers, swarmer = swarmers, voider = voiders}
   end
 
   get_classes = function(units)
@@ -350,43 +509,47 @@ function init()
   end
 
   class_set_numbers = {
-    ['ranger'] = function(units) return 2, 4, get_number_of_units_per_class(units).ranger end,
-    ['warrior'] = function(units) return 2, 4, get_number_of_units_per_class(units).warrior end,
-    ['mage'] = function(units) return 2, 4, get_number_of_units_per_class(units).mage end,
-    ['nuker'] = function(units) return 2, 4, get_number_of_units_per_class(units).nuker end,
-    ['rogue'] = function(units) return 2, 4, get_number_of_units_per_class(units).rogue end,
-    ['healer'] = function(units) return 3, 3, get_number_of_units_per_class(units).healer end,
-    ['conjurer'] = function(units) return 2, 2, get_number_of_units_per_class(units).conjurer end,
-    ['enchanter'] = function(units) return 3, 3, get_number_of_units_per_class(units).enchanter end,
-    ['psy'] = function(units) return 1, 2, get_number_of_units_per_class(units).psy end,
+    ['ranger'] = function(units) return 3, 6, get_number_of_units_per_class(units).ranger end,
+    ['warrior'] = function(units) return 3, 6, get_number_of_units_per_class(units).warrior end,
+    ['mage'] = function(units) return 3, 6, get_number_of_units_per_class(units).mage end,
+    ['nuker'] = function(units) return 3, 6, get_number_of_units_per_class(units).nuker end,
+    ['rogue'] = function(units) return 3, 6, get_number_of_units_per_class(units).rogue end,
+    ['healer'] = function(units) return 2, 4, get_number_of_units_per_class(units).healer end,
+    ['conjurer'] = function(units) return 2, 4, get_number_of_units_per_class(units).conjurer end,
+    ['enchanter'] = function(units) return 2, 4, get_number_of_units_per_class(units).enchanter end,
+    ['psyker'] = function(units) return 2, 4, get_number_of_units_per_class(units).psyker end,
+    ['trapper'] = function(units) return 2, 4, get_number_of_units_per_class(units).trapper end,
+    ['forcer'] = function(units) return 2, 4, get_number_of_units_per_class(units).forcer end,
+    ['swarmer'] = function(units) return 2, 4, get_number_of_units_per_class(units).swarmer end,
+    ['voider'] = function(units) return 2, 4, get_number_of_units_per_class(units).voider end,
   }
 
   level_to_tier_weights = {
-    [1] = {90, 10, 0},
-    [2] = {80, 15, 5},
-    [3] = {75, 20, 5},
-    [4] = {70, 20, 10},
-    [5] = {70, 20, 10},
-    [6] = {65, 25, 10},
-    [7] = {60, 25, 15},
-    [8] = {60, 25, 15},
-    [9] = {55, 30, 15},
-    [10] = {50, 30, 20},
-    [11] = {50, 30, 20},
-    [12] = {50, 30, 20},
-    [13] = {45, 30, 25},
-    [14] = {40, 35, 25},
-    [15] = {35, 40, 25},
-    [16] = {30, 40, 30},
-    [17] = {25, 45, 30},
-    [18] = {20, 50, 30},
-    [19] = {15, 50, 35},
-    [20] = {10, 55, 35},
-    [21] = {5, 60, 35},
-    [22] = {5, 55, 40},
-    [23] = {5, 55, 40},
-    [24] = {0, 55, 45},
-    [25] = {0, 50, 50},
+    [1] = {90, 10, 0, 0},
+    [2] = {80, 15, 5, 0},
+    [3] = {75, 20, 5, 0},
+    [4] = {70, 20, 10, 0},
+    [5] = {70, 20, 10, 0},
+    [6] = {65, 25, 10, 0},
+    [7] = {60, 25, 15, 0},
+    [8] = {55, 25, 15, 5},
+    [9] = {50, 30, 15, 5},
+    [10] = {50, 30, 15, 5},
+    [11] = {45, 30, 20, 5},
+    [12] = {45, 30, 20, 5},
+    [13] = {40, 30, 20, 10},
+    [14] = {40, 30, 20, 10},
+    [15] = {35, 35, 20, 10},
+    [16] = {30, 40, 20, 10},
+    [17] = {20, 40, 25, 15},
+    [18] = {20, 40, 25, 15},
+    [19] = {15, 40, 30, 15},
+    [20] = {10, 40, 30, 20},
+    [21] = {5, 40, 35, 20},
+    [22] = {5, 35, 35, 25},
+    [23] = {5, 35, 35, 25},
+    [24] = {0, 30, 40, 30},
+    [25] = {0, 25, 40, 35},
   }
 
   level_to_gold_gained = {
@@ -422,7 +585,7 @@ function init()
     [12] = 'exploder',
     [18] = 'swarmer',
     [24] = 'bouncer',
-    [25] = 'orbitter',
+    [25] = 'randomizer',
   }
 
   gold = 2
