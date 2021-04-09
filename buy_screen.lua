@@ -49,7 +49,7 @@ function BuyScreen:on_enter(from, level, units)
 
   self.shop_text = Text({{text = '[wavy_mid, fg]shop [fg]- gold: [yellow]' .. gold, font = pixul_font, alignment = 'center'}}, global_text_tags)
   self.party_text = Text({{text = '[wavy_mid, fg]party', font = pixul_font, alignment = 'center'}}, global_text_tags)
-  self.sets_text = Text({{text = '[wavy_mid, fg]sets', font = pixul_font, alignment = 'center'}}, global_text_tags)
+  self.sets_text = Text({{text = '[wavy_mid, fg]classes', font = pixul_font, alignment = 'center'}}, global_text_tags)
   self.items_text = Text({{text = '[wavy_mid, fg]items', font = pixul_font, alignment = 'center'}}, global_text_tags)
   self.under_text = Text2{group = self.main, x = 140, y = gh - 55, r = -math.pi/48, lines = {
     {text = '[light_bg]under', font = fat_font, alignment = 'center'},
@@ -64,7 +64,7 @@ end
 
 function BuyScreen:update(dt)
   self:update_game_object(dt*slow_amount)
-  cascade_instance.pitch = 1
+  -- cascade_instance.pitch = 1
 
   self.main:update(dt*slow_amount)
   self.effects:update(dt*slow_amount)
@@ -442,7 +442,11 @@ function CharacterPart:on_mouse_enter()
   self.info_text:activate({
     {text = '[' .. character_color_strings[self.character] .. ']' .. self.character:capitalize() .. '[fg] - [yellow]Lv.' .. self.level .. '[fg] - sells for [yellow]' .. self:get_sale_price(),
     font = pixul_font, alignment = 'center', height_multiplier = 1.25},
-    {text = character_descriptions[self.character](self.level), font = pixul_font, alignment = 'center'},
+    {text = '[fg]Classes: ' .. character_class_strings[self.character], font = pixul_font, alignment = 'center', height_multiplier = 1.25},
+    {text = character_descriptions[self.character](self.level), font = pixul_font, alignment = 'center', height_multiplier = 2},
+    {text = '[' .. (self.level == 3 and 'yellow' or 'light_bg') .. ']Lv.3 [' .. (self.level == 3 and 'fg' or 'light_bg') .. ']Effect - ' .. 
+      (self.level == 3 and character_effect_names[self.character] or character_effect_names_gray[self.character]), font = pixul_font, alignment = 'center', height_multiplier = 1.25},
+    {text = character_effect_descriptions[self.character](), font = pixul_font, alignment = 'center'},
   }, nil, nil, nil, nil, 16, 4, nil, 2)
   self.info_text.x, self.info_text.y = gw/2, gh/2 + 10
 end
@@ -613,7 +617,9 @@ function CharacterIcon:on_mouse_enter()
   self.info_text = InfoText{group = main.current.ui}
   self.info_text:activate({
     {text = '[' .. character_color_strings[self.character] .. ']' .. self.character:capitalize() .. '[fg] - cost: [yellow]' .. self.parent.cost, font = pixul_font, alignment = 'center', height_multiplier = 1.25},
-    {text = character_descriptions[self.character](get_character_stat(self.character, 1, 'dmg')), font = pixul_font, alignment = 'center'},
+    {text = '[fg]Classes: ' .. character_class_strings[self.character], font = pixul_font, alignment = 'center', height_multiplier = 1.25},
+    {text = character_descriptions[self.character](1), font = pixul_font, alignment = 'center'},
+    -- {text = character_stats[self.character](1), font = pixul_font, alignment = 'center'},
   }, nil, nil, nil, nil, 16, 4, nil, 2)
   self.info_text.x, self.info_text.y = gw/2, gh/2 + 10
 end
@@ -685,9 +691,13 @@ function ClassIcon:draw()
         end
       end
     elseif i == 3 then
-      graphics.line(self.x - 4, self.y + 22, self.x - 4, self.y + 30, (n >= 1) and class_colors[self.class] or bg[10], 2)
-      graphics.line(self.x, self.y + 22, self.x, self.y + 30, (n >= 2) and class_colors[self.class] or bg[10], 2)
-      graphics.line(self.x + 4, self.y + 22, self.x + 4, self.y + 30, (n >= 3) and class_colors[self.class] or bg[10], 2)
+      graphics.line(self.x - 3, self.y + 19, self.x - 3, self.y + 22, (n >= 1) and class_colors[self.class] or bg[10], 3)
+      graphics.line(self.x - 3, self.y + 24, self.x - 3, self.y + 27, (n >= 2) and class_colors[self.class] or bg[10], 3)
+      graphics.line(self.x - 3, self.y + 29, self.x - 3, self.y + 32, (n >= 3) and class_colors[self.class] or bg[10], 3)
+      graphics.line(self.x + 4, self.y + 19, self.x + 4, self.y + 22, (n >= 4) and class_colors[self.class] or bg[10], 3)
+      graphics.line(self.x + 4, self.y + 24, self.x + 4, self.y + 27, (n >= 5) and class_colors[self.class] or bg[10], 3)
+      graphics.line(self.x + 4, self.y + 29, self.x + 4, self.y + 32, (n >= 6) and class_colors[self.class] or bg[10], 3)
+      --[[
       if next_n then
         if next_n == 1 then
           graphics.line(self.x - 4, self.y + 22, self.x - 4, self.y + 30, self.flash and class_colors[self.class] or bg[10], 2)
@@ -697,16 +707,7 @@ function ClassIcon:draw()
           graphics.line(self.x + 4, self.y + 22, self.x + 4, self.y + 30, self.flash and class_colors[self.class] or bg[10], 2)
         end
       end
-    elseif i == 1 then
-      graphics.line(self.x - 3, self.y + 22, self.x - 3, self.y + 30, (n >= 1) and class_colors[self.class] or bg[10], 3)
-      graphics.line(self.x + 4, self.y + 22, self.x + 4, self.y + 30, (n >= 2) and class_colors[self.class] or bg[10], 3)
-      if next_n then
-        if next_n == 1 then
-          graphics.line(self.x - 3, self.y + 22, self.x - 3, self.y + 30, (n >= 1) and class_colors[self.class] or bg[10], 3)
-        elseif next_n == 2 then
-          graphics.line(self.x + 4, self.y + 22, self.x + 4, self.y + 30, (n >= 2) and class_colors[self.class] or bg[10], 3)
-        end
-      end
+      ]]--
     end
   graphics.pop()
 end

@@ -40,16 +40,16 @@
     Swarmer: increased critter health
     Voider: increased damage over time
   Characters
-    Vagrant [psyker, ranger, warrior]: shoots a projectile - Lv.3: Champion - gains increased damage and attack speed based on number of active sets
-    Swordsman [warrior]: deals AoE damage, deals extra damage for each unit hit - Lv.3: Cleave - damage is doubled
-    Wizard [mage]: shoots a projectile that deals AoE damage - Lv.3: Magic Missile - the projectile chains 5 times, each dealing AoE damage on impact
-    Archer [ranger]: shoots an arrow that pierces - Lv.3: Bounce Shot - the arrow ricochets on walls 3 times
-    Scout [rogue]: throws a knife that chains 3 times - Lv.3: Replica - each chain grants +15% damage and the last chain splits
-    Cleric [healer]: heals a unit when its health drops below half HP - Lv.3: Mass Heal - heals all units instead of one
-    Outlaw [warrior, rogue]: throws a fan of 5 knives - Lv.3: Fatal Roulette - every 3rd attack throw a nova of 15 knives instead
-    Blade [warrior, nuker]: throws multiple blades that deal AoE damage - Lv.3: Blade Resonance - deal additional damage based on number of enemies hit
-    Elementor [mage, nuker]: deals AoE damage to a random target in a large area - Lv.3: Windfield - slows enemies hit
-    Saboteur [rogue, conjurer, nuker]: calls saboteurs to seek targets and deal AoE damage - Lv.3: Chain Reaction - should an enemy die from a saboteur explosion, it also explodes
+    * Vagrant [psyker, ranger, warrior]: shoots a projectile - Lv.3: Champion - gains increased damage and attack speed based on number of active sets
+    * Swordsman [warrior]: deals AoE damage, deals extra damage for each unit hit - Lv.3: Cleave - damage is doubled
+    * Wizard [mage]: shoots a projectile that deals AoE damage - Lv.3: Magic Missile - the projectile chains 5 times, each dealing AoE damage on impact
+    * Archer [ranger]: shoots an arrow that pierces - Lv.3: Bounce Shot - the arrow ricochets on walls 3 times
+    * Scout [rogue]: throws a knife that chains 3 times - Lv.3: Replica - each chain grants +15% damage and the last chain splits
+    * Cleric [healer]: heals a unit when its health drops below half HP - Lv.3: Mass Heal - heals all units instead of one
+    * Outlaw [warrior, rogue]: throws a fan of 5 knives - Lv.3: Fatal Roulette - every 3rd attack throw a nova of 15 knives instead
+    * Blade [warrior, nuker]: throws multiple blades that deal AoE damage - Lv.3: Blade Resonance - deal additional damage based on number of enemies hit
+    * Elementor [mage, nuker]: deals AoE damage to a random target in a large area - Lv.3: Windfield - slows enemies hit
+    * Saboteur [rogue, conjurer, nuker]: calls saboteurs to seek targets and deal AoE damage - Lv.3: Chain Reaction - should an enemy die from a saboteur explosion, it also explodes
     Stormweaver [enchanter]: infuses all allied projectiles with chain lightning that deals extra damage - Lv.3: Lightning Spire - cast a spire of lightning periodically
     Sage [nuker]: shoots a slow moving projectile that pulls enemies in - Lv.3: Dimension Compression - when the projectile expires deal massive damage to all enemies under its influence
     Squire [warrior, enchanter]: increased damage and defense to all allies - Lv.3: Repair - you can reroll your item choice once every 3 levels, these opportunities stack if unused

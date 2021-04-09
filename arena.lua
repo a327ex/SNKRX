@@ -235,51 +235,20 @@ function Arena:on_enter(from, level, units)
   table.insert(units, self.player)
   for _, f in ipairs(self.player.followers) do table.insert(units, f) end
 
-  local rangers = 0
-  local warriors = 0
-  local healers = 0
-  local mages = 0
-  local nukers = 0
-  local conjurers = 0
-  local rogues = 0
-  local enchanters = 0
-  local psys = 0
-  for _, unit in ipairs(units) do
-    for _, unit_class in ipairs(unit.classes) do
-      if unit_class == 'ranger' then rangers = rangers + 1 end
-      if unit_class == 'warrior' then warriors = warriors + 1 end
-      if unit_class == 'healer' then healers = healers + 1 end
-      if unit_class == 'mage' then mages = mages + 1 end
-      if unit_class == 'nuker' then nukers = nukers + 1 end
-      if unit_class == 'conjurer' then conjurers = conjurers + 1 end
-      if unit_class == 'rogue' then rogues = rogues + 1 end
-      if unit_class == 'enchanter' then enchanters = enchanters + 1 end
-      if unit_class == 'psy' then psys = psys + 1 end
-    end
-  end
-
-  self.ranger_level = 0
-  if rangers >= 2 then self.ranger_level = 1 end
-  if rangers >= 4 then self.ranger_level = 2 end
-  self.warrior_level = 0
-  if warriors >= 2 then self.warrior_level = 1 end
-  if warriors >= 4 then self.warrior_level = 2 end
-  self.healer_level = 0
-  if healers >= 3 then self.healer_level = 1 end
-  self.mage_level = 0
-  if mages >= 2 then self.mage_level = 1 end
-  if mages >= 4 then self.mage_level = 2 end
-  self.nuke_level = 0
-  if nukers >= 2 then self.nuke_level = 1 end
-  if nukers >= 4 then self.nuke_level = 2 end
-  self.conjurer_level = 0
-  if conjurers >= 2 then self.conjurer_level = 1 end
-  self.rogue_level = 0
-  if rogues >= 2 then self.rogue_level = 1 end
-  if rogues >= 4 then self.rogue_level = 2 end
-  self.enchanter_level = 0
-  if enchanters >= 3 then self.enchanter_level = 1 end
-  self.psy_level = psys
+  local class_levels = get_class_levels(get_number_of_units_per_class(units))
+  self.ranger_level = class_levels.ranger
+  self.warrior_level = class_levels.warrior
+  self.mage_level = class_levels.mage
+  self.rogue_level = class_levels.rogue
+  self.nuker_level = class_levels.nuker
+  self.trapper_level = class_levels.trapper
+  self.forcer_level = class_levels.forcer
+  self.swarmer_level = class_levels.swarmer
+  self.voider_level = class_levels.voider
+  self.enchanter_level = class_levels.enchanter
+  self.healer_level = class_levels.healer
+  self.psyker_level = class_levels.psyker
+  self.conjurer_level = class_levels.conjurer
 end
 
 

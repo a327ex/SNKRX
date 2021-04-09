@@ -796,3 +796,37 @@ Nothing.
 
 Updated all tables with text descriptions as well as stats and overall gameplay numbers for all classes and characters.
 Tomorrow I start implementing the remaining 4 classes and 20 characters as well as revising the existing ones.
+
+# Day 50-51 - 07-08/04/21
+
+Nothing... Finding the energy to work on this has been getting harder. I'm sure I'll get to it eventually but for now I've been spending time with some more fun projects.
+
+# Day 52 - 09/04/21
+
+Lots of improvements and fixes to lots of different things that needed improving and fixing. I also started on the implementation of characters and Lv.3 effects. Today I got 10 out of 40 characters done completely:
+
+| Character | Classes | Description | 
+| --- | --- | --- |
+| Vagrant | psyker, ranger, warrior | shoots a projectile that deals X damage |
+| Swordsman | warrior | deals X AoE damage in an area, deals extra X/3 damage per unit hit |
+| Wizard | mage | shoots a projectile that deals X AoE damage |
+| Archer | ranger | shoots an arrow that deals X damage and pierces |
+| Scout | rogue | throws a knife that deals X damage and chains 3 times |
+| Cleric | healer | heals a unit for 20% of its max HP when it drops below 50% max HP |
+| Outlaw | warrior, rogue | throws a fan of 5 knives, each dealing X damage |
+| Blade | warrior, nuker | throws multiple blades that deal X AoE damage |
+| Elementor | mage, nuker | deals X AoE damage in a large area centered on a random target |
+| Saboteur | rogue, conjurer, nuker | calls 2 saboteurs to seek targets and deal X AoE damage |
+
+| Character | Lv.3 Effect Name | Lv.3 Effect Description |
+| --- | --- | --- |
+| Vagrant | Champion | +10% damage and +5% attack speed per active set |
+| Swordsman | Cleave | the swordsman's damage is doubled |
+| Wizard | Magic Missile | the projectile chains 5 times |
+| Archer | Bounce Shot | the arrow ricochets off walls 3 times |
+| Scout | Dagger Resonance | +25% damage per chain and +3 chains |
+| Cleric | Mass Heal | heals all units |
+| Outlaw | Flying Daggers | +50% outlaw attack speed and his knives seek enemies |
+| Blade | Blade Resonance | deal additional X/2 damage per enemy hit |
+| Elementor | Windfield | slows enemies by 60% for 6 seconds on hit |
+| Saboteur | Demoman | the explosion has 50% chance to crit, increasing in size and dealing 2X damage |

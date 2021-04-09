@@ -225,15 +225,22 @@ function Seeker:update(dt)
   if main.current.mage_level == 2 then self.buff_def_a = -30
   elseif main.current.mage_level == 1 then self.buff_def_a = -15
   else self.buff_def_a = 0 end
+
   if self.speed_boosting then
     local n = math.remap(love.timer.getTime() - self.speed_boosting, 0, 3, 1, 0.5)
-    self.buff_mvspd_m = (3 + 0.1*self.level)*n
+    self.speed_boosting_mvspd_m = (3 + 0.1*self.level)*n
     if not self.speed_booster and not self.exploder and not self.headbutter and not self.tank and not self.shooter and not self.spawner then
       self.color.r = math.remap(n, 1, 0.5, green[0].r, red[0].r)
       self.color.g = math.remap(n, 1, 0.5, green[0].g, red[0].g)
       self.color.b = math.remap(n, 1, 0.5, green[0].b, red[0].b)
     end
-  end
+  else self.speed_boosting_mvspd_m = 1 end
+
+  if self.slowed then self.slow_mvspd_m = self.slowed
+  else self.slow_mvspd_m = 1 end
+
+  self.buff_mvspd_m = (self.speed_boosting_mvspd_m or 1)*(self.slow_mvspd_m or 1)
+
   self:calculate_stats()
 
   if self.shooter then
@@ -403,6 +410,12 @@ end
 function Seeker:speed_boost(duration)
   self.speed_boosting = love.timer.getTime()
   self.t:after(duration, function() self.speed_boosting = false end, 'speed_boost')
+end
+
+
+function Seeker:slow(amount, duration)
+  self.slowed = amount
+  self.t:after(duration, function() self.slowed = false end, 'slow')
 end
 
 
