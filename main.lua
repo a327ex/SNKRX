@@ -19,6 +19,11 @@ function init()
   music.volume = 0
 
   local s = {tags = {sfx}}
+  dot1 = Sound('Magical Swoosh 18.ogg', s)
+  gun_kata1 = Sound('Pistol Shot_07.ogg', s)
+  gun_kata2 = Sound('Pistol Shot_08.ogg', s)
+  dual_gunner1 = Sound('Revolver Shot_07.ogg', s)
+  dual_gunner2 = Sound('Revolver Shot_08.ogg', s)
   ui_hover1 = Sound('bamboo_hit_by_lord.ogg', s)
   ui_switch1 = Sound('Switch.ogg', s)
   ui_switch2 = Sound('Switch 3.ogg', s)
@@ -148,7 +153,7 @@ function init()
     ['elementor'] = blue[0],
     ['saboteur'] = orange[0],
     ['stormweaver'] = blue[0],
-    ['sage'] = red[0],
+    ['sage'] = purple[0],
     ['squire'] = yellow[0],
     ['cannoneer'] = orange[0],
     ['dual_gunner'] = green[0],
@@ -177,7 +182,7 @@ function init()
     ['sapper'] = blue[0],
     ['priest'] = green[0],
     ['burrower'] = orange[0],
-    ['flagellant'] = red[0],
+    ['flagellant'] = fg[0],
   }
 
   character_color_strings = {
@@ -192,7 +197,7 @@ function init()
     ['elementor'] = 'blue',
     ['saboteur'] = 'orange',
     ['stormweaver'] = 'blue',
-    ['sage'] = 'red',
+    ['sage'] = 'purple',
     ['squire'] = 'yellow',
     ['cannoneer'] = 'orange',
     ['dual_gunner'] = 'green',
@@ -221,7 +226,7 @@ function init()
     ['sapper'] = 'blue',
     ['priest'] = 'green',
     ['burrower'] = 'orange',
-    ['flagellant'] = 'red',
+    ['flagellant'] = 'fg',
   }
 
   character_classes = {
@@ -314,17 +319,17 @@ function init()
 
   get_character_stat_string = function(character, level)
     local group = Group():set_as_physics_world(32, 0, 0, {'player', 'enemy', 'projectile', 'enemy_projectile'})
-    local mock = Player{group = group, leader = true, character = character, level = level, follower_index = 1}
-    mock:update(0)
-    return '[red]HP: [red]' .. mock.max_hp .. '[fg], [red]DMG: [red]' .. mock.dmg .. '[fg], [green]ASPD: [green]' .. math.round(mock.aspd_m, 2) .. 'x[fg], [blue]AREA: [blue]' ..
-    math.round(mock.area_dmg_m*mock.area_size_m, 2) ..  'x[fg], [yellow]DEF: [yellow]' .. math.round(mock.def, 2) .. '[fg], [green]MVSPD: [green]' .. math.round(mock.v, 2) .. '[fg]'
+    local player = Player{group = group, leader = true, character = character, level = level, follower_index = 1}
+    player:update(0)
+    return '[red]HP: [red]' .. player.max_hp .. '[fg], [red]DMG: [red]' .. player.dmg .. '[fg], [green]ASPD: [green]' .. math.round(player.aspd_m, 2) .. 'x[fg], [blue]AREA: [blue]' ..
+    math.round(player.area_dmg_m*player.area_size_m, 2) ..  'x[fg], [yellow]DEF: [yellow]' .. math.round(player.def, 2) .. '[fg], [green]MVSPD: [green]' .. math.round(player.v, 2) .. '[fg]'
   end
 
   get_character_stat = function(character, level, stat)
     local group = Group():set_as_physics_world(32, 0, 0, {'player', 'enemy', 'projectile', 'enemy_projectile'})
-    local mock = Player{group = group, leader = true, character = character, level = level, follower_index = 1}
-    mock:update(0)
-    return math.round(mock[stat], 2)
+    local player = Player{group = group, leader = true, character = character, level = level, follower_index = 1}
+    player:update(0)
+    return math.round(player[stat], 2)
   end
 
   character_descriptions = {
@@ -339,18 +344,18 @@ function init()
     ['blade'] = function(lvl) return '[fg]throws multiple blades that deal [yellow]' .. get_character_stat('blade', lvl, 'dmg') .. ' AoE[fg] damage' end,
     ['elementor'] = function(lvl) return '[fg]deals [yellow]' .. get_character_stat('elementor', lvl, 'dmg') .. ' AoE[fg] damage in a large area centered on a random target' end,
     ['saboteur'] = function(lvl) return '[fg]calls [yellow]2[fg] saboteurs to seek targets and deal [yellow]' .. get_character_stat('saboteur', lvl, 'dmg') .. ' AoE[fg] damage' end,
-    ['stormweaver'] = function(lvl) return '[fg]infuses all allied projectiles with chain lightning that deals [yellow]+20%[fg] damage on hit' end,
+    ['stormweaver'] = function(lvl) return '[fg]infuses projectiles with chain lightning that deals [yellow]20%[fg] damage to [yellow]2[fg] enemies' end,
     ['sage'] = function(lvl) return '[fg]shoots a slow projectile that draws enemies in' end,
-    ['squire'] = function(lvl) return '[yellow]+10%[fg] damage and defense to all allies' end, 
-    ['cannoneer'] = function(lvl) return '[fg]shoots a projectile that deals [yellow]' .. get_character_stat('cannoneer', lvl, 'dmg') .. ' AoE[fg] damage' end,
-    ['dual_gunner'] = function(lvl) return '[fg]shoots two parallel projectiles' end,
+    ['squire'] = function(lvl) return '[yellow]+15%[fg] damage and defense to all allies' end, 
+    ['cannoneer'] = function(lvl) return '[fg]shoots a projectile that deals [yellow]' .. 2*get_character_stat('cannoneer', lvl, 'dmg') .. ' AoE[fg] damage' end,
+    ['dual_gunner'] = function(lvl) return '[fg]shoots two parallel projectiles, each dealing [yellow]' .. get_character_stat('dual_gunner', lvl, 'dmg') .. '[fg] damage' end,
     ['hunter'] = function(lvl) return '[fg]shoots an arrow that deals [yellow]' .. get_character_stat('hunter', lvl, 'dmg') .. '[fg] damage and has a [yellow]20%[fg] chance to summon a pet' end,
     ['chronomancer'] = function(lvl) return '[yellow]+20%[fg] attack speed to all allies' end,
     ['spellblade'] = function(lvl) return '[fg]throws knives that deal [yellow]' .. get_character_stat('spellblade', lvl, 'dmg') .. '[fg] damage, pierce and spiral outwards' end,
     ['psykeeper'] = function(lvl) return '[fg]all damage taken is stored up to [yellow]50%[fg] max HP and distributed as healing to all allies' end,
     ['engineer'] = function(lvl) return '[fg]drops sentries that shoot bursts of projectiles, each dealing [yellow]' .. get_character_stat('engineer', lvl, 'dmg') .. '[fg] damage' end,
     ['plague_doctor'] = function(lvl) return '[fg]creates an area that deals [yellow]' .. get_character_stat('plague_doctor', lvl, 'dmg') .. '[fg] damage per second' end,
-    ['fisherman'] = function(lvl) return '[fg]throws a net that entangles enemies and prevents them from moving for [yellow]2[fg] seconds' end,
+    ['fisherman'] = function(lvl) return '[fg]throws a net that entangles enemies and prevents them from moving for [yellow]4[fg] seconds' end,
     ['juggernaut'] = function(lvl) return '[fg]creates a small area that deals [yellow]' .. get_character_stat('juggernaut', lvl, 'dmg') .. '[fg] damage and pushes enemies away with a strong force' end,
     ['lich'] = function(lvl) return '[fg]launches a chain frost that jumps [yellow]7[fg] times, dealing [yellow]' ..
       get_character_stat('lich', lvl, 'dmg') .. '[fg] damage and slowing enemies by [yellow]50%[fg] for [yellow]2[fg] seconds on hit' end,
@@ -385,7 +390,7 @@ function init()
     ['blade'] = '[yellow]Blade Resonance',
     ['elementor'] = '[blue]Windfield',
     ['saboteur'] = '[orange]Demoman',
-    ['stormweaver'] = '[blue]Lightning Spire',
+    ['stormweaver'] = '[blue]Wide Lightning',
     ['sage'] = '[purple]Dimension Compression',
     ['squire'] = '[yellow]Repair',
     ['cannoneer'] = '[orange]Cannon Barrage',
@@ -395,7 +400,7 @@ function init()
     ['spellblade'] = '[blue]Spiralism',
     ['psykeeper'] = '[fg]Crucio',
     ['engineer'] = '[orange]Upgrade',
-    ['plague_doctor'] = '[purple]Pandemic',
+    ['plague_doctor'] = '[purple]Black Death Steam',
     ['fisherman'] = '[yellow]Electric Net',
     ['juggernaut'] = '[yellow]Brutal Impact',
     ['lich'] = '[blue]Piercing Frost',
@@ -423,13 +428,13 @@ function init()
     ['swordsman'] = '[light_bg]Cleave',
     ['wizard'] = '[light_bg]Magic Missile',
     ['archer'] = '[light_bg]Bounce Shot',
-    ['scout'] = '[light_bg]Replica',
+    ['scout'] = '[light_bg]Dagger Resonance',
     ['cleric'] = '[light_bg]Mass Heal ',
-    ['outlaw'] = '[light_bg]Fatal Roulette',
+    ['outlaw'] = '[light_bg]Flying Daggers',
     ['blade'] = '[light_bg]Blade Resonance',
     ['elementor'] = '[light_bg]Windfield',
-    ['saboteur'] = '[light_bg]Chain Reaction',
-    ['stormweaver'] = '[light_bg]Lightning Spire',
+    ['saboteur'] = '[light_bg]Demoman',
+    ['stormweaver'] = '[light_bg]Wide Lightning',
     ['sage'] = '[light_bg]Dimension Compression',
     ['squire'] = '[light_bg]Repair',
     ['cannoneer'] = '[light_bg]Cannon Barrage',
@@ -439,7 +444,7 @@ function init()
     ['spellblade'] = '[light_bg]Spiralism',
     ['psykeeper'] = '[light_bg]Crucio',
     ['engineer'] = '[light_bg]Upgrade',
-    ['plague_doctor'] = '[light_bg]Pandemic',
+    ['plague_doctor'] = '[light_bg]Black Death Steam',
     ['fisherman'] = '[light_bg]Electric Net',
     ['juggernaut'] = '[light_bg]Brutal Impact',
     ['lich'] = '[light_bg]Piercing Frost',
@@ -473,17 +478,17 @@ function init()
     ['blade'] = function() return '[fg]deal additional [yellow]' .. get_character_stat('blade', 3, 'dmg')/2 .. '[fg] damage per enemy hit' end,
     ['elementor'] = function() return '[fg]slows enemies by [yellow]60%[fg] for [yellow]6[fg] seconds on hit' end,
     ['saboteur'] = function() return '[fg]the explosion has [yellow]50%[fg] chance to crit, increasing in size and dealing [yellow]2x[fg] damage' end,
-    ['stormweaver'] = function() return '[fg]cast a spire of lightning periodically' end,
-    ['sage'] = function() return '[fg]when the projectile expires deal [yellow]' .. get_character_stat('sage', 3, 'dmg') .. '[fg] to all enemies under its influence' end,
+    ['stormweaver'] = function() return "[fg]chain lightning's trigger area of effect and number of units hit is [yellow]doubled" end,
+    ['sage'] = function() return '[fg]when the projectile expires deal [yellow]' .. 3*get_character_stat('sage', 3, 'dmg') .. '[fg] damage to all enemies under its influence' end,
     ['squire'] = function() return '[fg]you can reroll your item choices once, these opportunities stack if unused' end,
-    ['cannoneer'] = function() return '[fg]showers the area in additional cannon shots that deal [yellow]' .. get_character_stat('cannoneer', 3, 'dmg') .. '[fg] AoE damage' end,
-    ['dual_gunner'] = function() return '[fg]every 5th attack shoots projectiles in rapid succession targetting all nearby enemies for [yellow]2[fg] seconds' end,
-    ['hunter'] = function() return '[fg]summons 3 pets' end,
+    ['cannoneer'] = function() return '[fg]showers the hit area in [yellow]5[fg] additional cannon shots that deal [yellow]' .. get_character_stat('cannoneer', 3, 'dmg')/2 .. '[fg] AoE damage' end,
+    ['dual_gunner'] = function() return '[fg]every 5th attack shoot in rapid succession for [yellow]2[fg] seconds' end,
+    ['hunter'] = function() return '[fg]summons [yellow]3[fg] pets and the pets ricochet off walls once' end,
     ['chronomancer'] = function() return '[fg]enemies take damave over time [yellow]50%[fg] faster' end,
     ['spellblade'] = function() return '[fg]faster projectile speed and tighter turns' end,
-    ['psykeeper'] = function() return '[fg]also redistributes damage taken as damage to all enemies' end,
-    ['engineer'] = function() return '[fg]every 3rd sentry dropped upgrade all sentries, granting them [yellow]+100%[fg] damage and attack speed' end,
-    ['plague_doctor'] = function() return '[fg]inflicts enemies with a contagion that deals additional [yellow]' .. get_character_stat('plague_doctor', 3, 'dmg') .. '[fg] damage per second and spreads to nearby enemies' end,
+    ['psykeeper'] = function() return '[fg]also redistributes damage taken as damage to all enemies at [yellow]double[fg] value' end,
+    ['engineer'] = function() return '[fg]every 3rd sentry dropped upgrade all sentries with [yellow]+100%[fg] damage and attack speed' end,
+    ['plague_doctor'] = function() return '[fg]nearby enemies take an additional [yellow]' .. get_character_stat('plague_doctor', 3, 'dmg') .. '[fg] damage per second' end,
     ['fisherman'] = function() return '[fg]enemies caught take [yellow]' .. get_character_stat('fisherman', 3, 'dmg')/4 .. '[fg] damage per second' end,
     ['juggernaut'] = function() return '[fg]enemies pushed away by the juggernaut are instantly killed if they hit a wall' end,
     ['lich'] = function() return '[fg]chain frost decreases enemy defenses by [yellow]30[fg] for [yellow]4[fg] seconds' end,
@@ -798,8 +803,8 @@ function init()
 
   main = Main()
   main:add(BuyScreen'buy_screen')
-  main:go_to('buy_screen', 15, {
-    {character = 'saboteur', level = 3},
+  main:go_to('buy_screen', 22, {
+    {character = 'fisherman', level = 3},
   })
   --[[
   main:add(Arena'arena')

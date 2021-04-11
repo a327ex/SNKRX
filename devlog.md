@@ -830,3 +830,36 @@ Lots of improvements and fixes to lots of different things that needed improving
 | Blade | Blade Resonance | deal additional X/2 damage per enemy hit |
 | Elementor | Windfield | slows enemies by 60% for 6 seconds on hit |
 | Saboteur | Demoman | the explosion has 50% chance to crit, increasing in size and dealing 2X damage |
+
+# Day 53 - 10/04/21
+
+Implemented 11 characters today and was going to do more but spent a lot of time trying to make traps work and I couldn't figure it out. Have to idea guy a mechanic other than traps to fill their spot now...
+Either way, 21 out of 40 characters 100% done is still good.
+
+| Character | Classes | Description | 
+| --- | --- | --- |
+| Stormweaver | enchanter | infuses projectiles with chain lightning that deals 20% damage to 2 enemies |
+| Sage | nuker | shoots a slow projectile that pulls enemies in |
+| Squire | warrior, enchanter | +15% damage and defense to all allies |
+| Cannoneer | ranger, nuker | shoots a projectile that deals 2X AoE damage |
+| Dual Gunner | ranger, rogue | shoots two parallel projectiles, each dealing X damage |
+| Hunter | ranger, conjurer | shoots an arrow that deals X damage and has a 20% chance to summon a pet |
+| Chronomancer | mage, enchanter | +20% attack speed to all allies |
+| Spellblade | mage, rogue | throws knives that deal X damage, pierce and spiral outwards |
+| Psykeeper | healer, psyker | all damage taken is stored up to 50% max HP and distributed as healing to all allies |
+| Engineer | conjurer | drops sentries that shoot bursts of projectiles, each dealing X damage |
+| Plague Doctor | nuker, voider | creates an area that deals X damage per second |
+
+| Character | Lv.3 Effect Name | Lv.3 Effect Description |
+| --- | --- | --- |
+| Stormweaver | Wide Lightning | chain lightning's trigger area of effect and number of units hit is doubled |
+| Sage | Dimension Compression | when the projectile expires deal 3X damage to all enemies under its influence |
+| Squire | Repair | you can reroll your item choices once, these opportunities stack if unused |
+| Cannoneer | Cannon Barrage | showers the area in 5 additional cannon shots that deal X/2 AoE damage |
+| Dual Gunner | Gun Kata | every 5th attack shoots in rapid succession for 2 seconds |
+| Hunter | Feral Pack | summons 3 pets and the pets ricochet off walls once |
+| Chronomancer | Quicken | enemies take damage over time 50% faster |
+| Spellblade | Spiralism | faster projectile speed and tighter turns |
+| Psykeeper | Crucio | also redistributes damage taken as damage to all enemies at double value |
+| Engineer | Upgrade | every 3rd sentry dropped upgrade all sentries with +100% damage and attack speed |
+| Plague Doctor | Black Death Steam | nearby enemies take an additional X damage per second |

@@ -50,17 +50,17 @@
     * Blade [warrior, nuker]: throws multiple blades that deal AoE damage - Lv.3: Blade Resonance - deal additional damage based on number of enemies hit
     * Elementor [mage, nuker]: deals AoE damage to a random target in a large area - Lv.3: Windfield - slows enemies hit
     * Saboteur [rogue, conjurer, nuker]: calls saboteurs to seek targets and deal AoE damage - Lv.3: Chain Reaction - should an enemy die from a saboteur explosion, it also explodes
-    Stormweaver [enchanter]: infuses all allied projectiles with chain lightning that deals extra damage - Lv.3: Lightning Spire - cast a spire of lightning periodically
-    Sage [nuker]: shoots a slow moving projectile that pulls enemies in - Lv.3: Dimension Compression - when the projectile expires deal massive damage to all enemies under its influence
-    Squire [warrior, enchanter]: increased damage and defense to all allies - Lv.3: Repair - you can reroll your item choice once every 3 levels, these opportunities stack if unused
-    Cannoneer [ranger, nuker]: shoots a projectile that deals AoE damage - Lv.3: Cannon Barrage - showers the hit area in additional cannon shots that deal AoE damage
-    Dual Gunner [ranger, rogue]: shoots two parallel projectiles - Lv.3: Gun Kata - every 5th attack shoots projectiles in a rapid succession for a duration, targetting all nearby enemies
-    Hunter [ranger, conjurer]: shoots an arrow that summons a pet - Lv.3: Feral Pack - summons 3 pets
-    Chronomancer [mage, enchanter]: increased attack speed to all allies - Lv.3: Quicken - enemies take DoT faster
-    Spellblade [mage, rogue]: throws knives that spiral outwards and pierce - Lv.3: Spiralism - faster projectile speed and tighter turns
-    Psykeeper [healer, psyker]: stores damage taken by all allies and redistributes it as healing - Lv.3: Crucio - also redistributes it as damage to all enemies
-    Engineer [conjurer]: drops sentries that shoot bursts of projectils - Lv.3: Upgrade - every 3rd sentry dropped, upgrade all sentries temporarily, giving increased damage and attack speed
-    Plague Doctor [nuker, voider]: creates an area that deals DoT - Lv.3: Pandemic - inflicts enemies with a contagion that deals additional DoT, if they die from it it passes to a nearby enemy
+    * Stormweaver [enchanter]: infuses all allied projectiles with chain lightning that deals extra damage - Lv.3: Lightning Spire - cast a spire of lightning periodically
+    * Sage [nuker]: shoots a slow moving projectile that pulls enemies in - Lv.3: Dimension Compression - when the projectile expires deal massive damage to all enemies under its influence
+    (Repair to do after items implemented) * Squire [warrior, enchanter]: increased damage and defense to all allies - Lv.3: Repair - you can reroll your item choice once every 3 levels, these opportunities stack if unused
+    * Cannoneer [ranger, nuker]: shoots a projectile that deals AoE damage - Lv.3: Cannon Barrage - showers the hit area in additional cannon shots that deal AoE damage
+    * Dual Gunner [ranger, rogue]: shoots two parallel projectiles - Lv.3: Gun Kata - every 5th attack shoots projectiles in a rapid succession for a duration, targetting all nearby enemies
+    * Hunter [ranger, conjurer]: shoots an arrow that summons a pet - Lv.3: Feral Pack - summons 3 pets
+    (Apply arena.chronomancer_dot when damage over time is implemented) * Chronomancer [mage, enchanter]: increased attack speed to all allies - Lv.3: Quicken - enemies take DoT faster
+    * Spellblade [mage, rogue]: throws knives that spiral outwards and pierce - Lv.3: Spiralism - faster projectile speed and tighter turns
+    * Psykeeper [healer, psyker]: stores damage taken by all allies and redistributes it as healing - Lv.3: Crucio - also redistributes it as damage to all enemies
+    * Engineer [conjurer]: drops sentries that shoot bursts of projectils - Lv.3: Upgrade - every 3rd sentry dropped, upgrade all sentries temporarily, giving increased damage and attack speed
+    * Plague Doctor [nuker, voider]: creates an area that deals DoT - Lv.3: Pandemic - inflicts enemies with a contagion that deals additional DoT, if they die from it it passes to a nearby enemy
     Fisherman [trapper, warrior]: throws a net that entangles enemies and prevents them from moving - Lv.3: Electric Net - enemies caught take DoT
     Juggernaut [forcer, warrior]: creates a small area that deals AoE damage and pushes enemies away - Lv.3: Brutal Impact - enemies pushed away are instantly killed if they hit a wall
     Lich [mage]: launches a chain frost that chains 7 times, dealing damage and slowing enemies it hits - Lv.3: Piercing Frost - chain frost ignores enemy defenses
