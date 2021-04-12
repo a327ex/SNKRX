@@ -294,15 +294,87 @@ function Player:init(args)
       end)
     end
 
-  elseif self.character == 'fisherman' then
-    self.color = character_colors.fisherman
+  elseif self.character == 'barbarian' then
+    self.color = character_colors.barbarian
     self:set_as_rectangle(9, 9, 'dynamic', 'player')
     self.visual_shape = 'rectangle'
-    self.classes = character_classes.fisherman
+    self.classes = character_classes.barbarian
 
-    self.t:every(10, function()
-      Trap{group = main.current.main, x = self.x, y = self.y, color = self.color, v = 50, r = random:float(0, 2*math.pi), dmg = self.dmg, character = self.character, level = self.level, parent = self}
+    self.t:every(8, function()
+      self:attack(96, {stun = 4})
     end)
+
+  elseif self.character == 'juggernaut' then
+    self.color = character_colors.juggernaut
+    self:set_as_rectangle(9, 9, 'dynamic', 'player')
+    self.visual_shape = 'rectangle'
+    self.classes = character_classes.juggernaut
+
+    self.t:every(8, function()
+      self:attack(64, {juggernaut_push = true})
+    end)
+
+  elseif self.character == 'lich' then
+    self.color = character_colors.lich
+    self:set_as_rectangle(9, 9, 'dynamic', 'player')
+    self.visual_shape = 'rectangle'
+    self.classes = character_classes.lich
+
+    self.attack_sensor = Circle(self.x, self.y, 128)
+    self.t:cooldown(4, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
+      local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
+      if closest_enemy then
+        self:shoot(self:angle_to_object(closest_enemy), {chain = (self.level == 3 and 14 or 7), v = 70})
+      end
+    end, nil, nil, 'shoot')
+
+  elseif self.character == 'cryomancer' then
+    self.color = character_colors.cryomancer
+    self:set_as_rectangle(9, 9, 'dynamic', 'player')
+    self.visual_shape = 'rectangle'
+    self.classes = character_classes.cryomancer
+    
+    self.t:after(0.01, function()
+      self.dot_area = DotArea{group = main.current.effects, x = self.x, y = self.y, rs = self.area_size_m*48, color = self.color, dmg = self.area_dmg_m*self.dmg, character = self.character, level = self.level, parent = self}
+    end)
+
+  elseif self.character == 'pyromancer' then
+    self.color = character_colors.pyromancer
+    self:set_as_rectangle(9, 9, 'dynamic', 'player')
+    self.visual_shape = 'rectangle'
+    self.classes = character_classes.pyromancer
+    
+    self.t:after(0.01, function()
+      self.dot_area = DotArea{group = main.current.effects, x = self.x, y = self.y, rs = self.area_size_m*48, color = self.color, dmg = self.area_dmg_m*self.dmg, character = self.character, level = self.level, parent = self}
+    end)
+
+  elseif self.character == 'corruptor' then
+    self.color = character_colors.corruptor
+    self:set_as_rectangle(9, 9, 'dynamic', 'player')
+    self.visual_shape = 'rectangle'
+    self.classes = character_classes.corruptor
+
+    self.attack_sensor = Circle(self.x, self.y, 160)
+    self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
+      local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
+      if closest_enemy then
+        self:shoot(self:angle_to_object(closest_enemy), {spawn_critters_on_kill = 3, spawn_critters_on_hit = (self.level == 3 and 3 or 0)})
+      end
+    end, nil, nil, 'shoot')
+
+  elseif self.character == 'beastmaster' then
+    self.color = character_colors.beastmaster
+    self:set_as_rectangle(9, 9, 'dynamic', 'player')
+    self.visual_shape = 'rectangle'
+    self.classes = character_classes.beastmaster
+
+    self.attack_sensor = Circle(self.x, self.y, 160)
+    self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
+      local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
+      if closest_enemy then
+        self:shoot(self:angle_to_object(closest_enemy), {spawn_critters_on_crit = 2})
+      end
+    end, nil, nil, 'shoot')
   end
 
   self:calculate_stats(true)
@@ -345,7 +417,7 @@ function Player:update(dt)
     if class_levels.conjurer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
     if class_levels.enchanter >= 1 then number_of_active_sets = number_of_active_sets + 1 end
     if class_levels.psyker >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.trapper >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.curser >= 1 then number_of_active_sets = number_of_active_sets + 1 end
     if class_levels.forcer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
     if class_levels.swarmer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
     if class_levels.voider >= 1 then number_of_active_sets = number_of_active_sets + 1 end
@@ -522,6 +594,15 @@ function Player:hit(damage)
   camera:shake(4, 0.5)
   main.current.damage_taken = main.current.damage_taken + actual_damage
 
+  if self.character == 'beastmaster' and self.level == 3 then
+    critter1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    trigger:after(0.01, function()
+      for i = 1, 2 do
+        Critter{group = main.current.main, x = self.x, y = self.y, color = orange[0], r = random:float(0, 2*math.pi), v = 20, dmg = self.dmg}
+      end
+    end)
+  end
+
   local psykeeper = self:get_unit'psykeeper'
   if psykeeper then
     psykeeper.stored_heal = psykeeper.stored_heal + actual_damage
@@ -557,6 +638,8 @@ function Player:hit(damage)
       if self.leader then self:recalculate_followers()
       else self.parent:recalculate_followers() end
     end
+
+    if self.dot_area then self.dot_area.dead = true; self.dot_area = nil end
   end
 end
 
@@ -638,6 +721,16 @@ function Player:shoot(r, mods)
   local dmg_m = 1
   local crit = false
   if self.chance_to_crit and random:bool(self.chance_to_crit) then dmg_m = 4; crit = true end
+  print(crit, mods.spawn_critters_on_crit, self.chance_to_crit)
+
+  if crit and mods.spawn_critters_on_crit then
+    critter1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    trigger:after(0.01, function()
+      for i = 1, mods.spawn_critters_on_crit do
+        Critter{group = main.current.main, x = self.x, y = self.y, color = orange[0], r = random:float(0, 2*math.pi), v = 10, dmg = self.dmg}
+      end
+    end)
+  end
 
   if self.character == 'outlaw' then
     HitCircle{group = main.current.effects, x = self.x + 0.8*self.shape.w*math.cos(r), y = self.y + 0.8*self.shape.w*math.sin(r), rs = 6}
@@ -707,7 +800,7 @@ function Player:shoot(r, mods)
     dual_gunner2:play{pitch = random:float(0.95, 1.05), volume = 0.3}
   elseif self.character == 'archer' or self.character == 'hunter' then
     archer1:play{pitch = random:float(0.95, 1.05), volume = 0.35}
-  elseif self.character == 'wizard' then
+  elseif self.character == 'wizard' or self.character == 'lich' then
     wizard1:play{pitch = random:float(0.95, 1.05), volume = 0.15}
   elseif self.character == 'scout' or self.character == 'outlaw' or self.character == 'blade' or self.character == 'spellblade' then
     _G[random:table{'scout1', 'scout2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.35}
@@ -716,6 +809,10 @@ function Player:shoot(r, mods)
     end
   elseif self.character == 'cannoneer' then
     _G[random:table{'cannoneer1', 'cannoneer2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+  end
+
+  if self.character == 'lich' then
+    frost1:play{pitch = random:float(0.95, 1.05), volume = 0.3}
   end
 
   if self.chance_to_barrage and random:bool(self.chance_to_barrage) then
@@ -728,12 +825,17 @@ function Player:attack(area, mods)
   mods = mods or {}
   camera:shake(2, 0.5)
   self.hfx:use('shoot', 0.25)
-  local t = {group = main.current.effects, x = mods.x or self.x, y = mods.y or self.y, r = self.r, w = self.area_size_m*(area or 64), color = self.color, dmg = self.area_dmg_m*self.dmg, character = self.character, level = self.level}
+  local t = {group = main.current.effects, x = mods.x or self.x, y = mods.y or self.y, r = self.r, w = self.area_size_m*(area or 64), color = self.color, dmg = self.area_dmg_m*self.dmg,
+    character = self.character, level = self.level, parent = self}
   Area(table.merge(t, mods))
 
-  if self.character == 'swordsman' then
+  if self.character == 'swordsman' or self.character == 'barbarian' or self.character == 'juggernaut' then
     _G[random:table{'swordsman1', 'swordsman2'}]:play{pitch = random:float(0.9, 1.1), volume = 0.75}
   elseif self.character == 'elementor' then
+    elementor1:play{pitch = random:float(0.9, 1.1), volume = 0.5}
+  end
+
+  if self.character == 'juggernaut' then
     elementor1:play{pitch = random:float(0.9, 1.1), volume = 0.5}
   end
 end
@@ -823,6 +925,12 @@ function Projectile:init(args)
         self.t:tween(12.25, self, {orbit_vr = 0}, math.linear)
       end)
     end
+
+  elseif self.character == 'lich' then
+    self.spring:pull(0.15)
+    self.t:every(0.08, function()
+      HitParticle{group = main.current.effects, x = self.x, y = self.y, color = self.color}
+    end)
   end
 
   if self.homing then
@@ -879,6 +987,11 @@ function Projectile:draw()
       graphics.circle(self.x, self.y, self.pull_sensor.rs, self.color_transparent)
       local lw = math.remap(self.pull_sensor.rs, 32, 256, 2, 4)
       for i = 1, 4 do graphics.arc('open', self.x, self.y, self.pull_sensor.rs, (i-1)*math.pi/2 + math.pi/4 - math.pi/8, (i-1)*math.pi/2 + math.pi/4 + math.pi/8, self.color, lw) end
+    graphics.pop()
+
+  elseif self.character == 'lich' then
+    graphics.push(self.x, self.y, self.r, self.spring.x, self.spring.x)
+      graphics.circle(self.x, self.y, 4 + random:float(-1, 1), self.color)
     graphics.pop()
 
   else
@@ -943,7 +1056,7 @@ function Projectile:on_collision_enter(other, contact)
       if self.character == 'spellblade' then
         magic_area1:play{pitch = random:float(0.95, 1.05), volume = 0.075}
       end
-    elseif self.character == 'wizard' then
+    elseif self.character == 'wizard' or self.character == 'lich' then
       self:die(x, y, r, random:int(2, 3))
       magic_area1:play{pitch = random:float(0.95, 1.05), volume = 0.075}
     elseif self.character == 'cannoneer' then
@@ -973,10 +1086,17 @@ function Projectile:on_trigger_enter(other, contact)
       if self.chain > 0 then
         self.chain = self.chain - 1
         table.insert(self.chain_enemies_hit, other)
-        local object = self:get_random_object_in_shape(Circle(self.x, self.y, 160), main.current.enemies, self.chain_enemies_hit)
+        local object = self:get_random_object_in_shape(Circle(self.x, self.y, 48), main.current.enemies, self.chain_enemies_hit)
         if object then
           self.r = self:angle_to_object(object)
-          self.v = self.v*1.25
+          if self.character == 'lich' then
+            self.v = self.v*1.1
+            if self.level == 3 then
+              object:slow(0.2, 2)
+            end
+          else
+            self.v = self.v*1.25
+          end
           if self.level == 3 and self.character == 'scout' then
             self.dmg = self.dmg*1.25
           end
@@ -992,7 +1112,7 @@ function Projectile:on_trigger_enter(other, contact)
       if self.character == 'spellblade' then
         magic_area1:play{pitch = random:float(0.95, 1.05), volume = 0.15}
       end
-    elseif self.character == 'wizard' then
+    elseif self.character == 'wizard' or self.character == 'lich' then
       magic_area1:play{pitch = random:float(0.95, 1.05), volume = 0.15}
     else
       hit3:play{pitch = random:float(0.95, 1.05), volume = 0.35}
@@ -1063,7 +1183,6 @@ function Area:init(args)
   self:init_game_object(args)
   self.shape = Rectangle(self.x, self.y, 1.5*self.w, 1.5*self.w, self.r)
   local enemies = main.current.main:get_objects_in_shape(self.shape, main.current.enemies)
-  if self.character == 'saboteur' then print(self.dmg) end
   for _, enemy in ipairs(enemies) do
     if self.character == 'elementor' then
       enemy:hit(2*self.dmg)
@@ -1082,15 +1201,28 @@ function Area:init(args)
     for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = enemy.color} end
     if self.character == 'wizard' or self.character == 'elementor' then
       magic_hit1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-    elseif self.character == 'swordsman' then
+    elseif self.character == 'swordsman' or self.character == 'barbarian' or self.character == 'juggernaut' then
       hit2:play{pitch = random:float(0.95, 1.05), volume = 0.35}
     elseif self.character == 'blade' then
       blade_hit1:play{pitch = random:float(0.9, 1.1), volume = 0.35}
       hit2:play{pitch = random:float(0.95, 1.05), volume = 0.2}
-    elseif self.character == 'saboteur' then
+    elseif self.character == 'saboteur' or self.character == 'pyromancer' then
+      if self.character == 'pyromancer' then pyro2:play{pitch = random:float(0.95, 1.05), volume = 0.4} end
       _G[random:table{'saboteur_hit1', 'saboteur_hit2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.2}
     elseif self.character == 'cannoneer' then
       _G[random:table{'saboteur_hit1', 'saboteur_hit2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.075}
+    end
+
+    if self.stun then
+      enemy:slow(0.1, self.stun)
+      enemy.barbarian_stunned = true
+      enemy.t:after(self.stun, function() enemy.barbarian_stunned = false end)
+    end
+
+    if self.juggernaut_push then
+      local r = self.parent:angle_to_object(enemy)
+      enemy:push(random:float(75, 100), r)
+      enemy.juggernaut_push = 3*self.dmg
     end
   end
 
@@ -1136,16 +1268,40 @@ function DotArea:init(args)
   self:init_game_object(args)
   self.shape = Circle(self.x, self.y, self.rs)
 
-  self.t:every(0.2, function()
-    local enemies = main.current.main:get_objects_in_shape(self.shape, main.current.enemies)
-    for _, enemy in ipairs(enemies) do
-      hit2:play{pitch = random:float(0.8, 1.2), volume = 0.2}
-      enemy:hit(self.dmg/5)
-      HitCircle{group = main.current.effects, x = enemy.x, y = enemy.y, rs = 6, color = fg[0], duration = 0.1}
-      for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = self.color} end
-      for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = enemy.color} end
-    end
-  end, nil, nil, 'dot')
+  if self.character == 'plague_doctor' or self.character == 'pyromancer' then
+    self.t:every(0.2, function()
+      local enemies = main.current.main:get_objects_in_shape(self.shape, main.current.enemies)
+      if #enemies > 0 then self.spring:pull(0.05, 200, 10) end
+      for _, enemy in ipairs(enemies) do
+        hit2:play{pitch = random:float(0.8, 1.2), volume = 0.2}
+        if self.character == 'pyromancer' then
+          pyro1:play{pitch = random:float(1.5, 1.8), volume = 0.1}
+          enemy.pyrod = self
+        end
+        enemy:hit(self.dmg/5)
+        HitCircle{group = main.current.effects, x = enemy.x, y = enemy.y, rs = 6, color = fg[0], duration = 0.1}
+        for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = self.color} end
+        for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = enemy.color} end
+      end
+    end, nil, nil, 'dot')
+  elseif self.character == 'cryomancer' then
+    self.t:every(2, function()
+      local enemies = main.current.main:get_objects_in_shape(self.shape, main.current.enemies)
+      if #enemies > 0 then
+        self.spring:pull(0.15, 200, 10)
+        frost1:play{pitch = random:float(0.8, 1.2), volume = 0.4}
+      end
+      for _, enemy in ipairs(enemies) do
+        if self.level == 3 then
+          enemy:slow(0.4, 4)
+        end
+        enemy:hit(2*self.dmg)
+        HitCircle{group = main.current.effects, x = enemy.x, y = enemy.y, rs = 6, color = fg[0], duration = 0.1}
+        for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = self.color} end
+        for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = enemy.color} end
+      end
+    end, nil, nil, 'dot')
+  end
 
   self.color = fg[0]
   self.color_transparent = Color(args.color.r, args.color.g, args.color.b, 0.08)
@@ -1170,7 +1326,7 @@ function DotArea:update(dt)
   self.vr = self.vr + self.dvr*dt
 
   if self.parent then
-    if self.character == 'plague_doctor' and self.level == 3 then
+    if (self.character == 'plague_doctor' and self.level == 3) or self.character == 'cryomancer' or self.character == 'pyromancer' then
       self.x, self.y = self.parent.x, self.parent.y
       self.shape:move_to(self.x, self.y)
     end
@@ -1188,49 +1344,6 @@ function DotArea:draw()
     for i = 1, 4 do graphics.arc('open', self.x, self.y, self.shape.rs, (i-1)*math.pi/2 + math.pi/4 - math.pi/8, (i-1)*math.pi/2 + math.pi/4 + math.pi/8, self.color, lw) end
   graphics.pop()
 end
-
-
-
-
---[[
-Trap = Object:extend()
-Trap:implement(GameObject)
-Trap:implement(Physics)
-function Trap:init(args)
-  self:init_game_object(args)
-  
-  self.shape = Rectangle(self.x, self.y, 6, 6)
-  self.spring:pull(0.15, 200, 20)
-  self.vr = 0
-  self.dvr = random:float(-2*math.pi, 2*math.pi)
-  self.t:tween(1, self, {v = 0, dvr = 0}, math.linear)
-end
-
-
-function Trap:update(dt)
-  self:update_game_object(dt)
-  self:move_along_angle(self.v, self.r)
-  self.vr = self.vr + self.dvr*dt
-  self.shape:move_to(self.x, self.y)
-
-  local enemies = self:get_objects_in_shape(self.shape, main.current.enemies)
-  if #enemies > 0 then
-    self.dead = true
-    local enemies = self:get_objects_in_shape(Circle(self.x, self.y, 24), main.current.enemies)
-    for _, enemy in ipairs(enemies) do
-      enemy:slow(0.1, 4)
-    end
-  end
-end
-
-
-function Trap:draw()
-  graphics.push(self.x, self.y, self.r + self.vr, self.spring.x, self.spring.x)
-    graphics.line(self.x - 6, self.y, self.x + 6, self.y, self.color, 3)
-    graphics.line(self.x, self.y - 6, self.x, self.y + 6, self.color, 3)
-  graphics.pop()
-end
-]]--
 
 
 
@@ -1413,13 +1526,16 @@ function Saboteur:update(dt)
   self:calculate_stats()
 
   if not self.target then self.target = random:table(self.group:get_objects_by_classes(main.current.enemies)) end
-  if not self.target then return end
-  if self.target.dead then self.target = random:table(self.group:get_objects_by_classes(main.current.enemies)) end
-  if not self.target then return end
-
-  self:seek_point(self.target.x, self.target.y)
-  self:rotate_towards_velocity(0.5)
-  self.r = self:get_angle()
+  if self.target and self.target.dead then self.target = random:table(self.group:get_objects_by_classes(main.current.enemies)) end
+  if not self.target then
+    self:seek_point(gw/2, gh/2)
+    self:rotate_towards_velocity(0.5)
+    self.r = self:get_angle()
+  else
+    self:seek_point(self.target.x, self.target.y)
+    self:rotate_towards_velocity(0.5)
+    self.r = self:get_angle()
+  end
 end
 
 
@@ -1437,5 +1553,123 @@ function Saboteur:on_collision_enter(other, contact)
       dmg = (self.crit and 2 or 1)*self.area_dmg_m*self.actual_dmg*(self.conjurer_buff_m or 1), character = self.character}
     Area(table.merge(t, mods or {}))
     self.dead = true
+  end
+end
+
+
+
+
+Critter = Object:extend()
+Critter:implement(GameObject)
+Critter:implement(Physics)
+Critter:implement(Unit)
+function Critter:init(args)
+  self:init_game_object(args)
+  self:init_unit()
+  self:set_as_rectangle(7, 4, 'dynamic', 'player')
+  self:set_restitution(0.5)
+
+  self.classes = {'enemy_critter'}
+  self.color = orange[0]
+  self:calculate_stats(true)
+  self:set_as_steerable(self.v, 400, math.pi, 1)
+  self:push(args.v, args.r)
+  self.invulnerable = true
+  self.t:after(0.5, function() self.invulnerable = false end)
+
+  self.hp = 1
+end
+
+
+function Critter:update(dt)
+  self:update_game_object(dt)
+
+  if self.being_pushed then
+    local v = math.length(self:get_velocity())
+    if v < 50 then
+      self.being_pushed = false
+      self.steering_enabled = true
+      self:set_damping(0)
+      self:set_angular_damping(0)
+    end
+  else
+    if not self.target then self.target = random:table(self.group:get_objects_by_classes(main.current.enemies)) end
+    if self.target and self.target.dead then self.target = random:table(self.group:get_objects_by_classes(main.current.enemies)) end
+    if not self.target then
+      self:seek_point(gw/2, gh/2)
+      self:wander(50, 200, 50)
+      self:rotate_towards_velocity(1)
+      self:steering_separate(8, {Critter})
+    else
+      self:seek_point(self.target.x, self.target.y)
+      self:wander(50, 200, 50)
+      self:rotate_towards_velocity(1)
+      self:steering_separate(8, {Critter})
+    end
+  end
+  self.r = self:get_angle()
+end
+
+
+function Critter:draw()
+  graphics.push(self.x, self.y, self.r, self.hfx.hit.x, self.hfx.hit.x)
+    graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 2, 2, self.hfx.hit.f and fg[0] or self.color)
+  graphics.pop()
+end
+
+
+function Critter:hit(damage)
+  if self.dead or self.invulnerable then return end
+  self.hfx:use('hit', 0.25, 200, 10)
+  self.hp = self.hp - damage
+  -- self:show_hp()
+  if self.hp <= 0 then self:die() end
+end
+
+
+function Critter:push(f, r)
+  self.push_force = f
+  self.being_pushed = true
+  self.steering_enabled = false
+  self:apply_impulse(f*math.cos(r), f*math.sin(r))
+  self:apply_angular_impulse(random:table{random:float(-12*math.pi, -4*math.pi), random:float(4*math.pi, 12*math.pi)})
+  self:set_damping(1.5)
+  self:set_angular_damping(1.5)
+end
+
+
+function Critter:die(x, y, r, n)
+  if self.dead then return end
+  x = x or self.x
+  y = y or self.y
+  n = n or random:int(2, 3)
+  for i = 1, n do HitParticle{group = main.current.effects, x = x, y = y, r = random:float(0, 2*math.pi), color = self.color} end
+  HitCircle{group = main.current.effects, x = x, y = y}:scale_down()
+  self.dead = true
+  _G[random:table{'enemy_die1', 'enemy_die2'}]:play{pitch = random:float(0.9, 1.1), volume = 0.5}
+  critter2:play{pitch = random:float(0.95, 1.05), volume = 0.2}
+end
+
+
+function Critter:on_collision_enter(other, contact)
+  local x, y = contact:getPositions()
+  local nx, ny = contact:getNormal()
+  local r = 0
+  if nx == 0 and ny == -1 then r = -math.pi/2
+  elseif nx == 0 and ny == 1 then r = math.pi/2
+  elseif nx == -1 and ny == 0 then r = math.pi
+  else r = 0 end
+
+  if other:is(Wall) then
+    self.hfx:use('hit', 0.15, 200, 10, 0.1)
+    self:bounce(contact:getNormal())
+  end
+end
+
+
+function Critter:on_trigger_enter(other, contact)
+  if other:is(Seeker) then
+    self:hit(1)
+    other:hit(self.dmg)
   end
 end

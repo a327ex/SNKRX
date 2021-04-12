@@ -863,3 +863,27 @@ Either way, 21 out of 40 characters 100% done is still good.
 | Psykeeper | Crucio | also redistributes damage taken as damage to all enemies at double value |
 | Engineer | Upgrade | every 3rd sentry dropped upgrade all sentries with +100% damage and attack speed |
 | Plague Doctor | Black Death Steam | nearby enemies take an additional X damage per second |
+
+# Day 54 - 11/04/21
+
+Implemented more 7 units fully. Today was slower because these were all new units that also were the first units for the new 4 classes, so I had to do some more work to get it going. The rest should go faster tomorrow.
+
+| Character | Classes | Description | 
+| --- | --- | --- |
+| Barbarian | curser, warrior | deals X AoE damage and stuns enemies hit for 4 seconds |
+| Juggernaut | forcer, warrior | deals X AoE damage and pushes enemies away with a strong force |
+| Lich | mage | launches a slow projectilt that jumps 7 times, dealing 2X damage per hit |
+| Cryomancer | mage, voider | nearby enemies take X damage per second |
+| Pyromancer | mage, nuker, voider | nearby enemies take X damage per second |
+| Corruptor | ranger, swarmer | spawn 3 small critters if the corruptor kills an enemy |
+| Beastmaster | rogue, swarmer | spawn 2 small critters if the beastmaster crits |
+
+| Character | Lv.3 Effect Name | Lv.3 Effect Description |
+| --- | --- | --- |
+| Barbarian | Seism | stunned enemies also take +100% damage |
+| Juggernaut | Brutal Impact | enemies pushed by the juggernaut take 4X damage if they hit a wall |
+| Lich | Chain Frost | chain frost slows enemies hit by 80% for 2 seconds and chains +7 times |
+| Cryomancer | Frostbite | enemies are also slowed by 60% while in the area |
+| Pyromancer | Ignite | enemies killed by the pyromancer explode, dealing X AoE damage |
+| Corruptor | Corruption | spawn 3 small critters if the corruptor hits an enemy |
+| Beastmaster | Call of the Wild | spawn 2 small critters if the beastmaster gets hit |

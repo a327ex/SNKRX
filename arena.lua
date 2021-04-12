@@ -235,13 +235,13 @@ function Arena:on_enter(from, level, units)
   table.insert(units, self.player)
   for _, f in ipairs(self.player.followers) do table.insert(units, f) end
 
-  local class_levels = get_class_levels(get_number_of_units_per_class(units))
+  local class_levels = get_class_levels(units)
   self.ranger_level = class_levels.ranger
   self.warrior_level = class_levels.warrior
   self.mage_level = class_levels.mage
   self.rogue_level = class_levels.rogue
   self.nuker_level = class_levels.nuker
-  self.trapper_level = class_levels.trapper
+  self.curser_level = class_levels.curser
   self.forcer_level = class_levels.forcer
   self.swarmer_level = class_levels.swarmer
   self.voider_level = class_levels.voider

@@ -243,6 +243,8 @@ function Seeker:update(dt)
 
   self:calculate_stats()
 
+  self.stun_dmg_m = (self.barbarian_stunned and 2 or 1)
+
   if self.shooter then
     self.t:set_every_multiplier('shooter', (1 - self.level*0.02))
   end
@@ -253,6 +255,7 @@ function Seeker:update(dt)
       if self.push_invulnerable then self.push_invulnerable = false end
       self.being_pushed = false
       self.steering_enabled = true
+      self.juggernaut_push = false
       self:set_damping(0)
       self:set_angular_damping(0)
     end
@@ -318,6 +321,10 @@ function Seeker:on_collision_enter(other, contact)
   if other:is(Wall) then
     self.hfx:use('hit', 0.15, 200, 10, 0.1)
     self:bounce(contact:getNormal())
+    if self.juggernaut_push then
+      self:hit(self.juggernaut_push)
+      hit2:play{pitch = random:float(0.95, 1.05), volume = 0.35}
+    end
 
   elseif table.any(main.current.enemies, function(v) return other:is(v) end) then
     if self.being_pushed and math.length(self:get_velocity()) > 60 then
@@ -344,14 +351,26 @@ end
 
 
 function Seeker:hit(damage, projectile)
+  local pyrod = self.pyrod
+  self.pyrod = false
   if self.dead then return end
   self.hfx:use('hit', 0.25, 200, 10)
   if self.push_invulnerable then return end
   self:show_hp()
   
-  local actual_damage = self:calculate_damage(damage)
+  local actual_damage = self:calculate_damage(damage)*self.stun_dmg_m
   self.hp = self.hp - actual_damage
   main.current.damage_dealt = main.current.damage_dealt + actual_damage
+
+  if projectile and projectile.spawn_critters_on_hit then
+    critter1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    trigger:after(0.01, function()
+      for i = 1, projectile.spawn_critters_on_hit do
+        Critter{group = main.current.main, x = self.x, y = self.y, color = orange[0], r = random:float(0, 2*math.pi), v = 10, dmg = projectile.parent.dmg}
+      end
+    end)
+  end
+
   if self.hp <= 0 then
     self.dead = true
     for i = 1, random:int(4, 6) do HitParticle{group = main.current.effects, x = self.x, y = self.y, color = self.color} end
@@ -385,6 +404,22 @@ function Seeker:hit(damage, projectile)
       trigger:after(0.01, function()
         for i = 1, random:int(3, 6) do
           EnemyCritter{group = main.current.main, x = self.x, y = self.y, color = purple[0], r = random:float(0, 2*math.pi), v = 5 + 0.1*self.level, dmg = self.dmg, projectile = projectile}
+        end
+      end)
+    end
+
+    if pyrod then
+      trigger:after(0.01, function()
+        Area{group = main.current.main, x = self.x, y = self.y, color = red[0], w = 32*pyrod.parent.area_size_m, r = random:float(0, 2*math.pi), dmg = pyrod.parent.area_dmg_m*pyrod.dmg,
+          character = pyrod.character, level = pyrod.level, parent = pyrod.parent}
+      end)
+    end
+
+    if projectile and projectile.spawn_critters_on_kill then
+      trigger:after(0.01, function()
+        critter1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+        for i = 1, projectile.spawn_critters_on_kill do
+          Critter{group = main.current.main, x = self.x, y = self.y, color = orange[0], r = random:float(0, 2*math.pi), v = 5, dmg = projectile.parent.dmg}
         end
       end)
     end
