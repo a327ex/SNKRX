@@ -887,3 +887,21 @@ Implemented more 7 units fully. Today was slower because these were all new unit
 | Pyromancer | Ignite | enemies killed by the pyromancer explode, dealing X AoE damage |
 | Corruptor | Corruption | spawn 3 small critters if the corruptor hits an enemy |
 | Beastmaster | Call of the Wild | spawn 2 small critters if the beastmaster gets hit |
+
+# Day 55 - 12/04/21
+
+Even slower day today, but I managed to get something done. I'm hoping I can finish the other 9 characters tomorrow but it might go slow too...
+
+| Character | Classes | Description | 
+| --- | --- | --- |
+| Launcher | forcer, warrior | nearby enemies are pushed after 4 seconds, taking 2X damage on wall hit |
+| Bard | curser, rogue | throws a knife that deals X damage and inflicts enemies hit with the bard's curse |
+| Assassin | voider, rogue | throws a piercing knife that deals X damage and inflicts poison that deals X/2 damage per second for 3 seconds |
+| Host | swarmer | periodically spawn 1 small critter |
+
+| Character | Lv.3 Effect Name | Lv.3 Effect Description |
+| --- | --- | --- |
+| Launcher | Kineticism | enemies launched take 300% more damage when they hit walls |
+| Bard | The Bard's Song | every 8th attack consume the curse to deal 4X damage to affected enemies |
+| Assassin | Toxic Delivery | poison inflicted from crits deals 8X damage |
+| Host | Invasion | +100% critter spawn rate and spawn 2 critters instead |

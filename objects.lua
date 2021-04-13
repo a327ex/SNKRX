@@ -250,6 +250,10 @@ function Unit:calculate_stats(first_run)
     self.base_hp = 25 + 30*y[x]
     self.base_dmg = 10 + 3*y[x]
     self.base_mvspd = 60 + 3*y[x]
+  elseif self:is(Overlord) then
+    self.base_hp = 50*math.pow(2, self.level-1)
+    self.base_dmg = 10*math.pow(2, self.level-1)
+    self.base_mvspd = 40
   end
   self.base_aspd_m = 1
   self.base_area_dmg_m = 1

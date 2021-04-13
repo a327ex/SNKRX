@@ -68,12 +68,12 @@
     * Pyromancer [mage, nuker, voider]: nearby enemies take damage over time and deal decreased damage - Lv.3: Ignite - enemies killed by the pyromancer explode, dealing AoE damage
     * Corruptor [ranger, swarmer]: spawn 3 small critters if the corruptor kills an enemy - Lv.3: Corruption - spawn 3 small critters if the corruptor hits an enemy
     * Beastmaster [rogue, swarmer]: spawn 2 small critters if the beastmaster crits - Lv.3: Call of the Wild - spawn 2 small critters if the beastmaster gets hit
-    Launcher [curser, forcer]: curses nearby enemies with a kinetic curse that triggers after 4 seconds - Lv.3: Kineticism - enemies launched that hit other enemies transfer their kinetic energy at double value
-    Bard [curser, rogue]: shoots a projectile that inflicts enemies hit with the bard's curse - Lv.3: The Bard's Song - every 5th attack consume the curse to deal massive damage to enemies affected
-    Assassin [rogue, voider]: throws a piercing knife that inflicts poison - Lv.3: Toxic Delivery - poison inflicted from crits deals more damage
-    Host [conjurer, swarmer]: creates overlords that periodically spawn small critters - Lv.3: Invasion - increased critter spawn rate
+    * Launcher [curser, forcer]: curses nearby enemies with a kinetic curse that triggers after 4 seconds - Lv.3: Kineticism - enemies launched that hit other enemies transfer their kinetic energy at double value
+    * Bard [curser, rogue]: shoots a projectile that inflicts enemies hit with the bard's curse - Lv.3: The Bard's Song - every 5th attack consume the curse to deal massive damage to enemies affected
+    * Assassin [rogue, voider]: throws a piercing knife that inflicts poison - Lv.3: Toxic Delivery - poison inflicted from crits deals more damage
+    * Host [swarmer]: creates overlords that periodically spawn small critters - Lv.3: Invasion - increased critter spawn rate
     Carver [conjurer, curser, healer]: carves a statue that periodically heals in an area - Lv.3: World Tree - carves a tree that heals in a bigger area and removes all buffs from enemies
-    Bane [curser, voider]: creates a large area that curses enemies to take increased DoT - Lv.3: Nightmare - the area also deals DoT and slows enemies
+    Bane [curser, voider]: creates a large area that curses enemies to take increased damage - Lv.3: Nightmare - the area also deals DoT and slows enemies
     Psykino [mage, psyker, forcer]: quickly pulls enemies together and then releases them with a force - Lv.3: Magnetic Force - enemies pulled together are forced to collide with each other before being released
     Arbalester [ranger, forcer]: launches a massive arrow that pushes enemies back, ignoring knockback resistances - Lv.3: Ballista Sinistra - enemies hit by the arrow have massively decreased defense
     Highlander [warrior]: creates a small area that deals massive damage - Lv.3: Crosscut - two crosscutting areas of larger size are created instead

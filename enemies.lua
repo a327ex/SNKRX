@@ -256,6 +256,7 @@ function Seeker:update(dt)
       self.being_pushed = false
       self.steering_enabled = true
       self.juggernaut_push = false
+      self.launcher_push = false
       self:set_damping(0)
       self:set_angular_damping(0)
     end
@@ -323,6 +324,11 @@ function Seeker:on_collision_enter(other, contact)
     self:bounce(contact:getNormal())
     if self.juggernaut_push then
       self:hit(self.juggernaut_push)
+      hit2:play{pitch = random:float(0.95, 1.05), volume = 0.35}
+    end
+
+    if self.launcher_push then
+      self:hit(self.launcher_push)
       hit2:play{pitch = random:float(0.95, 1.05), volume = 0.35}
     end
 
@@ -451,6 +457,29 @@ end
 function Seeker:slow(amount, duration)
   self.slowed = amount
   self.t:after(duration, function() self.slowed = false end, 'slow')
+end
+
+
+function Seeker:curse(curse, duration, arg1)
+  if curse == 'launcher' then
+    self.t:after(duration, function()
+      self.launcher_push = arg1
+      self:push(random:float(50, 75), random:table{0, math.pi, math.pi/2, -math.pi/2})
+    end, 'launcher_curse')
+  elseif curse == 'bard' then
+    self.bard_cursed = true
+  end
+end
+
+
+function Seeker:apply_dot(dmg, duration)
+  self.t:every(0.25, function()
+    hit2:play{pitch = random:float(0.8, 1.2), volume = 0.2}
+    self:hit(dmg/4)
+    HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = fg[0], duration = 0.1}
+    for i = 1, 1 do HitParticle{group = main.current.effects, x = self.x, y = self.y, color = self.color} end
+    for i = 1, 1 do HitParticle{group = main.current.effects, x = self.x, y = self.y, color = purple[0]} end
+  end, math.floor(duration/0.2))
 end
 
 

@@ -19,6 +19,8 @@ function init()
   music.volume = 0
 
   local s = {tags = {sfx}}
+  bard2 = Sound('376532__womb-affliction__flute-trill.ogg', s)
+  bard1 = Sound('Magical Impact 12.ogg', s)
   frost1 = Sound('Frost Bolt 20.ogg', s)
   pyro1 = Sound('Fire bolt 5.ogg', s)
   pyro2 = Sound('Explosion Fireworks_01.ogg', s)
@@ -173,7 +175,7 @@ function init()
     ['pyromancer'] = red[0],
     ['corruptor'] = orange[0],
     ['beastmaster'] = red[0],
-    ['launcher'] = orange[0],
+    ['launcher'] = yellow[0],
     ['bard'] = red[0],
     ['assassin'] = purple[0],
     ['host'] = orange[0],
@@ -217,7 +219,7 @@ function init()
     ['pyromancer'] = 'red',
     ['corruptor'] = 'orange',
     ['beastmaster'] = 'red',
-    ['launcher'] = 'orange',
+    ['launcher'] = 'yellow',
     ['bard'] = 'red',
     ['assassin'] = 'purple',
     ['host'] = 'orange',
@@ -264,7 +266,7 @@ function init()
     ['launcher'] = {'curser', 'forcer'},
     ['bard'] = {'curser', 'rogue'},
     ['assassin'] = {'rogue', 'voider'},
-    ['host'] = {'conjurer', 'swarmer'},
+    ['host'] = {'swarmer'},
     ['carver'] = {'conjurer', 'curser', 'healer'},
     ['bane'] = {'curser', 'voider'},
     ['psykino'] = {'mage', 'psyker', 'forcer'},
@@ -305,10 +307,10 @@ function init()
     ['pyromancer'] = '[blue]Mage, [red]Nuker, [purple]Voider',
     ['corruptor'] = '[green]Ranger, [orange]Swarmer',
     ['beastmaster'] = '[red]Rogue, [orange]Swarmer',
-    ['launcher'] = '[purple]Curser, [yellow]Forcer',
+    ['launcher'] = '[yellow]Forcer, [purple]Curser',
     ['bard'] = '[purple]Curser, [red]Rogue',
     ['assassin'] = '[red]Rogue, [purple]Voider',
-    ['host'] = '[orange]Conjurer, [orange]Swarmer',
+    ['host'] = '[orange]Swarmer',
     ['carver'] = '[orange]Conjurer, [purple]Curser, [green]Healer',
     ['bane'] = '[purple]Curser, Voider',
     ['psykino'] = '[blue]Mage, [fg]Psyker, [yellow]Forcer',
@@ -365,11 +367,11 @@ function init()
     ['pyromancer'] = function(lvl) return '[fg]nearby enemies take [yellow]' .. get_character_stat('pyromancer', lvl, 'dmg') .. '[fg] damage per second' end,
     ['corruptor'] = function(lvl) return '[fg]spawn [yellow]3[fg] small critters if the corruptor kills an enemy' end,
     ['beastmaster'] = function(lvl) return '[fg]spawn [yellow]2[fg] small critters if the beastmaster crits' end,
-    ['launcher'] = function(lvl) return '[fg]nearby enemies are afflicted with a kinetic curse that triggers after [yellow]4[fg] seconds' end,
-    ['bard'] = function(lvl) return "[fg]shoots a projectile that inflicts enemies hit with the bard's curse" end,
+    ['launcher'] = function(lvl) return '[fg]nearby enemies are pushed after [yellow]4[fg] seconds, taking [yellow]' .. 2*get_character_stat('launcher', lvl, 'dmg') .. '[fg] damage on wall hit' end,
+    ['bard'] = function(lvl) return "[fg]throws a knife that deals [yellow]" .. get_character_stat('bard', lvl, 'dmg') .. "[fg] damage and inflicts enemies hit with the bard's curse" end,
     ['assassin'] = function(lvl) return '[fg]throws a piercing knife that deals [yellow]' .. get_character_stat('assassin', lvl, 'dmg') .. '[fg] damage and inflicts poison that deals [yellow]' ..
-      get_character_stat('assassin', lvl, 'dmg')/2 .. '[fg] damage per second for [yellow]4[fg] seconds' end,
-    ['host'] = function(lvl) return '[fg]creates [yellow]2[fg] overlords that periodically spawn small critters' end,
+      get_character_stat('assassin', lvl, 'dmg')/2 .. '[fg] damage per second for [yellow]3[fg] seconds' end,
+    ['host'] = function(lvl) return '[fg]periodically spawn [yellow]1[fg] small critter' end,
     ['carver'] = function(lvl) return '[fg]carves a statue that periodically heals for [yellow]20%[fg] max HP in an area around it' end,
     ['bane'] = function(lvl) return '[fg]creates a large area that curses enemies to take [yellow]50%[fg] increased damage over time' end,
     ['psykino'] = function(lvl) return '[fg]quickly pulls enemies together and then release them with a force' end,
@@ -411,7 +413,7 @@ function init()
     ['corruptor'] = '[orange]Corruption',
     ['beastmaster'] = '[red]Call of the Wild',
     ['launcher'] = '[orange]Kineticism',
-    ['bard'] = "[orange]The Bard's Song",
+    ['bard'] = "[red]The Bard's Song",
     ['assassin'] = '[purple]Toxic Delivery',
     ['host'] = '[orange]Invasion',
     ['carver'] = '[green]World Tree',
@@ -498,10 +500,10 @@ function init()
     ['pyromancer'] = function() return '[fg]enemies killed by the pyromancer explode, dealing [yellow]' .. get_character_stat('pyromancer', 3, 'dmg') .. '[fg] AoE damage' end,
     ['corruptor'] = function() return '[fg]spawn [yellow]3[fg] small critters if the corruptor hits an enemy' end,
     ['beastmaster'] = function() return '[fg]spawn [yellow]2[fg] small critters if the beastmaster gets hit' end,
-    ['launcher'] = function() return '[fg]enemies launched that hit other enemies push those enemies at double the force they were pushed' end,
-    ['bard'] = function() return '[fg] every 5th attack consume the curse to deal [yellow]' .. 3*get_character_stat('bard', 3, 'dmg') .. '[fg] damage to affected enemies' end,
+    ['launcher'] = function() return '[fg]enemies launched take [yellow]300%[fg] more damage when they hit walls' end,
+    ['bard'] = function() return '[fg]every 8th attack consume the curse to deal [yellow]' .. 4*get_character_stat('bard', 3, 'dmg') .. '[fg] damage to affected enemies' end,
     ['assassin'] = function() return '[fg]poison inflicted from crits deals [yellow]8x[fg] damage' end,
-    ['host'] = function() return '[fg][yellow]+50%[fg] critter spawn rate' end,
+    ['host'] = function() return '[fg][yellow]+100%[fg] critter spawn rate and spawn [yellow]2[fg] critters instead' end,
     ['carver'] = function() return '[fg]carves a tree that heals in a bigger area and removes all buffs from enemies' end,
     ['bane'] = function() return '[fg]the area also deals [yellow]' .. get_character_stat('bane', 3, 'dmg') .. '[fg] damage per second and slows enemies by [yellow]50%[fg]' end,
     ['psykino'] = function() return '[fg]enemies pulled together are forced to collide with each other multiple times' end,
@@ -575,6 +577,7 @@ function init()
     ['mini_boss'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 0.3},
     ['enemy_critter'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 0.5},
     ['saboteur'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 1.4},
+    ['overlord'] = {hp = 1.5, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 0.5},
   }
 
   local ylb1 = function(lvl) return lvl >= 2 and 'fg' or (lvl >= 1 and 'yellow' or 'light_bg') end
@@ -806,9 +809,7 @@ function init()
   main = Main()
   main:add(BuyScreen'buy_screen')
   main:go_to('buy_screen', 22, {
-    {character = 'beastmaster', level = 3},
-    {character = 'scout', level = 3},
-    {character = 'outlaw', level = 3},
+    {character = 'host', level = 3},
   })
   --[[
   main:add(Arena'arena')
