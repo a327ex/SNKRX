@@ -905,3 +905,21 @@ Even slower day today, but I managed to get something done. I'm hoping I can fin
 | Bard | The Bard's Song | every 8th attack consume the curse to deal 4X damage to affected enemies |
 | Assassin | Toxic Delivery | poison inflicted from crits deals 8X damage |
 | Host | Invasion | +100% critter spawn rate and spawn 2 critters instead |
+
+# Day 56 - 13/04/21
+
+Still slow... But I got something done :)
+
+| Character | Classes | Description | 
+| --- | --- | --- |
+| Carver | conjurer, healer | carves a statue that periodically heals 1 unit for 20% max HP if in range |
+| Bane | voider, curser | creates a large area that curses enemies to take +50% damage |
+| Psykino | mage, psyker, forcer | pulls enemies together for 2 seconds |
+| Barrager | ranger, forcer | shoots a barrage of 5 arrows, each dealing X damage and pushing enemies |
+
+| Character | Lv.3 Effect Name | Lv.3 Effect Description |
+| --- | --- | --- |
+| Carver | World Tree | carves a tree that heals twice as fast, in a bigger area, and heals 2 units instead |
+| Bane | Nightmare | the area also deals X damage per second and slows enemies by 50% |
+| Psykino | Magnetic Force | enemies take 4X damage and are pushed away when the area expires |
+| Barrager | Barrage | every 3rd attack the barrage shoots 15 projectiles and they push harder |

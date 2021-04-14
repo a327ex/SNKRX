@@ -154,7 +154,7 @@ end
 -- Returns the elapsed time of a given trigger as a number between 0 and 1.
 -- Useful if you need to know where you currently are in the duration of a during call.
 function Trigger:get_during_elapsed_time(tag)
-  return self.triggers[tag].trigger/self.triggers[tag].delay
+  return self.triggers[tag].timer/self.triggers[tag].delay
 end
 
 

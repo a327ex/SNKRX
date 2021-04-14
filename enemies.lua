@@ -244,6 +244,7 @@ function Seeker:update(dt)
   self:calculate_stats()
 
   self.stun_dmg_m = (self.barbarian_stunned and 2 or 1)
+  self.bane_dmg_m = (self.baned and 1.5 or 1)
 
   if self.shooter then
     self.t:set_every_multiplier('shooter', (1 - self.level*0.02))
@@ -364,7 +365,7 @@ function Seeker:hit(damage, projectile)
   if self.push_invulnerable then return end
   self:show_hp()
   
-  local actual_damage = self:calculate_damage(damage)*self.stun_dmg_m
+  local actual_damage = self:calculate_damage(damage)*self.stun_dmg_m*self.bane_dmg_m
   self.hp = self.hp - actual_damage
   main.current.damage_dealt = main.current.damage_dealt + actual_damage
 
@@ -468,6 +469,9 @@ function Seeker:curse(curse, duration, arg1)
     end, 'launcher_curse')
   elseif curse == 'bard' then
     self.bard_cursed = true
+  elseif curse == 'bane' then
+    self.baned = true
+    self.t:after(duration, function() self.baned = false end, 'bane_curse')
   end
 end
 

@@ -72,14 +72,14 @@
     * Bard [curser, rogue]: shoots a projectile that inflicts enemies hit with the bard's curse - Lv.3: The Bard's Song - every 5th attack consume the curse to deal massive damage to enemies affected
     * Assassin [rogue, voider]: throws a piercing knife that inflicts poison - Lv.3: Toxic Delivery - poison inflicted from crits deals more damage
     * Host [swarmer]: creates overlords that periodically spawn small critters - Lv.3: Invasion - increased critter spawn rate
-    Carver [conjurer, curser, healer]: carves a statue that periodically heals in an area - Lv.3: World Tree - carves a tree that heals in a bigger area and removes all buffs from enemies
-    Bane [curser, voider]: creates a large area that curses enemies to take increased damage - Lv.3: Nightmare - the area also deals DoT and slows enemies
-    Psykino [mage, psyker, forcer]: quickly pulls enemies together and then releases them with a force - Lv.3: Magnetic Force - enemies pulled together are forced to collide with each other before being released
-    Arbalester [ranger, forcer]: launches a massive arrow that pushes enemies back, ignoring knockback resistances - Lv.3: Ballista Sinistra - enemies hit by the arrow have massively decreased defense
+    * Carver [conjurer, healer]: carves a statue that periodically heals in an area - Lv.3: World Tree - carves a tree that heals in a bigger area and removes all buffs from enemies
+    * Bane [curser, voider]: creates a large area that curses enemies to take increased damage - Lv.3: Nightmare - the area also deals DoT and slows enemies
+    * Psykino [mage, psyker, forcer]: quickly pulls enemies together and then releases them with a force - Lv.3: Magnetic Force - enemies pulled together are forced to collide with each other before being released
+    * Barrager [ranger, forcer]: shoots a barrage of 5 arrows that knocks enemies back - Lv.3: every 3rd attack the barrage shoots 15 projectiles and they push harder
     Highlander [warrior]: creates a small area that deals massive damage - Lv.3: Crosscut - two crosscutting areas of larger size are created instead
     Sapper [enchanter, voider, healer]: periodically steals health from nearby enemies and gain increased movement speed - Lv.3: Enduring Sap - sapped enemies permanently take damage over time, even outside the sapper's area of effect
     Priest [healer]: heals all units periodically - Lv.3: Divine Intervention - at the start of the round pick 3 units at random and grants them a buff that prevents them from dying once
-    Infestor [curser, swarmer]: curses enemies in an area for 6 seconds, they will release multiple critters on death - Lv.3: Infestation - triples the number of critters released
+    Infestor [curser, swarmer]: curses nearby enemies for 6 seconds, they will release multiple critters on death - Lv.3: Infestation - triples the number of critters released
     Flagellant [psyker, enchanter]: periodically deals damage to self and grants a damage buff to all allies - Lv.3: Zealotry - deals damage to all allies instead and also grants a massive damage buff
   Sets
     Ranger = 8/8
@@ -93,7 +93,7 @@
     Psyker = 4/4
     Healer = 5/5
     Enchanter = 5/5
-    Curser = 6/6
+    Curser = 5/5
     Swarmer = 4/4
 
 10. Items

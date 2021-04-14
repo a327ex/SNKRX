@@ -279,6 +279,48 @@ function Player:init(args)
         Critter{group = main.current.main, x = self.x, y = self.y, color = orange[0], r = random:float(0, 2*math.pi), v = 10, dmg = self.dmg, parent = self}
       end)
     end
+
+  elseif self.character == 'carver' then
+    self.t:every(16, function()
+      Tree{group = main.current.main, x = self.x, y = self.y, color = self.color, parent = self, rs = self.area_size_m*(self.level == 3 and 128 or 64), level = self.level}
+    end)
+
+  elseif self.character == 'bane' then
+    self.t:every(12, function()
+      self.dot_area = DotArea{group = main.current.effects, x = self.x, y = self.y, rs = self.area_size_m*128, color = self.color, dmg = self.area_dmg_m*(self.level == 3 and self.dmg or 0),
+        character = self.character, level = self.level, parent = self, duration = 8}
+    end)
+
+  elseif self.character == 'psykino' then
+    self.t:every(4, function()
+      local center_enemy = self:get_random_object_in_shape(Circle(self.x, self.y, 160), main.current.enemies)
+      if center_enemy then
+        ForceArea{group = main.current.effects, x = center_enemy.x, y = center_enemy.y, rs = self.area_size_m*64, color = self.color, character = self.character, level = self.level, parent = self}
+      end
+    end)
+
+  elseif self.character == 'barrager' then
+    self.barrager_counter = 0
+    self.attack_sensor = Circle(self.x, self.y, 128)
+    self.t:cooldown(4, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
+      local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
+      local r = self:angle_to_object(closest_enemy)
+      self.barrager_counter = self.barrager_counter + 1
+      if self.barrager_counter == 3 then
+        self.barrage_counter = 0
+        for i = 1, 15 do
+          self.t:after((i-1)*0.05, function()
+            self:shoot(r + random:float(-math.pi/32, math.pi/32), {knockback = (self.level == 3 and 14 or 7)})
+          end)
+        end
+      else
+        for i = 1, 5 do
+          self.t:after((i-1)*0.075, function()
+            self:shoot(r + random:float(-math.pi/32, math.pi/32), {knockback = (self.level == 3 and 14 or 7)})
+          end)
+        end
+      end
+    end)
   end
 
   self:calculate_stats(true)
@@ -717,7 +759,7 @@ function Player:shoot(r, mods)
   elseif self.character == 'dual_gunner' then
     dual_gunner1:play{pitch = random:float(0.95, 1.05), volume = 0.3}
     dual_gunner2:play{pitch = random:float(0.95, 1.05), volume = 0.3}
-  elseif self.character == 'archer' or self.character == 'hunter' then
+  elseif self.character == 'archer' or self.character == 'hunter' or self.character == 'barrager' then
     archer1:play{pitch = random:float(0.95, 1.05), volume = 0.35}
   elseif self.character == 'wizard' or self.character == 'lich' then
     wizard1:play{pitch = random:float(0.95, 1.05), volume = 0.15}
@@ -957,7 +999,7 @@ function Projectile:on_collision_enter(other, contact)
   else r = 0 end
 
   if other:is(Wall) then
-    if self.character == 'archer' or self.character == 'hunter' or self.character == 'barrage' then
+    if self.character == 'archer' or self.character == 'hunter' or self.character == 'barrage' or self.character == 'barrager' then
       if self.ricochet <= 0 then
         self:die(x, y, r, 0)
         WallArrow{group = main.current.main, x = x, y = y, r = self.r, color = self.color}
@@ -1029,7 +1071,7 @@ function Projectile:on_trigger_enter(other, contact)
     end
 
     if self.character == 'archer' or self.character == 'scout' or self.character == 'outlaw' or self.character == 'blade' or self.character == 'hunter' or self.character == 'spellblade' or self.character == 'engineer' or
-    self.character == 'bard' or self.character == 'assassin' then
+    self.character == 'bard' or self.character == 'assassin' or self.character == 'barrager' then
       hit2:play{pitch = random:float(0.95, 1.05), volume = 0.35}
       if self.character == 'spellblade' then
         magic_area1:play{pitch = random:float(0.95, 1.05), volume = 0.15}
@@ -1100,6 +1142,10 @@ function Projectile:on_trigger_enter(other, contact)
       for i = 1, 3 do HitParticle{group = main.current.effects, x = other.x, y = other.y, color = self.color, v = random:float(100, 400)} end
       for i = 1, 3 do HitParticle{group = main.current.effects, x = other.x, y = other.y, color = other.color, v = random:float(100, 400)} end
       HitCircle{group = main.current.effects, x = other.x, y = other.y, rs = 12, color = fg[0], duration = 0.3}:scale_down():change_color(0.5, self.color)
+    end
+
+    if self.knockback then
+      other:push(self.knockback, self.r)
     end
   end
 end
@@ -1216,6 +1262,7 @@ function DotArea:init(args)
         for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = enemy.color} end
       end
     end, nil, nil, 'dot')
+
   elseif self.character == 'cryomancer' then
     self.t:every(2, function()
       local enemies = main.current.main:get_objects_in_shape(self.shape, main.current.enemies)
@@ -1233,6 +1280,27 @@ function DotArea:init(args)
         for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = enemy.color} end
       end
     end, nil, nil, 'dot')
+
+  elseif self.character == 'bane' then
+    if self.level == 3 then
+      self.t:every(0.5, function()
+        local enemies = main.current.main:get_objects_in_shape(self.shape, main.current.enemies)
+        if #enemies > 0 then
+          self.spring:pull(0.05, 200, 10)
+          buff1:play{pitch = random:float(0.8, 1.2), volume = 0.1}
+        end
+        for _, enemy in ipairs(enemies) do
+          enemy:curse('bane', 0.5)
+          if self.level == 3 then
+            enemy:slow(0.5, 0.5)
+            enemy:hit(self.dmg/2)
+            HitCircle{group = main.current.effects, x = enemy.x, y = enemy.y, rs = 6, color = fg[0], duration = 0.1}
+            for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = self.color} end
+            for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = enemy.color} end
+          end
+        end
+      end, nil, nil, 'dot')
+    end
   end
 
   self.color = fg[0]
@@ -1274,6 +1342,146 @@ function DotArea:draw()
     graphics.circle(self.x, self.y, self.shape.rs, self.color_transparent)
     local lw = math.remap(self.shape.rs, 32, 256, 2, 4)
     for i = 1, 4 do graphics.arc('open', self.x, self.y, self.shape.rs, (i-1)*math.pi/2 + math.pi/4 - math.pi/8, (i-1)*math.pi/2 + math.pi/4 + math.pi/8, self.color, lw) end
+  graphics.pop()
+end
+
+
+
+
+ForceArea = Object:extend()
+ForceArea:implement(GameObject)
+ForceArea:implement(Physics)
+function ForceArea:init(args)
+  self:init_game_object(args)
+  self.shape = Circle(self.x, self.y, self.rs)
+  
+  self.color = fg[0]
+  self.color_transparent = Color(args.color.r, args.color.g, args.color.b, 0.08)
+  self.rs = 0
+  self.hidden = false
+  self.t:tween(0.05, self, {rs = args.rs}, math.cubic_in_out, function() self.spring:pull(0.15) end)
+  self.t:after(0.2, function() self.color = args.color end)
+
+  self.vr = 0
+  self.dvr = random:table{random:float(-6*math.pi, -4*math.pi), random:float(4*math.pi, 6*math.pi)}
+
+  if self.character == 'psykino' then
+    elementor1:play{pitch = random:float(0.9, 1.1), volume = 0.5}
+    self.t:tween(2, self, {dvr = 0}, math.linear)
+
+    self.t:during(2, function()
+      local enemies = main.current.main:get_objects_in_shape(self.shape, main.current.enemies)
+      local t = self.t:get_during_elapsed_time('psykino')
+      for _, enemy in ipairs(enemies) do
+        enemy:apply_steering_force(600*(1-t), enemy:angle_to_point(self.x, self.y))
+      end
+    end, nil, 'psykino')
+    self.t:after(2 - 0.35, function()
+      self.t:every_immediate(0.05, function() self.hidden = not self.hidden end, 7, function() self.dead = true end)
+      if self.level == 3 then
+        elementor1:play{pitch = random:float(0.9, 1.1), volume = 0.5}
+        local enemies = main.current.main:get_objects_in_shape(self.shape, main.current.enemies)
+        for _, enemy in ipairs(enemies) do
+          enemy:hit(4*self.parent.dmg)
+          enemy:push(50, self:angle_to_object(enemy))
+        end
+      end
+    end)
+  end
+end
+
+
+function ForceArea:update(dt)
+  self:update_game_object(dt)
+  self.vr = self.vr + self.dvr*dt
+end
+
+
+function ForceArea:draw()
+  if self.hidden then return end
+
+  graphics.push(self.x, self.y, self.r + self.vr, self.spring.x, self.spring.x)
+    graphics.circle(self.x, self.y, self.shape.rs, self.color_transparent)
+    local lw = math.remap(self.shape.rs, 32, 256, 2, 4)
+    for i = 1, 4 do graphics.arc('open', self.x, self.y, self.shape.rs, (i-1)*math.pi/2 + math.pi/4 - math.pi/8, (i-1)*math.pi/2 + math.pi/4 + math.pi/8, self.color, lw) end
+  graphics.pop()
+end
+
+
+
+Tree = Object:extend()
+Tree:implement(GameObject)
+Tree:implement(Physics)
+function Tree:init(args)
+  self:init_game_object(args)
+  self:set_as_rectangle(9, 9, 'static', 'player')
+  self:set_restitution(0.5)
+  self.hfx:add('hit', 1)
+  self.color = orange[0]
+  self.heal_sensor = Circle(self.x, self.y, args.rs)
+
+  self.vr = 0
+  self.dvr = random:float(-math.pi/4, math.pi/4)
+
+  buff1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+
+  self.color = fg[0]
+  self.color_transparent = Color(args.color.r, args.color.g, args.color.b, 0.08)
+  self.rs = 0
+  self.hidden = false
+  self.t:tween(0.05, self, {rs = args.rs}, math.cubic_in_out, function() self.spring:pull(0.15) end)
+  self.t:after(0.2, function() self.color = args.color end)
+
+  self.t:cooldown(3.33/(self.level == 3 and 2 or 1), function() return #self:get_objects_in_shape(self.heal_sensor, {Player}) > 0 end, function()
+    local n = n or random:int(3, 4)
+    for i = 1, n do HitParticle{group = main.current.effects, x = self.x, y = self.y, r = random:float(0, 2*math.pi), color = self.color} end
+    heal1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    local units = self:get_objects_in_shape(self.heal_sensor, {Player})
+    if self.level == 3 then
+      local unit_1 = random:table_remove(units)
+      local unit_2 = random:table_remove(units)
+      if unit_1 then
+        unit_1:heal(0.2*unit_1.max_hp*(self.heal_effect_m or 1))
+        LightningLine{group = main.current.effects, src = self, dst = unit_1, color = green[0]}
+      end
+      if unit_2 then
+        unit_2:heal(0.2*unit_2.max_hp*(self.heal_effect_m or 1))
+        LightningLine{group = main.current.effects, src = self, dst = unit_2, color = green[0]}
+      end
+      HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = green[0], duration = 0.1}
+    else
+      local unit = random:table(units)
+      unit:heal(0.2*unit.max_hp*(self.heal_effect_m or 1))
+      HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = green[0], duration = 0.1}
+      LightningLine{group = main.current.effects, src = self, dst = unit, color = green[0]}
+    end
+  end)
+
+  self.t:after(10*(self.parent.conjurer_buff_m or 1), function()
+    self.t:every_immediate(0.05, function() self.hidden = not self.hidden end, 7, function() self.dead = true end)
+  end)
+end
+
+
+function Tree:update(dt)
+  self:update_game_object(dt)
+  self.vr = self.vr + self.dvr*dt
+end
+
+
+function Tree:draw()
+  if self.hidden then return end
+
+  graphics.push(self.x, self.y, math.pi/4, self.spring.x, self.spring.x)
+    graphics.rectangle(self.x, self.y, 1.5*self.shape.w, 4, 2, 2, self.hfx.hit.f and fg[0] or self.color)
+    graphics.rectangle(self.x, self.y, 4, 1.5*self.shape.h, 2, 2, self.hfx.hit.f and fg[0] or self.color)
+  graphics.pop()
+
+  graphics.push(self.x, self.y, self.r + self.vr, self.spring.x, self.spring.x)
+    -- graphics.circle(self.x, self.y, self.shape.rs + random:float(-1, 1), self.color, 2)
+    graphics.circle(self.x, self.y, self.heal_sensor.rs, self.color_transparent)
+    local lw = math.remap(self.heal_sensor.rs, 32, 256, 2, 4)
+    for i = 1, 4 do graphics.arc('open', self.x, self.y, self.heal_sensor.rs, (i-1)*math.pi/2 + math.pi/4 - math.pi/8, (i-1)*math.pi/2 + math.pi/4 + math.pi/8, self.color, lw) end
   graphics.pop()
 end
 
