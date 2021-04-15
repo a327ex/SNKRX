@@ -23,23 +23,23 @@
   * Randomizer - randomly does the 4 ones above
   Orbitter - spawns shooters that orbit the boss
 
-8. Additional characters and classes
-9. Lv.3 effects for every character
-  Classes
-    Ranger: chance to release a barrage on attack
-    Warrior: increased defense
-    Mage: decreased enemy defense
-    Nuker: increased area damage and size
-    Rogue: chance to crit
-    Healer: increased healing effectiveness
-    Enchanter: increased damage
-    Conjurer: increased summon damage and duration
-    Psyker: increased damage and health based on number of active sets
-    Curser: increased curse effect and duration
-    Forcer: increased knockback force
-    Swarmer: increased critter health
-    Voider: increased damage over time
-  Characters
+* 8. Additional characters and classes
+* 9. Lv.3 effects for every character
+  * Classes
+    * Ranger: chance to release a barrage on attack
+    * Warrior: increased defense
+    * Mage: decreased enemy defense
+    * Nuker: increased area damage and size
+    * Rogue: chance to crit
+    * Healer: increased healing effectiveness
+    * Enchanter: increased damage
+    * Conjurer: increased summon damage and duration
+    * Psyker: increased damage and health based on number of active sets
+    * Curser: increased curse effect and duration
+    * Forcer: increased knockback force
+    * Swarmer: increased critter health
+    * Voider: increased damage over time
+  * Characters
     * Vagrant [psyker, ranger, warrior]: shoots a projectile - Lv.3: Champion - gains increased damage and attack speed based on number of active sets
     * Swordsman [warrior]: deals AoE damage, deals extra damage for each unit hit - Lv.3: Cleave - damage is doubled
     * Wizard [mage]: shoots a projectile that deals AoE damage - Lv.3: Magic Missile - the projectile chains 5 times, each dealing AoE damage on impact
@@ -76,12 +76,12 @@
     * Bane [curser, voider]: creates a large area that curses enemies to take increased damage - Lv.3: Nightmare - the area also deals DoT and slows enemies
     * Psykino [mage, psyker, forcer]: quickly pulls enemies together and then releases them with a force - Lv.3: Magnetic Force - enemies pulled together are forced to collide with each other before being released
     * Barrager [ranger, forcer]: shoots a barrage of 5 arrows that knocks enemies back - Lv.3: every 3rd attack the barrage shoots 15 projectiles and they push harder
-    Highlander [warrior]: creates a small area that deals massive damage - Lv.3: Crosscut - two crosscutting areas of larger size are created instead
-    Sapper [enchanter, voider, healer]: periodically steals health from nearby enemies and gain increased movement speed - Lv.3: Enduring Sap - sapped enemies permanently take damage over time, even outside the sapper's area of effect
-    Priest [healer]: heals all units periodically - Lv.3: Divine Intervention - at the start of the round pick 3 units at random and grants them a buff that prevents them from dying once
-    Infestor [curser, swarmer]: curses nearby enemies for 6 seconds, they will release multiple critters on death - Lv.3: Infestation - triples the number of critters released
-    Flagellant [psyker, enchanter]: periodically deals damage to self and grants a damage buff to all allies - Lv.3: Zealotry - deals damage to all allies instead and also grants a massive damage buff
-  Sets
+    * Highlander [warrior]: creates a small area that deals massive damage - Lv.3: Crosscut - two crosscutting areas of larger size are created instead
+    * Fairy [enchanter, healer]: periodically heals 1 random unit that has less than 100% HP and grants it +200% attack speed for 6 seconds - Lv.3: heals and buffs 2 units instead
+    * Priest [healer]: heals all units periodically - Lv.3: Divine Intervention - at the start of the round pick 3 units at random and grants them a buff that prevents them from dying once
+    * Infestor [curser, swarmer]: curses nearby enemies for 6 seconds, they will release multiple critters on death - Lv.3: Infestation - triples the number of critters released
+    * Flagellant [psyker, enchanter]: periodically deals damage to self and grants a damage buff to all allies - Lv.3: Zealotry - deals damage to all allies instead and also grants a massive damage buff
+  * Sets
     Ranger = 8/8
     Warrior = 8/8
     Mage = 8/8

@@ -430,6 +430,15 @@ function Seeker:hit(damage, projectile)
         end
       end)
     end
+
+    if self.infested then
+      critter1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      trigger:after(0.01, function()
+        for i = 1, self.infested do
+          Critter{group = main.current.main, x = self.x, y = self.y, color = orange[0], r = random:float(0, 2*math.pi), v = 10, dmg = self.infested_dmg}
+        end
+      end)
+    end
   end
 end
 
@@ -461,17 +470,27 @@ function Seeker:slow(amount, duration)
 end
 
 
-function Seeker:curse(curse, duration, arg1)
+function Seeker:curse(curse, duration, arg1, arg2)
+  local curse_m = 1
+  if main.current.curser_level == 2 then curse_m = 1.5
+  elseif main.current.curser_level == 1 then curse_m = 1.25
+  else curse_m = 1 end
+
   if curse == 'launcher' then
-    self.t:after(duration, function()
+    self.t:after(duration*curse_m, function()
       self.launcher_push = arg1
-      self:push(random:float(50, 75), random:table{0, math.pi, math.pi/2, -math.pi/2})
+      self.launcher = arg2
+      self:push(random:float(50, 75)*self.launcher.knockback_m, random:table{0, math.pi, math.pi/2, -math.pi/2})
     end, 'launcher_curse')
   elseif curse == 'bard' then
     self.bard_cursed = true
   elseif curse == 'bane' then
     self.baned = true
-    self.t:after(duration, function() self.baned = false end, 'bane_curse')
+    self.t:after(duration*curse_m, function() self.baned = false end, 'bane_curse')
+  elseif curse == 'infestor' then
+    self.infested = arg1
+    self.infested_dmg = arg2
+    self.t:after(duration*curse_m, function() self.infested = false end, 'infestor_curse')
   end
 end
 

@@ -923,3 +923,39 @@ Still slow... But I got something done :)
 | Bane | Nightmare | the area also deals X damage per second and slows enemies by 50% |
 | Psykino | Magnetic Force | enemies take 4X damage and are pushed away when the area expires |
 | Barrager | Barrage | every 3rd attack the barrage shoots 15 projectiles and they push harder |
+
+# Day 57 - 14/04/21
+
+Finished remaining 5 characters and revised all class bonuses. So 40/40 characters and 13/13 classes done. Now the only thing left are items and then all content will be done.
+
+| Character | Classes | Description | 
+| --- | --- | --- |
+| Highlander | warrior | deals 5X AoE damage |
+| Fairy | enchanter, healer | periodically heals 1 unit at random and grants it +100% attack speed for 6 seconds |
+| Priest | healer | heals all allies for 20% their max HP |
+| Infestor | curser, swarmer | curses nearby enemies for 6 seconds, they will release 2 critters on death |
+| Flagellant | enchanter, psyker | deals 2X damage to self and grants +4% damage to all allies per cast |
+
+| Character | Lv.3 Effect Name | Lv.3 Effect Description |
+| --- | --- | --- |
+| Highlander | Moulinet | quickly repeats the attack 3 times |
+| Fairy | Whimsy | heals 2 units instead and grants them an additional 100% attack speed |
+| Priest | Divine Intervention | at the start of the round pick 3 units at random and grants them a buff that prevents death once |
+| Infestor | Infestation | triples the number of critters released |
+| Flagellant | Zealotry | deals 2X damage to all allies and grants +12% damage to all allies per cast |
+
+| Class | Set Color | Set Numbers | Total Units | Set Effect |
+| --- | --- | --- | --- | --- |
+| Ranger | green | 3/6 | 7 | +10/20% chance to release a barrage to allied rangers |
+| Warrior | yellow | 3/6 | 8 | +25/50 defense to allied warriors |
+| Mage | blue | 3/6 | 8 | -15/30 enemy defense |
+| Rogue | red | 3/6 | 8 | +10/20% chance to crit to allied rogues, dealing 4x damage |
+| Healer | green | 2/4 | 5 | +15/30% healing effectiveness |
+| Enchanter | blue/red | 2/4 | 5 | +15/25% damage to all allies |
+| Nuker | blue/purple | 3/6 | 7 | +15/25% area damage and size to allied nukers |
+| Conjurer | orange | 2/4 | 4 | +25/50% summon damage and duration |
+| Psyker | white | 2/4 | 4 | +5/10% damage and attack speed per active set to allied psykers |
+| Curser | purple | 2/4 | 5 | +25/50% curse dueration |
+| Forcer | yellow | 2/4 | 5 | +25/50% knockback force to all allies |
+| Swarmer | orange | 2/4 | 4 | +1/3 health to critters |
+| Voider | purple | 2/4 | 5 | +15/25% DoT to allied voiders |

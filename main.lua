@@ -19,6 +19,7 @@ function init()
   music.volume = 0
 
   local s = {tags = {sfx}}
+  flagellant1 = Sound('Whipping Horse 3.ogg', s)
   bard2 = Sound('376532__womb-affliction__flute-trill.ogg', s)
   bard1 = Sound('Magical Impact 12.ogg', s)
   frost1 = Sound('Frost Bolt 20.ogg', s)
@@ -184,7 +185,7 @@ function init()
     ['psykino'] = fg[0],
     ['barrager'] = green[0],
     ['highlander'] = yellow[0],
-    ['sapper'] = blue[0],
+    ['fairy'] = green[0],
     ['priest'] = green[0],
     ['infestor'] = orange[0],
     ['flagellant'] = fg[0],
@@ -228,7 +229,7 @@ function init()
     ['psykino'] = 'fg',
     ['barrager'] = 'green',
     ['highlander'] = 'yellow',
-    ['sapper'] = 'blue',
+    ['fairy'] = 'green',
     ['priest'] = 'green',
     ['infestor'] = 'orange',
     ['flagellant'] = 'fg',
@@ -272,7 +273,7 @@ function init()
     ['psykino'] = {'mage', 'psyker', 'forcer'},
     ['barrager'] = {'ranger', 'forcer'},
     ['highlander'] = {'warrior'},
-    ['sapper'] = {'enchanter', 'voider', 'healer'},
+    ['fairy'] = {'enchanter', 'healer'},
     ['priest'] = {'healer'},
     ['infestor'] = {'curser', 'swarmer'},
     ['flagellant'] = {'psyker', 'enchanter'},
@@ -316,7 +317,7 @@ function init()
     ['psykino'] = '[blue]Mage, [fg]Psyker, [yellow]Forcer',
     ['barrager'] = '[green]Ranger, [yellow]Forcer',
     ['highlander'] = '[yellow]Warrior',
-    ['sapper'] = '[blue]Enchanter, [purple]Voider, [green]Healer',
+    ['fairy'] = '[blue]Enchanter, [green]Healer',
     ['priest'] = '[green]Healer',
     ['infestor'] = '[purple]Curser, [orange]Swarmer',
     ['flagellant'] = '[fg]Psyker, [blue]Enchanter',
@@ -376,11 +377,11 @@ function init()
     ['bane'] = function(lvl) return '[fg]creates a large area that curses enemies to take [yellow]+50%[fg] damage' end,
     ['psykino'] = function(lvl) return '[fg]pulls enemies together for [yellow]2[fg] seconds' end,
     ['barrager'] = function(lvl) return '[fg]shoots a barrage of [yellow]5[fg] arrows, each dealing [yellow]' .. get_character_stat('barrager', lvl, 'dmg') .. '[fg] damage and pushing enemies' end,
-    ['highlander'] = function(lvl) return '[fg]deals [yellow]' .. 6*get_character_stat('highlander', lvl, 'dmg') .. '[fg] AoE damage' end,
-    ['sapper'] = function(lvl) return '[fg]periodically steals [yellow]5%[fg] max HP per second from nearby enemies and gain 25% increased movement speed' end,
+    ['highlander'] = function(lvl) return '[fg]deals [yellow]' .. 5*get_character_stat('highlander', lvl, 'dmg') .. '[fg] AoE damage' end,
+    ['fairy'] = function(lvl) return '[fg]periodically heals [yellow]1[fg] unit at random and grants it [yellow]+100%[fg] attack speed for [yellow]6[fg] seconds' end,
     ['priest'] = function(lvl) return '[fg]heals all allies for [yellow]20%[fg] their max HP' end,
-    ['infestor'] = function(lvl) return '[fg]curses enemies in an area for [yellow]6[fg] seconds, they will release multiple critters on death' end,
-    ['flagellant'] = function(lvl) return '[fg]deals damage to self and grants [yellow]+4%[fg] damage to all allies per cast' end,
+    ['infestor'] = function(lvl) return '[fg]curses nearby enemies for [yellow]6[fg] seconds, they will release [yellow]2[fg] critters on death' end,
+    ['flagellant'] = function(lvl) return '[fg]deals [yellow]' .. 2*get_character_stat('flagellant', lvl, 'dmg') .. '[fg] damage to self and grants [yellow]+4%[fg] damage to all allies per cast' end,
   }
 
   character_effect_names = {
@@ -420,8 +421,8 @@ function init()
     ['bane'] = '[purple]Nightmare',
     ['psykino'] = '[fg]Magnetic Force',
     ['barrager'] = '[green]Barrage',
-    ['highlander'] = '[yellow]Crosscut',
-    ['sapper'] = '[blue]Enduring Sap',
+    ['highlander'] = '[yellow]Moulinet',
+    ['fairy'] = '[green]Whimsy',
     ['priest'] = '[green]Divine Intervention',
     ['infestor'] = '[orange]Infestation',
     ['flagellant'] = '[red]Zealotry',
@@ -449,23 +450,23 @@ function init()
     ['psykeeper'] = '[light_bg]Crucio',
     ['engineer'] = '[light_bg]Upgrade',
     ['plague_doctor'] = '[light_bg]Black Death Steam',
-    ['fisherman'] = '[light_bg]Electric Net',
+    ['barbarian'] = '[light_bg]Seism',
     ['juggernaut'] = '[light_bg]Brutal Impact',
-    ['lich'] = '[light_bg]Piercing Frost',
+    ['lich'] = '[light_bg]Chain Frost',
     ['cryomancer'] = '[light_bg]Frostbite',
     ['pyromancer'] = '[light_bg]Ignite',
     ['corruptor'] = '[light_bg]Corruption',
     ['beastmaster'] = '[light_bg]Call of the Wild',
     ['launcher'] = '[light_bg]Kineticism',
-    ['spiker'] = '[light_bg]Caltrops',
+    ['bard'] = "[red]The Bard'light_bgSong",
     ['assassin'] = '[light_bg]Toxic Delivery',
     ['host'] = '[light_bg]Invasion',
     ['carver'] = '[light_bg]World Tree',
-    ['bane'] = '[light_bg]Baneling Swarm',
+    ['bane'] = '[light_bg]Nightmare',
     ['psykino'] = '[light_bg]Magnetic Force',
-    ['barrager'] = '[light_bg]Ballista Sinitra',
-    ['barbarian'] = '[light_bg]Berserk',
-    ['sapper'] = '[light_bg]Chain Reaction',
+    ['barrager'] = '[light_bg]Barrage',
+    ['highlander'] = '[light_bg]Moulinet',
+    ['fairy'] = '[light_bg]Whimsy',
     ['priest'] = '[light_bg]Divine Intervention',
     ['infestor'] = '[light_bg]Infestation',
     ['flagellant'] = '[light_bg]Zealotry',
@@ -508,11 +509,11 @@ function init()
     ['bane'] = function() return '[fg]the area also deals [yellow]' .. get_character_stat('bane', 3, 'dmg') .. '[fg] damage per second and slows enemies by [yellow]50%[fg]' end,
     ['psykino'] = function() return '[fg]enemies take [yellow]' .. 4*get_character_stat('psykino', 3, 'dmg') .. '[fg] damage and are pushed away when the area expires' end,
     ['barrager'] = function() return '[fg]every 3rd attack the barrage shoots [yellow]15[fg] projectiles and they push harder' end,
-    ['crosscut'] = function() return '[fg]two crosscutting areas of +100% size are created instead' end,
-    ['sapper'] = function() return '[fg]sapped enemies permanently take [yellow]' .. get_character_stat('sapper', 3, 'dmg') .. '[fg] damage per second' end,
+    ['highlander'] = function() return '[fg]quickly repeats the attack [yellow]3[fg] times' end,
+    ['fairy'] = function() return '[fg]heals [yellow]2[fg] units instead and grants them an additional [yellow]100%[fg] attack speed' end,
     ['priest'] = function() return '[fg]at the start of the round pick [yellow]3[fg] units at random and grants them a buff that prevents death once' end,
     ['infestor'] = function() return '[fg][yellow]triples[fg] the number of critters released' end,
-    ['flagellant'] = function() return '[fg]deals damage to all allies instead and grants stacking [yellow]+10%[fg] damage to all allies per cast' end,
+    ['flagellant'] = function() return '[fg]deals [yellow]' .. 2*get_character_stat('flagellant', 3, 'dmg') .. '[fg] damage to all allies and grants [yellow]+12%[fg] damage to all allies per cast' end,
   }
 
   character_stats = {
@@ -553,7 +554,7 @@ function init()
     ['psykino'] = function(lvl) return get_character_stat_string('psykino', lvl) end,
     ['barrager'] = function(lvl) return get_character_stat_string('barrager', lvl) end,
     ['highlander'] = function(lvl) return get_character_stat_string('highlander', lvl) end,
-    ['sapper'] = function(lvl) return get_character_stat_string('sapper', lvl) end,
+    ['fairy'] = function(lvl) return get_character_stat_string('fairy', lvl) end,
     ['priest'] = function(lvl) return get_character_stat_string('priest', lvl) end,
     ['infestor'] = function(lvl) return get_character_stat_string('infestor', lvl) end,
     ['flagellant'] = function(lvl) return get_character_stat_string('flagellant', lvl) end,
@@ -577,7 +578,6 @@ function init()
     ['mini_boss'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 0.3},
     ['enemy_critter'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 0.5},
     ['saboteur'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 1.4},
-    ['overlord'] = {hp = 1.5, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 0.5},
   }
 
   local ylb1 = function(lvl) return lvl >= 2 and 'fg' or (lvl >= 1 and 'yellow' or 'light_bg') end
@@ -591,8 +591,8 @@ function init()
     ['enchanter'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+15%[' .. ylb2(lvl) .. ']/+25% [fg]damage to all allies' end,
     ['nuker'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[' .. ylb2(lvl) .. ']/6 [fg]- [' .. ylb1(lvl) .. ']+15%[' .. ylb2(lvl) .. ']/+25% [fg]area damage and size to allied nukers' end,
     ['conjurer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+25%[' .. ylb2(lvl) .. ']/+50% [fg]summon damage and duration' end,
-    ['psyker'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+5%[' .. ylb2(lvl) .. ']/+10% [fg]damage and health per active set to allied psykers' end,
-    ['curser'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+25%[' .. ylb2(lvl) .. ']/+50% [fg]curse effectiveness and duration' end,
+    ['psyker'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+5%[' .. ylb2(lvl) .. ']/+10% [fg]damage and attack speed per active set to allied psykers' end,
+    ['curser'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+25%[' .. ylb2(lvl) .. ']/+50% [fg]curse duration' end,
     ['forcer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+25%[' .. ylb2(lvl) .. ']/+50% [fg]knockback force to all allies' end,
     ['swarmer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+1[' .. ylb2(lvl) .. ']/+3 [fg]hits to critters' end,
     ['voider'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+15%[' .. ylb2(lvl) .. ']/+25% [fg]damage over time to allied voiders' end,
@@ -602,7 +602,7 @@ function init()
     [1] = {'vagrant', 'swordsman', 'wizard', 'archer', 'scout', 'cleric'},
     [2] = {'saboteur', 'sage', 'squire', 'dual_gunner', 'hunter', 'chronomancer', 'barbarian', 'cryomancer', 'beastmaster', 'launcher', 'bard', 'carver'},
     [3] = {'outlaw', 'elementor', 'stormweaver', 'spellblade', 'psykeeper', 'engineer', 'juggernaut', 'pyromancer', 'corruptor', 'assassin', 'bane', 'barrager', 'infestor', 'flagellant'},
-    [4] = {'priest', 'highlander', 'psykino', 'lich', 'host', 'sapper', 'blade', 'plague_doctor', 'cannoneer'},
+    [4] = {'priest', 'highlander', 'psykino', 'lich', 'host', 'fairy', 'blade', 'plague_doctor', 'cannoneer'},
   }
 
   non_attacking_characters = {'cleric', 'stormweaver', 'squire', 'chronomancer', 'sage'}
@@ -645,7 +645,7 @@ function init()
     ['psykino'] = 4,
     ['barrager'] = 3,
     ['highlander'] = 4,
-    ['sapper'] = 4,
+    ['fairy'] = 4,
     ['priest'] = 4,
     ['infestor'] = 3,
     ['flagellant'] = 3,
@@ -809,7 +809,9 @@ function init()
   main = Main()
   main:add(BuyScreen'buy_screen')
   main:go_to('buy_screen', 22, {
-    {character = 'barrager', level = 3},
+    {character = 'flagellant', level = 3},
+    {character = 'scout', level = 3},
+    {character = 'archer', level = 3},
   })
   --[[
   main:add(Arena'arena')

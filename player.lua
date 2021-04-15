@@ -321,6 +321,106 @@ function Player:init(args)
         end
       end
     end)
+
+  elseif self.character == 'highlander' then
+    self.attack_sensor = Circle(self.x, self.y, 64)
+    self.t:cooldown(4, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
+      if self.level == 3 then
+        self.t:every(0.25, function()
+          self:attack(48)
+        end, 3)
+      else
+        self:attack(48)
+      end
+    end, nil, nil, 'attack')
+
+  elseif self.character == 'fairy' then
+    self.t:every(6, function()
+      if self.level == 3 then
+        local units = self:get_all_units()
+        local unit_1 = random:table_remove(units)
+        local unit_2 = random:table_remove(units)
+        unit_1:heal(0.2*unit_1.max_hp*(self.heal_effect_m or 1))
+        unit_1.fairy_aspd_m = 3
+        unit_1.t:after(5.98, function() unit_1.fairy_aspd_m = 1 end)
+        unit_2:heal(0.2*unit_2.max_hp*(self.heal_effect_m or 1))
+        unit_2.fairy_aspd_m = 3
+        unit_2.t:after(5.98, function() unit_2.fairy_aspd_m = 1 end)
+        heal1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+        buff1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      else
+        local unit = random:table(self:get_all_units())
+        unit:heal(0.2*unit.max_hp*(self.heal_effect_m or 1))
+        unit.fairy_aspd_m = 2
+        unit.t:after(5.98, function() unit.fairy_aspd_m = 1 end)
+        heal1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+        buff1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      end
+    end)
+
+  elseif self.character == 'priest' then
+    if self.level == 3 then
+      self.t:after(0.01, function()
+        local all_units = self:get_all_units()
+        local unit_1 = random:table_remove(all_units)
+        local unit_2 = random:table_remove(all_units)
+        local unit_3 = random:table_remove(all_units)
+        if unit_1 then unit_1.divined = true end
+        if unit_2 then unit_2.divined = true end
+        if unit_3 then unit_3.divined = true end
+      end)
+    end
+
+    self.t:every(10, function()
+      local all_units = self:get_all_units()
+      for _, unit in ipairs(all_units) do unit:heal(0.2*unit.max_hp*(self.heal_effect_m or 1)) end
+      heal1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    end)
+
+  elseif self.character == 'infestor' then
+    self.t:every(8, function()
+      local enemies = main.current.main:get_objects_by_classes(main.current.enemies)
+      for _, enemy in ipairs(enemies) do
+        if self:distance_to_object(enemy) < 128 then
+          enemy:curse('infestor', 6, (self.level == 3 and 6 or 2), self.dmg)
+          HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = orange[0], duration = 0.1}
+          LightningLine{group = main.current.effects, src = self, dst = enemy, color = orange[0]}
+        end
+      end
+    end)
+
+  elseif self.character == 'flagellant' then
+    self.t:every(8, function()
+      if self.level == 3 then
+        flagellant1:play{pitch = random:float(0.95, 1.05), volume = 0.4}
+        buff1:play{pitch = random:float(0.95, 1.05), volume = 0.3}
+        local all_units = self:get_all_units()
+        local dmg = self.dmg
+        for _, unit in ipairs(all_units) do
+          hit2:play{pitch = random:float(0.95, 1.05), volume = 0.4}
+          unit:hit(2*dmg)
+          if not unit.flagellant_dmg_m then
+            unit.flagellant_dmg_m = 1
+          end
+          unit.flagellant_dmg_m = unit.flagellant_dmg_m + 0.12
+        end
+
+      else
+        buff1:play{pitch = random:float(0.95, 1.05), volume = 0.3}
+        flagellant1:play{pitch = random:float(0.95, 1.05), volume = 0.4}
+        local all_units = self:get_all_units()
+        for _, unit in ipairs(all_units) do
+          if unit.character == 'flagellant' then
+            hit2:play{pitch = random:float(0.95, 1.05), volume = 0.4}
+            unit:hit(2*unit.dmg)
+          end
+          if not unit.flagellant_dmg_m then
+            unit.flagellant_dmg_m = 1
+          end
+          unit.flagellant_dmg_m = unit.flagellant_dmg_m + 0.04
+        end
+      end
+    end)
   end
 
   self:calculate_stats(true)
@@ -333,6 +433,8 @@ function Player:init(args)
       if #self.previous_positions > 256 then self.previous_positions[257] = nil end
     end)
   end
+
+  self.first_frame_calculate_stats = true
 end
 
 
@@ -391,10 +493,9 @@ function Player:update(dt)
     elseif main.current.warrior_level == 0 then self.warrior_def_a = 0 end
   end
 
-  if table.any(self.classes, function(v) return v == 'healer' end) then
-    if main.current.healer_level == 1 then self.heal_effect_m = 1.25
-    else self.heal_effect_m = 1 end
-  end
+  if main.current.healer_level == 2 then self.heal_effect_m = 1.3
+  elseif main.current.healer_level == 1 then self.heal_effect_m = 1.15
+  else self.heal_effect_m = 1 end
 
   if table.any(self.classes, function(v) return v == 'nuker' end) then
     if main.current.nuker_level == 2 then self.nuker_area_size_m = 1.25; self.nuker_area_dmg_m = 1.25
@@ -402,10 +503,9 @@ function Player:update(dt)
     elseif main.current.nuker_level == 0 then self.nuker_area_size_m = 1; self.nuker_area_dmg_m = 1 end
   end
 
-  if table.any(self.classes, function(v) return v == 'conjurer' end) then
-    if main.current.conjurer_level == 1 then self.conjurer_buff_m = 1.25
-    else self.conjurer_buff_m = 1 end
-  end
+  if main.current.conjurer_level == 2 then self.conjurer_buff_m = 1.5
+  elseif main.current.conjurer_level == 1 then self.conjurer_buff_m = 1.25
+  else self.conjurer_buff_m = 1 end
 
   if table.any(self.classes, function(v) return v == 'rogue' end) then
     if main.current.rogue_level == 2 then self.chance_to_crit = 20
@@ -413,14 +513,50 @@ function Player:update(dt)
     elseif main.current.rogue_level == 0 then self.chance_to_crit = 0 end
   end
 
-  if table.any(self.classes, function(v) return v == 'enchanter' end) then
-    if main.current.enchanter_level == 1 then self.enchanter_dmg_m = 1.25
-    else self.enchanter_dmg_m = 1 end
+  if main.current.enchanter_level == 2 then self.enchanter_dmg_m = 1.25
+  elseif main.current.enchanter_level == 1 then self.enchanter_dmg_m = 1.15
+  else self.enchanter_dmg_m = 1 end
+
+  if table.any(self.classes, function(v) return v == 'psyker' end) then
+    local class_levels = get_class_levels(self:get_all_units())
+    local number_of_active_sets = 0
+    if class_levels.ranger >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.warrior >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.mage >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.rogue >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.healer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.conjurer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.enchanter >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.psyker >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.curser >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.forcer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.swarmer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.voider >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if main.current.psyker_level == 2 then
+      self.psyker_dmg_m = 1 + 0.1*number_of_active_sets
+      self.psyker_aspd_m = 1 + 0.1*number_of_active_sets
+    elseif main.current.psyker_level == 1 then
+      self.psyker_dmg_m = 1 + 0.05*number_of_active_sets
+      self.psyker_aspd_m = 1 + 0.05*number_of_active_sets
+    else
+      self.psyker_dmg_m = 1
+      self.psyker_aspd_m = 1
+    end
+  end
+
+  if main.current.forcer_level == 2 then self.knockback_m = 1.5
+  elseif main.current.forcer_level == 1 then self.knockback_m = 1.25
+  else self.knockback_m = 1 end
+
+  if table.any(self.classes, function(v) return v == 'voider' end) then
+    if main.current.voider_level == 2 then self.dot_dmg_m = 1.25
+    elseif main.current.voider_level == 1 then self.dot_dmg_m = 1.15
+    else self.dot_dmg_m = 1 end
   end
 
   self.buff_def_a = (self.warrior_def_a or 0)
-  self.buff_aspd_m = (self.chronomancer_aspd_m or 1)*(self.vagrant_aspd_m or 1)*(self.outlaw_aspd_m or 1)
-  self.buff_dmg_m = (self.squire_dmg_m or 1)*(self.vagrant_dmg_m or 1)*(main.current.enchanter_dmg_m or 1)*(self.swordsman_dmg_m or 1)
+  self.buff_aspd_m = (self.chronomancer_aspd_m or 1)*(self.vagrant_aspd_m or 1)*(self.outlaw_aspd_m or 1)*(self.fairy_aspd_m or 1)*(self.psyker_aspd_m or 1)
+  self.buff_dmg_m = (self.squire_dmg_m or 1)*(self.vagrant_dmg_m or 1)*(self.enchanter_dmg_m or 1)*(self.swordsman_dmg_m or 1)*(self.flagellant_dmg_m or 1)*(self.psyker_dmg_m or 1)
   self.buff_def_m = (self.squire_def_m or 1)
   self.buff_area_size_m = (self.nuker_area_size_m or 1)
   self.buff_area_dmg_m = (self.nuker_area_dmg_m or 1)
@@ -516,7 +652,7 @@ function Player:on_collision_enter(other, contact)
     end
 
   elseif table.any(main.current.enemies, function(v) return other:is(v) end) then
-    other:push(random:float(25, 35), self:angle_to_object(other))
+    other:push(random:float(25, 35)*self.knockback_m, self:angle_to_object(other))
     if self.character == 'vagrant' or self.character == 'psykeeper' then other:hit(2*self.dmg)
     else other:hit(self.dmg) end
     if other.headbutting then
@@ -573,19 +709,29 @@ function Player:hit(damage)
   end
 
   if self.hp <= 0 then
-    hit4:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-    slow(0.25, 1)
-    self.dead = true
-    for i = 1, random:int(4, 6) do HitParticle{group = main.current.effects, x = self.x, y = self.y, color = self.color} end
-    HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 12}:scale_down(0.3):change_color(0.5, self.color)
-    if self.leader and #self.followers == 0 then
-      main.current:die()
-    else
-      if self.leader then self:recalculate_followers()
-      else self.parent:recalculate_followers() end
-    end
+    if self.divined then
+      self:heal(self.max_hp)
+      heal1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      buff1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      for i = 1, random:int(4, 6) do HitParticle{group = main.current.effects, x = self.x, y = self.y, color = self.color} end
+      HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 12}:scale_down(0.3):change_color(0.5, self.color)
+      self.divined = false
 
-    if self.dot_area then self.dot_area.dead = true; self.dot_area = nil end
+    else
+      hit4:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      slow(0.25, 1)
+      self.dead = true
+      for i = 1, random:int(4, 6) do HitParticle{group = main.current.effects, x = self.x, y = self.y, color = self.color} end
+      HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 12}:scale_down(0.3):change_color(0.5, self.color)
+      if self.leader and #self.followers == 0 then
+        main.current:die()
+      else
+        if self.leader then self:recalculate_followers()
+        else self.parent:recalculate_followers() end
+      end
+
+      if self.dot_area then self.dot_area.dead = true; self.dot_area = nil end
+    end
   end
 end
 
@@ -790,7 +936,7 @@ function Player:attack(area, mods)
     character = self.character, level = self.level, parent = self}
   Area(table.merge(t, mods))
 
-  if self.character == 'swordsman' or self.character == 'barbarian' or self.character == 'juggernaut' then
+  if self.character == 'swordsman' or self.character == 'barbarian' or self.character == 'juggernaut' or self.character == 'highlander' then
     _G[random:table{'swordsman1', 'swordsman2'}]:play{pitch = random:float(0.9, 1.1), volume = 0.75}
   elseif self.character == 'elementor' then
     elementor1:play{pitch = random:float(0.9, 1.1), volume = 0.5}
@@ -1110,7 +1256,7 @@ function Projectile:on_trigger_enter(other, contact)
     end
 
     if self.character == 'assassin' then
-      other:apply_dot(self.crit and 4*self.dmg or self.dmg/2, 3)
+      other:apply_dot((self.crit and 4*self.dmg or self.dmg/2)*self.dot_dmg_m*(main.current.chronomancer_dot), 3)
     end
 
     if self.parent.chain_infused then
@@ -1145,7 +1291,7 @@ function Projectile:on_trigger_enter(other, contact)
     end
 
     if self.knockback then
-      other:push(self.knockback, self.r)
+      other:push(self.knockback*self.knockback_m, self.r)
     end
   end
 end
@@ -1169,8 +1315,10 @@ function Area:init(args)
       enemy:hit(self.dmg + self.dmg*0.33*#enemies)
     elseif self.character == 'blade' and self.level == 3 then
       enemy:hit(self.dmg + self.dmg*0.5*#enemies)
+    elseif self.character == 'highlander' then
+      enemy:hit(6*self.dmg)
     elseif self.character == 'launcher' then
-      enemy:curse('launcher', 4, (self.level == 3 and 6*self.dmg or 2*self.dmg))
+      enemy:curse('launcher', 4, (self.level == 3 and 6*self.dmg or 2*self.dmg), self.parent)
     else
       enemy:hit(self.dmg)
     end
@@ -1179,7 +1327,7 @@ function Area:init(args)
     for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = enemy.color} end
     if self.character == 'wizard' or self.character == 'elementor' then
       magic_hit1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-    elseif self.character == 'swordsman' or self.character == 'barbarian' or self.character == 'juggernaut' then
+    elseif self.character == 'swordsman' or self.character == 'barbarian' or self.character == 'juggernaut' or self.character == 'highlander' then
       hit2:play{pitch = random:float(0.95, 1.05), volume = 0.35}
     elseif self.character == 'blade' then
       blade_hit1:play{pitch = random:float(0.9, 1.1), volume = 0.35}
@@ -1199,7 +1347,7 @@ function Area:init(args)
 
     if self.juggernaut_push then
       local r = self.parent:angle_to_object(enemy)
-      enemy:push(random:float(75, 100), r)
+      enemy:push(random:float(75, 100)*self.knockback_m, r)
       enemy.juggernaut_push = 3*self.dmg
     end
   end
@@ -1256,7 +1404,7 @@ function DotArea:init(args)
           pyro1:play{pitch = random:float(1.5, 1.8), volume = 0.1}
           enemy.pyrod = self
         end
-        enemy:hit(self.dmg/5)
+        enemy:hit(self.dot_dmg_m*self.dmg/5)
         HitCircle{group = main.current.effects, x = enemy.x, y = enemy.y, rs = 6, color = fg[0], duration = 0.1}
         for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = self.color} end
         for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = enemy.color} end
@@ -1274,7 +1422,7 @@ function DotArea:init(args)
         if self.level == 3 then
           enemy:slow(0.4, 4)
         end
-        enemy:hit(2*self.dmg)
+        enemy:hit(self.dot_dmg_m*2*self.dmg)
         HitCircle{group = main.current.effects, x = enemy.x, y = enemy.y, rs = 6, color = fg[0], duration = 0.1}
         for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = self.color} end
         for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = enemy.color} end
@@ -1293,7 +1441,7 @@ function DotArea:init(args)
           enemy:curse('bane', 0.5)
           if self.level == 3 then
             enemy:slow(0.5, 0.5)
-            enemy:hit(self.dmg/2)
+            enemy:hit(self.dot_dmg_m*self.dmg/2)
             HitCircle{group = main.current.effects, x = enemy.x, y = enemy.y, rs = 6, color = fg[0], duration = 0.1}
             for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = self.color} end
             for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = enemy.color} end
@@ -1383,7 +1531,7 @@ function ForceArea:init(args)
         local enemies = main.current.main:get_objects_in_shape(self.shape, main.current.enemies)
         for _, enemy in ipairs(enemies) do
           enemy:hit(4*self.parent.dmg)
-          enemy:push(50, self:angle_to_object(enemy))
+          enemy:push(50*self.knockback_m, self:angle_to_object(enemy))
         end
       end
     end)
@@ -1615,7 +1763,7 @@ function Pet:on_trigger_enter(other)
     if self.pierce <= 0 then
       camera:shake(2, 0.5)
       other:hit(self.parent.dmg*(self.conjurer_buff_m or 1))
-      other:push(35, self:angle_to_object(other))
+      other:push(35*self.knockback_m, self:angle_to_object(other))
       self.dead = true
       local n = random:int(3, 4)
       for i = 1, n do HitParticle{group = main.current.effects, x = x, y = y, r = random:float(0, 2*math.pi), color = self.color} end
@@ -1623,7 +1771,7 @@ function Pet:on_trigger_enter(other)
     else
       camera:shake(2, 0.5)
       other:hit(self.parent.dmg*(self.conjurer_buff_m or 1))
-      other:push(35, self:angle_to_object(other))
+      other:push(35*self.knockback_m, self:angle_to_object(other))
       self.pierce = self.pierce - 1
     end
     hit2:play{pitch = random:float(0.95, 1.05), volume = 0.35}
@@ -1717,8 +1865,8 @@ function Critter:init(args)
   self.invulnerable = true
   self.t:after(0.5, function() self.invulnerable = false end)
 
-  self.dmg = self.parent.dmg
-  self.hp = 1
+  self.dmg = args.dmg or self.parent.dmg
+  self.hp = 1 + ((main.current.swarmer_level == 2 and 3) or (main.current.swarmer_level == 1 and 1) or 0)
 end
 
 
@@ -1762,7 +1910,7 @@ end
 function Critter:hit(damage)
   if self.dead or self.invulnerable then return end
   self.hfx:use('hit', 0.25, 200, 10)
-  self.hp = self.hp - damage
+  self.hp = self.hp - 1
   -- self:show_hp()
   if self.hp <= 0 then self:die() end
 end
