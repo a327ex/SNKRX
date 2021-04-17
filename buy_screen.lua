@@ -484,6 +484,51 @@ end
 
 
 
+PassiveCard = Object:extend()
+PassiveCard:implement(GameObject)
+function PassiveCard:init(args)
+  self:init_game_object(args)
+  self.shape = Rectangle(self.x, self.y, self.w, self.h)
+  self.interact_with_mouse = true
+  self.passive_name =  Text({{text = '[fg, wavy_mid]' .. passive_names[self.passive], font = pixul_font, alignment = 'center'}}, global_text_tags)
+  self.passive_description = passive_descriptions[self.passive]
+end
+
+
+function PassiveCard:update(dt)
+  self:update_game_object(dt)
+  self.passive_name:update(dt)
+  print(dt)
+end
+
+
+function PassiveCard:draw()
+  graphics.push(self.x, self.y, 0, self.sx*self.spring.x, self.sy*self.spring.x)
+    self.passive_name:draw(self.x, self.y - 20)
+    _G[self.passive]:draw(self.x, self.y + 24, 0, 1, 1, 0, 0, fg[0])
+  graphics.pop()
+end
+
+
+function PassiveCard:on_mouse_enter()
+  ui_hover1:play{pitch = random:float(1.3, 1.5), volume = 0.5}
+  self.spring:pull(0.2, 200, 10)
+  self.info_text = InfoText{group = main.current.ui, force_update = true}
+  self.info_text:activate({
+    {text = self.passive_description, font = pixul_font, alignment = 'center', height_multiplier = 1.25},
+  }, nil, nil, nil, nil, 16, 4, nil, 2)
+  self.info_text.x, self.info_text.y = gw/2, gh/2 + gh/4 + 12
+end
+
+
+function PassiveCard:on_mouse_exit()
+  self.info_text:deactivate()
+  self.info_text.dead = true
+  self.info_text = nil
+end
+
+
+
 ShopCard = Object:extend()
 ShopCard:implement(GameObject)
 function ShopCard:init(args)

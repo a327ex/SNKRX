@@ -572,7 +572,7 @@ function Player:update(dt)
     if input.move_right.down then self.r = self.r + 1.66*math.pi*dt end
     self:set_velocity(self.v*math.cos(self.r), self.v*math.sin(self.r))
 
-    if not main.current.won then
+    if not main.current.won and not main.current.choosing_passives then
       local vx, vy = self:get_velocity()
       local hd = math.remap(math.abs(self.x - gw/2), 0, 192, 1, 0)
       local vd = math.remap(math.abs(self.y - gh/2), 0, 108, 1, 0)

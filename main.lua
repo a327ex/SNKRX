@@ -114,6 +114,48 @@ function init()
   forcer = Image('forcer')
   swarmer = Image('swarmer')
   voider = Image('voider')
+  ouroboros_technique_r = Image('ouroboros_technique_r')
+  ouroboros_technique_l = Image('ouroboros_technique_l')
+  wall_echo = Image('wall_echo')
+  wall_rider = Image('wall_rider')
+  centipede = Image('centipede')
+  intimidation = Image('intimidation')
+  vulnerability = Image('vulnerability')
+  temporal_chains = Image('temporal_chains')
+  amplify = Image('amplify')
+  amplify_x = Image('amplify_x')
+  resonance = Image('resonance')
+  ballista = Image('ballista')
+  ballista_x = Image('ballista_x')
+  point_blank = Image('point_blank')
+  longshot = Image('longshot')
+  blunt_arrow = Image('blunt_arrow')
+  explosive_arrow = Image('explosive_arrow')
+  divine_machine_arrow = Image('divine_machine_arrow')
+  chronomancy = Image('chronomancy')
+  awakening = Image('awakening')
+  divine_punishment = Image('divine_punishment')
+  berserking = Image('berserking')
+  unwavering_stance = Image('unwavering_stance')
+  ultimatum = Image('ultimatum')
+  flying_daggers = Image('flying_daggers')
+  assassination = Image('assassination')
+  magnify = Image('magnify')
+  concentrated_fire = Image('concentrated_fire')
+  unleash = Image('unleash')
+  reinforce = Image('reinforce')
+  payback = Image('payback')
+  blessing = Image('blessing')
+  hex_master = Image('hex_master')
+  whispers_of_doom = Image('whispers_of_doom')
+  force_push = Image('force_push')
+  heavy_impact = Image('heavy_impact')
+  crucio = Image('crucio')
+  immolation = Image('immolation')
+  call_of_the_void = Image('call_of_the_void')
+  spawning_pool = Image('spawning_pool')
+  hive = Image('hive')
+  void_rift = Image('void_rift')
 
   class_colors = {
     ['warrior'] = yellow[0],
@@ -145,6 +187,50 @@ function init()
     ['forcer'] = 'yellow',
     ['swarmer'] = 'orange',
     ['voider'] = 'purple',
+  }
+
+  character_names = {
+    ['vagrant'] = 'Vagrant',
+    ['swordsman'] = 'Swordsman',
+    ['wizard'] = 'Wizard',
+    ['archer'] = 'Archer',
+    ['scout'] = 'Scout',
+    ['cleric'] = 'Cleric',
+    ['outlaw'] = 'Outlaw',
+    ['blade'] = 'Blade',
+    ['elementor'] = 'Elementor',
+    ['saboteur'] = 'Saboteur',
+    ['stormweaver'] = 'Stormweaver',
+    ['sage'] = 'Sage',
+    ['squire'] = 'Squire',
+    ['cannoneer'] = 'Cannoneer',
+    ['dual_gunner'] = 'Dual Gunner',
+    ['hunter'] = 'Hunter',
+    ['chronomancer'] = 'Chronomancer',
+    ['spellblade'] = 'Spellblade',
+    ['psykeeper'] = 'Psykeeper',
+    ['engineer'] = 'Engineer',
+    ['plague_doctor'] = 'Plague Doctor',
+    ['barbarian'] = 'Barbarian',
+    ['juggernaut'] = 'Juggernaut',
+    ['lich'] = 'Lich',
+    ['cryomancer'] = 'Cryomancer',
+    ['pyromancer'] = 'Pyromancer',
+    ['corruptor'] = 'Corruptor',
+    ['beastmaster'] = 'Beastmaster',
+    ['launcher'] = 'Launcher',
+    ['bard'] = 'Bard',
+    ['assassin'] = 'Assassin',
+    ['host'] = 'Host',
+    ['carver'] = 'Carver',
+    ['bane'] = 'Bane',
+    ['psykino'] = 'Psykino',
+    ['barrager'] = 'Barrager',
+    ['highlander'] = 'Highlander',
+    ['fairy'] = 'Fairy',
+    ['priest'] = 'Priest',
+    ['infestor'] = 'Infestor',
+    ['flagellant'] = 'Flagellant',
   }
 
   character_colors = {
@@ -800,32 +886,183 @@ function init()
     [6] = 'speed_booster',
     [12] = 'exploder',
     [18] = 'swarmer',
-    [24] = 'bouncer',
+    [24] = 'forcer',
     [25] = 'randomizer',
+  }
+
+  passive_names = {
+    ['ouroboros_technique_r'] = 'Ouroboros Technique R',
+    ['ouroboros_technique_l'] = 'Ouroboros Technique L',
+    ['wall_echo'] = 'Wall Echo',
+    ['wall_rider'] = 'Wall Rider',
+    ['centipede'] = 'Centipede',
+    ['intimidation'] = 'Intimidation',
+    ['vulnerability'] = 'Vulnerability',
+    ['temporal_chains'] = 'Temporal Chains',
+    ['amplify'] = 'Amplify',
+    ['amplify_x'] = 'Amplify X',
+    ['resonance'] = 'Resonance',
+    ['ballista'] = 'Ballista',
+    ['ballista_x'] = 'Ballista X',
+    ['point_blank'] = 'Point Blank',
+    ['longshot'] = 'Longshot',
+    ['blunt_arrow'] = 'Blunt Arrow',
+    ['explosive_arrow'] = 'Explosive Arrow',
+    ['divine_machine_arrow'] = 'Divine Machine Arrow',
+    ['chronomancy'] = 'Chronomancy',
+    ['awakening'] = 'Awakening',
+    ['divine_punishment'] = 'Divine Punishment',
+    ['berserking'] = 'Berserking',
+    ['unwavering_stance'] = 'Unwavering Stance',
+    ['ultimatum'] = 'Ultimatum',
+    ['flying_daggers'] = 'Flying Daggers',
+    ['assassination'] = 'Assassination',
+    ['magnify'] = 'Magnify',
+    ['concentrated_fire'] = 'Concentrated Fire',
+    ['unleash'] = 'Unleash',
+    ['reinforce'] = 'Reinforce',
+    ['payback'] = 'Payback',
+    ['blessing'] = 'Blessing',
+    ['hex_master'] = 'Hex Master',
+    ['whispers_of_doom'] = 'Whispers of Doom',
+    ['force_push'] = 'Force Push',
+    ['heavy_impact'] = 'Heavy Impact',
+    ['crucio'] = 'Crucio',
+    ['immolation'] = 'Immolation',
+    ['call_of_the_void'] = 'Call of the Void',
+    ['spawning_pool'] = 'Spawning Pool',
+    ['hive'] = 'Hive',
+    ['void_rift'] = 'Void Rift',
+  }
+
+  passive_descriptions = {
+    ['ouroboros_technique_r'] = '[fg]rotating around yourself to the right makes every unit periodically release projectiles',
+    ['ouroboros_technique_l'] = '[fg]rotating around yourself to the left grants +25% defense to all units',
+    ['wall_echo'] = '[fg]hitting walls has a [yellow]25%[fg] chance of releasing [yellow]2[fg] projectiles',
+    ['wall_rider'] = '[fg]hitting walls grants a [yellow]25%[fg] movement speed buff to your snake for [yellow]1[fg] second',
+    ['centipede'] = '[yellow]+20%[fg] movement speed',
+    ['intimidation'] = '[fg]enemies spawn with [yellow]-20%[fg] max HP',
+    ['vulnerability'] = '[fg]all enemies take [yellow]+20%[fg] damage',
+    ['temporal_chains'] = '[fg]all enemies move [yellow]20%[fg] slower',
+    ['amplify'] = '[fg]all units that deal AoE damage gain [yellow]+25%[fg] AoE damage',
+    ['amplify_x'] = '[yellow]+25%[fg] AoE damage if all your units only deal AoE damage',
+    ['resonance'] = '[fg]all AoE attacks deal [yellow]+5%[fg] damage per unit hit',
+    ['ballista'] = "[fg]all units that release projectiles and don't deal AoE damage gain [yellow]+25%[fg] damage",
+    ['ballista_x'] = "[yellow]+25%[fg] damage if all your units only release projectiles and don't deal AoE damage",
+    ['point_blank'] = '[fg]projectiles deal up to [yellow]+100%[fg] damage up close and down to [yellow]-50%[fg] damage far away',
+    ['longshot'] = '[fg]projectiles deal up to [yellow]+100%[fg] damage far away and down to [yellow]-50%[fg] up close',
+    ['blunt_arrow'] = '[fg]all arrows fired by rangers have a [yellow]20%[fg] chance to knockback',
+    ['explosive_arrow'] = '[fg]all arrows fired by rangers have a [yellow]20%[fg] chance to explode, dealing [yellow]+20%[fg] damage in a small area',
+    ['divine_machine_arrow'] = '[fg]all arrows fired by rangers have a [yellow]20%[fg] chance to seek enemies and pierce [yellow]5[fg] times',
+    ['chronomancy'] = '[fg]all mages cast their spells [yellow]25%[fg] faster',
+    ['awakening'] = '[fg]at the start of the round [yellow]1[fg] mage is chosen at random and is granted [yellow]+100%[fg] attack speed and damage for that round',
+    ['divine_punishment'] = '[fg]periodically deal [yellow]10X[fg] damage to all enemies, where [yellow]X[fg] is the number of mages you have',
+    ['berserking'] = '[fg]all warriors have up to [yellow]+50%[fg]attack speed based on missing HP',
+    ['unwavering_stance'] = '[fg]all warriors gain [yellow]+5%[fg] defense every [yellow]5[fg] seconds, up to [yellow]+50%[fg]',
+    ['ultimatum'] = '[fg]projectiles that chain gain [yellow]+25%[fg] damage with each chain',
+    ['flying_daggers'] = '[fg]all knives thrown by rogues chain [yellow]+2[fg] times',
+    ['assassination'] = '[fg]your crits deal [yellow]8x[fg] damage (up from [yellow]4x[fg]) but normal attacks deal [yellow]half[fg] damage',
+    ['magnify'] = '[yellow]+25%[fg] area size',
+    ['concentrated_fire'] = '[yellow]-50%[fg] area size and [yellow]+50%[fg] area damage',
+    ['unleash'] = '[fg]gain [yellow]+5%[fg] area size and damage per second, this resets when an AoE attack happens',
+    ['reinforce'] = '[yellow]+10%[fg] damage, defense and attack speed to all allies if you have at least one enchanter',
+    ['payback'] = '[yellow]+5%[fg] damage to all allies whenever an enchanter is hit',
+    ['blessing'] = '[yellow]+20%[fg] healing effectiveness',
+    ['hex_master'] = '[yellow]+25%[fg] curse duration',
+    ['whispers_of_doom'] = '[fg]curses apply doom, when [yellow]3[fg] doom instances are applied they are consumed, dealing [yellow]100[fg] damage',
+    ['force_push'] = '[yellow]+25%[fg] knockback force',
+    ['heavy_impact'] = '[fg]if knockbacked enemies hit walls they take damage according to the knockback force',
+    ['crucio'] = '[fg]taking damage shares [yellow]2X[fg] the amount across all enemies',
+    ['immolation'] = '[yellow]3[fg] units chosen at random will periodically take damage, all your allies gain [yellow]+8%[fg] damage per tick',
+    ['call_of_the_void'] = '[yellow]+25%[fg] damage over time',
+    ['spawning_pool'] = '[yellow]+1[fg] critter health',
+    ['hive'] = '[yellow]+2[fg] critter health',
+    ['void_rift'] = '[fg]all AoE attacks by mages, nukers or voiders have a [yellow]20%[fg] chance to create an area that deals [yellow]50%[fg] damage per second for [yellow]2[fg] seconds',
+  }
+
+  passive_tiers = {
+    ['ouroboros_technique_r'] = 2,
+    ['ouroboros_technique_l'] = 2,
+    ['wall_echo'] = 1,
+    ['wall_rider'] = 1,
+    ['centipede'] = 1,
+    ['intimidation'] = 2,
+    ['vulnerability'] = 2,
+    ['temporal_chains'] = 1,
+    ['amplify'] = 1,
+    ['amplify_x'] = 1,
+    ['resonance'] = 2,
+    ['ballista'] = 1,
+    ['ballista_x'] = 1,
+    ['point_blank'] = 2,
+    ['longshot'] = 2,
+    ['blunt_arrow'] = 1,
+    ['explosive_arrow'] = 2,
+    ['divine_machine_arrow'] = 3,
+    ['chronomancy'] = 2,
+    ['awakening'] = 2,
+    ['divine_punishment'] = 3,
+    ['berserking'] = 1,
+    ['unwavering_stance'] = 1,
+    ['ultimatum'] = 2,
+    ['flying_daggers'] = 3,
+    ['assassination'] = 1,
+    ['magnify'] = 1,
+    ['concentrated_fire'] = 2,
+    ['unleash'] = 1,
+    ['reinforce'] = 2,
+    ['payback'] = 2,
+    ['blessing'] = 1,
+    ['hex_master'] = 1,
+    ['whispers_of_doom'] = 2,
+    ['force_push'] = 1,
+    ['heavy_impact'] = 2,
+    ['crucio'] = 3,
+    ['immolation'] = 2,
+    ['call_of_the_void'] = 2,
+    ['spawning_pool'] = 1,
+    ['hive'] = 3,
+    ['void_rift'] = 3,
+  }
+
+  tier_to_passives = {
+    [1] = {'wall_echo', 'wall_rider', 'centipede', 'temporal_chains', 'amplify', 'amplify_x', 'ballista', 'ballista_x', 'blunt_arrow', 'berserking', 'unwavering_stance', 'assassination', 'unleash', 'blessing',
+      'hex_master', 'force_push', 'spawning_pool'},
+    [2] = {'ouroboros_technique_r', 'ouroboros_technique_l', 'intimidation', 'vulnerability', 'resonance', 'point_blank', 'longshot', 'explosive_arrow', 'chronomancy', 'awakening', 'ultimatum', 'concentrated_fire',
+      'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
+    [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
+  }
+
+  level_to_passive_tier_weights = {
+    [3] = {70, 20, 10},
+    [6] = {60, 25, 15},
+    [9] = {50, 30, 20},
+    [12] = {40, 40, 20},
+    [15] = {30, 45, 25},
+    [18] = {20, 50, 30},
+    [21] = {20, 40, 40},
+    [24] = {20, 30, 50},
   }
 
   gold = 2
 
   main = Main()
-  main:add(BuyScreen'buy_screen')
-  main:go_to('buy_screen', 22, {
-    {character = 'flagellant', level = 3},
-    {character = 'scout', level = 3},
-    {character = 'archer', level = 3},
-  })
   --[[
-  main:add(Arena'arena')
-  main:go_to('arena', 18, {
-    {character = 'scout', level = 3},
-    {character = 'engineer', level = 3},
-    {character = 'wizard', level = 3},
+  main:add(BuyScreen'buy_screen')
+  main:go_to('buy_screen', 3, {
     {character = 'swordsman', level = 3},
-    {character = 'outlaw', level = 3},
+    {character = 'wizard', level = 3},
+    {character = 'scout', level = 3},
     {character = 'archer', level = 3},
-    {character = 'cannoneer', level = 3},
-    {character = 'spellblade', level = 3},
   })
   ]]--
+  main:add(Arena'arena')
+  main:go_to('arena', 3, {
+    {character = 'swordsman', level = 3},
+    {character = 'wizard', level = 3},
+    {character = 'scout', level = 3},
+    {character = 'archer', level = 3},
+  })
 end
 
 

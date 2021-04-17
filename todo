@@ -82,19 +82,19 @@
     * Infestor [curser, swarmer]: curses nearby enemies for 6 seconds, they will release multiple critters on death - Lv.3: Infestation - triples the number of critters released
     * Flagellant [psyker, enchanter]: periodically deals damage to self and grants a damage buff to all allies - Lv.3: Zealotry - deals damage to all allies instead and also grants a massive damage buff
   * Sets
-    Ranger = 8/8
-    Warrior = 8/8
-    Mage = 8/8
-    Rogue = 8/8
-    Nuker = 7/7
-    Conjurer = 5/5
-    Forcer = 5/5
-    Voider = 5/5
-    Psyker = 4/4
-    Healer = 5/5
-    Enchanter = 5/5
-    Curser = 5/5
-    Swarmer = 4/4
+    * Ranger = 7/7
+    * Warrior = 8/8
+    * Mage = 8/8
+    * Rogue = 8/8
+    * Nuker = 7/7
+    * Conjurer = 5/5
+    * Forcer = 5/5
+    * Voider = 5/5
+    * Psyker = 4/4
+    * Healer = 5/5
+    * Enchanter = 5/5
+    * Curser = 5/5
+    * Swarmer = 4/4
 
 10. Items
   Ouroboros Technique R: rotating around yourself to the right makes every unit periodically release projectiles
@@ -122,7 +122,7 @@
 11. Steam integration: achievements, etc
 12. Hovering over a party member should show which set they belong to and vice-versa
 13. Show a unit DPS list like Underlord's to the right side of the screen
-14. Warriors that deal AoE damage should deal extra damage based on number of enemies hit
+* 14. Warriors that deal AoE damage should deal extra damage based on number of enemies hit
 15. GO button is grayed out and thus doesn't say it's meant to be clicked on
 16. 28/20 enemies or 4/3 wave confuses players and makes them think the level goals are bugged
 17. Music for first 9-15 levels should be calm rather than upbeat

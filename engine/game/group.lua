@@ -51,7 +51,13 @@ end
 
 function Group:update(dt)
   self.t:update(dt)
-  for _, object in ipairs(self.objects) do object:update(dt) end
+  for _, object in ipairs(self.objects) do
+    if object.force_update then
+      object:update(1/refresh_rate)
+    else
+      object:update(dt)
+    end
+  end
   if self.world then self.world:update(dt) end
 
   self.cells = {}

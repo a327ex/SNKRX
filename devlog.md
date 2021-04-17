@@ -959,3 +959,8 @@ Finished remaining 5 characters and revised all class bonuses. So 40/40 characte
 | Forcer | yellow | 2/4 | 5 | +25/50% knockback force to all allies |
 | Swarmer | orange | 2/4 | 4 | +1/3 health to critters |
 | Voider | purple | 2/4 | 5 | +15/25% DoT to allied voiders |
+
+# Day 58-59 - 15-16/04/21
+
+Had to ideaguy all 40 passives. Managed to do it and also get the passive selection screen working partly. Tomorrow I should finish it and start working through the 40 passives, which should go significantly faster
+than the characters since I made sure to pick types of passives that were already implemented one way or another in the game.

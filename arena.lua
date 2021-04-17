@@ -249,6 +249,8 @@ function Arena:on_enter(from, level, units)
   self.healer_level = class_levels.healer
   self.psyker_level = class_levels.psyker
   self.conjurer_level = class_levels.conjurer
+
+  self.can_quit = true
 end
 
 
@@ -326,9 +328,6 @@ function Arena:update(dt)
   self:update_game_object(dt*slow_amount)
   -- cascade_instance.pitch = math.clamp(slow_amount*self.main_slow_amount, 0.05, 1)
 
-  if self.enchanter_level == 1 then self.enchanter_dmg_m = 1.25
-  else self.enchanter_dmg_m = 1 end
-
   self.floor:update(dt*slow_amount)
   self.main:update(dt*slow_amount*self.main_slow_amount)
   self.post_main:update(dt*slow_amount)
@@ -360,39 +359,56 @@ function Arena:update(dt)
     else
       if not self.arena_clear_text then self.arena_clear_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 48, lines = {{text = '[wavy_mid, cbyc]arena clear!', font = fat_font, alignment = 'center'}}} end
       self.t:after(3, function()
-        ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-        TransitionEffect{group = main.transitions, x = self.player.x, y = self.player.y, color = self.color, transition_action = function(t)
-          main:add(BuyScreen'buy_screen')
-          main:go_to('buy_screen', self.level, self.units)
-          t.t:after(0.1, function()
-            t.text:set_text({
-              {text = '[nudge_down, bg]gold gained: ' .. tostring(gold_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-              {text = '[wavy_lower, bg]damage taken: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-              {text = '[wavy_lower, bg]damage dealt: 0', font = pixul_font, alignment = 'center'}
-            })
-            _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-            t.t:after(0.2, function()
+        if self.level % 3 == 0 then
+          self.arena_clear_text.dead = true
+          trigger:tween(1, _G, {slow_amount = 0}, math.linear, function() slow_amount = 0 end)
+          trigger:tween(4, camera, {x = gw/2, y = gh/2, r = 0}, math.linear, function() camera.x, camera.y, camera.r = gw/2, gh/2, 0 end)
+          local card_w, card_h = 100, 100
+          local w = 3*card_w + 2*20
+          self.choosing_passives = true
+          self.cards = {}
+          local passive_1 = random:table(tier_to_passives[random:weighted_pick(unpack(level_to_passive_tier_weights[level or self.level]))])
+          local passive_2 = random:table(tier_to_passives[random:weighted_pick(unpack(level_to_passive_tier_weights[level or self.level]))])
+          local passive_3 = random:table(tier_to_passives[random:weighted_pick(unpack(level_to_passive_tier_weights[level or self.level]))])
+          table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 0*(card_w + 20) + card_w/2, y = gh/2, w = card_w, h = card_h, arena = self, passive = passive_1, force_update = true})
+          table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 1*(card_w + 20) + card_w/2, y = gh/2, w = card_w, h = card_h, arena = self, passive = passive_2, force_update = true})
+          table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 2*(card_w + 20) + card_w/2, y = gh/2, w = card_w, h = card_h, arena = self, passive = passive_3, force_update = true})
+          self.passive_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 65, lines = {{text = '[fg, wavy]choose one', font = fat_font, alignment = 'center'}}}
+        else
+          ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+          TransitionEffect{group = main.transitions, x = self.player.x, y = self.player.y, color = self.color, transition_action = function(t)
+            main:add(BuyScreen'buy_screen')
+            main:go_to('buy_screen', self.level, self.units)
+            t.t:after(0.1, function()
               t.text:set_text({
-                {text = '[wavy_lower, bg]gold gained: ' .. tostring(gold_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-                {text = '[nudge_down, bg]damage taken: ' .. tostring(math.round(self.damage_taken, 0)), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+                {text = '[nudge_down, bg]gold gained: ' .. tostring(gold_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+                {text = '[wavy_lower, bg]damage taken: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
                 {text = '[wavy_lower, bg]damage dealt: 0', font = pixul_font, alignment = 'center'}
               })
               _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
               t.t:after(0.2, function()
                 t.text:set_text({
                   {text = '[wavy_lower, bg]gold gained: ' .. tostring(gold_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-                  {text = '[wavy_lower, bg]damage taken: ' .. tostring(math.round(self.damage_taken, 0)), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-                  {text = '[nudge_down, bg]damage dealt: ' .. tostring(math.round(self.damage_dealt, 0)), font = pixul_font, alignment = 'center'}
+                  {text = '[nudge_down, bg]damage taken: ' .. tostring(math.round(self.damage_taken, 0)), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+                  {text = '[wavy_lower, bg]damage dealt: 0', font = pixul_font, alignment = 'center'}
                 })
                 _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+                t.t:after(0.2, function()
+                  t.text:set_text({
+                    {text = '[wavy_lower, bg]gold gained: ' .. tostring(gold_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+                    {text = '[wavy_lower, bg]damage taken: ' .. tostring(math.round(self.damage_taken, 0)), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+                    {text = '[nudge_down, bg]damage dealt: ' .. tostring(math.round(self.damage_dealt, 0)), font = pixul_font, alignment = 'center'}
+                  })
+                  _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+                end)
               end)
             end)
-          end)
-        end, text = Text({
-          {text = '[wavy_lower, bg]gold gained: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-          {text = '[wavy_lower, bg]damage taken: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-          {text = '[wavy_lower, bg]damage dealt: 0', font = pixul_font, alignment = 'center'}
-        }, global_text_tags)}
+          end, text = Text({
+            {text = '[wavy_lower, bg]gold gained: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+            {text = '[wavy_lower, bg]damage taken: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+            {text = '[wavy_lower, bg]damage dealt: 0', font = pixul_font, alignment = 'center'}
+          }, global_text_tags)}
+        end
       end, 'transition')
     end
   end
@@ -405,10 +421,11 @@ function Arena:draw()
   self.post_main:draw()
   self.effects:draw()
   if self.level == 18 and self.trailer then graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent) end
+  if self.choosing_passives then graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent) end
   self.ui:draw()
 
   camera:attach()
-  if self.start_time and self.start_time > 0 then
+  if self.start_time and self.start_time > 0 and not self.choosing_passives then
     graphics.push(gw/2, gh/2 - 48, 0, self.hfx.condition1.x, self.hfx.condition1.x)
       graphics.print_centered(tostring(self.start_time), fat_font, gw/2, gh/2 - 48, 0, 1, 1, nil, nil, self.hfx.condition1.f and fg[0] or red[0])
     graphics.pop()
@@ -567,4 +584,24 @@ function Arena:spawn_n_enemies(p, j, n)
       Seeker{group = self.main, x = x, y = y, character = 'seeker', level = self.level}
     end}
   end, n, nil, 'spawn_enemies_' .. j)
+end
+
+
+
+
+Passives = Object:extend()
+Passives:implement(GameObject)
+function Passives:init(args)
+  self:init_game_object(args)
+  
+end
+
+
+function Passives:update(dt)
+  self:update_game_object(dt)
+end
+
+
+function Passives:draw()
+
 end
