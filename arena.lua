@@ -7,11 +7,12 @@ function Arena:init(name)
 end
 
 
-function Arena:on_enter(from, level, units)
+function Arena:on_enter(from, level, units, passives)
   self.hfx:add('condition1', 1)
   self.hfx:add('condition2', 1)
   self.level = level or 1
   self.units = units
+  self.passives = passives
 
   steam.friends.setRichPresence('steam_display', '#StatusFull')
   steam.friends.setRichPresence('text', 'Arena - Level ' .. self.level)
@@ -63,9 +64,9 @@ function Arena:on_enter(from, level, units)
 
   for i, unit in ipairs(units) do
     if i == 1 then
-      self.player = Player{group = self.main, x = gw/2, y = gh/2 + 16, leader = true, character = unit.character, level = unit.level}
+      self.player = Player{group = self.main, x = gw/2, y = gh/2 + 16, leader = true, character = unit.character, level = unit.level, passives = self.passives}
     else
-      self.player:add_follower(Player{group = self.main, character = unit.character, level = unit.level})
+      self.player:add_follower(Player{group = self.main, character = unit.character, level = unit.level, passives = self.passives})
     end
   end
 
@@ -249,8 +250,6 @@ function Arena:on_enter(from, level, units)
   self.healer_level = class_levels.healer
   self.psyker_level = class_levels.psyker
   self.conjurer_level = class_levels.conjurer
-
-  self.can_quit = true
 end
 
 
@@ -336,9 +335,6 @@ function Arena:update(dt)
 
   if self.can_quit and #self.main:get_objects_by_classes(self.enemies) <= 0 and not self.transitioning then
     self.can_quit = false
-    self.transitioning = true
-    local gold_gained = random:int(level_to_gold_gained[self.level][1], level_to_gold_gained[self.level][2])
-    gold = gold + gold_gained
 
     if self.level == 25 then
       if not self.win_text and not self.win_text2 then
@@ -370,44 +366,12 @@ function Arena:update(dt)
           local passive_1 = random:table(tier_to_passives[random:weighted_pick(unpack(level_to_passive_tier_weights[level or self.level]))])
           local passive_2 = random:table(tier_to_passives[random:weighted_pick(unpack(level_to_passive_tier_weights[level or self.level]))])
           local passive_3 = random:table(tier_to_passives[random:weighted_pick(unpack(level_to_passive_tier_weights[level or self.level]))])
-          table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 0*(card_w + 20) + card_w/2, y = gh/2, w = card_w, h = card_h, arena = self, passive = passive_1, force_update = true})
-          table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 1*(card_w + 20) + card_w/2, y = gh/2, w = card_w, h = card_h, arena = self, passive = passive_2, force_update = true})
-          table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 2*(card_w + 20) + card_w/2, y = gh/2, w = card_w, h = card_h, arena = self, passive = passive_3, force_update = true})
+          table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 0*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, arena = self, passive = passive_1, force_update = true})
+          table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 1*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, arena = self, passive = passive_2, force_update = true})
+          table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 2*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, arena = self, passive = passive_3, force_update = true})
           self.passive_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 65, lines = {{text = '[fg, wavy]choose one', font = fat_font, alignment = 'center'}}}
         else
-          ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-          TransitionEffect{group = main.transitions, x = self.player.x, y = self.player.y, color = self.color, transition_action = function(t)
-            main:add(BuyScreen'buy_screen')
-            main:go_to('buy_screen', self.level, self.units)
-            t.t:after(0.1, function()
-              t.text:set_text({
-                {text = '[nudge_down, bg]gold gained: ' .. tostring(gold_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-                {text = '[wavy_lower, bg]damage taken: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-                {text = '[wavy_lower, bg]damage dealt: 0', font = pixul_font, alignment = 'center'}
-              })
-              _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-              t.t:after(0.2, function()
-                t.text:set_text({
-                  {text = '[wavy_lower, bg]gold gained: ' .. tostring(gold_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-                  {text = '[nudge_down, bg]damage taken: ' .. tostring(math.round(self.damage_taken, 0)), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-                  {text = '[wavy_lower, bg]damage dealt: 0', font = pixul_font, alignment = 'center'}
-                })
-                _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-                t.t:after(0.2, function()
-                  t.text:set_text({
-                    {text = '[wavy_lower, bg]gold gained: ' .. tostring(gold_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-                    {text = '[wavy_lower, bg]damage taken: ' .. tostring(math.round(self.damage_taken, 0)), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-                    {text = '[nudge_down, bg]damage dealt: ' .. tostring(math.round(self.damage_dealt, 0)), font = pixul_font, alignment = 'center'}
-                  })
-                  _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-                end)
-              end)
-            end)
-          end, text = Text({
-            {text = '[wavy_lower, bg]gold gained: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-            {text = '[wavy_lower, bg]damage taken: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-            {text = '[wavy_lower, bg]damage dealt: 0', font = pixul_font, alignment = 'center'}
-          }, global_text_tags)}
+          self:transition()
         end
       end, 'transition')
     end
@@ -488,6 +452,46 @@ function Arena:die()
       }}
     end)
   end
+end
+
+
+function Arena:transition()
+  self.transitioning = true
+  local gold_gained = random:int(level_to_gold_gained[self.level][1], level_to_gold_gained[self.level][2])
+  gold = gold + gold_gained
+  ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+  TransitionEffect{group = main.transitions, x = self.player.x, y = self.player.y, color = self.color, transition_action = function(t)
+    main:add(BuyScreen'buy_screen')
+    main:go_to('buy_screen', self.level, self.units, passives)
+    t.t:after(0.1, function()
+      t.text:set_text({
+        {text = '[nudge_down, bg]gold gained: ' .. tostring(gold_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+        {text = '[wavy_lower, bg]damage taken: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+        {text = '[wavy_lower, bg]damage dealt: 0', font = pixul_font, alignment = 'center'}
+      })
+      _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      t.t:after(0.2, function()
+        t.text:set_text({
+          {text = '[wavy_lower, bg]gold gained: ' .. tostring(gold_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+          {text = '[nudge_down, bg]damage taken: ' .. tostring(math.round(self.damage_taken, 0)), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+          {text = '[wavy_lower, bg]damage dealt: 0', font = pixul_font, alignment = 'center'}
+        })
+        _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+        t.t:after(0.2, function()
+          t.text:set_text({
+            {text = '[wavy_lower, bg]gold gained: ' .. tostring(gold_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+            {text = '[wavy_lower, bg]damage taken: ' .. tostring(math.round(self.damage_taken, 0)), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+            {text = '[nudge_down, bg]damage dealt: ' .. tostring(math.round(self.damage_dealt, 0)), font = pixul_font, alignment = 'center'}
+          })
+          _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+        end)
+      end)
+    end)
+  end, text = Text({
+    {text = '[wavy_lower, bg]gold gained: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+    {text = '[wavy_lower, bg]damage taken: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+    {text = '[wavy_lower, bg]damage dealt: 0', font = pixul_font, alignment = 'center'}
+  }, global_text_tags)}
 end
 
 

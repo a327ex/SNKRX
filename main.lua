@@ -936,8 +936,8 @@ function init()
   }
 
   passive_descriptions = {
-    ['ouroboros_technique_r'] = '[fg]rotating around yourself to the right makes every unit periodically release projectiles',
-    ['ouroboros_technique_l'] = '[fg]rotating around yourself to the left grants +25% defense to all units',
+    ['ouroboros_technique_r'] = '[fg]rotating around yourself to the right makes units release projectiles',
+    ['ouroboros_technique_l'] = '[fg]rotating around yourself to the left grants [yellow]+25%[fg] defense to all units',
     ['wall_echo'] = '[fg]hitting walls has a [yellow]25%[fg] chance of releasing [yellow]2[fg] projectiles',
     ['wall_rider'] = '[fg]hitting walls grants a [yellow]25%[fg] movement speed buff to your snake for [yellow]1[fg] second',
     ['centipede'] = '[yellow]+20%[fg] movement speed',
@@ -952,19 +952,19 @@ function init()
     ['point_blank'] = '[fg]projectiles deal up to [yellow]+100%[fg] damage up close and down to [yellow]-50%[fg] damage far away',
     ['longshot'] = '[fg]projectiles deal up to [yellow]+100%[fg] damage far away and down to [yellow]-50%[fg] up close',
     ['blunt_arrow'] = '[fg]all arrows fired by rangers have a [yellow]20%[fg] chance to knockback',
-    ['explosive_arrow'] = '[fg]all arrows fired by rangers have a [yellow]20%[fg] chance to explode, dealing [yellow]+20%[fg] damage in a small area',
-    ['divine_machine_arrow'] = '[fg]all arrows fired by rangers have a [yellow]20%[fg] chance to seek enemies and pierce [yellow]5[fg] times',
+    ['explosive_arrow'] = '[fg]arrows fired by rangers have a [yellow]20%[fg] chance to explode, dealing [yellow]20%[fg] AoE damage',
+    ['divine_machine_arrow'] = '[fg]arrows fired by rangers have a [yellow]20%[fg] chance to seek enemies and pierce [yellow]5[fg] times',
     ['chronomancy'] = '[fg]all mages cast their spells [yellow]25%[fg] faster',
-    ['awakening'] = '[fg]at the start of the round [yellow]1[fg] mage is chosen at random and is granted [yellow]+100%[fg] attack speed and damage for that round',
-    ['divine_punishment'] = '[fg]periodically deal [yellow]10X[fg] damage to all enemies, where [yellow]X[fg] is the number of mages you have',
-    ['berserking'] = '[fg]all warriors have up to [yellow]+50%[fg]attack speed based on missing HP',
+    ['awakening'] = '[fg]every round [yellow]1[fg] mage is granted [yellow]+100%[fg] attack speed and damage for that round',
+    ['divine_punishment'] = '[fg]periodically deal [yellow]10X[fg] damage to all enemies, where [yellow]X[fg] is how many mages you have',
+    ['berserking'] = '[fg]all warriors have up to [yellow]+50%[fg] attack speed based on missing HP',
     ['unwavering_stance'] = '[fg]all warriors gain [yellow]+5%[fg] defense every [yellow]5[fg] seconds, up to [yellow]+50%[fg]',
     ['ultimatum'] = '[fg]projectiles that chain gain [yellow]+25%[fg] damage with each chain',
     ['flying_daggers'] = '[fg]all knives thrown by rogues chain [yellow]+2[fg] times',
     ['assassination'] = '[fg]your crits deal [yellow]8x[fg] damage (up from [yellow]4x[fg]) but normal attacks deal [yellow]half[fg] damage',
     ['magnify'] = '[yellow]+25%[fg] area size',
     ['concentrated_fire'] = '[yellow]-50%[fg] area size and [yellow]+50%[fg] area damage',
-    ['unleash'] = '[fg]gain [yellow]+5%[fg] area size and damage per second, this resets when an AoE attack happens',
+    ['unleash'] = '[yellow]+5%[fg] area size and damage per second, this resets when any AoE attack happens',
     ['reinforce'] = '[yellow]+10%[fg] damage, defense and attack speed to all allies if you have at least one enchanter',
     ['payback'] = '[yellow]+5%[fg] damage to all allies whenever an enchanter is hit',
     ['blessing'] = '[yellow]+20%[fg] healing effectiveness',
@@ -977,7 +977,7 @@ function init()
     ['call_of_the_void'] = '[yellow]+25%[fg] damage over time',
     ['spawning_pool'] = '[yellow]+1[fg] critter health',
     ['hive'] = '[yellow]+2[fg] critter health',
-    ['void_rift'] = '[fg]all AoE attacks by mages, nukers or voiders have a [yellow]20%[fg] chance to create an area that deals [yellow]50%[fg] damage per second for [yellow]2[fg] seconds',
+    ['void_rift'] = '[fg]AoE attacks by mages, nukers or voiders have a [yellow]20%[fg] chance to create a void rift',
   }
 
   passive_tiers = {
@@ -1045,17 +1045,25 @@ function init()
   }
 
   gold = 2
+  passives = {'ouroboros_technique_r'}
 
   main = Main()
-  --[[
   main:add(BuyScreen'buy_screen')
-  main:go_to('buy_screen', 3, {
+  main:go_to('buy_screen', 2, {
     {character = 'swordsman', level = 3},
     {character = 'wizard', level = 3},
     {character = 'scout', level = 3},
     {character = 'archer', level = 3},
-  })
-  ]]--
+    {character = 'host', level = 3},
+    {character = 'beastmaster', level = 3},
+    {character = 'corruptor', level = 3},
+    {character = 'flagellant', level = 3},
+    {character = 'psykino', level = 3},
+    {character = 'juggernaut', level = 3},
+    {character = 'vagrant', level = 3},
+    {character = 'stormweaver', level = 3},
+  }, passives)
+  --[[
   main:add(Arena'arena')
   main:go_to('arena', 3, {
     {character = 'swordsman', level = 3},
@@ -1063,6 +1071,7 @@ function init()
     {character = 'scout', level = 3},
     {character = 'archer', level = 3},
   })
+  ]]--
 end
 
 

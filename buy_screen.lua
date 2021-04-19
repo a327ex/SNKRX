@@ -18,7 +18,6 @@ function BuyScreen:on_exit()
   self.party_text = nil
   self.sets_text = nil
   self.items_text = nil
-  self.under_text = nil
   self.characters = nil
   self.sets = nil
   self.cards = nil
@@ -26,9 +25,10 @@ function BuyScreen:on_exit()
 end
 
 
-function BuyScreen:on_enter(from, level, units)
+function BuyScreen:on_enter(from, level, units, passives)
   self.level = level
   self.units = units
+  self.passives = passives
   camera.x, camera.y = gw/2, gh/2
 
   if self.level == 0 then
@@ -46,18 +46,15 @@ function BuyScreen:on_enter(from, level, units)
 
   self:set_cards()
   self:set_party_and_sets()
+  self:set_items()
 
   self.shop_text = Text({{text = '[wavy_mid, fg]shop [fg]- gold: [yellow]' .. gold, font = pixul_font, alignment = 'center'}}, global_text_tags)
   self.party_text = Text({{text = '[wavy_mid, fg]party', font = pixul_font, alignment = 'center'}}, global_text_tags)
   self.sets_text = Text({{text = '[wavy_mid, fg]classes', font = pixul_font, alignment = 'center'}}, global_text_tags)
   self.items_text = Text({{text = '[wavy_mid, fg]items', font = pixul_font, alignment = 'center'}}, global_text_tags)
-  self.under_text = Text2{group = self.main, x = 140, y = gh - 55, r = -math.pi/48, lines = {
-    {text = '[light_bg]under', font = fat_font, alignment = 'center'},
-    {text = '[light_bg]construction', font = fat_font, alignment = 'center'},
-  }}
 
   if not self.first_screen then RerollButton{group = self.main, x = 150, y = 18, parent = self} end
-  GoButton{group = self.main, x = gw - 30, y = gh - 20, parent = self}
+  GoButton{group = self.main, x = gw - 135, y = gh - 20, parent = self}
   -- WishlistButton{group = self.main, x = gw - 147, y = gh - 20, parent = self}
 end
 
@@ -174,7 +171,7 @@ function BuyScreen:set_party_and_sets()
   self.characters = {}
   local y = 40
   for i, unit in ipairs(self.units) do
-    table.insert(self.characters, CharacterPart{group = self.main, x = gw - 30, y = y + (i-1)*20, character = unit.character, level = unit.level, reserve = unit.reserve, i = i, spawn_effect = unit.spawn_effect, parent = self})
+    table.insert(self.characters, CharacterPart{group = self.main, x = gw - 30, y = y + (i-1)*19, character = unit.character, level = unit.level, reserve = unit.reserve, i = i, spawn_effect = unit.spawn_effect, parent = self})
     unit.spawn_effect = false
   end
 
@@ -186,6 +183,17 @@ function BuyScreen:set_party_and_sets()
     if #classes <= 6 then x, y = math.index_to_coordinates(i, 2)
     else x, y = math.index_to_coordinates(i, 3) end
     table.insert(self.sets, ClassIcon{group = self.main, x = (#classes <= 6 and 319 or 308) + (x-1)*20, y = 45 + (y-1)*56, class = class, units = self.units, parent = self})
+  end
+end
+
+
+function BuyScreen:set_items()
+  if self.items then for _, item in ipairs(self.items) do item:die() end end
+  self.items = {}
+  local y = 182
+  for k, item in ipairs(self.passives) do
+    local i, j = math.index_to_coordinates(k, 4)
+    table.insert(self.items, ItemCard{group = self.main, x = 45 + (i-1)*60, y = y + (j-1)*50, w = 40, h = 50, passive = item})
   end
 end
 
@@ -259,7 +267,7 @@ function GoButton:init(args)
   self:init_game_object(args)
   self.shape = Rectangle(self.x, self.y, 28, 18)
   self.interact_with_mouse = true
-  self.text = Text({{text = '[bg10]GO!', font = pixul_font, alignment = 'center'}}, global_text_tags)
+  self.text = Text({{text = '[greenm5]GO!', font = pixul_font, alignment = 'center'}}, global_text_tags)
 end
 
 
@@ -287,7 +295,7 @@ function GoButton:update(dt)
       self.transitioning = true
       TransitionEffect{group = main.transitions, x = self.x, y = self.y, color = character_colors[random:table(self.parent.units).character], transition_action = function()
         main:add(Arena'arena')
-        main:go_to('arena', ((self.parent.first_screen and 1) or (self.parent.level + 1)), self.parent.units)
+        main:go_to('arena', ((self.parent.first_screen and 1) or (self.parent.level + 1)), self.parent.units, self.parent.passives)
       end, text = Text({{text = '[wavy, bg]level ' .. ((self.parent.first_screen and 1) or (self.parent.level + 1)), font = pixul_font, alignment = 'center'}}, global_text_tags)}
     end
   end
@@ -296,8 +304,8 @@ end
 
 function GoButton:draw()
   graphics.push(self.x, self.y, 0, self.spring.x, self.spring.y)
-    graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 4, 4, self.selected and fg[0] or bg[1])
-    self.text:draw(self.x, self.y + 1)
+    graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 4, 4, self.selected and fg[0] or green[0])
+    self.text:draw(self.x, self.y + 1, 0, 1, 1)
   graphics.pop()
 end
 
@@ -312,7 +320,7 @@ end
 
 
 function GoButton:on_mouse_exit()
-  self.text:set_text{{text = '[bg10]GO!', font = pixul_font, alignment = 'center'}}
+  self.text:set_text{{text = '[greenm5]GO!', font = pixul_font, alignment = 'center'}}
   self.selected = false
 end
 
@@ -498,7 +506,17 @@ end
 function PassiveCard:update(dt)
   self:update_game_object(dt)
   self.passive_name:update(dt)
-  print(dt)
+
+  if self.selected and input.m1.pressed and self.arena.choosing_passives then
+    self.arena.choosing_passives = false
+    table.insert(passives, self.passive)
+    trigger:tween(0.25, _G, {slow_amount = 1}, math.linear, function()
+      slow_amount = 1
+      self.arena:transition()
+    end)
+    ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    self:die()
+  end
 end
 
 
@@ -511,6 +529,7 @@ end
 
 
 function PassiveCard:on_mouse_enter()
+  self.selected = true
   ui_hover1:play{pitch = random:float(1.3, 1.5), volume = 0.5}
   self.spring:pull(0.2, 200, 10)
   self.info_text = InfoText{group = main.current.ui, force_update = true}
@@ -522,9 +541,77 @@ end
 
 
 function PassiveCard:on_mouse_exit()
+  self.selected = false
   self.info_text:deactivate()
   self.info_text.dead = true
   self.info_text = nil
+end
+
+
+function PassiveCard:die()
+  self.dead = true
+  if self.info_text then
+    self.info_text:deactivate()
+    self.info_text.dead = true
+    self.info_text = nil
+  end
+end
+
+
+
+
+ItemCard = Object:extend()
+ItemCard:implement(GameObject)
+function ItemCard:init(args)
+  self:init_game_object(args)
+  self.shape = Rectangle(self.x, self.y, self.w, self.h)
+  self.interact_with_mouse = true
+end
+
+
+function ItemCard:update(dt)
+  self:update_game_object(dt)
+end
+
+
+function ItemCard:draw()
+  graphics.push(self.x, self.y, 0, self.spring.x, self.spring.x)
+    if self.selected then
+      graphics.rectangle(self.x, self.y, self.w, self.h, 6, 6, bg[-1])
+    end
+    _G[self.passive]:draw(self.x, self.y, 0, 0.8, 0.7, 0, 0, fg[0])
+  graphics.pop()
+end
+
+
+function ItemCard:on_mouse_enter()
+  self.selected = true
+  ui_hover1:play{pitch = random:float(1.3, 1.5), volume = 0.5}
+  self.spring:pull(0.2, 200, 10)
+  self.info_text = InfoText{group = main.current.ui, force_update = true}
+  self.info_text:activate({
+    {text = '[fg]' .. passive_names[self.passive], font = pixul_font, alignment = 'center', height_multiplier = 1.25},
+    {text = passive_descriptions[self.passive], font = pixul_font, alignment = 'center', height_multiplier = 1.25},
+  }, nil, nil, nil, nil, 16, 4, nil, 2)
+  self.info_text.x, self.info_text.y = gw/2, gh/2 + 10
+end
+
+
+function ItemCard:on_mouse_exit()
+  self.selected = false
+  self.info_text:deactivate()
+  self.info_text.dead = true
+  self.info_text = nil
+end
+
+
+function ItemCard:die()
+  self.dead = true
+  if self.info_text then
+    self.info_text:deactivate()
+    self.info_text.dead = true
+    self.info_text = nil
+  end
 end
 
 

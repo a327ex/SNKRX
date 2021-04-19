@@ -6,6 +6,8 @@ function Player:init(args)
   self:init_game_object(args)
   self:init_unit()
 
+  for k, v in pairs(self.passives) do self[v] = true end
+
   self.color = character_colors[self.character]
   self:set_as_rectangle(9, 9, 'dynamic', 'player')
   self.visual_shape = 'rectangle'
@@ -434,6 +436,23 @@ function Player:init(args)
     end)
   end
 
+  if self.ouroboros_technique_r then
+    self.t:every(0.1, function()
+      if self.move_right_pressed and love.timer.getTime() - self.move_right_pressed > 1 then
+        local units = self:get_all_units()
+        local cx, cy = 0, 0
+        for _, unit in ipairs(units) do
+          cx = cx + unit.x
+          cy = cy + unit.y
+        end
+        cx = cx/#units
+        cy = cy/#units
+        local unit = random:table(units)
+        unit:barrage(unit:angle_from_point(cx, cy), 1)
+      end
+    end)
+  end
+
   self.first_frame_calculate_stats = true
 end
 
@@ -568,6 +587,10 @@ function Player:update(dt)
   self.t:set_every_multiplier('attack', self.aspd_m)
 
   if self.leader then
+    if input.move_left.pressed and not self.move_right_pressed then self.move_left_pressed = love.timer.getTime() end
+    if input.move_right.pressed and not self.move_left_pressed then self.move_right_pressed = love.timer.getTime() end
+    if input.move_left.released then self.move_left_pressed = nil end
+    if input.move_right.released then self.move_right_pressed = nil end
     if input.move_left.down then self.r = self.r - 1.66*math.pi*dt end
     if input.move_right.down then self.r = self.r + 1.66*math.pi*dt end
     self:set_velocity(self.v*math.cos(self.r), self.v*math.sin(self.r))
@@ -652,7 +675,7 @@ function Player:on_collision_enter(other, contact)
     end
 
   elseif table.any(main.current.enemies, function(v) return other:is(v) end) then
-    other:push(random:float(25, 35)*self.knockback_m, self:angle_to_object(other))
+    other:push(random:float(25, 35)*(self.knockback_m or 1), self:angle_to_object(other))
     if self.character == 'vagrant' or self.character == 'psykeeper' then other:hit(2*self.dmg)
     else other:hit(self.dmg) end
     if other.headbutting then
@@ -1291,7 +1314,7 @@ function Projectile:on_trigger_enter(other, contact)
     end
 
     if self.knockback then
-      other:push(self.knockback*self.knockback_m, self.r)
+      other:push(self.knockback*(self.knockback_m or 1), self.r)
     end
   end
 end
@@ -1347,7 +1370,7 @@ function Area:init(args)
 
     if self.juggernaut_push then
       local r = self.parent:angle_to_object(enemy)
-      enemy:push(random:float(75, 100)*self.knockback_m, r)
+      enemy:push(random:float(75, 100)*(self.knockback_m or 1), r)
       enemy.juggernaut_push = 3*self.dmg
     end
   end
@@ -1531,7 +1554,7 @@ function ForceArea:init(args)
         local enemies = main.current.main:get_objects_in_shape(self.shape, main.current.enemies)
         for _, enemy in ipairs(enemies) do
           enemy:hit(4*self.parent.dmg)
-          enemy:push(50*self.knockback_m, self:angle_to_object(enemy))
+          enemy:push(50*(self.knockback_m or 1), self:angle_to_object(enemy))
         end
       end
     end)
@@ -1763,7 +1786,7 @@ function Pet:on_trigger_enter(other)
     if self.pierce <= 0 then
       camera:shake(2, 0.5)
       other:hit(self.parent.dmg*(self.conjurer_buff_m or 1))
-      other:push(35*self.knockback_m, self:angle_to_object(other))
+      other:push(35*(self.knockback_m or 1), self:angle_to_object(other))
       self.dead = true
       local n = random:int(3, 4)
       for i = 1, n do HitParticle{group = main.current.effects, x = x, y = y, r = random:float(0, 2*math.pi), color = self.color} end
@@ -1771,7 +1794,7 @@ function Pet:on_trigger_enter(other)
     else
       camera:shake(2, 0.5)
       other:hit(self.parent.dmg*(self.conjurer_buff_m or 1))
-      other:push(35*self.knockback_m, self:angle_to_object(other))
+      other:push(35*(self.knockback_m or 1), self:angle_to_object(other))
       self.pierce = self.pierce - 1
     end
     hit2:play{pitch = random:float(0.95, 1.05), volume = 0.35}

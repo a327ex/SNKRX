@@ -964,3 +964,9 @@ Finished remaining 5 characters and revised all class bonuses. So 40/40 characte
 
 Had to ideaguy all 40 passives. Managed to do it and also get the passive selection screen working partly. Tomorrow I should finish it and start working through the 40 passives, which should go significantly faster
 than the characters since I made sure to pick types of passives that were already implemented one way or another in the game.
+
+# Day 60-61 - 17-18/04/21
+
+Finished literally everything needed to make passives work, now I only need to actually make them. The more I work on this the clearer the parts that slow me down because they're annoying to work with
+become. Generally it's higher level "glue" type of code, rather than the code that actually makes the thing work as a unit. So the node refactor for instance is addressing a lot of this glue code by making it conceptually the same
+thing, which should make it easier to work with. The rect cutting UI idea does something similar the high level part of UI, which tends to be mostly layouting. And so on.

@@ -434,6 +434,7 @@ global_text_tags = {
   fg = TextTag{draw = function(c, i, text) graphics.set_color(fg[0]) end},
   fgm5 = TextTag{draw = function(c, i, text) graphics.set_color(fg[-5]) end},
   fgm10 = TextTag{draw = function(c, i, text) graphics.set_color(fg[-10]) end},
+  greenm5 = TextTag{draw = function(c, i, text) graphics.set_color(green[-5]) end},
   wavy = TextTag{update = function(c, dt, i, text) c.oy = 2*math.sin(4*time + i) end},
   wavy_mid = TextTag{update = function(c, dt, i, text) c.oy = 0.75*math.sin(3*time + i) end},
   wavy_mid2 = TextTag{update = function(c, dt, i, text) c.oy = 0.5*math.sin(3*time + i) end},
