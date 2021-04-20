@@ -970,3 +970,30 @@ than the characters since I made sure to pick types of passives that were alread
 Finished literally everything needed to make passives work, now I only need to actually make them. The more I work on this the clearer the parts that slow me down because they're annoying to work with
 become. Generally it's higher level "glue" type of code, rather than the code that actually makes the thing work as a unit. So the node refactor for instance is addressing a lot of this glue code by making it conceptually the same
 thing, which should make it easier to work with. The rect cutting UI idea does something similar the high level part of UI, which tends to be mostly layouting. And so on.
+
+# Day 62 - 19/04/21
+
+20 out of 40 passives done today.
+
+| Name | Description |
+| --- | --- |
+| Ouroboros Technique R | rotating around yourself to the right makes units release projectiles |
+| Ouroboros Technique L | rotating around yourself to the left grants +25% defense to all units |
+| Wall Echo | hitting walls has a 34% chance of releasing 2 projectiles |
+| Wall Rider | hitting walls grants a 25% movement speed buff for 1 second |
+| Centipede | +20% movement speed |
+| Intimidation | enemies spawn with -20% max HP |
+| Vulnerability | enemies take +20% damage |
+| Temporal Chains | all enemies move 20% slower |
+| Amplify | +25% AoE damage |
+| Amplify X | +50% AoE damage |
+| Resonance | all AoE attacks deal +5% damage per enemy hit |
+| Ballista | +25% damage to rangers and rogues |
+| Ballista X | +50% damage to rangers and rogues |
+| Point Blank | projectiles deal up to +100% damage up close and down to -50% damage far away |
+| Longshot | projectiles deal up to +100% damage far away and down to -50% damage up close |
+| Blunt Arrow | all arrows fired by rangers have a 20% chance to knockback |
+| Explosive Arrow | all arrows fired by rangers have a 30% chance to explode, dealing 20% AoE damage |
+| Divine Machine Arrow | all arrows fired by rangers have a 40% chance to seek enemies and pierce 5 times |
+| Chronomancy | all mages cast their spells 25% faster |
+| Awakening | every round 1 mage is granted +100% cast speed and damage for that round |

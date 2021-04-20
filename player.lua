@@ -6,7 +6,7 @@ function Player:init(args)
   self:init_game_object(args)
   self:init_unit()
 
-  for k, v in pairs(self.passives) do self[v] = true end
+  if self.passives then for k, v in pairs(self.passives) do self[v] = true end end
 
   self.color = character_colors[self.character]
   self:set_as_rectangle(9, 9, 'dynamic', 'player')
@@ -439,21 +439,61 @@ function Player:init(args)
   if self.ouroboros_technique_r then
     self.t:every(0.1, function()
       if self.move_right_pressed and love.timer.getTime() - self.move_right_pressed > 1 then
-        local units = self:get_all_units()
-        local cx, cy = 0, 0
-        for _, unit in ipairs(units) do
-          cx = cx + unit.x
-          cy = cy + unit.y
+        local target = self:get_closest_object_in_shape(Circle(self.x, self.y, 96), main.current.enemies)
+        if target then
+          local units = self:get_all_units()
+          local unit = random:table(units)
+          unit:barrage(unit:angle_to_object(target), 1)
+        else
+          local units = self:get_all_units()
+          local cx, cy = 0, 0
+          for _, unit in ipairs(units) do
+            cx = cx + unit.x
+            cy = cy + unit.y
+          end
+          cx = cx/#units
+          cy = cy/#units
+          local unit = random:table(units)
+          unit:barrage(unit:angle_from_point(cx, cy), 1)
         end
-        cx = cx/#units
-        cy = cy/#units
-        local unit = random:table(units)
-        unit:barrage(unit:angle_from_point(cx, cy), 1)
       end
     end)
   end
 
-  self.first_frame_calculate_stats = true
+  if self.centipede then self.centipede_mvspd_m = 1.2 end
+  if self.amplify then self.amplify_area_dmg_m = 1.25 end
+  if self.amplify_x then self.amplify_x_area_dmg_m = 1.5 end
+
+  if self.ballista then
+    if table.any(self.classes, function(v) return v == 'ranger' end) or table.any(self.classes, function(v) return v == 'rogue' end) then
+      self.ballista_dmg_m = 1.25
+    end
+  end
+
+  if self.ballista_x then
+    if table.any(self.classes, function(v) return v == 'ranger' end) or table.any(self.classes, function(v) return v == 'rogue' end) then
+      self.ballista_x_dmg_m = 1.5
+    end
+  end
+
+  if self.chronomancy then
+    if table.any(self.classes, function(v) return v == 'mage' end) then
+      self.chronomancy_aspd_m = 1.25
+    end
+  end
+
+  if self.leader and self.awakening then
+    local units = self:get_all_units()
+    local mages = {}
+    for _, unit in ipairs(units) do
+      if table.any(unit.classes, function(v) return v == 'mage' end) then
+        table.insert(mages, unit)
+      end
+    end
+    local mage = random:table(mages)
+    mage.awakening_aspd_m = 2
+    mage.awakening_dmg_m = 2
+  end
 end
 
 
@@ -573,12 +613,26 @@ function Player:update(dt)
     else self.dot_dmg_m = 1 end
   end
 
+  if self.ouroboros_technique_l and self.leader then
+    local units = self:get_all_units()
+    if self.move_left_pressed and love.timer.getTime() - self.move_left_pressed > 1 then
+      for _, unit in ipairs(units) do
+        unit.ouroboros_def_m = 1.25
+      end
+    else
+      for _, unit in ipairs(units) do
+        unit.ouroboros_def_m = 1
+      end
+    end
+  end
+
   self.buff_def_a = (self.warrior_def_a or 0)
-  self.buff_aspd_m = (self.chronomancer_aspd_m or 1)*(self.vagrant_aspd_m or 1)*(self.outlaw_aspd_m or 1)*(self.fairy_aspd_m or 1)*(self.psyker_aspd_m or 1)
-  self.buff_dmg_m = (self.squire_dmg_m or 1)*(self.vagrant_dmg_m or 1)*(self.enchanter_dmg_m or 1)*(self.swordsman_dmg_m or 1)*(self.flagellant_dmg_m or 1)*(self.psyker_dmg_m or 1)
-  self.buff_def_m = (self.squire_def_m or 1)
+  self.buff_aspd_m = (self.chronomancer_aspd_m or 1)*(self.vagrant_aspd_m or 1)*(self.outlaw_aspd_m or 1)*(self.fairy_aspd_m or 1)*(self.psyker_aspd_m or 1)*(self.chronomancy_aspd_m or 1)*(self.awakening_aspd_m or 1)
+  self.buff_dmg_m = (self.squire_dmg_m or 1)*(self.vagrant_dmg_m or 1)*(self.enchanter_dmg_m or 1)*(self.swordsman_dmg_m or 1)*(self.flagellant_dmg_m or 1)*(self.psyker_dmg_m or 1)*(self.ballista_dmg_m or 1)*(self.ballista_x_dmg_m or 1)*(self.awakening_dmg_m or 1)
+  self.buff_def_m = (self.squire_def_m or 1)*(self.ouroboros_def_m or 1)
   self.buff_area_size_m = (self.nuker_area_size_m or 1)
-  self.buff_area_dmg_m = (self.nuker_area_dmg_m or 1)
+  self.buff_area_dmg_m = (self.nuker_area_dmg_m or 1)*(self.amplify_area_dmg_m or 1)*(self.amplify_x_area_dmg_m or 1)
+  self.buff_mvspd_m = (self.wall_rider_mvspd_m or 1)*(self.centipede_mvspd_m or 1)
   self:calculate_stats()
 
   if self.attack_sensor then self.attack_sensor:move_to(self.x, self.y) end
@@ -593,7 +647,15 @@ function Player:update(dt)
     if input.move_right.released then self.move_right_pressed = nil end
     if input.move_left.down then self.r = self.r - 1.66*math.pi*dt end
     if input.move_right.down then self.r = self.r + 1.66*math.pi*dt end
-    self:set_velocity(self.v*math.cos(self.r), self.v*math.sin(self.r))
+
+    local total_v = 0
+    local units = self:get_all_units()
+    for _, unit in ipairs(units) do
+      total_v = total_v + unit.max_v
+    end
+    total_v = total_v/#units
+
+    self:set_velocity(total_v*math.cos(self.r), total_v*math.sin(self.r))
 
     if not main.current.won and not main.current.choosing_passives then
       local vx, vy = self:get_velocity()
@@ -671,6 +733,26 @@ function Player:on_collision_enter(other, contact)
           player_hit_wall1:play{pitch = r + 0.025*i, volume = 0.1}
           pop1:play{pitch = r + 0.05*i, volume = 0.2}
         end)
+      end
+
+      if self.wall_echo then
+        if random:bool(34) then
+          local target = self:get_closest_object_in_shape(Circle(self.x, self.y, 96), main.current.enemies)
+          if target then
+            self:barrage(self:angle_to_object(target), 2)
+          else
+            local r = Vector(contact:getNormal()):angle()
+            self:barrage(r, 2)
+          end
+        end
+      end
+
+      if self.wall_rider then
+        local units = self:get_all_units()
+        for _, unit in ipairs(units) do unit.wall_rider_mvspd_m = 1.25 end
+        trigger:after(1, function()
+          for _, unit in ipairs(units) do unit.wall_rider_mvspd_m = 1 end
+        end, 'wall_rider')
       end
     end
 
@@ -1065,12 +1147,28 @@ function Projectile:init(args)
     end)
   end
 
+  if self.parent.divine_machine_arrow and table.any(self.parent.classes, function(v) return v == 'ranger' end) then
+    if random:bool(40) then
+      self.homing = true
+      self.pierce = 5
+    end
+  end
+
   if self.homing then
     self.homing = false
     self.t:after(0.1, function()
       self.homing = true
       self.closest_sensor = Circle(self.x, self.y, 64)
     end)
+  end
+
+  self.distance_travelled = 0
+  self.distance_dmg_m = 1
+
+  if self.parent.blunt_arrow and table.any(self.parent.classes, function(v) return v == 'ranger' end) then
+    if random:bool(20) then
+      self.knockback = 10
+    end
   end
 end
 
@@ -1098,7 +1196,6 @@ function Projectile:update(dt)
     self:move_along_angle(self.v, self.r + (self.orbit_r or 0))
   end
 
-
   if self.character == 'sage' then
     self.pull_sensor:move_to(self.x, self.y)
     local enemies = self:get_objects_in_shape(self.pull_sensor, main.current.enemies)
@@ -1106,6 +1203,17 @@ function Projectile:update(dt)
       enemy:apply_steering_force(math.remap(self:distance_to_object(enemy), 0, 100, 250, 50), enemy:angle_to_object(self))
     end
     self.vr = self.vr + self.dvr*dt
+  end
+
+  if self.parent.point_blank or self.parent.longshot then
+    self.distance_travelled = self.distance_travelled + math.length(self:get_velocity())
+    if self.parent.point_blank and self.parent.longshot then
+      self.distance_dmg_m = 1
+    elseif self.parent.point_blank then
+      self.distance_dmg_m = math.remap(self.distance_travelled, 0, 15000, 2, 0.75)
+    elseif self.parent.longshot then
+      self.distance_dmg_m = math.remap(self.distance_travelled, 0, 15000, 0.75, 2)
+    end
   end
 end
 
@@ -1144,16 +1252,18 @@ function Projectile:die(x, y, r, n)
   self.dead = true
 
   if self.character == 'wizard' then
-    Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.parent.area_size_m*32, color = self.color, dmg = self.parent.area_dmg_m*self.dmg, character = self.character, level = self.level}
+    Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.parent.area_size_m*32, color = self.color, dmg = self.parent.area_dmg_m*self.dmg, character = self.character, level = self.level, parent = self}
   elseif self.character == 'blade' then
-    Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.parent.area_size_m*64, color = self.color, dmg = self.parent.area_dmg_m*self.dmg, character = self.character, level = self.level}
+    Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.parent.area_size_m*64, color = self.color, dmg = self.parent.area_dmg_m*self.dmg, character = self.character, level = self.level, parent = self}
   elseif self.character == 'cannoneer' then
-    Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.parent.area_size_m*96, color = self.color, dmg = 2*self.parent.area_dmg_m*self.dmg, character = self.character, level = self.level}
-    self.parent.t:every(0.2, function()
-      _G[random:table{'cannoneer1', 'cannoneer2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-      Area{group = main.current.effects, x = self.x + random:float(-32, 32), y = self.y + random:float(-32, 32), r = self.r + random:float(0, 2*math.pi), w = self.parent.area_size_m*48, color = self.color, 
-        dmg = 0.5*self.parent.area_dmg_m*self.dmg, character = self.character, level = self.level}
-    end, 5)
+    Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.parent.area_size_m*96, color = self.color, dmg = 2*self.parent.area_dmg_m*self.dmg, character = self.character, level = self.level, parent = self}
+    if self.level == 3 then
+      self.parent.t:every(0.2, function()
+        _G[random:table{'cannoneer1', 'cannoneer2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+        Area{group = main.current.effects, x = self.x + random:float(-32, 32), y = self.y + random:float(-32, 32), r = self.r + random:float(0, 2*math.pi), w = self.parent.area_size_m*48, color = self.color, 
+          dmg = 0.5*self.parent.area_dmg_m*self.dmg, character = self.character, level = self.level, parent = self}
+      end, 5)
+    end
   end
 end
 
@@ -1251,10 +1361,10 @@ function Projectile:on_trigger_enter(other, contact)
       hit3:play{pitch = random:float(0.95, 1.05), volume = 0.35}
     end
 
-    other:hit(self.dmg, self)
+    other:hit(self.dmg*(self.distance_dmg_m or 1), self)
 
     if self.character == 'wizard' and self.level == 3 then
-      Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.parent.area_size_m*32, color = self.color, dmg = self.parent.area_dmg_m*self.dmg, character = self.character}
+      Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.parent.area_size_m*32, color = self.color, dmg = self.parent.area_dmg_m*self.dmg, character = self.character, parent = self}
     end
 
     if self.character == 'hunter' and random:bool(40) then
@@ -1297,7 +1407,7 @@ function Projectile:on_trigger_enter(other, contact)
         table.insert(self.infused_enemies_hit, src)
         local dst = src:get_random_object_in_shape(Circle(src.x, src.y, (stormweaver_level == 3 and 128 or 64)), main.current.enemies, self.infused_enemies_hit)
         if dst then
-          dst:hit(0.2*self.dmg)
+          dst:hit(0.2*self.dmg*(self.distance_dmg_m or 1))
           LightningLine{group = main.current.effects, src = src, dst = dst}
           src = dst 
         end
@@ -1316,6 +1426,14 @@ function Projectile:on_trigger_enter(other, contact)
     if self.knockback then
       other:push(self.knockback*(self.knockback_m or 1), self.r)
     end
+
+    if self.parent.explosive_arrow and table.any(self.parent.classes, function(v) return v == 'ranger' end) then
+      if random:bool(30) then
+        _G[random:table{'cannoneer1', 'cannoneer2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+        Area{group = main.current.effects, x = self.x, y = self.y, r = self.r + random:float(0, 2*math.pi), w = self.parent.area_size_m*32, color = self.color, 
+          dmg = 0.2*self.parent.area_dmg_m*self.dmg, character = self.character, level = self.level, parent = self}
+      end
+    end
   end
 end
 
@@ -1329,21 +1447,28 @@ function Area:init(args)
   self.shape = Rectangle(self.x, self.y, 1.5*self.w, 1.5*self.w, self.r)
   local enemies = main.current.main:get_objects_in_shape(self.shape, main.current.enemies)
   for _, enemy in ipairs(enemies) do
+    local resonance_dmg = 0
     if self.character == 'elementor' then
-      enemy:hit(2*self.dmg)
+      if self.parent.resonance then resonance_dmg = 2*self.dmg*0.05*#enemies end
+      enemy:hit(2*self.dmg + resonance_dmg)
       if self.level == 3 then
         enemy:slow(0.4, 6)
       end
     elseif self.character == 'swordsman' then
-      enemy:hit(self.dmg + self.dmg*0.33*#enemies)
+      if self.parent.resonance then resonance_dmg = (self.dmg + self.dmg*0.33*#enemies)*0.05*#enemies end
+      enemy:hit(self.dmg + self.dmg*0.33*#enemies + resonance_dmg)
     elseif self.character == 'blade' and self.level == 3 then
-      enemy:hit(self.dmg + self.dmg*0.5*#enemies)
+      if self.parent.resonance then resonance_dmg = (self.dmg + self.dmg*0.5*#enemies)*0.05*#enemies end
+      enemy:hit(self.dmg + self.dmg*0.5*#enemies + resonance_dmg)
     elseif self.character == 'highlander' then
-      enemy:hit(6*self.dmg)
+      if self.parent.resonance then resonance_dmg = 6*self.dmg*0.05*#enemies end
+      enemy:hit(6*self.dmg + resonance_dmg)
     elseif self.character == 'launcher' then
-      enemy:curse('launcher', 4, (self.level == 3 and 6*self.dmg or 2*self.dmg), self.parent)
+      if self.parent.resonance then resonance_dmg = (self.level == 3 and 6*self.dmg*0.05*#enemies or 2*self.dmg*0.05*#enemies) end
+      enemy:curse('launcher', 4, (self.level == 3 and 6*self.dmg or 2*self.dmg) + resonance_dmg, self.parent)
     else
-      enemy:hit(self.dmg)
+      if self.parent.resonance then resonance_dmg = self.dmg*0.05*#enemies end
+      enemy:hit(self.dmg + resonance_dmg)
     end
     HitCircle{group = main.current.effects, x = enemy.x, y = enemy.y, rs = 6, color = fg[0], duration = 0.1}
     for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = self.color} end

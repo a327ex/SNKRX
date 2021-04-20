@@ -938,22 +938,22 @@ function init()
   passive_descriptions = {
     ['ouroboros_technique_r'] = '[fg]rotating around yourself to the right makes units release projectiles',
     ['ouroboros_technique_l'] = '[fg]rotating around yourself to the left grants [yellow]+25%[fg] defense to all units',
-    ['wall_echo'] = '[fg]hitting walls has a [yellow]25%[fg] chance of releasing [yellow]2[fg] projectiles',
+    ['wall_echo'] = '[fg]hitting walls has a [yellow]34%[fg] chance of releasing [yellow]2[fg] projectiles',
     ['wall_rider'] = '[fg]hitting walls grants a [yellow]25%[fg] movement speed buff to your snake for [yellow]1[fg] second',
     ['centipede'] = '[yellow]+20%[fg] movement speed',
     ['intimidation'] = '[fg]enemies spawn with [yellow]-20%[fg] max HP',
     ['vulnerability'] = '[fg]all enemies take [yellow]+20%[fg] damage',
     ['temporal_chains'] = '[fg]all enemies move [yellow]20%[fg] slower',
-    ['amplify'] = '[fg]all units that deal AoE damage gain [yellow]+25%[fg] AoE damage',
-    ['amplify_x'] = '[yellow]+25%[fg] AoE damage if all your units only deal AoE damage',
+    ['amplify'] = '[yellow]+25%[fg] AoE damage',
+    ['amplify_x'] = '[yellow]+50%[fg] AoE damage',
     ['resonance'] = '[fg]all AoE attacks deal [yellow]+5%[fg] damage per unit hit',
-    ['ballista'] = "[fg]all units that release projectiles and don't deal AoE damage gain [yellow]+25%[fg] damage",
-    ['ballista_x'] = "[yellow]+25%[fg] damage if all your units only release projectiles and don't deal AoE damage",
+    ['ballista'] = '[yellow]+25%[fg] damage to rangers and rogues ',
+    ['ballista_x'] = '[yellow]+50%[fg] damage to rangers and rogues',
     ['point_blank'] = '[fg]projectiles deal up to [yellow]+100%[fg] damage up close and down to [yellow]-50%[fg] damage far away',
     ['longshot'] = '[fg]projectiles deal up to [yellow]+100%[fg] damage far away and down to [yellow]-50%[fg] up close',
     ['blunt_arrow'] = '[fg]all arrows fired by rangers have a [yellow]20%[fg] chance to knockback',
-    ['explosive_arrow'] = '[fg]arrows fired by rangers have a [yellow]20%[fg] chance to explode, dealing [yellow]20%[fg] AoE damage',
-    ['divine_machine_arrow'] = '[fg]arrows fired by rangers have a [yellow]20%[fg] chance to seek enemies and pierce [yellow]5[fg] times',
+    ['explosive_arrow'] = '[fg]arrows fired by rangers have a [yellow]30%[fg] chance to explode, dealing [yellow]20%[fg] AoE damage',
+    ['divine_machine_arrow'] = '[fg]arrows fired by rangers have a [yellow]40%[fg] chance to seek enemies and pierce [yellow]5[fg] times',
     ['chronomancy'] = '[fg]all mages cast their spells [yellow]25%[fg] faster',
     ['awakening'] = '[fg]every round [yellow]1[fg] mage is granted [yellow]+100%[fg] attack speed and damage for that round',
     ['divine_punishment'] = '[fg]periodically deal [yellow]10X[fg] damage to all enemies, where [yellow]X[fg] is how many mages you have',
@@ -990,10 +990,10 @@ function init()
     ['vulnerability'] = 2,
     ['temporal_chains'] = 1,
     ['amplify'] = 1,
-    ['amplify_x'] = 1,
-    ['resonance'] = 2,
+    ['amplify_x'] = 2,
+    ['resonance'] = 3,
     ['ballista'] = 1,
-    ['ballista_x'] = 1,
+    ['ballista_x'] = 2,
     ['point_blank'] = 2,
     ['longshot'] = 2,
     ['blunt_arrow'] = 1,
@@ -1044,12 +1044,59 @@ function init()
     [24] = {20, 30, 50},
   }
 
+  --[[
+    * ['ouroboros_technique_r'] = 2,
+    * ['ouroboros_technique_l'] = 2,
+    * ['wall_echo'] = 1,
+    * ['wall_rider'] = 1,
+    * ['centipede'] = 1,
+    * ['intimidation'] = 2,
+    * ['vulnerability'] = 2,
+    * ['temporal_chains'] = 1,
+    * ['amplify'] = 1,
+    * ['amplify_x'] = 1,
+    * ['resonance'] = 2,
+    * ['ballista'] = 1,
+    * ['ballista_x'] = 1,
+    * ['point_blank'] = 2,
+    * ['longshot'] = 2,
+    * ['blunt_arrow'] = 1,
+    * ['explosive_arrow'] = 2,
+    * ['divine_machine_arrow'] = 3,
+    * ['chronomancy'] = 2,
+    * ['awakening'] = 2,
+    ['divine_punishment'] = 3,
+    ['berserking'] = 1,
+    ['unwavering_stance'] = 1,
+    ['ultimatum'] = 2,
+    ['flying_daggers'] = 3,
+    ['assassination'] = 1,
+    ['magnify'] = 1,
+    ['concentrated_fire'] = 2,
+    ['unleash'] = 1,
+    ['reinforce'] = 2,
+    ['payback'] = 2,
+    ['blessing'] = 1,
+    ['hex_master'] = 1,
+    ['whispers_of_doom'] = 2,
+    ['force_push'] = 1,
+    ['heavy_impact'] = 2,
+    ['crucio'] = 3,
+    ['immolation'] = 2,
+    ['call_of_the_void'] = 2,
+    ['spawning_pool'] = 1,
+    ['hive'] = 3,
+  ]]--
+
   gold = 2
-  passives = {'ouroboros_technique_r'}
+  passives = {'awakening'}
 
   main = Main()
   main:add(BuyScreen'buy_screen')
   main:go_to('buy_screen', 2, {
+    {character = 'wizard', level = 1},
+    {character = 'spellblade', level = 1},
+  --[[
     {character = 'swordsman', level = 3},
     {character = 'wizard', level = 3},
     {character = 'scout', level = 3},
@@ -1062,6 +1109,7 @@ function init()
     {character = 'juggernaut', level = 3},
     {character = 'vagrant', level = 3},
     {character = 'stormweaver', level = 3},
+  ]]--
   }, passives)
   --[[
   main:add(Arena'arena')

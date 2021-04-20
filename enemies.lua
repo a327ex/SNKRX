@@ -216,6 +216,21 @@ function Seeker:init(args)
   elseif self.spawner then
     self.color = purple[0]:clone()
   end
+
+  local player = main.current.player
+  if player and player.intimidation and not self.boss and not self.tank then
+    self.buff_hp_m = 0.8
+    self:calculate_stats()
+    self.hp = self.max_hp
+  end
+
+  if player and player.vulnerability then
+    self.vulnerable = true
+  end
+
+  if player and player.temporal_chains then
+    self.temporal_chains_mvspd_m = 0.8
+  end
 end
 
 
@@ -239,7 +254,7 @@ function Seeker:update(dt)
   if self.slowed then self.slow_mvspd_m = self.slowed
   else self.slow_mvspd_m = 1 end
 
-  self.buff_mvspd_m = (self.speed_boosting_mvspd_m or 1)*(self.slow_mvspd_m or 1)
+  self.buff_mvspd_m = (self.speed_boosting_mvspd_m or 1)*(self.slow_mvspd_m or 1)*(self.temporal_chains_mvspd_m or 1)
 
   self:calculate_stats()
 
@@ -366,7 +381,9 @@ function Seeker:hit(damage, projectile)
   self:show_hp()
   
   local actual_damage = self:calculate_damage(damage)*self.stun_dmg_m*self.bane_dmg_m
+  if self.vulnerable then actual_damage = actual_damage*1.2 end
   self.hp = self.hp - actual_damage
+  print(actual_damage)
   main.current.damage_dealt = main.current.damage_dealt + actual_damage
 
   if projectile and projectile.spawn_critters_on_hit then
