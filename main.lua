@@ -19,6 +19,7 @@ function init()
   music.volume = 0
 
   local s = {tags = {sfx}}
+  thunder1 = Sound('399656__bajko__sfx-thunder-blast.ogg', s)
   flagellant1 = Sound('Whipping Horse 3.ogg', s)
   bard2 = Sound('376532__womb-affliction__flute-trill.ogg', s)
   bard1 = Sound('Magical Impact 12.ogg', s)
@@ -958,26 +959,26 @@ function init()
     ['awakening'] = '[fg]every round [yellow]1[fg] mage is granted [yellow]+100%[fg] attack speed and damage for that round',
     ['divine_punishment'] = '[fg]periodically deal [yellow]10X[fg] damage to all enemies, where [yellow]X[fg] is how many mages you have',
     ['berserking'] = '[fg]all warriors have up to [yellow]+50%[fg] attack speed based on missing HP',
-    ['unwavering_stance'] = '[fg]all warriors gain [yellow]+5%[fg] defense every [yellow]5[fg] seconds, up to [yellow]+50%[fg]',
+    ['unwavering_stance'] = '[fg]all warriors gain [yellow]+5%[fg] defense every [yellow]5[fg] seconds',
     ['ultimatum'] = '[fg]projectiles that chain gain [yellow]+25%[fg] damage with each chain',
     ['flying_daggers'] = '[fg]all knives thrown by rogues chain [yellow]+2[fg] times',
-    ['assassination'] = '[fg]your crits deal [yellow]8x[fg] damage (up from [yellow]4x[fg]) but normal attacks deal [yellow]half[fg] damage',
+    ['assassination'] = '[fg]crits from rogues deal [yellow]8x[fg] damage but normal attacks deal [yellow]half[fg] damage',
     ['magnify'] = '[yellow]+25%[fg] area size',
     ['concentrated_fire'] = '[yellow]-50%[fg] area size and [yellow]+50%[fg] area damage',
-    ['unleash'] = '[yellow]+5%[fg] area size and damage per second, this resets when any AoE attack happens',
+    ['unleash'] = '[yellow]+2%[fg] area size and damage per second',
     ['reinforce'] = '[yellow]+10%[fg] damage, defense and attack speed to all allies if you have at least one enchanter',
     ['payback'] = '[yellow]+5%[fg] damage to all allies whenever an enchanter is hit',
     ['blessing'] = '[yellow]+20%[fg] healing effectiveness',
     ['hex_master'] = '[yellow]+25%[fg] curse duration',
-    ['whispers_of_doom'] = '[fg]curses apply doom, when [yellow]3[fg] doom instances are applied they are consumed, dealing [yellow]100[fg] damage',
+    ['whispers_of_doom'] = '[fg]curses apply doom, when [yellow]4[fg] doom instances are reached they deal [yellow]200[fg] damage',
     ['force_push'] = '[yellow]+25%[fg] knockback force',
-    ['heavy_impact'] = '[fg]if knockbacked enemies hit walls they take damage according to the knockback force',
-    ['crucio'] = '[fg]taking damage shares [yellow]2X[fg] the amount across all enemies',
-    ['immolation'] = '[yellow]3[fg] units chosen at random will periodically take damage, all your allies gain [yellow]+8%[fg] damage per tick',
+    ['heavy_impact'] = '[fg]when enemies hit walls they take damage according to the knockback force',
+    ['crucio'] = '[fg]taking damage also shares that amount across all enemies',
+    ['immolation'] = '[yellow]3[fg] units will periodically take damage, all your allies gain [yellow]+8%[fg] damage per tick',
     ['call_of_the_void'] = '[yellow]+25%[fg] damage over time',
     ['spawning_pool'] = '[yellow]+1[fg] critter health',
     ['hive'] = '[yellow]+2[fg] critter health',
-    ['void_rift'] = '[fg]AoE attacks by mages, nukers or voiders have a [yellow]20%[fg] chance to create a void rift',
+    ['void_rift'] = '[fg]attacks by mages, nukers or voiders have a [yellow]20%[fg] chance to create a void rift on hit',
   }
 
   passive_tiers = {
@@ -1044,58 +1045,13 @@ function init()
     [24] = {20, 30, 50},
   }
 
-  --[[
-    * ['ouroboros_technique_r'] = 2,
-    * ['ouroboros_technique_l'] = 2,
-    * ['wall_echo'] = 1,
-    * ['wall_rider'] = 1,
-    * ['centipede'] = 1,
-    * ['intimidation'] = 2,
-    * ['vulnerability'] = 2,
-    * ['temporal_chains'] = 1,
-    * ['amplify'] = 1,
-    * ['amplify_x'] = 1,
-    * ['resonance'] = 2,
-    * ['ballista'] = 1,
-    * ['ballista_x'] = 1,
-    * ['point_blank'] = 2,
-    * ['longshot'] = 2,
-    * ['blunt_arrow'] = 1,
-    * ['explosive_arrow'] = 2,
-    * ['divine_machine_arrow'] = 3,
-    * ['chronomancy'] = 2,
-    * ['awakening'] = 2,
-    ['divine_punishment'] = 3,
-    ['berserking'] = 1,
-    ['unwavering_stance'] = 1,
-    ['ultimatum'] = 2,
-    ['flying_daggers'] = 3,
-    ['assassination'] = 1,
-    ['magnify'] = 1,
-    ['concentrated_fire'] = 2,
-    ['unleash'] = 1,
-    ['reinforce'] = 2,
-    ['payback'] = 2,
-    ['blessing'] = 1,
-    ['hex_master'] = 1,
-    ['whispers_of_doom'] = 2,
-    ['force_push'] = 1,
-    ['heavy_impact'] = 2,
-    ['crucio'] = 3,
-    ['immolation'] = 2,
-    ['call_of_the_void'] = 2,
-    ['spawning_pool'] = 1,
-    ['hive'] = 3,
-  ]]--
-
   gold = 2
-  passives = {'awakening'}
+  passives = {'void_rift'}
 
   main = Main()
   main:add(BuyScreen'buy_screen')
-  main:go_to('buy_screen', 2, {
-    {character = 'wizard', level = 1},
-    {character = 'spellblade', level = 1},
+  main:go_to('buy_screen', 20, {
+    {character = 'spellblade', level = 3},
   --[[
     {character = 'swordsman', level = 3},
     {character = 'wizard', level = 3},

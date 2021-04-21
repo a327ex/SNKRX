@@ -43,6 +43,7 @@ end
 
 
 function HitFX:use(name, x, k, d, flash_duration)
+  if not self.parent then return end
   self.parent.flashes[name]:flash(flash_duration)
   self.parent.springs[name]:pull(x, k, d)
 end

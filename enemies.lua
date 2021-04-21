@@ -348,6 +348,12 @@ function Seeker:on_collision_enter(other, contact)
       hit2:play{pitch = random:float(0.95, 1.05), volume = 0.35}
     end
 
+    if main.current.player.heavy_impact then
+      if self.being_pushed then
+        self:hit(self.push_force)
+      end
+    end
+
   elseif table.any(main.current.enemies, function(v) return other:is(v) end) then
     if self.being_pushed and math.length(self:get_velocity()) > 60 then
       other:hit(math.floor(self.push_force/4))
@@ -383,7 +389,6 @@ function Seeker:hit(damage, projectile)
   local actual_damage = self:calculate_damage(damage)*self.stun_dmg_m*self.bane_dmg_m
   if self.vulnerable then actual_damage = actual_damage*1.2 end
   self.hp = self.hp - actual_damage
-  print(actual_damage)
   main.current.damage_dealt = main.current.damage_dealt + actual_damage
 
   if projectile and projectile.spawn_critters_on_hit then
@@ -492,6 +497,17 @@ function Seeker:curse(curse, duration, arg1, arg2)
   if main.current.curser_level == 2 then curse_m = 1.5
   elseif main.current.curser_level == 1 then curse_m = 1.25
   else curse_m = 1 end
+
+  if main.current.player.whispers_of_doom then
+    if not self.doom then self.doom = 0 end
+    self.doom = self.doom + 1
+    if self.doom == 4 then
+      self.doom = 0
+      self:hit(200)
+      buff1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    end
+  end
 
   if curse == 'launcher' then
     self.t:after(duration*curse_m, function()

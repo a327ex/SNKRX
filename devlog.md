@@ -997,3 +997,29 @@ thing, which should make it easier to work with. The rect cutting UI idea does s
 | Divine Machine Arrow | all arrows fired by rangers have a 40% chance to seek enemies and pierce 5 times |
 | Chronomancy | all mages cast their spells 25% faster |
 | Awakening | every round 1 mage is granted +100% cast speed and damage for that round |
+
+# Day 63 - 20/04/21
+
+| Name | Description |
+| --- | --- |
+| Divine Punishment | periodically deal 10X damage to all enemies, where X is how many mages you have |
+| Berserking | all warriors have up to +50% attack speed based on missing HP |
+| Unwavering Stance | all warriors gain +5% defense every 5 seconds |
+| Ultimatum | projectiles that chain gain +25% damage with each chain |
+| Flying Daggers | all knives thrown by rogues chain +2 times |
+| Magnify | +25% area size |
+| Concentrated Fire | -50% area size and +50% area damage |
+| Unleash | +2% area size and damage per second |
+| Reinforce | +10% damage, defense and attack speed to all allies if you have at least one enchanter |
+| Payback | +5% damage to all allies whenever an enchanter is hit |
+| Blessing | +20% healing effectiveness |
+| Hex Master | +25% curse duration |
+| Whispers of Doom | curses apply doom, when 4 doom instances are reached they deal 200 damage |
+| Force Push | +25% knockback force |
+| Heavy Impact | when enemies hit walls they take damage according to the knockback force |
+| Crucio | taking damage also shares that amount to each enemy |
+| Immolation | 3 allies will periodically take damage, all allies gain +8% damage per tick |
+| Call of the Void | +25% damage over time |
+| Spawning Pool | +1 critter health |
+| Hive | +2 critter health |
+| Void Rift | attacks by mages, nukers or voiders have a 20% chance to create a void rift on hit |

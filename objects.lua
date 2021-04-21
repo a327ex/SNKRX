@@ -44,14 +44,14 @@ function LightningLine:init(args)
   self.lines = {}
   table.insert(self.lines, {x1 = self.src.x, y1 = self.src.y, x2 = self.dst.x, y2 = self.dst.y})
   self.w = 3
-  self.generations = 3
-  self.max_offset = 8
+  self.generations = args.generations or 3
+  self.max_offset = args.max_offset or 8
   self:generate()
-  self.t:tween(0.1, self, {w = 1}, math.linear, function() self.dead = true end)
+  self.t:tween(self.duration or 0.1, self, {w = 1}, math.linear, function() self.dead = true end)
   self.color = args.color or blue[0]
-  HitCircle{group = main.current.effects, x = self.src.x, y = self.src.y, rs = 6, color = fg[0], duration = 0.1}
+  HitCircle{group = main.current.effects, x = self.src.x, y = self.src.y, rs = 6, color = fg[0], duration = self.duration or 0.1}
   for i = 1, 2 do HitParticle{group = main.current.effects, x = self.src.x, y = self.src.y, color = self.color} end
-  HitCircle{group = main.current.effects, x = self.dst.x, y = self.dst.y, rs = 6, color = fg[0], duration = 0.1}
+  HitCircle{group = main.current.effects, x = self.dst.x, y = self.dst.y, rs = 6, color = fg[0], duration = self.duration or 0.1}
   HitParticle{group = main.current.effects, x = self.dst.x, y = self.dst.y, color = self.color}
 end
 
