@@ -1,16 +1,12 @@
-5. Stat and description details to each unit when hovering over it in the party section
-6. Classes line on each unit's shop card, as well as on party section
+Achievements
+Hover class highlight
+DPS list
+Remove enemies killed mode
+Make bosses have only wave mode
+General balance
 
-11. Steam integration: achievements, etc
-12. Hovering over a party member should show which set they belong to and vice-versa
-13. Show a unit DPS list like Underlord's to the right side of the screen
-15. GO button is grayed out and thus doesn't say it's meant to be clicked on
-16. 28/20 enemies or 4/3 wave confuses players and makes them think the level goals are bugged
-17. Music for first 9-15 levels should be calm rather than upbeat
 
 Engine improvements for after SNKRX release
-  Node refactor: described partly somewhere in the devlog
-  Rewrite SNKRX: using this game as a target for the node refactor will yield good results for both the refactor and future SNKRX updates, if any
   on_hit:
     on_collision_enter/exit are automatically called and automatically call on_hit/on_leave for each object
     This enables the definition of on_hit on each object and the question of where the logic should stay is solved/dodged
@@ -18,7 +14,3 @@ Engine improvements for after SNKRX release
     Defining on_hit on the Wall creation call for that specific Wall, and thus that specific Wall will have this behavior while other walls won't
     https://i.imgur.com/asPdpnQ.png ?
     Not sure if I should go all the way with event systems like this or only have it work for specific cases, need to think about it more
-  release tool:
-    Build a command line tool that creates projects and builds them up for release automatically on Windows, Web and Steam
-    All the steps for this are listed on the readme and everything about it that can be automated should
-    Ideally the user should run one command for creating a project and one for building it for each platform

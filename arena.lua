@@ -43,6 +43,7 @@ function Arena:on_enter(from, level, units, passives)
   -- Spawn solids and player
   self.x1, self.y1 = gw/2 - 0.8*gw/2, gh/2 - 0.8*gh/2
   self.x2, self.y2 = gw/2 + 0.8*gw/2, gh/2 + 0.8*gh/2
+  self.w, self.h = self.x2 - self.x1, self.y2 - self.y1
   self.spawn_points = {
     {x = self.x1 + 32, y = self.y1 + 32, r = math.pi/4},
     {x = self.x1 + 32, y = self.y2 - 32, r = -math.pi/4},
@@ -89,7 +90,7 @@ function Arena:on_enter(from, level, units, passives)
         SpawnEffect{group = self.effects, x = gw/2, y = gh/2 - 48}
         SpawnEffect{group = self.effects, x = gw/2, y = gh/2, action = function(x, y)
           spawn1:play{pitch = random:float(0.8, 1.2), volume = 0.15}
-          self.boss = Seeker{group = self.main, x = x, y = y, character = 'seeker', level = self.level, boss = boss_by_level[self.level]}
+          self.boss = Seeker{group = self.main, x = x, y = y, character = 'seeker', level = self.level, boss = level_to_boss[self.level]}
         end}
         self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 1 end, function()
           self.hfx:use('condition1', 0.25, 200, 10)
@@ -103,7 +104,7 @@ function Arena:on_enter(from, level, units, passives)
           end)
         end)
       end)
-      self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 0 end, function() self.can_quit = true end)
+      self.t:every(function() return self.start_time <= 0 and #self.main:get_objects_by_classes(self.enemies) <= 0 end, function() self.can_quit = true end)
     end)
   else
     -- Set win condition and enemy spawns
@@ -305,9 +306,10 @@ function Arena:update(dt)
       TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = fg[0], transition_action = function()
         slow_amount = 1
         gold = 2
+        passives = {}
         cascade_instance:stop()
         main:add(BuyScreen'buy_screen')
-        main:go_to('buy_screen', 0, {})
+        main:go_to('buy_screen', 0, {}, passives)
       end, text = Text({{text = '[wavy, bg]restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
     end
 
@@ -325,7 +327,7 @@ function Arena:update(dt)
   end
 
   self:update_game_object(dt*slow_amount)
-  -- cascade_instance.pitch = math.clamp(slow_amount*self.main_slow_amount, 0.05, 1)
+  cascade_instance.pitch = math.clamp(slow_amount*self.main_slow_amount, 0.05, 1)
 
   self.floor:update(dt*slow_amount)
   self.main:update(dt*slow_amount*self.main_slow_amount)
@@ -388,6 +390,14 @@ function Arena:draw()
   if self.choosing_passives then graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent) end
   self.ui:draw()
 
+  graphics.draw_with_mask(function()
+    star_canvas:draw(0, 0, 0, 1, 1)
+  end, function()
+    camera:attach()
+    graphics.rectangle(gw/2, gh/2, self.w, self.h, nil, nil, fg[0])
+    camera:detach()
+  end, true)
+
   camera:attach()
   if self.start_time and self.start_time > 0 and not self.choosing_passives then
     graphics.push(gw/2, gh/2 - 48, 0, self.hfx.condition1.x, self.hfx.condition1.x)
@@ -434,6 +444,7 @@ function Arena:draw()
     end
   end
   camera:detach()
+
 end
 
 
@@ -588,24 +599,4 @@ function Arena:spawn_n_enemies(p, j, n)
       Seeker{group = self.main, x = x, y = y, character = 'seeker', level = self.level}
     end}
   end, n, nil, 'spawn_enemies_' .. j)
-end
-
-
-
-
-Passives = Object:extend()
-Passives:implement(GameObject)
-function Passives:init(args)
-  self:init_game_object(args)
-  
-end
-
-
-function Passives:update(dt)
-  self:update_game_object(dt)
-end
-
-
-function Passives:draw()
-
 end

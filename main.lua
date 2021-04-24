@@ -5,6 +5,7 @@ require 'buy_screen'
 require 'objects'
 require 'player'
 require 'enemies'
+require 'media'
 
 
 function init()
@@ -15,8 +16,6 @@ function init()
   input:bind('move_up', {'w', 'up'})
   input:bind('move_down', {'s', 'down'})
   input:bind('enter', {'space', 'return'})
-
-  music.volume = 0
 
   local s = {tags = {sfx}}
   thunder1 = Sound('399656__bajko__sfx-thunder-blast.ogg', s)
@@ -157,6 +156,7 @@ function init()
   spawning_pool = Image('spawning_pool')
   hive = Image('hive')
   void_rift = Image('void_rift')
+  star = Image('star')
 
   class_colors = {
     ['warrior'] = yellow[0],
@@ -545,7 +545,7 @@ function init()
     ['corruptor'] = '[light_bg]Corruption',
     ['beastmaster'] = '[light_bg]Call of the Wild',
     ['launcher'] = '[light_bg]Kineticism',
-    ['bard'] = "[red]The Bard'light_bgSong",
+    ['bard'] = "[light_bg]The Bard's Song",
     ['assassin'] = '[light_bg]Toxic Delivery',
     ['host'] = '[light_bg]Invasion',
     ['carver'] = '[light_bg]World Tree',
@@ -1046,41 +1046,22 @@ function init()
   }
 
   gold = 2
-  passives = {'void_rift'}
+  passives = {}
+  system.load_state()
 
   main = Main()
   main:add(BuyScreen'buy_screen')
-  main:go_to('buy_screen', 20, {
-    {character = 'spellblade', level = 3},
+  main:go_to('buy_screen', 0, {{character = 'cryomancer', level = 1}, {character = 'pyromancer', level = 1}}, passives)
   --[[
-    {character = 'swordsman', level = 3},
-    {character = 'wizard', level = 3},
-    {character = 'scout', level = 3},
-    {character = 'archer', level = 3},
-    {character = 'host', level = 3},
-    {character = 'beastmaster', level = 3},
-    {character = 'corruptor', level = 3},
-    {character = 'flagellant', level = 3},
-    {character = 'psykino', level = 3},
-    {character = 'juggernaut', level = 3},
-    {character = 'vagrant', level = 3},
-    {character = 'stormweaver', level = 3},
-  ]]--
-  }, passives)
-  --[[
-  main:add(Arena'arena')
-  main:go_to('arena', 3, {
-    {character = 'swordsman', level = 3},
-    {character = 'wizard', level = 3},
-    {character = 'scout', level = 3},
-    {character = 'archer', level = 3},
-  })
+  main:add(Media'media')
+  main:go_to('media')
   ]]--
 end
 
 
 function update(dt)
   main:update(dt)
+  star_group:update(dt)
 
   if input.n.pressed then
     if sfx.volume == 0.5 then

@@ -310,6 +310,19 @@ function graphics.set_stencil_test(...)
 end
 
 
+-- Draws the image masked by a shape, meaning that only parts inside (or outside) the shape that intersects the image are drawn.
+-- By default only parts that intersect with the shape are drawn, pass the third argument as true to make it so that only parts that don't intersect are drawn.
+-- action is a function that draws the image.
+-- mask_action is a function that draws the shape.
+function graphics.draw_with_mask(action, mask_action, invert_mask)
+  graphics.stencil(function() mask_action() end)
+  if not invert_mask then graphics.set_stencil_test('greater', 0)
+  else graphics.set_stencil_test('notequal', 1) end
+  action()
+  graphics.set_stencil_test()
+end
+
+
 local stencil_mask_shader = love.graphics.newShader[[
 vec4 effect(vec4 color, Image texture, vec2 tc, vec2 pc) {
   vec4 t = Texel(texture, tc);
@@ -320,7 +333,8 @@ vec4 effect(vec4 color, Image texture, vec2 tc, vec2 pc) {
 }
 ]]
 
--- Draws the second image on top of the first but only the portions of it that aren't transparent are drawn.
+-- Draws the second image on top of the first, but only the portions of the second image that aren't transparent are drawn.
+-- This essentially applies the second image as a texture on top of the shape of the first.
 -- action1 and action2 are functions that draw the images.
 -- graphics.draw_intersection(function() player_image:draw(player.x, player.y) end, function() gradient_image:draw(player.x, player.y) end) -> draws the player with a gradient applied to it
 function graphics.draw_intersection(action1, action2)

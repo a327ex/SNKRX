@@ -1023,3 +1023,31 @@ thing, which should make it easier to work with. The rect cutting UI idea does s
 | Spawning Pool | +1 critter health |
 | Hive | +2 critter health |
 | Void Rift | attacks by mages, nukers or voiders have a 20% chance to create a void rift on hit |
+
+# Day 64-66 - 21-23/04/21
+
+Lots of small fixes here and there and also made an attempt at getting the build accepted on Steam. It failed and now I'm waiting again until next week most likely since the guy didn't get to it by the end of Friday.
+I also made some small graphical improvements to the game that I think will help. Now what I have left to do, in order of importance:
+
+* General balance
+  * Enemies should have a chance to be spawned with a modifier as levels increase
+  * Every 3rd level should be wave only
+  * Remove "enemies killed" mode
+  * Balance playthroughs (record all balance playthroughs as they can be used for trailers)
+* UI improvements
+  * Hover class highlight
+  * DPS list (right)
+  * HP list (bottom)
+  * Item list (left)
+* Graphical improvements
+  * Further graphical improvements if there's time
+* Trailers
+  * 3-4 pure gameplay playthroughs showcasing different builds
+* Misc
+  * Better pause screen
+  * End screen
+  * Ascension mode (difficulty ramps up faster and goes higher than normal at the end)
+  * Music for bosses and shop
+* Achievements
+  * Come up with a few new ones as I play the game more and balance the numbers
+  * Implement all the ones I already uploaded to Steam

@@ -1113,7 +1113,7 @@ function Player:shoot(r, mods)
 
   if self.character == 'bard' then
     self.bard_counter = self.bard_counter + 1
-    if self.bard_counter == 8 then
+    if self.bard_counter == 8 and self.level == 3 then
       self.bard_counter = 0
       bard2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       self.t:after(3, function()
@@ -1691,7 +1691,9 @@ function DotArea:init(args)
         hit2:play{pitch = random:float(0.8, 1.2), volume = 0.2}
         if self.character == 'pyromancer' then
           pyro1:play{pitch = random:float(1.5, 1.8), volume = 0.1}
-          enemy.pyrod = self
+          if self.level == 3 then
+            enemy.pyrod = self
+          end
         end
         enemy:hit((self.dot_dmg_m or 1)*self.dmg/5)
         HitCircle{group = main.current.effects, x = enemy.x, y = enemy.y, rs = 6, color = fg[0], duration = 0.1}

@@ -17,6 +17,9 @@ function shared_init()
   modal_transparent = Color(0.1, 0.1, 0.1, 0.6)
   fg_transparent = Color(fg[0].r, fg[0].g, fg[0].b, 0.5)
 
+  bg_off = Color(47, 47, 47)
+  bg_gradient = GradientImage('vertical', Color(128, 128, 128, 0), Color(0, 0, 0, 0.3))
+
   graphics.set_background_color(bg[0])
   graphics.set_color(fg[0])
   slow_amount = 1
@@ -24,17 +27,50 @@ function shared_init()
   sfx = SoundTag()
   sfx.volume = 0.5
   music = SoundTag()
-  music.volume = 0.5
+  music.volume = 0
 
   fat_font = Font('FatPixelFont', 8)
   pixul_font = Font('PixulBrush', 8)
+  background_canvas = Canvas(gw, gh)
   main_canvas = Canvas(gw, gh, {stencil = true})
   shadow_canvas = Canvas(gw, gh)
   shadow_shader = Shader(nil, 'shadow.frag')
+  star_canvas = Canvas(gw, gh, {stencil = true})
+  star_group = Group()
+  local star_positions = {}
+  for i = -30, gh + 30, 15 do table.insert(star_positions, {x = -40, y = i}) end
+  for i = -30, gw, 15 do table.insert(star_positions, {x = i, y = gh + 40}) end
+  trigger:every(0.375, function()
+    local p = random:table(star_positions)
+    Star{group = star_group, x = p.x, y = p.y}
+  end)
 end
 
 
 function shared_draw(draw_action)
+  star_canvas:draw_to(function()
+    star_group:draw()
+  end)
+
+  background_canvas:draw_to(function()
+    camera:attach()
+    for i = 1, 32 do
+      for j = 1, 18 do
+        if j % 2 == 0 then
+          if i % 2 == 1 then
+            graphics.rectangle2(0 + (i-1)*22, 0 + (j-1)*22, 22, 22, nil, nil, bg_off)
+          end
+        else
+          if i % 2 == 0 then
+            graphics.rectangle2(0 + (i-1)*22, 0 + (j-1)*22, 22, 22, nil, nil, bg_off)
+          end
+        end
+      end
+    end
+    bg_gradient:draw(gw/2, gh/2, 480, 270)
+    camera:detach()
+  end)
+
   main_canvas:draw_to(function()
     draw_action()
     if flashing then graphics.rectangle(gw/2, gh/2, gw, gh, nil, nil, flash_color) end
@@ -47,8 +83,36 @@ function shared_draw(draw_action)
     shadow_shader:unset()
   end)
 
+  background_canvas:draw(0, 0, 0, sx, sy)
   shadow_canvas:draw(6, 6, 0, sx, sy)
   main_canvas:draw(0, 0, 0, sx, sy)
+end
+
+
+
+
+Star = Object:extend()
+Star:implement(GameObject)
+Star:implement(Physics)
+function Star:init(args)
+  self:init_game_object(args)
+  self.sx, self.sy = 0.35, 0.35
+  self.vr = 0
+  self.dvr = random:float(0, math.pi/4)
+  self.v = random:float(0.5, 0.7)
+end
+
+
+function Star:update(dt)
+  self:update_game_object(dt)
+  self.x = self.x + self.v*math.cos(-math.pi/4)
+  self.y = self.y + self.v*math.sin(-math.pi/4)
+  self.vr = self.vr + self.dvr*dt
+end
+
+
+function Star:draw()
+  star:draw(self.x, self.y, self.vr, self.sx, self.sy, 0, 0, bg[1])
 end
 
 

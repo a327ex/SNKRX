@@ -114,7 +114,7 @@ end
 
 function system.save_state()
   if not system.does_file_exist(love.filesystem.getSaveDirectory()) then love.filesystem.createDirectory("") end
-  binser.w(state_path, state)
+  binser.w(state_path, state or {})
 end
 
 

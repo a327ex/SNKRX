@@ -395,7 +395,7 @@ function Seeker:hit(damage, projectile)
     critter1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     trigger:after(0.01, function()
       for i = 1, projectile.spawn_critters_on_hit do
-        Critter{group = main.current.main, x = self.x, y = self.y, color = orange[0], r = random:float(0, 2*math.pi), v = 10, dmg = projectile.parent.dmg}
+        Critter{group = main.current.main, x = self.x, y = self.y, color = orange[0], r = random:float(0, 2*math.pi), v = 10, dmg = projectile.parent.dmg, parent = projectile.parent}
       end
     end)
   end
@@ -448,7 +448,7 @@ function Seeker:hit(damage, projectile)
       trigger:after(0.01, function()
         critter1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
         for i = 1, projectile.spawn_critters_on_kill do
-          Critter{group = main.current.main, x = self.x, y = self.y, color = orange[0], r = random:float(0, 2*math.pi), v = 5, dmg = projectile.parent.dmg}
+          Critter{group = main.current.main, x = self.x, y = self.y, color = orange[0], r = random:float(0, 2*math.pi), v = 5, dmg = projectile.parent.dmg, parent = projectile.parent}
         end
       end)
     end
@@ -457,7 +457,7 @@ function Seeker:hit(damage, projectile)
       critter1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       trigger:after(0.01, function()
         for i = 1, self.infested do
-          Critter{group = main.current.main, x = self.x, y = self.y, color = orange[0], r = random:float(0, 2*math.pi), v = 10, dmg = self.infested_dmg}
+          Critter{group = main.current.main, x = self.x, y = self.y, color = orange[0], r = random:float(0, 2*math.pi), v = 10, dmg = self.infested_dmg, parent = projectile.parent}
         end
       end)
     end

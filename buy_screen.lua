@@ -61,7 +61,7 @@ end
 
 function BuyScreen:update(dt)
   self:update_game_object(dt*slow_amount)
-  -- cascade_instance.pitch = 1
+  cascade_instance.pitch = 1
 
   self.main:update(dt*slow_amount)
   self.effects:update(dt*slow_amount)
