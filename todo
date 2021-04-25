@@ -1,9 +1,25 @@
-Achievements
-Hover class highlight
-DPS list
-Remove enemies killed mode
-Make bosses have only wave mode
 General balance
+  Enemies should have a chance to be spawned with a modifier as levels increase
+  Every 3rd level should be wave only
+  * Remove "enemies killed" mode
+  Balance playthroughs (record all balance playthroughs as they can be used for trailers; do this after graphical improvements done)
+UI improvements
+  Hover class highlight
+  DPS list (right)
+  HP list (bottom)
+  Item list (left)
+Graphical improvements
+  Further graphical improvements if there's time
+Trailers
+  3-4 pure gameplay playthroughs showcasing different builds
+Misc
+  Better pause screen
+  * End screen
+  Ascension mode (difficulty ramps up faster and goes higher than normal at the end)
+  Music for bosses and shop
+Achievements
+  Come up with a few new ones as I play the game more and balance the numbers
+  Implement all the ones I already uploaded to Steam
 
 
 Engine improvements for after SNKRX release

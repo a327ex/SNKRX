@@ -499,10 +499,23 @@ global_text_tags = {
   fgm5 = TextTag{draw = function(c, i, text) graphics.set_color(fg[-5]) end},
   fgm10 = TextTag{draw = function(c, i, text) graphics.set_color(fg[-10]) end},
   greenm5 = TextTag{draw = function(c, i, text) graphics.set_color(green[-5]) end},
+  blue5 = TextTag{draw = function(c, i, text) graphics.set_color(blue[5]) end},
+  bluem5 = TextTag{draw = function(c, i, text) graphics.set_color(blue[-5]) end},
   wavy = TextTag{update = function(c, dt, i, text) c.oy = 2*math.sin(4*time + i) end},
   wavy_mid = TextTag{update = function(c, dt, i, text) c.oy = 0.75*math.sin(3*time + i) end},
   wavy_mid2 = TextTag{update = function(c, dt, i, text) c.oy = 0.5*math.sin(3*time + i) end},
   wavy_lower = TextTag{update = function(c, dt, i, text) c.oy = 0.25*math.sin(2*time + i) end},
+
+  steam_link = TextTag{
+    init = function(c, i, text)
+      c.color = blue[0]
+    end,
+
+    draw = function(c, i, text)
+      graphics.set_color(c.color)
+      graphics.line(c.x - c.w/2, c.y + c.h/2 + c.h/10, c.x + c.w/2, c.y + c.h/2 + c.h/10)
+    end
+  },
 
   cbyc = TextTag{init = function(c, i, text)
     c.color = invisible

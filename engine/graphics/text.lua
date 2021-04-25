@@ -118,6 +118,8 @@ function Text:format_text()
       c.y = y
       c.sx = line.sx or c.sx or 1
       c.sy = line.sy or c.sy or 1
+      c.w = line.font:get_text_width(c.character)
+      c.h = line.font.h
       x = x + line.font:get_text_width(c.character)
     end
     y = y + h

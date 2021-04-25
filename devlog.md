@@ -1051,3 +1051,7 @@ I also made some small graphical improvements to the game that I think will help
 * Achievements
   * Come up with a few new ones as I play the game more and balance the numbers
   * Implement all the ones I already uploaded to Steam
+
+# Day 67 - 24/04/21
+
+Added an end game screen and started work on making elites spawn throughout the levels.

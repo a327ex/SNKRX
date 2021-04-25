@@ -147,38 +147,6 @@ function Arena:on_enter(from, level, units, passives)
         self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 0 and self.wave > self.max_waves end, function() self.can_quit = true end)
       end)
 
-    elseif self.win_condition == 'enemy_kill' then
-      self.level_to_enemies_to_kill = {
-        8, 12, random:int(14, 16),
-        16, 16, 18, random:int(18, 20),
-        20, 20, 20, 20, random:int(20, 22),
-        22, 22, 22, 22, 22, random:int(22, 24),
-        24, 26, 28, 30, 30, 32, 40
-      }
-      self.enemies_killed = 0
-      self.enemies_to_kill = self.level_to_enemies_to_kill[self.level]
-      self.enemy_spawn_delay = 8
-      self.enemies_spawned = 0
-      self.start_time = 3
-      self.t:after(1, function()
-        self.t:every(1, function()
-          if self.start_time > 1 then alert1:play{volume = 0.5} end
-          self.start_time = self.start_time - 1
-          self.hfx:use('condition1', 0.25, 200, 10)
-        end, 3, function()
-          alert1:play{pitch = 1.2, volume = 0.5}
-          camera:shake(4, 0.25)
-          SpawnEffect{group = self.effects, x = gw/2, y = gh/2 - 48}
-          self:spawn_distributed_enemies()
-          self.t:every(2, function()
-            if love.timer.getTime() - self.last_spawn_enemy_time >= self.enemy_spawn_delay and #self.main:get_objects_by_class(self.enemies) < self.enemies_to_kill and not self.transitioning then
-              self:spawn_distributed_enemies()
-            end
-          end, nil, nil, 'spawn_enemies')
-        end)
-      end)
-      self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 0 and self.enemies_killed >= self.enemies_to_kill end, function() self.can_quit = true end)
-
     elseif self.win_condition == 'time' then
       self.level_to_time_left = {
         20, 20, random:int(20, 25),
@@ -313,18 +281,22 @@ function Arena:update(dt)
       end, text = Text({{text = '[wavy, bg]restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
     end
 
+    --[[
     if input.w.pressed then
       ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       system.open_url'https://store.steampowered.com/app/915310/SNKRX/'
     end
+    ]]--
   end
 
+  --[[
   if input.w.pressed and self.won then
     ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     system.open_url'https://store.steampowered.com/app/915310/SNKRX/'
   end
+  ]]--
 
   self:update_game_object(dt*slow_amount)
   cascade_instance.pitch = math.clamp(slow_amount*self.main_slow_amount, 0.05, 1)
@@ -342,15 +314,18 @@ function Arena:update(dt)
       if not self.win_text and not self.win_text2 then
         self.won = true
         camera.x, camera.y = gw/2, gh/2
-        self.win_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 64, lines = {{text = '[wavy_mid, cbyc2]congratulations!', font = fat_font, alignment = 'center'}}}
+        self.win_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 66, lines = {{text = '[wavy_mid, cbyc2]congratulations!', font = fat_font, alignment = 'center'}}}
         self.t:after(2.5, function()
-          self.win_text2 = Text2{group = self.ui, x = gw/2, y = gh/2 + 16, lines = {
-            {text = "[fg]you've beaten the demo!", font = pixul_font, alignment = 'center', height_multiplier = 1.2},
-            {text = "[fg]the game's full version is coming in a few weeks,", font = pixul_font, alignment = 'center', height_multiplier = 1.2},
-            {text = "[fg]so if you liked the game, make sure to wishlist it!", font = pixul_font, alignment = 'center', height_multiplier = 5},
-            {text = "[wavy_mid, fg]thanks for playing!", font = pixul_font, alignment = 'center'},
+          self.win_text2 = Text2{group = self.ui, x = gw/2, y = gh/2 + 20, lines = {
+            {text = "[fg]you've beaten the game!", font = pixul_font, alignment = 'center', height_multiplier = 1.2},
+            {text = "[fg]i made this game in 2 months as a dev challenge", font = pixul_font, alignment = 'center', height_multiplier = 1.2},
+            {text = "[fg]and i'm happy with how it turned out!", font = pixul_font, alignment = 'center', height_multiplier = 1.2},
+            {text = "[fg]if you liked it too and want to play more games like this:", font = pixul_font, alignment = 'center', height_multiplier = 5},
+            {text = "[fg]i will release more games this year, so stay tuned!", font = pixul_font, alignment = 'center', height_multiplier = 1.4},
+            {text = "[wavy_mid, yellow]thanks for playing!", font = pixul_font, alignment = 'center'},
           }}
-          WishlistButton{group = self.ui, x = gw/2, y = gh/2 + 30, w_to_wishlist = true}
+          SteamFollowButton{group = self.ui, x = gw/2, y = gh/2 + 37}
+          RestartButton{group = self.ui, x = gw - 40, y = gh - 20}
         end)
       end
 
@@ -387,7 +362,7 @@ function Arena:draw()
   self.post_main:draw()
   self.effects:draw()
   if self.level == 18 and self.trailer then graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent) end
-  if self.choosing_passives then graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent) end
+  if self.choosing_passives or self.won or self.paused then graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent) end
   self.ui:draw()
 
   graphics.draw_with_mask(function()
@@ -431,20 +406,10 @@ function Arena:draw()
             graphics.print(self.wave .. '/' .. self.max_waves, fat_font, self.x2 - 25, self.y1 - 8, 0, 0.75, 0.75, nil, fat_font.h/2, self.hfx.condition1.f and fg[0] or yellow[0])
           graphics.pop()
         end
-      elseif self.win_condition == 'enemy_kill' then
-        if self.start_time <= 0 then
-          graphics.push(self.x2 - 106, self.y1 - 10, 0, self.hfx.condition2.x, self.hfx.condition2.x)
-            graphics.print_centered('enemies killed:', fat_font, self.x2 - 106, self.y1 - 10, 0, 0.6, 0.6, nil, nil, fg[0])
-          graphics.pop()
-          graphics.push(self.x2 - 41 + fat_font:get_text_width(self.enemies_killed .. '/' .. self.enemies_to_kill)/2, self.y1 - 8, 0, self.hfx.condition1.x, self.hfx.condition1.x)
-            graphics.print(self.enemies_killed .. '/' .. self.enemies_to_kill, fat_font, self.x2 - 41, self.y1 - 8, 0, 0.75, 0.75, nil, fat_font.h/2, self.hfx.condition1.f and fg[0] or yellow[0])
-          graphics.pop()
-        end
       end
     end
   end
   camera:detach()
-
 end
 
 
@@ -459,7 +424,6 @@ function Arena:die()
       self.death_info_text = Text2{group = self.ui, x = gw/2, y = gh/2 + 24, sx = 0.7, sy = 0.7, lines = {
         {text = '[wavy_mid, light_bg]level reached: [wavy_mid, yellow]' .. self.level, font = fat_font, alignment = 'center'},
         {text = '[wavy_mid, light_bg]r - start new run', font = fat_font, alignment = 'center'},
-        {text = '[wavy_mid, light_bg]w - wishlist on steam', font = fat_font, alignment = 'center'},
       }}
     end)
   end
@@ -503,20 +467,6 @@ function Arena:transition()
     {text = '[wavy_lower, bg]damage taken: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
     {text = '[wavy_lower, bg]damage dealt: 0', font = pixul_font, alignment = 'center'}
   }, global_text_tags)}
-end
-
-
-function Arena:enemy_killed()
-  if self.win_condition == 'enemy_kill' then
-    self.enemies_killed = self.enemies_killed + 1
-    self.hfx:use('condition1', 0.25, 200, 10)
-    self.hfx:pull('condition2', 0.0625)
-    self.enemy_spawn_delay = self.enemy_spawn_delay*0.95
-    if self.enemies_killed >= self.enemies_to_kill then
-      self.can_quit = true
-      self.t:cancel'spawn_enemies'
-    end
-  end
 end
 
 
@@ -589,10 +539,6 @@ function Arena:spawn_n_enemies(p, j, n)
   n = n or 4
   self.last_spawn_enemy_time = love.timer.getTime()
   self.t:every(0.1, function()
-    if self.win_condition == 'enemy_kill' then
-      if self.enemies_spawned >= math.floor(1.4*self.enemies_to_kill) then return end
-      self.enemies_spawned = self.enemies_spawned + 1
-    end
     local o = self.spawn_offsets[(self.t:get_every_iteration('spawn_enemies_' .. j) % 5) + 1]
     SpawnEffect{group = self.effects, x = p.x + o.x, y = p.y + o.y, action = function(x, y)
       spawn1:play{pitch = random:float(0.8, 1.2), volume = 0.15}

@@ -200,6 +200,56 @@ end
 
 
 
+SteamFollowButton = Object:extend()
+SteamFollowButton:implement(GameObject)
+function SteamFollowButton:init(args)
+  self:init_game_object(args)
+  self.interact_with_mouse = true
+  self.shape = Rectangle(self.x, self.y, fat_font:get_text_width('follow me on steam!'), fat_font.h)
+  self.text = Text({{text = '[blue]follow me on steam!', font = fat_font, alignment = 'center'}}, global_text_tags)
+end
+
+
+function SteamFollowButton:update(dt)
+  self:update_game_object(dt)
+
+  if self.selected and input.m1.pressed then
+    ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    self.spring:pull(0.2, 200, 10)
+    self.selected = true
+    ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    system.open_url'https://store.steampowered.com/dev/a327ex/'
+  end
+end
+
+
+function SteamFollowButton:draw()
+  graphics.push(self.x, self.y, 0, self.spring.x, self.spring.y)
+    self.text:draw(self.x, self.y)
+    graphics.rectangle(self.x, self.y + self.text.h/5, self.text.w, 2, 2, 2, self.selected and blue[5] or blue[0])
+  graphics.pop()
+end
+
+
+function SteamFollowButton:on_mouse_enter()
+  love.mouse.setCursor(love.mouse.getSystemCursor'hand')
+  ui_hover1:play{pitch = random:float(1.3, 1.5), volume = 0.5}
+  pop2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+  self.selected = true
+  self.text:set_text{{text = '[blue5]follow me on steam!', font = fat_font, alignment = 'center'}}
+  self.spring:pull(0.05, 200, 10)
+end
+
+
+function SteamFollowButton:on_mouse_exit()
+  love.mouse.setCursor()
+  self.text:set_text{{text = '[blue]follow me on steam!', font = fat_font, alignment = 'center'}}
+  self.selected = false
+end
+
+
+
+
 WishlistButton = Object:extend()
 WishlistButton:implement(GameObject)
 function WishlistButton:init(args)
@@ -255,6 +305,61 @@ function WishlistButton:on_mouse_exit()
   else
     self.text:set_text{{text = '[bg10]wishlist on steam', font = pixul_font, alignment = 'center'}}
   end
+  self.selected = false
+end
+
+
+
+
+RestartButton = Object:extend()
+RestartButton:implement(GameObject)
+function RestartButton:init(args)
+  self:init_game_object(args)
+  self.shape = Rectangle(self.x, self.y, pixul_font:get_text_width('restart') + 4, pixul_font.h + 4)
+  self.interact_with_mouse = true
+  self.text = Text({{text = '[bg10]restart', font = pixul_font, alignment = 'center'}}, global_text_tags)
+end
+
+
+function RestartButton:update(dt)
+  self:update_game_object(dt)
+
+  if self.selected and input.m1.pressed then
+    main.current.transitioning = true
+    ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = fg[0], transition_action = function()
+      slow_amount = 1
+      gold = 2
+      passives = {}
+      cascade_instance:stop()
+      main:add(BuyScreen'buy_screen')
+      main:go_to('buy_screen', 0, {}, passives)
+    end, text = Text({{text = '[wavy, bg]restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
+  end
+end
+
+
+function RestartButton:draw()
+  graphics.push(self.x, self.y, 0, self.spring.x, self.spring.y)
+    graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 4, 4, self.selected and fg[0] or bg[1])
+    self.text:draw(self.x, self.y + 1, 0, 1, 1)
+  graphics.pop()
+end
+
+
+function RestartButton:on_mouse_enter()
+  ui_hover1:play{pitch = random:float(1.3, 1.5), volume = 0.5}
+  pop2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+  self.selected = true
+  self.text:set_text{{text = '[fgm5]restart', font = pixul_font, alignment = 'center'}}
+  self.spring:pull(0.2, 200, 10)
+end
+
+
+function RestartButton:on_mouse_exit()
+  self.text:set_text{{text = '[bg10]restart', font = pixul_font, alignment = 'center'}}
   self.selected = false
 end
 

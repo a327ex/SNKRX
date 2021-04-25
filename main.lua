@@ -827,70 +827,6 @@ function init()
     ['voider'] = function(units) return 2, 4, get_number_of_units_per_class(units).voider end,
   }
 
-  level_to_tier_weights = {
-    [1] = {90, 10, 0, 0},
-    [2] = {80, 15, 5, 0},
-    [3] = {75, 20, 5, 0},
-    [4] = {70, 20, 10, 0},
-    [5] = {70, 20, 10, 0},
-    [6] = {65, 25, 10, 0},
-    [7] = {60, 25, 15, 0},
-    [8] = {55, 25, 15, 5},
-    [9] = {50, 30, 15, 5},
-    [10] = {50, 30, 15, 5},
-    [11] = {45, 30, 20, 5},
-    [12] = {45, 30, 20, 5},
-    [13] = {40, 30, 20, 10},
-    [14] = {40, 30, 20, 10},
-    [15] = {35, 35, 20, 10},
-    [16] = {30, 40, 20, 10},
-    [17] = {20, 40, 25, 15},
-    [18] = {20, 40, 25, 15},
-    [19] = {15, 40, 30, 15},
-    [20] = {10, 40, 30, 20},
-    [21] = {5, 40, 35, 20},
-    [22] = {5, 35, 35, 25},
-    [23] = {5, 35, 35, 25},
-    [24] = {0, 30, 40, 30},
-    [25] = {0, 25, 40, 35},
-  }
-
-  level_to_gold_gained = {
-    [1] = {2, 2},
-    [2] = {2, 2},
-    [3] = {4, 6},
-    [4] = {2, 3},
-    [5] = {3, 5},
-    [6] = {6, 10},
-    [7] = {4, 7}, 
-    [8] = {4, 7},
-    [9] = {10, 16},
-    [10] = {5, 8},
-    [11] = {5, 8},
-    [12] = {12, 20},
-    [13] = {6, 10},
-    [14] = {6, 10},
-    [15] = {14, 22},
-    [16] = {8, 12},
-    [17] = {8, 12},
-    [18] = {16, 24}, 
-    [19] = {8, 12},
-    [20] = {10, 14}, 
-    [21] = {20, 28},
-    [22] = {11, 15},
-    [23] = {11, 15},
-    [24] = {24, 36},
-    [25] = {100, 100},
-  }
-
-  level_to_boss = {
-    [6] = 'speed_booster',
-    [12] = 'exploder',
-    [18] = 'swarmer',
-    [24] = 'forcer',
-    [25] = 'randomizer',
-  }
-
   passive_names = {
     ['ouroboros_technique_r'] = 'Ouroboros Technique R',
     ['ouroboros_technique_l'] = 'Ouroboros Technique L',
@@ -1034,6 +970,62 @@ function init()
     [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
   }
 
+  level_to_tier_weights = {
+    [1] = {90, 10, 0, 0},
+    [2] = {80, 15, 5, 0},
+    [3] = {75, 20, 5, 0},
+    [4] = {70, 20, 10, 0},
+    [5] = {70, 20, 10, 0},
+    [6] = {65, 25, 10, 0},
+    [7] = {60, 25, 15, 0},
+    [8] = {55, 25, 15, 5},
+    [9] = {50, 30, 15, 5},
+    [10] = {50, 30, 15, 5},
+    [11] = {45, 30, 20, 5},
+    [12] = {45, 30, 20, 5},
+    [13] = {40, 30, 20, 10},
+    [14] = {40, 30, 20, 10},
+    [15] = {35, 35, 20, 10},
+    [16] = {30, 40, 20, 10},
+    [17] = {20, 40, 25, 15},
+    [18] = {20, 40, 25, 15},
+    [19] = {15, 40, 30, 15},
+    [20] = {10, 40, 30, 20},
+    [21] = {5, 40, 35, 20},
+    [22] = {5, 35, 35, 25},
+    [23] = {5, 35, 35, 25},
+    [24] = {0, 30, 40, 30},
+    [25] = {0, 25, 40, 35},
+  }
+
+  level_to_gold_gained = {
+    [1] = {2, 2},
+    [2] = {2, 2},
+    [3] = {4, 6},
+    [4] = {2, 3},
+    [5] = {3, 5},
+    [6] = {6, 10},
+    [7] = {4, 7}, 
+    [8] = {4, 7},
+    [9] = {10, 16},
+    [10] = {5, 8},
+    [11] = {5, 8},
+    [12] = {12, 20},
+    [13] = {6, 10},
+    [14] = {6, 10},
+    [15] = {14, 22},
+    [16] = {8, 12},
+    [17] = {8, 12},
+    [18] = {16, 24}, 
+    [19] = {8, 12},
+    [20] = {10, 14}, 
+    [21] = {20, 28},
+    [22] = {11, 15},
+    [23] = {11, 15},
+    [24] = {24, 36},
+    [25] = {100, 100},
+  }
+
   level_to_passive_tier_weights = {
     [3] = {70, 20, 10},
     [6] = {60, 25, 15},
@@ -1045,13 +1037,77 @@ function init()
     [24] = {20, 30, 50},
   }
 
+  level_to_elite_spawn_weights = {
+    [1] = {0},
+    [2] = {4, 2},
+    [3] = {10},
+    [4] = {4, 4},
+    [5] = {4, 3, 2},
+    [6] = {14},
+    [7] = {5, 3, 2},
+    [8] = {6, 3, 3, 3},
+    [9] = {18},
+    [10] = {8, 4},
+    [11] = {8, 6, 2},
+    [12] = {18},
+    [13] = {8, 8},
+    [14] = {12, 6},
+    [15] = {18},
+    [16] = {10, 6, 4},
+    [17] = {6, 5, 4, 3},
+    [18] = {18},
+    [19] = {10, 6},
+    [20] = {10, 6, 2},
+    [21] = {28},
+    [22] = {10, 10, 5},
+    [23] = {20, 5, 5},
+    [24] = {35},
+    [25] = {5, 5, 5, 5, 5, 5},
+  }
+
+  level_to_boss = {
+    [6] = 'speed_booster',
+    [12] = 'exploder',
+    [18] = 'swarmer',
+    [24] = 'forcer',
+    [25] = 'randomizer',
+  }
+
+  level_to_elite_spawn_types = {
+    [1] = {'speed_booster'},
+    [2] = {'speed_booster', 'shooter'},
+    [3] = {'speed_booster'},
+    [4] = {'speed_booster', 'exploder'},
+    [5] = {'speed_booster', 'exploder', 'shooter'},
+    [6] = {'speed_booster'},
+    [7] = {'speed_booster', 'exploder', 'headbutter'},
+    [8] = {'speed_booster', 'exploder', 'headbutter', 'shooter'},
+    [9] = {'shooter'},
+    [10] = {'exploder', 'headbutter'},
+    [11] = {'exploder', 'headbutter', 'tank'},
+    [12] = {'exploder'},
+    [13] = {'speed_booster', 'shooter'},
+    [14] = {'speed_booster', 'spawner'},
+    [15] = {'shooter'},
+    [16] = {'speed_booster', 'exploder', 'spawner'},
+    [17] = {'speed_booster', 'exploder', 'spawner', 'shooter'},
+    [18] = {'spawner'},
+    [19] = {'headbutter', 'tank'},
+    [20] = {'speed_booster', 'tank', 'spawner'},
+    [21] = {'headbutter'},
+    [22] = {'speed_booster', 'headbutter', 'tank'},
+    [23] = {'headbutter', 'tank', 'shooter'},
+    [24] = {'tank'},
+    [25] = {'speed_booster', 'exploder', 'headbutter', 'tank', 'shooter', 'spawner'},
+  }
+
   gold = 2
   passives = {}
   system.load_state()
 
   main = Main()
   main:add(BuyScreen'buy_screen')
-  main:go_to('buy_screen', 0, {{character = 'cryomancer', level = 1}, {character = 'pyromancer', level = 1}}, passives)
+  main:go_to('buy_screen', 0, {}, passives)
   --[[
   main:add(Media'media')
   main:go_to('media')
