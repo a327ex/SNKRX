@@ -11,11 +11,11 @@ require 'media'
 function init()
   shared_init()
 
-  input:bind('move_left', {'a', 'left'})
-  input:bind('move_right', {'d', 'right'})
-  input:bind('move_up', {'w', 'up'})
-  input:bind('move_down', {'s', 'down'})
-  input:bind('enter', {'space', 'return'})
+  input:bind('move_left', {'a', 'left', 'dpleft'})
+  input:bind('move_right', {'d', 'right', 'dpright'})
+  input:bind('move_up', {'w', 'up', 'dpup'})
+  input:bind('move_down', {'s', 'down', 'dpdown'})
+  input:bind('enter', {'space', 'return', 'fleft', 'fdown', 'fright'})
 
   local s = {tags = {sfx}}
   thunder1 = Sound('399656__bajko__sfx-thunder-blast.ogg', s)
@@ -603,6 +603,50 @@ function init()
     ['flagellant'] = function() return '[fg]deals [yellow]' .. 2*get_character_stat('flagellant', 3, 'dmg') .. '[fg] damage to all allies and grants [yellow]+12%[fg] damage to all allies per cast' end,
   }
 
+  character_effect_descriptions_gray = {
+    ['vagrant'] = function() return '[light_bg]+10% damage and +5% attack speed per active set' end,
+    ['swordsman'] = function() return "[light_bg]the swordsman's damage is doubled" end,
+    ['wizard'] = function() return '[light_bg]the projectile chains 5 times' end,
+    ['archer'] = function() return '[light_bg]the arrow ricochets off walls 3 times' end,
+    ['scout'] = function() return '[light_bg]+25% damage per chain and +3 chains' end,
+    ['cleric'] = function() return '[light_bg]heals all units' end,
+    ['outlaw'] = function() return "[light_bg]+50% outlaw attack speed and his knives seek enemies" end,
+    ['blade'] = function() return '[light_bg]deal additional ' .. get_character_stat('blade', 3, 'dmg')/2 .. ' damage per enemy hit' end,
+    ['elementor'] = function() return '[light_bg]slows enemies by 60% for 6 seconds on hit' end,
+    ['saboteur'] = function() return '[light_bg]the explosion has 50% chance to crit, increasing in size and dealing 2x damage' end,
+    ['stormweaver'] = function() return "[light_bg]chain lightning's trigger area of effect and number of units hit is doubled" end,
+    ['sage'] = function() return '[light_bg]when the projectile expires deal ' .. 3*get_character_stat('sage', 3, 'dmg') .. ' damage to all enemies under its influence' end,
+    ['squire'] = function() return '[light_bg]you can reroll your item choices once, these opportunities stack if unused' end,
+    ['cannoneer'] = function() return '[light_bg]showers the hit area in 5 additional cannon shots that deal ' .. get_character_stat('cannoneer', 3, 'dmg')/2 .. ' AoE damage' end,
+    ['dual_gunner'] = function() return '[light_bg]every 5th attack shoot in rapid succession for 2 seconds' end,
+    ['hunter'] = function() return '[light_bg]summons 3 pets and the pets ricochet off walls once' end,
+    ['chronomancer'] = function() return '[light_bg]enemies take damave over time 50% faster' end,
+    ['spellblade'] = function() return '[light_bg]faster projectile speed and tighter turns' end,
+    ['psykeeper'] = function() return '[light_bg]also redistributes damage taken as damage to all enemies at double value' end,
+    ['engineer'] = function() return '[light_bg]every 3rd sentry dropped upgrade all sentries with +100% damage and attack speed' end,
+    ['plague_doctor'] = function() return '[light_bg]nearby enemies take an additional ' .. get_character_stat('plague_doctor', 3, 'dmg') .. ' damage per second' end,
+    ['barbarian'] = function() return '[light_bg]stunned enemies also take 100% increased damage' end,
+    ['juggernaut'] = function() return '[light_bg]enemies pushed by the juggernaut take ' .. 4*get_character_stat('juggernaut', 3, 'dmg') .. ' damage if they hit a wall' end,
+    ['lich'] = function() return '[light_bg]chain frost slows enemies hit by 80% for 2 seconds and chains +7 times' end,
+    ['cryomancer'] = function() return '[light_bg]enemies are also slowed by 60% while in the area' end,
+    ['pyromancer'] = function() return '[light_bg]enemies killed by the pyromancer explode, dealing ' .. get_character_stat('pyromancer', 3, 'dmg') .. ' AoE damage' end,
+    ['corruptor'] = function() return '[light_bg]spawn 3 small critters if the corruptor hits an enemy' end,
+    ['beastmaster'] = function() return '[light_bg]spawn 2 small critters if the beastmaster gets hit' end,
+    ['launcher'] = function() return '[light_bg]enemies launched take 300% more damage when they hit walls' end,
+    ['bard'] = function() return '[light_bg]every 8th attack consume the curse to deal ' .. 4*get_character_stat('bard', 3, 'dmg') .. ' damage to affected enemies' end,
+    ['assassin'] = function() return '[light_bg]poison inflicted from crits deals 8x damage' end,
+    ['host'] = function() return '[light_bg]+100% critter spawn rate and spawn 2 critters instead' end,
+    ['carver'] = function() return '[light_bg]carves a tree that heals twice as fast, in a bigger area, and heals 2 units instead' end,
+    ['bane'] = function() return '[light_bg]the area also deals ' .. get_character_stat('bane', 3, 'dmg') .. ' damage per second and slows enemies by 50%' end,
+    ['psykino'] = function() return '[light_bg]enemies take ' .. 4*get_character_stat('psykino', 3, 'dmg') .. ' damage and are pushed away when the area expires' end,
+    ['barrager'] = function() return '[light_bg]every 3rd attack the barrage shoots 15 projectiles and they push harder' end,
+    ['highlander'] = function() return '[light_bg]quickly repeats the attack 3 times' end,
+    ['fairy'] = function() return '[light_bg]heals 2 units instead and grants them an additional 100% attack speed' end,
+    ['priest'] = function() return '[light_bg]at the start of the round pick 3 units at random and grants them a buff that prevents death once' end,
+    ['infestor'] = function() return '[light_bg][yellow]triples the number of critters released' end,
+    ['flagellant'] = function() return '[light_bg]deals ' .. 2*get_character_stat('flagellant', 3, 'dmg') .. ' damage to all allies and grants +12% damage to all allies per cast' end,
+  }
+
   character_stats = {
     ['vagrant'] = function(lvl) return get_character_stat_string('vagrant', lvl) end,
     ['swordsman'] = function(lvl) return get_character_stat_string('swordsman', lvl) end, 
@@ -692,7 +736,7 @@ function init()
     [4] = {'priest', 'highlander', 'psykino', 'lich', 'host', 'fairy', 'blade', 'plague_doctor', 'cannoneer'},
   }
 
-  non_attacking_characters = {'cleric', 'stormweaver', 'squire', 'chronomancer', 'sage'}
+  non_attacking_characters = {'cleric', 'stormweaver', 'squire', 'chronomancer', 'sage', 'psykeeper', 'bane', 'carver', 'fairy', 'priest', 'flagellant'}
 
   character_tiers = {
     ['vagrant'] = 1,

@@ -173,7 +173,7 @@ function Player:init(args)
         Turret{group = main.current.main, x = x, y = y, parent = self}
       end}
       self.turret_counter = self.turret_counter + 1
-      if self.turret_counter == 3 then
+      if self.turret_counter == 3 and self.level == 3 then
         self.turret_counter = 0
         local turrets = main.current.main:get_objects_by_class(Turret)
         buff1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -308,7 +308,7 @@ function Player:init(args)
       local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
       local r = self:angle_to_object(closest_enemy)
       self.barrager_counter = self.barrager_counter + 1
-      if self.barrager_counter == 3 then
+      if self.barrager_counter == 3 and self.level == 3 then
         self.barrage_counter = 0
         for i = 1, 15 do
           self.t:after((i-1)*0.05, function()
@@ -1088,7 +1088,7 @@ function Player:shoot(r, mods)
     Projectile(table.merge(t1, mods or {}))
     Projectile(table.merge(t2, mods or {}))
     self.dg_counter = self.dg_counter + 1
-    if self.dg_counter == 5 then
+    if self.dg_counter == 5 and self.level == 3 then
       self.dg_counter = 0
       self.t:every(0.1, function()
         local random_enemy = self:get_random_object_in_shape(self.attack_sensor, main.current.enemies)
@@ -1518,7 +1518,7 @@ function Projectile:on_trigger_enter(other, contact)
     end
 
     if self.character == 'assassin' then
-      other:apply_dot((self.crit and 4*self.dmg or self.dmg/2)*(self.dot_dmg_m or 1)*(main.current.chronomancer_dot), 3)
+      other:apply_dot((self.crit and 4*self.dmg or self.dmg/2)*(self.dot_dmg_m or 1)*(main.current.chronomancer_dot or 1), 3)
     end
 
     if self.parent.chain_infused then

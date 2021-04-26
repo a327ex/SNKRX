@@ -92,13 +92,17 @@ end
 -- t = {4, 3, 2, 1}
 -- table.head(t) -> 4
 -- table.head(t, 2) -> {4, 3}
+-- If n is defined then it always returns a table, even with only 1 value.
 function table.head(t, n)
   local out = {}
   for i = 1, (n or 1) do
     table.push(out, t[i])
   end
-  if #out == 1 then return out[1]
-  else return out end
+  if n then return out
+  else
+    if #out == 1 then return out[1]
+    else return out end
+  end
 end
 
 
@@ -106,13 +110,17 @@ end
 -- t = {5, 4, 3, 2, 1}
 -- table.tail(t) -> 1
 -- table.tail(t, 2) -> {2, 1}
+-- If n is defined then it always returns a table, even with only 1 value.
 function table.tail(t, n)
   local out = {}
   for i = #t-(n or #t-1)+1, #t do
     table.push(out, t[i])
   end
-  if #out == 1 then return out[1]
-  else return out end
+  if n then return out
+  else
+    if #out == 1 then return out[1]
+    else return out end
+  end
 end
 
 
@@ -255,8 +263,14 @@ end
 -- For those cases the third argument comes in handy and can be used to set the initial value of memo directly.
 function table.reduce(t, f, dv, ...)
   local memo = dv or t[1]
-  for i = 1, #t do
-    memo = f(memo, t[i], i, ...)
+  if dv then
+    for i = 1, #t do
+      memo = f(memo, t[i], i, ...)
+    end
+  else
+    for i = 2, #t do
+      memo = f(memo, t[i], i, ...)
+    end
   end
   return memo
 end

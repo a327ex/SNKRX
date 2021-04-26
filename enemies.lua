@@ -15,8 +15,8 @@ function Seeker:init(args)
 
     if self.boss == 'speed_booster' then
       self.color = green[0]:clone()
-      self.t:every(5, function()
-        local enemies = self:get_objects_in_shape(Circle(self.x, self.y, 128), main.current.enemies)
+      self.t:every(8, function()
+        local enemies = table.head(self:get_objects_in_shape(Circle(self.x, self.y, 128), main.current.enemies), 4)
         if #enemies > 0 then
           buff1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
           HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = green[0], duration = 0.1}
@@ -644,6 +644,12 @@ function EnemyCritter:on_trigger_enter(other, contact)
     self:die(self.x, self.y, nil, random:int(2, 3))
     other:hit(self.dmg)
   end
+end
+
+
+function EnemyCritter:speed_boost(duration)
+  self.speed_boosting = love.timer.getTime()
+  self.t:after(duration, function() self.speed_boosting = false end, 'speed_boost')
 end
 
 

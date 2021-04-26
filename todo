@@ -1,6 +1,9 @@
+Selling should keep units value unless it's already merged into a higher level
+Boss stands still for 1 second before enemies spawn
+
 General balance
-  Enemies should have a chance to be spawned with a modifier as levels increase
-  Every 3rd level should be wave only
+  * Enemies should have a chance to be spawned with a modifier as levels increase
+  * Every 3rd level should be wave only
   * Remove "enemies killed" mode
   Balance playthroughs (record all balance playthroughs as they can be used for trailers; do this after graphical improvements done)
 UI improvements
@@ -13,9 +16,9 @@ Graphical improvements
 Trailers
   3-4 pure gameplay playthroughs showcasing different builds
 Misc
-  Better pause screen
+  * Better pause screen
   * End screen
-  Ascension mode (difficulty ramps up faster and goes higher than normal at the end)
+  Ascension mode (difficulty ramps up faster and goes higher than normal at the end, the player also gains more gold, and on ascension 1 and 5 the maximum number of units is increased by 1 (10->11->12)
   Music for bosses and shop
 Achievements
   Come up with a few new ones as I play the game more and balance the numbers

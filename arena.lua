@@ -104,11 +104,12 @@ function Arena:on_enter(from, level, units, passives)
           end)
         end)
       end)
-      self.t:every(function() return self.start_time <= 0 and #self.main:get_objects_by_classes(self.enemies) <= 0 end, function() self.can_quit = true end)
+      self.t:every(function() return self.start_time <= 0 and (self.boss and self.boss.dead) and #self.main:get_objects_by_classes(self.enemies) <= 0 end, function() self.can_quit = true end)
     end)
   else
     -- Set win condition and enemy spawns
-    self.win_condition = random:table{'time', 'enemy_kill', 'wave'}
+    self.win_condition = random:table{'time', 'wave'}
+    if self.level % 3 == 0 then self.win_condition = 'wave' end
     if self.level == 18 and self.trailer then self.win_condition = 'wave' end
     if self.win_condition == 'wave' then
       self.level_to_max_waves = {
@@ -235,13 +236,12 @@ function Arena:update(dt)
       trigger:tween(0.25, _G, {slow_amount = 0}, math.linear, function()
         slow_amount = 0
         self.paused = true
-        self.paused_t1 = Text2{group = self.ui, x = gw/2, y = gh/2 - 68, sx = 0.6, sy = 0.6, lines = {{text = '[bg10]<- or a         -> or d', font = fat_font, alignment = 'center'}}}
-        self.paused_t2 = Text2{group = self.ui, x = gw/2, y = gh/2 - 52, lines = {{text = '[bg10]turn left                                      turn right', font = pixul_font, alignment = 'center'}}}
-        self.paused_t3 = Text2{group = self.ui, x = gw/2, y = gh/2 - 22, sx = 0.6, sy = 0.6, lines = {{text = '[bg10]n - mute sfx', font = fat_font, alignment = 'center'}}}
-        self.paused_t4 = Text2{group = self.ui, x = gw/2, y = gh/2 + 0, sx = 0.6, sy = 0.6, lines = {{text = '[bg10]m - mute music', font = fat_font, alignment = 'center'}}}
-        self.paused_t5 = Text2{group = self.ui, x = gw/2, y = gh/2 + 22, sx = 0.6, sy = 0.6, lines = {{text = '[bg10]esc - resume game', font = fat_font, alignment = 'center'}}}
-        self.paused_t6 = Text2{group = self.ui, x = gw/2, y = gh/2 + 44, sx = 0.6, sy = 0.6, lines = {{text = '[bg10]r - restart run', font = fat_font, alignment = 'center'}}}
-        self.paused_t7 = Text2{group = self.ui, x = gw/2, y = gh/2 + 68, sx = 0.6, sy = 0.6, lines = {{text = '[bg10]w - wishlist on steam', font = fat_font, alignment = 'center'}}}
+        self.paused_t1 = Text2{group = self.ui, x = gw/2, y = gh/2 - 68, sx = 0.6, sy = 0.6, lines = {{text = '[fg]<- or a         -> or d', font = fat_font, alignment = 'center'}}}
+        self.paused_t2 = Text2{group = self.ui, x = gw/2, y = gh/2 - 52, lines = {{text = '[fg]turn left                                      turn right', font = pixul_font, alignment = 'center'}}}
+        self.paused_t3 = Text2{group = self.ui, x = gw/2, y = gh/2 - 22, sx = 0.6, sy = 0.6, lines = {{text = '[fg]n - mute sfx', font = fat_font, alignment = 'center'}}}
+        self.paused_t4 = Text2{group = self.ui, x = gw/2, y = gh/2 + 0, sx = 0.6, sy = 0.6, lines = {{text = '[fg]m - mute music', font = fat_font, alignment = 'center'}}}
+        self.paused_t5 = Text2{group = self.ui, x = gw/2, y = gh/2 + 22, sx = 0.6, sy = 0.6, lines = {{text = '[fg]esc - resume game', font = fat_font, alignment = 'center'}}}
+        self.paused_t6 = Text2{group = self.ui, x = gw/2, y = gh/2 + 44, sx = 0.6, sy = 0.6, lines = {{text = '[fg]r - restart run', font = fat_font, alignment = 'center'}}}
       end, 'pause')
     else
       trigger:tween(0.25, _G, {slow_amount = 1}, math.linear, function()
@@ -253,14 +253,12 @@ function Arena:update(dt)
         self.paused_t4.dead = true
         self.paused_t5.dead = true
         self.paused_t6.dead = true
-        self.paused_t7.dead = true
         self.paused_t1 = nil
         self.paused_t2 = nil
         self.paused_t3 = nil
         self.paused_t4 = nil
         self.paused_t5 = nil
         self.paused_t6 = nil
-        self.paused_t7 = nil
       end, 'pause')
     end
   end
@@ -362,7 +360,7 @@ function Arena:draw()
   self.post_main:draw()
   self.effects:draw()
   if self.level == 18 and self.trailer then graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent) end
-  if self.choosing_passives or self.won or self.paused then graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent) end
+  if self.choosing_passives or self.won or self.paused or self.died then graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent) end
   self.ui:draw()
 
   graphics.draw_with_mask(function()
@@ -422,8 +420,8 @@ function Arena:die()
     }}
     self.t:after(2, function()
       self.death_info_text = Text2{group = self.ui, x = gw/2, y = gh/2 + 24, sx = 0.7, sy = 0.7, lines = {
-        {text = '[wavy_mid, light_bg]level reached: [wavy_mid, yellow]' .. self.level, font = fat_font, alignment = 'center'},
-        {text = '[wavy_mid, light_bg]r - start new run', font = fat_font, alignment = 'center'},
+        {text = '[wavy_mid, fg]level reached: [wavy_mid, yellow]' .. self.level, font = fat_font, alignment = 'center'},
+        {text = '[wavy_mid, fg]r - start new run', font = fat_font, alignment = 'center'},
       }}
     end)
   end
@@ -542,7 +540,13 @@ function Arena:spawn_n_enemies(p, j, n)
     local o = self.spawn_offsets[(self.t:get_every_iteration('spawn_enemies_' .. j) % 5) + 1]
     SpawnEffect{group = self.effects, x = p.x + o.x, y = p.y + o.y, action = function(x, y)
       spawn1:play{pitch = random:float(0.8, 1.2), volume = 0.15}
-      Seeker{group = self.main, x = x, y = y, character = 'seeker', level = self.level}
+      if random:bool(table.reduce(level_to_elite_spawn_weights[self.level], function(memo, v) return memo + v end)) then
+        local elite_type = level_to_elite_spawn_types[self.level][random:weighted_pick(unpack(level_to_elite_spawn_weights[self.level]))]
+        Seeker{group = self.main, x = x, y = y, character = 'seeker', level = self.level,
+          speed_booster = elite_type == 'speed_booster', exploder = elite_type == 'exploder', shooter = elite_type == 'shooter', headbutter = elite_type == 'headbutter', tank = elite_type == 'tank', spawner = elite_type == 'spawner'}
+      else
+        Seeker{group = self.main, x = x, y = y, character = 'seeker', level = self.level}
+      end
     end}
   end, n, nil, 'spawn_enemies_' .. j)
 end

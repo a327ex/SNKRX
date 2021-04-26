@@ -1055,3 +1055,8 @@ I also made some small graphical improvements to the game that I think will help
 # Day 67 - 24/04/21
 
 Added an end game screen and started work on making elites spawn throughout the levels.
+
+# Day 68 - 25/04/21
+
+Elites now spawn at appropriate rates. Testing out the game a little with this and it seems a lot better than before, but I need to balance a few of the elite units more (headbutter and spawner seem weak).
+Also went through a bunch of smaller bug fixes and changes as I play the game more and missing details start popping up. I should leave proper balancing for later and start work on final UI improvements tomorrow.

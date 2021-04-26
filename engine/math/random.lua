@@ -20,8 +20,8 @@ end
 
 
 -- Returns a random real number between the range.
--- random:bool(0, 1) -> returns a random number between 0 and 1, like 0.432
--- random:bool(-100, 45.2) -> returns a random number between -100 and 45.2, like -99.7
+-- random:float(0, 1) -> returns a random number between 0 and 1, like 0.432
+-- random:float(-100, 45.2) -> returns a random number between -100 and 45.2, like -99.7
 function Random:float(min, max)
   min = min or 0
   max = max or 1
@@ -46,7 +46,7 @@ end
 
 -- Returns a random value of the table and also removes it.
 -- a = {7, 6, 5, 4}
--- random:table(a) -> returns either 7, 6, 5 or 4 randomly and removes it from the table as well
+-- random:table_remove(a) -> returns either 7, 6, 5 or 4 randomly and removes it from the table as well
 function Random:table_remove(t)
   return table.remove(t, self.generator:random(1, #t))
 end

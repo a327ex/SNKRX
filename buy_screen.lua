@@ -559,7 +559,7 @@ function CharacterPart:on_mouse_enter()
     {text = character_descriptions[self.character](self.level), font = pixul_font, alignment = 'center', height_multiplier = 2},
     {text = '[' .. (self.level == 3 and 'yellow' or 'light_bg') .. ']Lv.3 [' .. (self.level == 3 and 'fg' or 'light_bg') .. ']Effect - ' .. 
       (self.level == 3 and character_effect_names[self.character] or character_effect_names_gray[self.character]), font = pixul_font, alignment = 'center', height_multiplier = 1.25},
-    {text = character_effect_descriptions[self.character](), font = pixul_font, alignment = 'center'},
+    {text = (self.level == 3 and character_effect_descriptions[self.character]() or character_effect_descriptions_gray[self.character]()), font = pixul_font, alignment = 'center'},
   }, nil, nil, nil, nil, 16, 4, nil, 2)
   self.info_text.x, self.info_text.y = gw/2, gh/2 + 10
 end
@@ -934,17 +934,21 @@ function ClassIcon:draw()
       graphics.line(self.x + 4, self.y + 19, self.x + 4, self.y + 22, (n >= 4) and class_colors[self.class] or bg[10], 3)
       graphics.line(self.x + 4, self.y + 24, self.x + 4, self.y + 27, (n >= 5) and class_colors[self.class] or bg[10], 3)
       graphics.line(self.x + 4, self.y + 29, self.x + 4, self.y + 32, (n >= 6) and class_colors[self.class] or bg[10], 3)
-      --[[
       if next_n then
         if next_n == 1 then
-          graphics.line(self.x - 4, self.y + 22, self.x - 4, self.y + 30, self.flash and class_colors[self.class] or bg[10], 2)
+          graphics.line(self.x - 3, self.y + 19, self.x - 3, self.y + 22, self.flash and class_colors[self.class] or bg[10], 3)
         elseif next_n == 2 then
-          graphics.line(self.x, self.y + 22, self.x, self.y + 30, self.flash and class_colors[self.class] or bg[10], 2)
+          graphics.line(self.x - 3, self.y + 24, self.x - 3, self.y + 27, self.flash and class_colors[self.class] or bg[10], 3)
         elseif next_n == 3 then
-          graphics.line(self.x + 4, self.y + 22, self.x + 4, self.y + 30, self.flash and class_colors[self.class] or bg[10], 2)
+          graphics.line(self.x - 3, self.y + 29, self.x - 3, self.y + 32, self.flash and class_colors[self.class] or bg[10], 3)
+        elseif next_n == 4 then
+          graphics.line(self.x + 4, self.y + 19, self.x + 4, self.y + 22, self.flash and class_colors[self.class] or bg[10], 3)
+        elseif next_n == 5 then
+          graphics.line(self.x + 4, self.y + 24, self.x + 4, self.y + 27, self.flash and class_colors[self.class] or bg[10], 3)
+        elseif next_n == 6 then
+          graphics.line(self.x + 4, self.y + 29, self.x + 4, self.y + 32, self.flash and class_colors[self.class] or bg[10], 3)
         end
       end
-      ]]--
     end
   graphics.pop()
 end
