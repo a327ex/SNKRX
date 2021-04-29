@@ -12,6 +12,7 @@ function Player:init(args)
   self:set_as_rectangle(9, 9, 'dynamic', 'player')
   self.visual_shape = 'rectangle'
   self.classes = character_classes[self.character]
+  self.damage_dealt = 0
 
   if self.character == 'vagrant' then
     self.attack_sensor = Circle(self.x, self.y, 96)
@@ -70,7 +71,7 @@ function Player:init(args)
         end
         heal1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       end
-    end)
+    end, nil, nil, 'heal')
 
   elseif self.character == 'outlaw' then
     self.attack_sensor = Circle(self.x, self.y, 96)
@@ -103,7 +104,7 @@ function Player:init(args)
           Saboteur{group = main.current.main, x = x, y = y, parent = self, level = self.level, conjurer_buff_m = self.conjurer_buff_m or 1, crit = (self.level == 3) and random:bool(50)}
         end}
       end, 2)
-    end)
+    end, nil, nil, 'spawn')
 
   elseif self.character == 'stormweaver' then
     self.t:every(8, function()
@@ -112,7 +113,7 @@ function Player:init(args)
       for _, unit in ipairs(units) do
         unit:chain_infuse(4)
       end
-    end)
+    end, nil, nil, 'buff')
 
   elseif self.character == 'sage' then
     self.attack_sensor = Circle(self.x, self.y, 96)
@@ -121,7 +122,7 @@ function Player:init(args)
       if closest_enemy then
         self:shoot(self:angle_to_object(closest_enemy))
       end
-    end)
+    end, nil, nil, 'shoot')
 
   elseif self.character == 'cannoneer' then
     self.attack_sensor = Circle(self.x, self.y, 128)
@@ -183,12 +184,12 @@ function Player:init(args)
           turret:upgrade()
         end
       end
-    end)
+    end, nil, nil, 'spawn')
 
   elseif self.character == 'plague_doctor' then
     self.t:every(5, function()
       self:dot_attack(24, {duration = 12})
-    end)
+    end, nil, nil, 'attack')
 
     if self.level == 3 then
       self.t:after(0.01, function()
@@ -199,12 +200,12 @@ function Player:init(args)
   elseif self.character == 'barbarian' then
     self.t:every(8, function()
       self:attack(96, {stun = 4})
-    end)
+    end, nil, nil, 'attack')
 
   elseif self.character == 'juggernaut' then
     self.t:every(8, function()
       self:attack(64, {juggernaut_push = true})
-    end)
+    end, nil, nil, 'attack')
 
   elseif self.character == 'lich' then
     self.attack_sensor = Circle(self.x, self.y, 128)
@@ -230,7 +231,7 @@ function Player:init(args)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
       if closest_enemy then
-        self:shoot(self:angle_to_object(closest_enemy), {spawn_critters_on_kill = 3, spawn_critters_on_hit = (self.level == 3 and 3 or 0)})
+        self:shoot(self:angle_to_object(closest_enemy), {spawn_critters_on_kill = 3, spawn_critters_on_hit = (self.level == 3 and 3 or nil)})
       end
     end, nil, nil, 'shoot')
 
@@ -246,7 +247,7 @@ function Player:init(args)
   elseif self.character == 'launcher' then
     self.t:every(8, function()
       self:attack(128)
-    end)
+    end, nil, nil, 'attack')
 
   elseif self.character == 'bard' then
     self.bard_counter = 0
@@ -274,24 +275,24 @@ function Player:init(args)
         for i = 1, 2 do
           Critter{group = main.current.main, x = self.x, y = self.y, color = orange[0], r = random:float(0, 2*math.pi), v = 10, dmg = self.dmg, parent = self}
         end
-      end)
+      end, nil, nil, 'spawn')
     else
       self.t:every(2, function()
         critter1:play{pitch = random:float(0.95, 1.05), volume = 0.35}
         Critter{group = main.current.main, x = self.x, y = self.y, color = orange[0], r = random:float(0, 2*math.pi), v = 10, dmg = self.dmg, parent = self}
-      end)
+      end, nil, nil, 'spawn')
     end
 
   elseif self.character == 'carver' then
     self.t:every(16, function()
       Tree{group = main.current.main, x = self.x, y = self.y, color = self.color, parent = self, rs = self.area_size_m*(self.level == 3 and 128 or 64), level = self.level}
-    end)
+    end, nil, nil, 'spawn')
 
   elseif self.character == 'bane' then
     self.t:every(12, function()
       self.dot_area = DotArea{group = main.current.effects, x = self.x, y = self.y, rs = self.area_size_m*128, color = self.color, dmg = self.area_dmg_m*(self.level == 3 and self.dmg or 0),
         character = self.character, level = self.level, parent = self, duration = 8}
-    end)
+    end, nil, nil, 'spawn')
 
   elseif self.character == 'psykino' then
     self.t:every(4, function()
@@ -299,7 +300,7 @@ function Player:init(args)
       if center_enemy then
         ForceArea{group = main.current.effects, x = center_enemy.x, y = center_enemy.y, rs = self.area_size_m*64, color = self.color, character = self.character, level = self.level, parent = self}
       end
-    end)
+    end, nil, nil, 'attack')
 
   elseif self.character == 'barrager' then
     self.barrager_counter = 0
@@ -322,7 +323,7 @@ function Player:init(args)
           end)
         end
       end
-    end)
+    end, nil, nil, 'shoot')
 
   elseif self.character == 'highlander' then
     self.attack_sensor = Circle(self.x, self.y, 64)
@@ -358,7 +359,7 @@ function Player:init(args)
         heal1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
         buff1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       end
-    end)
+    end, nil, nil, 'heal')
 
   elseif self.character == 'priest' then
     if self.level == 3 then
@@ -377,7 +378,7 @@ function Player:init(args)
       local all_units = self:get_all_units()
       for _, unit in ipairs(all_units) do unit:heal(0.2*unit.max_hp*(self.heal_effect_m or 1)) end
       heal1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-    end)
+    end, nil, nil, 'heal')
 
   elseif self.character == 'infestor' then
     self.t:every(8, function()
@@ -389,7 +390,7 @@ function Player:init(args)
           LightningLine{group = main.current.effects, src = self, dst = enemy, color = orange[0]}
         end
       end
-    end)
+    end, nil, nil, 'attack')
 
   elseif self.character == 'flagellant' then
     self.t:every(8, function()
@@ -422,7 +423,7 @@ function Player:init(args)
           unit.flagellant_dmg_m = unit.flagellant_dmg_m + 0.04
         end
       end
-    end)
+    end, nil, nil, 'buff')
   end
 
   self:calculate_stats(true)
@@ -542,6 +543,9 @@ function Player:init(args)
     self.t:every(1, function()
       self.unleash_area_dmg_m = self.unleash_area_dmg_m + 0.02
       self.unleash_area_size_m = self.unleash_area_size_m + 0.02
+      if self.dot_area then
+        self.dot_area:scale(self.unleash_area_size_m)
+      end
     end)
   end
 
@@ -707,7 +711,7 @@ function Player:update(dt)
     elseif main.current.voider_level == 1 then self.dot_dmg_m = 1.15
     else self.dot_dmg_m = 1 end
   end
-  if self.call_of_the_void then self.dot_dmg_m = self.dot_dmg_m*1.25 end
+  if self.call_of_the_void then self.dot_dmg_m = (self.dot_dmg_m or 1)*1.25 end
 
   if self.ouroboros_technique_l and self.leader then
     local units = self:get_all_units()
@@ -925,6 +929,8 @@ function Player:hit(damage)
     end
   end
 
+  self.character_hp:change_hp()
+
   if self.hp <= 0 then
     if self.divined then
       self:heal(self.max_hp)
@@ -961,6 +967,8 @@ function Player:heal(amount)
   self:show_heal(1.5)
   self.hp = self.hp + amount
   if self.hp > self.max_hp then self.hp = self.max_hp end
+
+  self.character_hp:change_hp()
 end
 
 
@@ -1590,11 +1598,11 @@ function Area:init(args)
         enemy:slow(0.4, 6)
       end
     elseif self.character == 'swordsman' then
+      if self.parent.resonance then resonance_dmg = (self.dmg + self.dmg*0.15*#enemies)*0.05*#enemies end
+      enemy:hit(self.dmg + self.dmg*0.15*#enemies + resonance_dmg)
+    elseif self.character == 'blade' and self.level == 3 then
       if self.parent.resonance then resonance_dmg = (self.dmg + self.dmg*0.33*#enemies)*0.05*#enemies end
       enemy:hit(self.dmg + self.dmg*0.33*#enemies + resonance_dmg)
-    elseif self.character == 'blade' and self.level == 3 then
-      if self.parent.resonance then resonance_dmg = (self.dmg + self.dmg*0.5*#enemies)*0.05*#enemies end
-      enemy:hit(self.dmg + self.dmg*0.5*#enemies + resonance_dmg)
     elseif self.character == 'highlander' then
       if self.parent.resonance then resonance_dmg = 6*self.dmg*0.05*#enemies end
       enemy:hit(6*self.dmg + resonance_dmg)
@@ -1799,6 +1807,11 @@ function DotArea:draw()
     local lw = math.remap(self.shape.rs, 32, 256, 2, 4)
     for i = 1, 4 do graphics.arc('open', self.x, self.y, self.shape.rs, (i-1)*math.pi/2 + math.pi/4 - math.pi/8, (i-1)*math.pi/2 + math.pi/4 + math.pi/8, self.color, lw) end
   graphics.pop()
+end
+
+
+function DotArea:scale(v)
+  self.shape = Circle(self.x, self.y, (v or 1)*self.rs)
 end
 
 
@@ -2146,7 +2159,7 @@ function Saboteur:on_collision_enter(other, contact)
   if table.any(main.current.enemies, function(v) return other:is(v) end) then
     camera:shake(4, 0.5)
     local t = {group = main.current.effects, x = self.x, y = self.y, r = self.r, w = (self.crit and 1.5 or 1)*self.area_size_m*64, color = self.color, 
-      dmg = (self.crit and 2 or 1)*self.area_dmg_m*self.actual_dmg*(self.conjurer_buff_m or 1), character = self.character}
+      dmg = (self.crit and 2 or 1)*self.area_dmg_m*self.actual_dmg*(self.conjurer_buff_m or 1), character = self.character, parent = self.parent}
     Area(table.merge(t, mods or {}))
     self.dead = true
   end

@@ -101,6 +101,11 @@ function init()
   rogue_crit2 = Sound('Sword hits another sword 6.ogg', s)
   cascade = Sound('Kubbi - Ember - 04 Cascade.ogg', {tags = {music}})
 
+  speed_booster_elite = Image('speed_booster_elite')
+  exploder_elite = Image('exploder_elite')
+  swarmer_elite = Image('swarmer_elite')
+  forcer_elite = Image('forcer_elite')
+  cluster_elite = Image('cluster_elite')
   warrior = Image('warrior')
   ranger = Image('ranger')
   healer = Image('healer')
@@ -428,7 +433,7 @@ function init()
   character_descriptions = {
     ['vagrant'] = function(lvl) return '[fg]shoots a projectile that deals [yellow]' .. get_character_stat('vagrant', lvl, 'dmg') .. '[fg] damage' end,
     ['swordsman'] = function(lvl) return '[fg]deals [yellow]' .. get_character_stat('swordsman', lvl, 'dmg') .. '[fg] damage in an area, deals extra [yellow]' ..
-      math.round(get_character_stat('swordsman', lvl, 'dmg')/3, 2) .. '[fg] damage per unit hit' end,
+      math.round(get_character_stat('swordsman', lvl, 'dmg')*0.15, 2) .. '[fg] damage per unit hit' end,
     ['wizard'] = function(lvl) return '[fg]shoots a projectile that deals [yellow]' .. get_character_stat('wizard', lvl, 'dmg') .. ' AoE[fg] damage' end,
     ['archer'] = function(lvl) return '[fg]shoots an arrow that deals [yellow]' .. get_character_stat('archer', lvl, 'dmg') .. '[fg] damage and pierces' end,
     ['scout'] = function(lvl) return '[fg]throws a knife that deals [yellow]' .. get_character_stat('scout', lvl, 'dmg') .. '[fg] damage and chains [yellow]3[fg] times' end,
@@ -567,7 +572,7 @@ function init()
     ['scout'] = function() return '[yellow]+25%[fg] damage per chain and [yellow]+3[fg] chains' end,
     ['cleric'] = function() return '[fg]heals all units' end,
     ['outlaw'] = function() return "[yellow]+50%[fg] outlaw attack speed and his knives seek enemies" end,
-    ['blade'] = function() return '[fg]deal additional [yellow]' .. get_character_stat('blade', 3, 'dmg')/2 .. '[fg] damage per enemy hit' end,
+    ['blade'] = function() return '[fg]deal additional [yellow]' .. get_character_stat('blade', 3, 'dmg')/3 .. '[fg] damage per enemy hit' end,
     ['elementor'] = function() return '[fg]slows enemies by [yellow]60%[fg] for [yellow]6[fg] seconds on hit' end,
     ['saboteur'] = function() return '[fg]the explosion has [yellow]50%[fg] chance to crit, increasing in size and dealing [yellow]2x[fg] damage' end,
     ['stormweaver'] = function() return "[fg]chain lightning's trigger area of effect and number of units hit is [yellow]doubled" end,
@@ -1148,14 +1153,15 @@ function init()
   gold = 2
   passives = {}
   system.load_state()
+  new_game_plus = state.new_game_plus or 0
+  steam.userStats.requestCurrentStats()
 
   main = Main()
-  main:add(BuyScreen'buy_screen')
-  main:go_to('buy_screen', 0, {}, passives)
-  --[[
+  --main:add(BuyScreen'buy_screen')
+  --main:go_to('buy_screen', 0, {}, passives)
+
   main:add(Media'media')
   main:go_to('media')
-  ]]--
 end
 
 
@@ -1178,6 +1184,16 @@ function update(dt)
       music.volume = 0.5
     end
   end
+
+  if input.k.pressed then
+    steam.userStats.setAchievement('ASCENSION_1')
+    steam.userStats.storeStats()
+  end
+
+  if input.l.pressed then
+    steam.userStats.resetAllStats(true)
+    steam.userStats.storeStats()
+  end
 end
 
 
@@ -1191,7 +1207,7 @@ end
 function love.run()
   return engine_run({
     game_name = 'SNKRX',
-    window_width = 480*3,
-    window_height = 270*3,
+    window_width = 480*4,
+    window_height = 270*4,
   })
 end

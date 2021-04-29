@@ -13,9 +13,12 @@ function shared_init()
     red = ColorRamp(Color'#e91d39', 0.025),
     purple = ColorRamp(Color'#8e559e', 0.025),
   }
-  for name, color in pairs(colors) do _G[name] = color end
+  for name, color in pairs(colors) do
+    _G[name] = color
+    _G[name .. '_transparent'] = Color(color[0].r, color[0].g, color[0].b, 0.5)
+    _G[name .. '_transparent_weak'] = Color(color[0].r, color[0].g, color[0].b, 0.25)
+  end
   modal_transparent = Color(0.1, 0.1, 0.1, 0.6)
-  fg_transparent = Color(fg[0].r, fg[0].g, fg[0].b, 0.5)
 
   bg_off = Color(47, 47, 47)
   bg_gradient = GradientImage('vertical', Color(128, 128, 128, 0), Color(0, 0, 0, 0.3))
@@ -48,6 +51,7 @@ end
 
 
 function shared_draw(draw_action)
+  --[[
   star_canvas:draw_to(function()
     star_group:draw()
   end)
@@ -70,6 +74,7 @@ function shared_draw(draw_action)
     bg_gradient:draw(gw/2, gh/2, 480, 270)
     camera:detach()
   end)
+  ]]--
 
   main_canvas:draw_to(function()
     draw_action()

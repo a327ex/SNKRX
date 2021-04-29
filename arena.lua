@@ -65,10 +65,16 @@ function Arena:on_enter(from, level, units, passives)
 
   for i, unit in ipairs(units) do
     if i == 1 then
-      self.player = Player{group = self.main, x = gw/2, y = gh/2 + 16, leader = true, character = unit.character, level = unit.level, passives = self.passives}
+      self.player = Player{group = self.main, x = gw/2, y = gh/2 + 16, leader = true, character = unit.character, level = unit.level, passives = self.passives, ii = i}
     else
-      self.player:add_follower(Player{group = self.main, character = unit.character, level = unit.level, passives = self.passives})
+      self.player:add_follower(Player{group = self.main, character = unit.character, level = unit.level, passives = self.passives, ii = i})
     end
+  end
+
+  local units = self.player:get_all_units()
+  for _, unit in ipairs(units) do
+    local chp = CharacterHP{group = self.effects, x = self.x1 + 8 + (unit.ii-1)*22, y = self.y2 + 14, parent = unit}
+    unit.character_hp = chp
   end
 
   if self.level == 1000 then
@@ -104,7 +110,35 @@ function Arena:on_enter(from, level, units, passives)
           end)
         end)
       end)
-      self.t:every(function() return self.start_time <= 0 and (self.boss and self.boss.dead) and #self.main:get_objects_by_classes(self.enemies) <= 0 end, function() self.can_quit = true end)
+      self.t:every(function() return self.start_time <= 0 and (self.boss and self.boss.dead) and #self.main:get_objects_by_classes(self.enemies) <= 0 end, function()
+        self.can_quit = true
+        if self.level == 6 then
+          state.achievement_speed_booster = true
+          system.save_state()
+          steam.userStats.setAchievement('SPEED_BOOSTER')
+          steam.userStats.storeStats()
+        elseif self.level == 12 then
+          state.achievement_exploder = true
+          system.save_state()
+          steam.userStats.setAchievement('EXPLODER')
+          steam.userStats.storeStats()
+        elseif self.level == 18 then
+          state.achievement_swarmer = true
+          system.save_state()
+          steam.userStats.setAchievement('SWARMER')
+          steam.userStats.storeStats()
+        elseif self.level == 24 then
+          state.achievement_forcer = true
+          system.save_state()
+          steam.userStats.setAchievement('FORCER')
+          steam.userStats.storeStats()
+        elseif self.level == 25 then
+          state.achievement_cluster = true
+          system.save_state()
+          steam.userStats.setAchievement('CLUSTER')
+          steam.userStats.storeStats()
+        end
+      end)
     end)
   else
     -- Set win condition and enemy spawns
@@ -174,13 +208,13 @@ function Arena:on_enter(from, level, units, passives)
           end, self.time_left)
 
           self.t:every_immediate(2, function()
-            if #self.main:get_objects_by_classes(self.enemies) <= 0 or love.timer.getTime() - self.last_spawn_enemy_time >= 8 and not self.transitioning then
+            if #self.main:get_objects_by_classes(self.enemies) <= 0 or love.timer.getTime() - self.last_spawn_enemy_time >= 8 and not self.transitioning and not self.can_quit then
               self:spawn_distributed_enemies()
             end
           end, self.time_left/2)
         end)
       end)
-      self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 0 and self.time_left <= 0 end, function() self.can_quit = true end)
+      self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 0 and self.time_left <= 0 and not self.can_quit end, function() self.can_quit = true end)
     end
 
     if self.level == 18 and self.trailer then
@@ -314,17 +348,140 @@ function Arena:update(dt)
         camera.x, camera.y = gw/2, gh/2
         self.win_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 66, lines = {{text = '[wavy_mid, cbyc2]congratulations!', font = fat_font, alignment = 'center'}}}
         self.t:after(2.5, function()
-          self.win_text2 = Text2{group = self.ui, x = gw/2, y = gh/2 + 20, lines = {
-            {text = "[fg]you've beaten the game!", font = pixul_font, alignment = 'center', height_multiplier = 1.2},
-            {text = "[fg]i made this game in 2 months as a dev challenge", font = pixul_font, alignment = 'center', height_multiplier = 1.2},
-            {text = "[fg]and i'm happy with how it turned out!", font = pixul_font, alignment = 'center', height_multiplier = 1.2},
-            {text = "[fg]if you liked it too and want to play more games like this:", font = pixul_font, alignment = 'center', height_multiplier = 5},
-            {text = "[fg]i will release more games this year, so stay tuned!", font = pixul_font, alignment = 'center', height_multiplier = 1.4},
-            {text = "[wavy_mid, yellow]thanks for playing!", font = pixul_font, alignment = 'center'},
-          }}
-          SteamFollowButton{group = self.ui, x = gw/2, y = gh/2 + 37}
-          RestartButton{group = self.ui, x = gw - 40, y = gh - 20}
+          if new_game_plus == 10 then
+
+          else
+            self.win_text2 = Text2{group = self.ui, x = gw/2, y = gh/2 + 20, lines = {
+              {text = "[fg]you've beaten the game!", font = pixul_font, alignment = 'center', height_multiplier = 1.2},
+              {text = "[fg]i made this game in 3 months as a dev challenge", font = pixul_font, alignment = 'center', height_multiplier = 1.2},
+              {text = "[fg]and i'm happy with how it turned out!", font = pixul_font, alignment = 'center', height_multiplier = 1.2},
+              {text = "[fg]if you liked it too and want to play more games like this:", font = pixul_font, alignment = 'center', height_multiplier = 5},
+              {text = "[fg]i will release more games this year, so stay tuned!", font = pixul_font, alignment = 'center', height_multiplier = 1.4},
+              {text = "[wavy_mid, yellow]thanks for playing!", font = pixul_font, alignment = 'center'},
+            }}
+            SteamFollowButton{group = self.ui, x = gw/2, y = gh/2 + 37}
+            RestartButton{group = self.ui, x = gw - 40, y = gh - 20}
+          end
         end)
+
+        if new_game_plus == 1 then
+          state.achievement_new_game_1 = true
+          system.save_state()
+          steam.userStats.setAchievement('NEW_GAME_1')
+          steam.userStats.storeStats()
+        end
+
+        if new_game_plus == 5 then
+          state.achievement_new_game_5 = true
+          system.save_state()
+          steam.userStats.setAchievement('NEW_GAME_5')
+          steam.userStats.storeStats()
+        end
+
+        if new_game_plus == 10 then
+          state.achievement_game_complete = true
+          system.save_state()
+          steam.userStats.setAchievement('GAME_COMPLETE')
+          steam.userStats.storeStats()
+        end
+
+        if self.ranger_level >= 2 then
+          state.achievement_rangers_win = true
+          system.save_state()
+          steam.userStats.setAchievement('RANGERS_WIN')
+          steam.userStats.storeStats()
+        end
+
+        if self.warrior_level >= 2 then
+          state.achievement_warriors_win = true
+          system.save_state()
+          steam.userStats.setAchievement('WARRIORS_WIN')
+          steam.userStats.storeStats()
+        end
+
+        if self.mage_level >= 2 then
+          state.achievement_mages_win = true
+          system.save_state()
+          steam.userStats.setAchievement('MAGES_WIN')
+          steam.userStats.storeStats()
+        end
+
+        if self.rogue_level >= 2 then
+          state.achievement_rogues_win = true
+          system.save_state()
+          steam.userStats.setAchievement('ROGUES_WIN')
+          steam.userStats.storeStats()
+        end
+
+        if self.healer_level >= 2 then
+          state.achievement_healers_win = true
+          system.save_state()
+          steam.userStats.setAchievement('HEALERS_WIN')
+          steam.userStats.storeStats()
+        end
+
+        if self.enchanter_level >= 2 then
+          state.achievement_enchanters_win = true
+          system.save_state()
+          steam.userStats.setAchievement('ENCHANTERS_WIN')
+          steam.userStats.storeStats()
+        end
+
+        if self.nuker_level >= 2 then
+          state.achievement_nukers_win = true
+          system.save_state()
+          steam.userStats.setAchievement('NUKERS_WIN')
+          steam.userStats.storeStats()
+        end
+
+        if self.conjurer_level >= 2 then
+          state.achievement_conjurers_win = true
+          system.save_state()
+          steam.userStats.setAchievement('CONJURERS_WIN')
+          steam.userStats.storeStats()
+        end
+
+        if self.psyker_level >= 2 then
+          state.achievement_psykers_win = true
+          system.save_state()
+          steam.userStats.setAchievement('PSYKERS_WIN')
+          steam.userStats.storeStats()
+        end
+
+        if self.curser_level >= 2 then
+          state.achievement_cursers_win = true
+          system.save_state()
+          steam.userStats.setAchievement('CURSERS_WIN')
+          steam.userStats.storeStats()
+        end
+
+        if self.forcer_level >= 2 then
+          state.achievement_forcers_win = true
+          system.save_state()
+          steam.userStats.setAchievement('FORCERS_WIN')
+          steam.userStats.storeStats()
+        end
+
+        if self.swarmer_level >= 2 then
+          state.achievement_swarmers_win = true
+          system.save_state()
+          steam.userStats.setAchievement('SWARMERS_WIN')
+          steam.userStats.storeStats()
+        end
+
+        if self.voider_level >= 2 then
+          state.achievement_voiders_win = true
+          system.save_state()
+          steam.userStats.setAchievement('VOIDERS_WIN')
+          steam.userStats.storeStats()
+        end
+
+        --[[
+        state.achievement_speed_booster = true
+        system.save_state()
+        steam.userStats.setAchievement('SPEED_BOOSTER')
+        steam.userStats.storeStats()
+        ]]--
       end
 
     else
@@ -359,9 +516,6 @@ function Arena:draw()
   self.main:draw()
   self.post_main:draw()
   self.effects:draw()
-  if self.level == 18 and self.trailer then graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent) end
-  if self.choosing_passives or self.won or self.paused or self.died then graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent) end
-  self.ui:draw()
 
   graphics.draw_with_mask(function()
     star_canvas:draw(0, 0, 0, 1, 1)
@@ -408,6 +562,11 @@ function Arena:draw()
     end
   end
   camera:detach()
+
+  if self.level == 18 and self.trailer then graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent) end
+  if self.choosing_passives or self.won or self.paused or self.died then graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent) end
+
+  self.ui:draw()
 end
 
 
@@ -549,4 +708,53 @@ function Arena:spawn_n_enemies(p, j, n)
       end
     end}
   end, n, nil, 'spawn_enemies_' .. j)
+end
+
+
+
+CharacterHP = Object:extend()
+CharacterHP:implement(GameObject)
+function CharacterHP:init(args)
+  self:init_game_object(args)
+  self.hfx:add('hit', 1)
+  self.cooldown_ratio = 0
+end
+
+
+function CharacterHP:update(dt)
+  self:update_game_object(dt)
+  local t, d = self.parent.t:get_timer_and_delay'shoot'
+  if t and d then
+    local m = self.parent.t:get_every_multiplier'shoot'
+    self.cooldown_ratio = math.min(t/(d*m), 1)
+  end
+  local t, d = self.parent.t:get_timer_and_delay'attack'
+  if t and d then
+    local m = self.parent.t:get_every_multiplier'attack'
+    self.cooldown_ratio = math.min(t/(d*m), 1)
+  end
+  local t, d = self.parent.t:get_timer_and_delay'heal'
+  if t and d then self.cooldown_ratio = math.min(t/d, 1) end
+  local t, d = self.parent.t:get_timer_and_delay'buff'
+  if t and d then self.cooldown_ratio = math.min(t/d, 1) end
+  local t, d = self.parent.t:get_timer_and_delay'spawn'
+  if t and d then self.cooldown_ratio = math.min(t/d, 1) end
+end
+
+
+function CharacterHP:draw()
+  graphics.push(self.x, self.y, 0, self.hfx.hit.x, self.hfx.hit.x)
+    graphics.rectangle(self.x, self.y - 2, 14, 4, 2, 2, self.parent.dead and bg[5] or (self.hfx.hit.f and fg[0] or _G[character_color_strings[self.parent.character]][-2]), 2)
+    if self.parent.hp > 0 then
+      graphics.rectangle2(self.x - 7, self.y - 4, 14*(self.parent.hp/self.parent.max_hp), 4, nil, nil, self.parent.dead and bg[5] or (self.hfx.hit.f and fg[0] or _G[character_color_strings[self.parent.character]][-2]))
+    end
+    if not self.parent.dead then
+      graphics.line(self.x - 8, self.y + 5, self.x - 8 + 15.5*self.cooldown_ratio, self.y + 5, self.hfx.hit.f and fg[0] or _G[character_color_strings[self.parent.character]][-2], 2)
+    end
+  graphics.pop()
+end
+
+
+function CharacterHP:change_hp()
+  self.hfx:use('hit', 0.5)
 end

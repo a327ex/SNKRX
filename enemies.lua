@@ -171,8 +171,10 @@ function Seeker:init(args)
   if self.speed_booster then
     self.color = green[0]:clone()
     self.area_sensor = Circle(self.x, self.y, 128)
+    self.t:after({16, 32}, function() self:hit(10000) end)
   elseif self.exploder then
     self.color = blue[0]:clone()
+    self.t:after({16, 32}, function() self:hit(10000) end)
   elseif self.headbutter then
     self.color = orange[0]:clone()
     self.last_headbutt_time = 0
@@ -285,7 +287,7 @@ function Seeker:update(dt)
       if self.boss then
         local enemies = main.current.main:get_objects_by_classes(main.current.enemies)
         local x, y = 0, 0
-        if #enemies > 0 then
+        if #enemies > 1 then
           for _, enemy in ipairs(enemies) do
             x = x + enemy.x
             y = y + enemy.y

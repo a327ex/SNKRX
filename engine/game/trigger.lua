@@ -151,10 +151,23 @@ function Trigger:set_every_multiplier(tag, multiplier)
 end
 
 
+function Trigger:get_every_multiplier(tag)
+  if not self.triggers[tag] then return end
+  return self.triggers[tag].multiplier
+end
+
+
 -- Returns the elapsed time of a given trigger as a number between 0 and 1.
 -- Useful if you need to know where you currently are in the duration of a during call.
 function Trigger:get_during_elapsed_time(tag)
+  if not self.triggers[tag] then return end
   return self.triggers[tag].timer/self.triggers[tag].delay
+end
+
+
+function Trigger:get_timer_and_delay(tag)
+  if not self.triggers[tag] then return end
+  return self.triggers[tag].timer, self.triggers[tag].delay
 end
 
 

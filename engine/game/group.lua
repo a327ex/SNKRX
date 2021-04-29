@@ -63,9 +63,11 @@ function Group:update(dt)
   self.cells = {}
   for _, object in ipairs(self.objects) do
     local cx, cy = math.floor(object.x/self.cell_size), math.floor(object.y/self.cell_size)
+    if tostring(cx) == tostring(0/0) or tostring(cy) == tostring(0/0) then goto continue end
     if not self.cells[cx] then self.cells[cx] = {} end
     if not self.cells[cx][cy] then self.cells[cx][cy] = {} end
     table.insert(self.cells[cx][cy], object)
+    ::continue::
   end
 
   for i = #self.objects, 1, -1 do

@@ -1,28 +1,12 @@
-Selling should keep units value unless it's already merged into a higher level
-Boss stands still for 1 second before enemies spawn
-
 General balance
-  * Enemies should have a chance to be spawned with a modifier as levels increase
-  * Every 3rd level should be wave only
-  * Remove "enemies killed" mode
-  Balance playthroughs (record all balance playthroughs as they can be used for trailers; do this after graphical improvements done)
-UI improvements
-  Hover class highlight
-  DPS list (right)
-  HP list (bottom)
-  Item list (left)
-Graphical improvements
-  Further graphical improvements if there's time
 Trailers
   3-4 pure gameplay playthroughs showcasing different builds
+  1 normal 30-40s trailer
 Misc
-  * Better pause screen
-  * End screen
-  Ascension mode (difficulty ramps up faster and goes higher than normal at the end, the player also gains more gold, and on ascension 1 and 5 the maximum number of units is increased by 1 (10->11->12)
-  Music for bosses and shop
-Achievements
-  Come up with a few new ones as I play the game more and balance the numbers
-  Implement all the ones I already uploaded to Steam
+  NG+1-10 (difficulty ramps up faster and goes higher than normal at the end, the player also gains more gold per round, and on NG+1 and NG+5 the maximum number of units is increased by 1 (10->11->12)
+  NG+10 end screen
+  New music
+  Credits
 
 
 Engine improvements for after SNKRX release
@@ -33,3 +17,6 @@ Engine improvements for after SNKRX release
     Defining on_hit on the Wall creation call for that specific Wall, and thus that specific Wall will have this behavior while other walls won't
     https://i.imgur.com/asPdpnQ.png ?
     Not sure if I should go all the way with event systems like this or only have it work for specific cases, need to think about it more
+
+Rewrite
+  DPS list - needs every damage event to be logged with source, destination and damage values being detached from intermediary objects (areas, projectiles, etc)

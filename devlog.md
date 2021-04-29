@@ -1060,3 +1060,20 @@ Added an end game screen and started work on making elites spawn throughout the 
 
 Elites now spawn at appropriate rates. Testing out the game a little with this and it seems a lot better than before, but I need to balance a few of the elite units more (headbutter and spawner seem weak).
 Also went through a bunch of smaller bug fixes and changes as I play the game more and missing details start popping up. I should leave proper balancing for later and start work on final UI improvements tomorrow.
+
+# Day 69-72 - 26-29/04/21
+
+Everything is done except these:
+
+* General balance
+* Trailers
+  * 3-4 pure gameplay playthroughs showcasing different builds
+  * 1 normal 30-40s trailer
+* Misc
+  * NG+1-10 (difficulty ramps up faster and goes higher than normal at the end, the player also gains more gold per round, and on NG+1 and NG+5 the maximum number of units is increased by 1 (10->11->12)
+  * NG+10 end screen
+  * New music
+  * Credits
+
+Tomorrow I'll start balancing the game out, which should lead to a bunch of bug fixes and small changes, and after that's done I'll get NG+1-10 working.
+Once that's done I'll do credits screen, NG+10 (game complete) screen, and find new music for the game. I want something more ambient generally and less upbeat.

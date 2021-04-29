@@ -317,7 +317,7 @@ function RestartButton:init(args)
   self:init_game_object(args)
   self.shape = Rectangle(self.x, self.y, pixul_font:get_text_width('restart') + 4, pixul_font.h + 4)
   self.interact_with_mouse = true
-  self.text = Text({{text = '[bg10]restart', font = pixul_font, alignment = 'center'}}, global_text_tags)
+  self.text = Text({{text = '[bg10]NG+' .. tostring(new_game_plus+1), font = pixul_font, alignment = 'center'}}, global_text_tags)
 end
 
 
@@ -334,6 +334,9 @@ function RestartButton:update(dt)
       gold = 2
       passives = {}
       cascade_instance:stop()
+      new_game_plus = new_game_plus + 1
+      state.new_game_plus = new_game_plus
+      system.save_state()
       main:add(BuyScreen'buy_screen')
       main:go_to('buy_screen', 0, {}, passives)
     end, text = Text({{text = '[wavy, bg]restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
@@ -353,13 +356,13 @@ function RestartButton:on_mouse_enter()
   ui_hover1:play{pitch = random:float(1.3, 1.5), volume = 0.5}
   pop2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
   self.selected = true
-  self.text:set_text{{text = '[fgm5]restart', font = pixul_font, alignment = 'center'}}
+  self.text:set_text{{text = '[fgm5]NG+' .. tostring(new_game_plus+1), font = pixul_font, alignment = 'center'}}
   self.spring:pull(0.2, 200, 10)
 end
 
 
 function RestartButton:on_mouse_exit()
-  self.text:set_text{{text = '[bg10]restart', font = pixul_font, alignment = 'center'}}
+  self.text:set_text{{text = '[bg10]NG+' .. tostring(new_game_plus+1), font = pixul_font, alignment = 'center'}}
   self.selected = false
 end
 
@@ -541,8 +544,8 @@ end
 
 function CharacterPart:draw()
   graphics.push(self.x, self.y, 0, self.sx*self.spring.x, self.sy*self.spring.x)
-    graphics.rectangle(self.x, self.y, 14, 14, 3, 3, character_colors[self.character])
-    graphics.print_centered(self.level, pixul_font, self.x + 0.5, self.y + 2, 0, 1, 1, 0, 0, _G[character_color_strings[self.character]][-5])
+    graphics.rectangle(self.x, self.y, 14, 14, 3, 3, self.highlighted and fg[0] or character_colors[self.character])
+    graphics.print_centered(self.level, pixul_font, self.x + 0.5, self.y + 2, 0, 1, 1, 0, 0, self.highlighted and fg[-5] or _G[character_color_strings[self.character]][-5])
   graphics.pop()
 end
 
@@ -562,15 +565,23 @@ function CharacterPart:on_mouse_enter()
     {text = (self.level == 3 and character_effect_descriptions[self.character]() or character_effect_descriptions_gray[self.character]()), font = pixul_font, alignment = 'center'},
   }, nil, nil, nil, nil, 16, 4, nil, 2)
   self.info_text.x, self.info_text.y = gw/2, gh/2 + 10
+
+  if self.parent:is(BuyScreen) then
+    for _, set in ipairs(self.parent.sets) do
+      if table.any(character_classes[self.character], function(v) return v == set.class end) then
+        set:highlight()
+      end
+    end
+  end
 end
 
 
 function CharacterPart:get_sale_price()
   local total = 0
-  total = total + ((self.level == 1 and 1) or (self.level == 2 and 4) or (self.level == 3 and 8))
+  total = total + ((self.level == 1 and character_tiers[self.character]) or (self.level == 2 and 2*character_tiers[self.character]) or (self.level == 3 and 6*character_tiers[self.character]))
   if self.reserve then
-    if self.reserve[2] then total = total + self.reserve[2]*4 end
-    if self.reserve[1] then total = total + self.reserve[1] end
+    if self.reserve[2] then total = total + self.reserve[2]*character_tiers[self.character]*2 end
+    if self.reserve[1] then total = total + self.reserve[1]*character_tiers[self.character] end
   end
   return total
 end
@@ -578,9 +589,19 @@ end
 
 function CharacterPart:on_mouse_exit()
   self.selected = false
-  self.info_text:deactivate()
-  self.info_text.dead = true
+  if self.info_text then
+    self.info_text:deactivate()
+    self.info_text.dead = true
+  end
   self.info_text = nil
+
+  if self.parent:is(BuyScreen) then
+    for _, set in ipairs(self.parent.sets) do
+      if table.any(character_classes[self.character], function(v) return v == set.class end) then
+        set:unhighlight()
+      end
+    end
+  end
 end
 
 
@@ -592,6 +613,26 @@ function CharacterPart:die()
     self.info_text.dead = true
     self.info_text = nil
   end
+
+  if self.selected and self.parent:is(BuyScreen) then
+    for _, set in ipairs(self.parent.sets) do
+      if table.any(character_classes[self.character], set.class) then
+        set:unhighlight()
+      end
+    end
+  end
+end
+
+
+function CharacterPart:highlight()
+  self.highlighted = true
+  self.spring:pull(0.2, 200, 10)
+end
+
+
+function CharacterPart:unhighlight()
+  self.highlighted = false
+  self.spring:pull(0.05, 200, 10)
 end
 
 
@@ -863,8 +904,10 @@ end
 
 
 function CharacterIcon:on_mouse_exit()
-  self.info_text:deactivate()
-  self.info_text.dead = true
+  if self.info_text then
+    self.info_text:deactivate()
+    self.info_text.dead = true
+  end
   self.info_text = nil
 end
 
@@ -908,14 +951,21 @@ function ClassIcon:draw()
       if table.any(self.units, function(v) return v.character == self.character end) then next_n = nil end
     end
 
-    graphics.rectangle(self.x, self.y, 16, 24, 4, 4, (n >= i) and class_colors[self.class] or bg[3])
-    _G[self.class]:draw(self.x, self.y, 0, 0.3, 0.3, 0, 0, (n >= i) and _G[class_color_strings[self.class]][-5] or bg[10])
-    graphics.rectangle(self.x, self.y + 26, 16, 16, 3, 3, bg[3])
+    graphics.rectangle(self.x, self.y, 16, 24, 4, 4, self.highlighted and fg[0] or ((n >= i) and class_colors[self.class] or bg[3]))
+    _G[self.class]:draw(self.x, self.y, 0, 0.3, 0.3, 0, 0, self.highlighted and fg[-5] or ((n >= i) and _G[class_color_strings[self.class]][-5] or bg[10]))
+    graphics.rectangle(self.x, self.y + 26, 16, 16, 3, 3, self.highlighted and fg[0] or bg[3])
     if i == 2 then
-      graphics.line(self.x - 3, self.y + 20, self.x - 3, self.y + 25, (n >= 1) and class_colors[self.class] or bg[10], 3)
-      graphics.line(self.x - 3, self.y + 27, self.x - 3, self.y + 32, (n >= 2) and class_colors[self.class] or bg[10], 3)
-      graphics.line(self.x + 4, self.y + 20, self.x + 4, self.y + 25, (n >= 3) and class_colors[self.class] or bg[10], 3)
-      graphics.line(self.x + 4, self.y + 27, self.x + 4, self.y + 32, (n >= 4) and class_colors[self.class] or bg[10], 3)
+      if self.highlighted then
+        graphics.line(self.x - 3, self.y + 20, self.x - 3, self.y + 25, (n >= 1) and fg[-5] or fg[-10], 3)
+        graphics.line(self.x - 3, self.y + 27, self.x - 3, self.y + 32, (n >= 2) and fg[-5] or fg[-10], 3)
+        graphics.line(self.x + 4, self.y + 20, self.x + 4, self.y + 25, (n >= 3) and fg[-5] or fg[-10], 3)
+        graphics.line(self.x + 4, self.y + 27, self.x + 4, self.y + 32, (n >= 4) and fg[-5] or fg[-10], 3)
+      else
+        graphics.line(self.x - 3, self.y + 20, self.x - 3, self.y + 25, (n >= 1) and class_colors[self.class] or bg[10], 3)
+        graphics.line(self.x - 3, self.y + 27, self.x - 3, self.y + 32, (n >= 2) and class_colors[self.class] or bg[10], 3)
+        graphics.line(self.x + 4, self.y + 20, self.x + 4, self.y + 25, (n >= 3) and class_colors[self.class] or bg[10], 3)
+        graphics.line(self.x + 4, self.y + 27, self.x + 4, self.y + 32, (n >= 4) and class_colors[self.class] or bg[10], 3)
+      end
       if next_n then
         if next_n == 1 then
           graphics.line(self.x - 3, self.y + 20, self.x - 3, self.y + 25, self.flash and class_colors[self.class] or bg[10], 3)
@@ -928,12 +978,21 @@ function ClassIcon:draw()
         end
       end
     elseif i == 3 then
-      graphics.line(self.x - 3, self.y + 19, self.x - 3, self.y + 22, (n >= 1) and class_colors[self.class] or bg[10], 3)
-      graphics.line(self.x - 3, self.y + 24, self.x - 3, self.y + 27, (n >= 2) and class_colors[self.class] or bg[10], 3)
-      graphics.line(self.x - 3, self.y + 29, self.x - 3, self.y + 32, (n >= 3) and class_colors[self.class] or bg[10], 3)
-      graphics.line(self.x + 4, self.y + 19, self.x + 4, self.y + 22, (n >= 4) and class_colors[self.class] or bg[10], 3)
-      graphics.line(self.x + 4, self.y + 24, self.x + 4, self.y + 27, (n >= 5) and class_colors[self.class] or bg[10], 3)
-      graphics.line(self.x + 4, self.y + 29, self.x + 4, self.y + 32, (n >= 6) and class_colors[self.class] or bg[10], 3)
+      if self.highlighted then
+        graphics.line(self.x - 3, self.y + 19, self.x - 3, self.y + 22, (n >= 1) and fg[-5] or fg[-10], 3)
+        graphics.line(self.x - 3, self.y + 24, self.x - 3, self.y + 27, (n >= 2) and fg[-5] or fg[-10], 3)
+        graphics.line(self.x - 3, self.y + 29, self.x - 3, self.y + 32, (n >= 3) and fg[-5] or fg[-10], 3)
+        graphics.line(self.x + 4, self.y + 19, self.x + 4, self.y + 22, (n >= 4) and fg[-5] or fg[-10], 3)
+        graphics.line(self.x + 4, self.y + 24, self.x + 4, self.y + 27, (n >= 5) and fg[-5] or fg[-10], 3)
+        graphics.line(self.x + 4, self.y + 29, self.x + 4, self.y + 32, (n >= 6) and fg[-5] or fg[-10], 3)
+      else
+        graphics.line(self.x - 3, self.y + 19, self.x - 3, self.y + 22, (n >= 1) and class_colors[self.class] or bg[10], 3)
+        graphics.line(self.x - 3, self.y + 24, self.x - 3, self.y + 27, (n >= 2) and class_colors[self.class] or bg[10], 3)
+        graphics.line(self.x - 3, self.y + 29, self.x - 3, self.y + 32, (n >= 3) and class_colors[self.class] or bg[10], 3)
+        graphics.line(self.x + 4, self.y + 19, self.x + 4, self.y + 22, (n >= 4) and class_colors[self.class] or bg[10], 3)
+        graphics.line(self.x + 4, self.y + 24, self.x + 4, self.y + 27, (n >= 5) and class_colors[self.class] or bg[10], 3)
+        graphics.line(self.x + 4, self.y + 29, self.x + 4, self.y + 32, (n >= 6) and class_colors[self.class] or bg[10], 3)
+      end
       if next_n then
         if next_n == 1 then
           graphics.line(self.x - 3, self.y + 19, self.x - 3, self.y + 22, self.flash and class_colors[self.class] or bg[10], 3)
@@ -964,13 +1023,31 @@ function ClassIcon:on_mouse_enter()
     {text = class_descriptions[self.class]((owned >= j and 2) or (owned >= i and 1) or 0), font = pixul_font, alignment = 'center'},
   }, nil, nil, nil, nil, 16, 4, nil, 2)
   self.info_text.x, self.info_text.y = gw/2, gh/2 + 10
+
+  if not self.parent:is(ShopCard) then
+    for _, character in ipairs(self.parent.characters) do
+      if table.any(character_classes[character.character], function(v) return v == self.class end) then
+        character:highlight()
+      end
+    end
+  end
 end
 
 
 function ClassIcon:on_mouse_exit()
-  self.info_text:deactivate()
-  self.info_text.dead = true
+  if self.info_text then
+    self.info_text:deactivate()
+    self.info_text.dead = true
+  end
   self.info_text = nil
+
+  if not self.parent:is(ShopCard) then
+    for _, character in ipairs(self.parent.characters) do
+      if table.any(character_classes[character.character], function(v) return v == self.class end) then
+        character:unhighlight()
+      end
+    end
+  end
 end
 
 
@@ -983,4 +1060,24 @@ function ClassIcon:die(dont_spawn_effect)
     self.info_text.dead = true
     self.info_text = nil
   end
+
+  if self.selected and not self.parent:is(ShopCard) then
+    for _, character in ipairs(self.parent.characters) do
+      if table.any(character.classes, function(v) return v == self.class end) then
+        character:highlight()
+      end
+    end
+  end
+end
+
+
+function ClassIcon:highlight()
+  self.highlighted = true
+  self.spring:pull(0.2, 200, 10)
+end
+
+
+function ClassIcon:unhighlight()
+  self.highlighted = false
+  self.spring:pull(0.05, 200, 10)
 end
