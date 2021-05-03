@@ -20,7 +20,7 @@ function shared_init()
   end
   modal_transparent = Color(0.1, 0.1, 0.1, 0.6)
 
-  bg_off = Color(47, 47, 47)
+  bg_off = Color(46, 46, 46)
   bg_gradient = GradientImage('vertical', Color(128, 128, 128, 0), Color(0, 0, 0, 0.3))
 
   graphics.set_background_color(bg[0])
@@ -51,7 +51,6 @@ end
 
 
 function shared_draw(draw_action)
-  --[[
   star_canvas:draw_to(function()
     star_group:draw()
   end)
@@ -74,7 +73,6 @@ function shared_draw(draw_action)
     bg_gradient:draw(gw/2, gh/2, 480, 270)
     camera:detach()
   end)
-  ]]--
 
   main_canvas:draw_to(function()
     draw_action()
@@ -504,6 +502,7 @@ global_text_tags = {
   fgm5 = TextTag{draw = function(c, i, text) graphics.set_color(fg[-5]) end},
   fgm10 = TextTag{draw = function(c, i, text) graphics.set_color(fg[-10]) end},
   greenm5 = TextTag{draw = function(c, i, text) graphics.set_color(green[-5]) end},
+  green5 = TextTag{draw = function(c, i, text) graphics.set_color(green[5]) end},
   blue5 = TextTag{draw = function(c, i, text) graphics.set_color(blue[5]) end},
   bluem5 = TextTag{draw = function(c, i, text) graphics.set_color(blue[-5]) end},
   wavy = TextTag{update = function(c, dt, i, text) c.oy = 2*math.sin(4*time + i) end},
@@ -539,6 +538,15 @@ global_text_tags = {
       c.color = yellow[0]
       camera:shake(3, 0.075)
       pop1:play{pitch = random:float(0.95, 1.05), volume = 0.35}
+    end)
+  end, draw = function(c, i, text)
+    graphics.set_color(c.color)
+  end},
+
+  cbyc3 = TextTag{init = function(c, i, text)
+    c.color = invisible
+    text.t:after((i-1)*0.05, function()
+      c.color = bg[10]
     end)
   end, draw = function(c, i, text)
     graphics.set_color(c.color)

@@ -468,7 +468,7 @@ function init()
     ['carver'] = function(lvl) return '[fg]carves a statue that periodically heals [yellow]1[fg] unit for [yellow]20%[fg] max HP if in range' end,
     ['bane'] = function(lvl) return '[fg]creates a large area that curses enemies to take [yellow]+50%[fg] damage' end,
     ['psykino'] = function(lvl) return '[fg]pulls enemies together for [yellow]2[fg] seconds' end,
-    ['barrager'] = function(lvl) return '[fg]shoots a barrage of [yellow]5[fg] arrows, each dealing [yellow]' .. get_character_stat('barrager', lvl, 'dmg') .. '[fg] damage and pushing enemies' end,
+    ['barrager'] = function(lvl) return '[fg]shoots a barrage of [yellow]3[fg] arrows, each dealing [yellow]' .. get_character_stat('barrager', lvl, 'dmg') .. '[fg] damage and pushing enemies' end,
     ['highlander'] = function(lvl) return '[fg]deals [yellow]' .. 5*get_character_stat('highlander', lvl, 'dmg') .. '[fg] AoE damage' end,
     ['fairy'] = function(lvl) return '[fg]periodically heals [yellow]1[fg] unit at random and grants it [yellow]+100%[fg] attack speed for [yellow]6[fg] seconds' end,
     ['priest'] = function(lvl) return '[fg]heals all allies for [yellow]20%[fg] their max HP' end,
@@ -719,7 +719,7 @@ function init()
   local ylb1 = function(lvl) return lvl >= 2 and 'fg' or (lvl >= 1 and 'yellow' or 'light_bg') end
   local ylb2 = function(lvl) return (lvl >= 2 and 'yellow' or 'light_bg') end
   class_descriptions = {
-    ['ranger'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[' .. ylb2(lvl) .. ']/6 [fg]- [' .. ylb1(lvl) .. ']10%[' .. ylb2(lvl) .. ']/20% [fg]chance to release a barrage on attack to allied rangers' end,
+    ['ranger'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[' .. ylb2(lvl) .. ']/6 [fg]- [' .. ylb1(lvl) .. ']8%[' .. ylb2(lvl) .. ']/16% [fg]chance to release a barrage on attack to allied rangers' end,
     ['warrior'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[' .. ylb2(lvl) .. ']/6 [fg]- [' .. ylb1(lvl) .. ']+25[' .. ylb2(lvl) .. ']/+50 [fg]defense to allied warriors' end,
     ['mage'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[' .. ylb2(lvl) .. ']/6 [fg]- [' .. ylb1(lvl) .. ']-15[' .. ylb2(lvl) .. ']/-30 [fg]enemy defense' end,
     ['rogue'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[' .. ylb2(lvl) .. ']/6 [fg]- [' .. ylb1(lvl) .. ']10%[' .. ylb2(lvl) .. ']/20% [fg]chance to crit to allied rogues, dealing [yellow]4x[] damage' end,
@@ -949,7 +949,7 @@ function init()
     ['flying_daggers'] = '[fg]all knives thrown by rogues chain [yellow]+2[fg] times',
     ['assassination'] = '[fg]crits from rogues deal [yellow]8x[fg] damage but normal attacks deal [yellow]half[fg] damage',
     ['magnify'] = '[yellow]+25%[fg] area size',
-    ['concentrated_fire'] = '[yellow]-50%[fg] area size and [yellow]+50%[fg] area damage',
+    ['concentrated_fire'] = '[yellow]-50%[fg] area size and [yellow]+100%[fg] area damage',
     ['unleash'] = '[yellow]+2%[fg] area size and damage per second',
     ['reinforce'] = '[yellow]+10%[fg] damage, defense and attack speed to all allies if you have at least one enchanter',
     ['payback'] = '[yellow]+5%[fg] damage to all allies whenever an enchanter is hit',
@@ -958,7 +958,7 @@ function init()
     ['whispers_of_doom'] = '[fg]curses apply doom, when [yellow]4[fg] doom instances are reached they deal [yellow]200[fg] damage',
     ['force_push'] = '[yellow]+25%[fg] knockback force',
     ['heavy_impact'] = '[fg]when enemies hit walls they take damage according to the knockback force',
-    ['crucio'] = '[fg]taking damage also shares that amount across all enemies',
+    ['crucio'] = '[fg]taking damage also shares that across all enemies at [yellow]25%[fg] its value',
     ['immolation'] = '[yellow]3[fg] units will periodically take damage, all your allies gain [yellow]+8%[fg] damage per tick',
     ['call_of_the_void'] = '[yellow]+25%[fg] damage over time',
     ['spawning_pool'] = '[yellow]+1[fg] critter health',
@@ -1051,27 +1051,27 @@ function init()
     [1] = {2, 2},
     [2] = {2, 2},
     [3] = {4, 6},
-    [4] = {2, 3},
-    [5] = {3, 5},
+    [4] = {3, 5},
+    [5] = {4, 7},
     [6] = {6, 10},
-    [7] = {4, 7}, 
-    [8] = {4, 7},
+    [7] = {6, 7}, 
+    [8] = {7, 8},
     [9] = {10, 16},
-    [10] = {5, 8},
-    [11] = {5, 8},
-    [12] = {12, 20},
-    [13] = {6, 10},
-    [14] = {6, 10},
-    [15] = {14, 22},
-    [16] = {8, 12},
-    [17] = {8, 12},
-    [18] = {16, 24}, 
+    [10] = {10, 12},
+    [11] = {12, 14},
+    [12] = {18, 20},
+    [13] = {12, 16},
+    [14] = {14, 18},
+    [15] = {16, 20},
+    [16] = {12, 12},
+    [17] = {12, 12},
+    [18] = {20, 24}, 
     [19] = {8, 12},
     [20] = {10, 14}, 
     [21] = {20, 28},
-    [22] = {11, 15},
-    [23] = {11, 15},
-    [24] = {24, 36},
+    [22] = {32, 32},
+    [23] = {36, 36},
+    [24] = {48, 48},
     [25] = {100, 100},
   }
 
@@ -1150,18 +1150,28 @@ function init()
     [25] = {'speed_booster', 'exploder', 'headbutter', 'tank', 'shooter', 'spawner'},
   }
 
+  run_passive_pool_by_tiers = {
+    [1] = { 'wall_echo', 'wall_rider', 'centipede', 'temporal_chains', 'amplify', 'amplify_x', 'ballista', 'ballista_x', 'blunt_arrow', 'berserking', 'unwavering_stance', 'assassination', 'unleash', 'blessing',
+      'hex_master', 'force_push', 'spawning_pool'}, 
+    [2] = {'ouroboros_technique_r', 'ouroboros_technique_l', 'intimidation', 'vulnerability', 'resonance', 'point_blank', 'longshot', 'explosive_arrow', 'chronomancy', 'awakening', 'ultimatum', 'concentrated_fire', 
+      'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
+    [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
+  }
   gold = 2
   passives = {}
   system.load_state()
   new_game_plus = state.new_game_plus or 0
   steam.userStats.requestCurrentStats()
+  max_units = 7 + math.floor(new_game_plus/2)
 
   main = Main()
-  --main:add(BuyScreen'buy_screen')
-  --main:go_to('buy_screen', 0, {}, passives)
+  main:add(BuyScreen'buy_screen')
+  main:go_to('buy_screen', 0, {}, passives)
 
+  --[[
   main:add(Media'media')
   main:go_to('media')
+  ]]--
 end
 
 

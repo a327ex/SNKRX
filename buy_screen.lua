@@ -52,9 +52,10 @@ function BuyScreen:on_enter(from, level, units, passives)
   self.party_text = Text({{text = '[wavy_mid, fg]party', font = pixul_font, alignment = 'center'}}, global_text_tags)
   self.sets_text = Text({{text = '[wavy_mid, fg]classes', font = pixul_font, alignment = 'center'}}, global_text_tags)
   self.items_text = Text({{text = '[wavy_mid, fg]items', font = pixul_font, alignment = 'center'}}, global_text_tags)
+  self.ng_text = Text({{text = '[fg]NG+' .. new_game_plus, font = pixul_font, alignment = 'center'}}, global_text_tags)
 
   if not self.first_screen then RerollButton{group = self.main, x = 150, y = 18, parent = self} end
-  GoButton{group = self.main, x = gw - 135, y = gh - 20, parent = self}
+  GoButton{group = self.main, x = gw - 100, y = gh - 20, parent = self}
   -- WishlistButton{group = self.main, x = gw - 147, y = gh - 20, parent = self}
 end
 
@@ -71,18 +72,22 @@ function BuyScreen:update(dt)
   if self.sets_text then self.sets_text:update(dt) end
   if self.party_text then self.party_text:update(dt) end
   if self.items_text then self.items_text:update(dt) end
+  if self.ng_text then self.ng_text:update(dt) end
 end
 
 
 function BuyScreen:draw()
   self.main:draw()
   self.effects:draw()
-  if self.items_text then self.items_text:draw(32, 150) end
+  if self.items_text then self.items_text:draw(32, 145) end
   self.ui:draw()
 
   if self.shop_text then self.shop_text:draw(64, 20) end
   if self.sets_text then self.sets_text:draw(328, 20) end
   if self.party_text then self.party_text:draw(440, 20) end
+  if new_game_plus > 0 then
+    self.ng_text:draw(240, 20)
+  end
 end
 
 
@@ -118,11 +123,11 @@ function BuyScreen:buy(character, i)
     end
     bought = true
   else
-    if #self.units >= 10 then
+    if #self.units >= max_units then
       if not self.info_text then
         self.info_text = InfoText{group = main.current.ui}
         self.info_text:activate({
-          {text = '[fg]maximum number of units [yellow](10) [fg]reached', font = pixul_font, alignment = 'center'},
+          {text = '[fg]maximum number of units [yellow](' .. max_units .. ') [fg]reached', font = pixul_font, alignment = 'center'},
         }, nil, nil, nil, nil, 16, 4, nil, 2)
         self.info_text.x, self.info_text.y = gw - 140, gh - 20
       end
@@ -205,8 +210,8 @@ SteamFollowButton:implement(GameObject)
 function SteamFollowButton:init(args)
   self:init_game_object(args)
   self.interact_with_mouse = true
-  self.shape = Rectangle(self.x, self.y, fat_font:get_text_width('follow me on steam!'), fat_font.h)
-  self.text = Text({{text = '[blue]follow me on steam!', font = fat_font, alignment = 'center'}}, global_text_tags)
+  self.shape = Rectangle(self.x, self.y, pixul_font:get_text_width('follow me on steam!') + 12, pixul_font.h + 4)
+  self.text = Text({{text = '[greenm5]follow me on steam!', font = pixul_font, alignment = 'center'}}, global_text_tags)
 end
 
 
@@ -225,8 +230,8 @@ end
 
 function SteamFollowButton:draw()
   graphics.push(self.x, self.y, 0, self.spring.x, self.spring.y)
+    graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 4, 4, self.selected and fg[0] or green[0])
     self.text:draw(self.x, self.y)
-    graphics.rectangle(self.x, self.y + self.text.h/5, self.text.w, 2, 2, 2, self.selected and blue[5] or blue[0])
   graphics.pop()
 end
 
@@ -236,14 +241,14 @@ function SteamFollowButton:on_mouse_enter()
   ui_hover1:play{pitch = random:float(1.3, 1.5), volume = 0.5}
   pop2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
   self.selected = true
-  self.text:set_text{{text = '[blue5]follow me on steam!', font = fat_font, alignment = 'center'}}
+  self.text:set_text{{text = '[fgm5]follow me on steam!', font = pixul_font, alignment = 'center'}}
   self.spring:pull(0.05, 200, 10)
 end
 
 
 function SteamFollowButton:on_mouse_exit()
   love.mouse.setCursor()
-  self.text:set_text{{text = '[blue]follow me on steam!', font = fat_font, alignment = 'center'}}
+  self.text:set_text{{text = '[greenm5]follow me on steam!', font = pixul_font, alignment = 'center'}}
   self.selected = false
 end
 
@@ -616,7 +621,7 @@ function CharacterPart:die()
 
   if self.selected and self.parent:is(BuyScreen) then
     for _, set in ipairs(self.parent.sets) do
-      if table.any(character_classes[self.character], set.class) then
+      if table.any(character_classes[self.character], function(v) return v == set.class end) then
         set:unhighlight()
       end
     end
@@ -656,6 +661,7 @@ function PassiveCard:update(dt)
   if self.selected and input.m1.pressed and self.arena.choosing_passives then
     self.arena.choosing_passives = false
     table.insert(passives, self.passive)
+    table.delete(run_passive_pool_by_tiers[passive_tiers[self.passive]], self.passive)
     trigger:tween(0.25, _G, {slow_amount = 1}, math.linear, function()
       slow_amount = 1
       self.arena:transition()

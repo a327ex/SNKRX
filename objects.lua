@@ -9,7 +9,7 @@ function SpawnMarker:init(args)
   self.m = 1
   self.n = 0
   pop3:play{pitch = 1, volume = 0.15}
-  self.t:every({0.11, 0.14}, function()
+  self.t:every({0.13, 0.16}, function()
     self.hidden = not self.hidden
     self.m = self.m*random:float(0.84, 0.87)
   end, nil, nil, 'blink')
@@ -229,14 +229,14 @@ function Unit:calculate_stats(first_run)
   elseif self:is(Seeker) then
     if self.boss then
       local x = self.level
-      local y = {0, 1, 4, 2, 3, 6, 3, 5, 9, 4, 6, 11, 7, 9, 15, 8, 10, 18, 9, 11, 21, 14, 15, 24, 25}
-      self.base_hp = 150 + 175*y[x]
+      local y = {0, 0, 3, 0, 0, 6, 0, 0, 9, 0, 0, 12, 0, 0, 15, 0, 0, 18, 0, 0, 21, 0, 0, 24, 25}
+      self.base_hp = 100 + (new_game_plus*5) + (100 + new_game_plus*5)*y[x]
       self.base_dmg = 50 + 15*y[x]
       self.base_mvspd = 35 + 1.5*y[x]
     else
       local x = self.level
-      local y = {0, 1, 4, 2, 3, 6, 3, 5, 9, 4, 6, 11, 7, 9, 15, 8, 10, 18, 9, 11, 21, 14, 15, 24, 25}
-      self.base_hp = 50 + 55*y[x]
+      local y = {0, 1, 3, 3, 4, 6, 5, 6, 9, 7, 8, 12, 10, 11, 15, 12, 13, 18, 16, 17, 21, 17, 20, 24, 25}
+      self.base_hp = 25 + (new_game_plus*2) + (25 + new_game_plus*2)*y[x]
       self.base_dmg = 10 + 3*y[x]
       self.base_mvspd = 70 + 3*y[x]
     end
@@ -246,7 +246,7 @@ function Unit:calculate_stats(first_run)
     self.base_mvspd = 75
   elseif self:is(EnemyCritter) or self:is(Critter) then
     local x = self.level
-    local y = {0, 1, 4, 2, 3, 6, 3, 5, 9, 4, 6, 11, 7, 9, 15, 8, 10, 18, 9, 11, 21, 14, 15, 24, 25}
+      local y = {0, 1, 3, 3, 4, 6, 5, 6, 9, 7, 8, 12, 10, 11, 15, 12, 13, 18, 16, 17, 21, 17, 20, 24, 25}
     self.base_hp = 25 + 30*y[x]
     self.base_dmg = 10 + 3*y[x]
     self.base_mvspd = 60 + 3*y[x]

@@ -317,7 +317,7 @@ function Player:init(args)
           end)
         end
       else
-        for i = 1, 5 do
+        for i = 1, 3 do
           self.t:after((i-1)*0.075, function()
             self:shoot(r + random:float(-math.pi/32, math.pi/32), {knockback = (self.level == 3 and 14 or 7)})
           end)
@@ -438,26 +438,28 @@ function Player:init(args)
   end
 
   if self.ouroboros_technique_r then
-    self.t:every(0.1, function()
-      if self.move_right_pressed and love.timer.getTime() - self.move_right_pressed > 1 then
-        local target = self:get_closest_object_in_shape(Circle(self.x, self.y, 96), main.current.enemies)
-        if target then
-          local units = self:get_all_units()
-          local unit = random:table(units)
-          unit:barrage(unit:angle_to_object(target), 1)
-        else
-          local units = self:get_all_units()
-          local cx, cy = 0, 0
-          for _, unit in ipairs(units) do
-            cx = cx + unit.x
-            cy = cy + unit.y
+    self.t:after(0.01, function()
+      self.t:every(0.4 - (0.02*#self:get_all_units()), function()
+        if self.move_right_pressed and love.timer.getTime() - self.move_right_pressed > 1 then
+          local target = self:get_closest_object_in_shape(Circle(self.x, self.y, 96), main.current.enemies)
+          if target then
+            local units = self:get_all_units()
+            local unit = random:table(units)
+            unit:barrage(unit:angle_to_object(target), 1)
+          else
+            local units = self:get_all_units()
+            local cx, cy = 0, 0
+            for _, unit in ipairs(units) do
+              cx = cx + unit.x
+              cy = cy + unit.y
+            end
+            cx = cx/#units
+            cy = cy/#units
+            local unit = random:table(units)
+            unit:barrage(unit:angle_from_point(cx, cy), 1)
           end
-          cx = cx/#units
-          cy = cy/#units
-          local unit = random:table(units)
-          unit:barrage(unit:angle_from_point(cx, cy), 1)
         end
-      end
+      end)
     end)
   end
 
@@ -534,7 +536,7 @@ function Player:init(args)
 
   if self.concentrated_fire then
     self.concentrated_fire_area_size_m = 0.66
-    self.concentrated_fire_area_dmg_m = 1.5
+    self.concentrated_fire_area_dmg_m = 2
   end
 
   if self.unleash then
@@ -638,8 +640,8 @@ function Player:update(dt)
   end
 
   if table.any(self.classes, function(v) return v == 'ranger' end) then
-    if main.current.ranger_level == 2 then self.chance_to_barrage = 20
-    elseif main.current.ranger_level == 1 then self.chance_to_barrage = 10
+    if main.current.ranger_level == 2 then self.chance_to_barrage = 16
+    elseif main.current.ranger_level == 1 then self.chance_to_barrage = 8
     elseif main.current.ranger_level == 0 then self.chance_to_barrage = 0 end
   end
 
@@ -901,7 +903,7 @@ function Player:hit(damage)
   if self.crucio then
     local enemies = main.current.main:get_objects_by_classes(main.current.enemies)
     for _, enemy in ipairs(enemies) do
-      enemy:hit(actual_damage)
+      enemy:hit(0.25*actual_damage)
       HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = fg[0], duration = 0.1}
     end
   end
@@ -909,8 +911,8 @@ function Player:hit(damage)
   local psykeeper = self:get_unit'psykeeper'
   if psykeeper then
     psykeeper.stored_heal = psykeeper.stored_heal + actual_damage
-    if psykeeper.stored_heal > (0.5*psykeeper.max_hp) and love.timer.getTime() - self.last_heal_time > 6 then
-      self.last_heal_time = love.timer.getTime()
+    if psykeeper.stored_heal > (0.5*psykeeper.max_hp) and love.timer.getTime() - psykeeper.last_heal_time > 6 then
+      psykeeper.last_heal_time = love.timer.getTime()
       local all_units = self:get_all_units()
       for _, unit in ipairs(all_units) do
         unit:heal(psykeeper.stored_heal*(self.heal_effect_m or 1)/#all_units)
@@ -1140,11 +1142,11 @@ function Player:shoot(r, mods)
   elseif self.character == 'dual_gunner' then
     dual_gunner1:play{pitch = random:float(0.95, 1.05), volume = 0.3}
     dual_gunner2:play{pitch = random:float(0.95, 1.05), volume = 0.3}
-  elseif self.character == 'archer' or self.character == 'hunter' or self.character == 'barrager' then
+  elseif self.character == 'archer' or self.character == 'hunter' or self.character == 'barrager' or self.character == 'corruptor' then
     archer1:play{pitch = random:float(0.95, 1.05), volume = 0.35}
   elseif self.character == 'wizard' or self.character == 'lich' then
     wizard1:play{pitch = random:float(0.95, 1.05), volume = 0.15}
-  elseif self.character == 'scout' or self.character == 'outlaw' or self.character == 'blade' or self.character == 'spellblade' or self.character == 'bard' or self.character == 'assassin' then
+  elseif self.character == 'scout' or self.character == 'outlaw' or self.character == 'blade' or self.character == 'spellblade' or self.character == 'bard' or self.character == 'assassin' or self.character == 'beastmaster' then
     _G[random:table{'scout1', 'scout2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.35}
     if self.character == 'spellblade' then
       wizard1:play{pitch = random:float(0.95, 1.05), volume = 0.15}
@@ -1158,7 +1160,7 @@ function Player:shoot(r, mods)
   end
 
   if self.chance_to_barrage and random:bool(self.chance_to_barrage) then
-    self:barrage(r, 4)
+    self:barrage(r, 3)
   end
 end
 
@@ -2280,6 +2282,6 @@ end
 function Critter:on_trigger_enter(other, contact)
   if other:is(Seeker) then
     self:hit(1)
-    other:hit(self.dmg)
+    other:hit(self.dmg, self)
   end
 end

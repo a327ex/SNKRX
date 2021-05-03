@@ -1077,3 +1077,8 @@ Everything is done except these:
 
 Tomorrow I'll start balancing the game out, which should lead to a bunch of bug fixes and small changes, and after that's done I'll get NG+1-10 working.
 Once that's done I'll do credits screen, NG+10 (game complete) screen, and find new music for the game. I want something more ambient generally and less upbeat.
+
+# Day 73-75 - 30/04/21 - 02/05/21
+
+Spending a lot of time balancing the game. The end game is pretty hectic and I need to make sure that it's reachable at NG+~7+.
+Basically just playing the game a lot, changing things that are too strong weak, then playing more and seeing if it's better.

@@ -40,6 +40,9 @@ function Arena:on_enter(from, level, units, passives)
   self.enemies = {Seeker, EnemyCritter}
   self.color = self.color or fg[0]
 
+  self.level = 25
+  self.can_quit = true
+
   -- Spawn solids and player
   self.x1, self.y1 = gw/2 - 0.8*gw/2, gh/2 - 0.8*gh/2
   self.x2, self.y2 = gw/2 + 0.8*gw/2, gh/2 + 0.8*gh/2
@@ -98,7 +101,7 @@ function Arena:on_enter(from, level, units, passives)
           spawn1:play{pitch = random:float(0.8, 1.2), volume = 0.15}
           self.boss = Seeker{group = self.main, x = x, y = y, character = 'seeker', level = self.level, boss = level_to_boss[self.level]}
         end}
-        self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 1 end, function()
+        self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 0 end, function()
           self.hfx:use('condition1', 0.25, 200, 10)
           self.hfx:pull('condition2', 0.0625)
           self.t:after(0.5, function()
@@ -110,7 +113,7 @@ function Arena:on_enter(from, level, units, passives)
           end)
         end)
       end)
-      self.t:every(function() return self.start_time <= 0 and (self.boss and self.boss.dead) and #self.main:get_objects_by_classes(self.enemies) <= 0 end, function()
+      self.t:every(function() return self.start_time <= 0 and (self.boss and self.boss.dead) and #self.main:get_objects_by_classes(self.enemies) <= 0 and not self.spawning_enemies and not self.quitting end, function()
         self.can_quit = true
         if self.level == 6 then
           state.achievement_speed_booster = true
@@ -142,80 +145,58 @@ function Arena:on_enter(from, level, units, passives)
     end)
   else
     -- Set win condition and enemy spawns
-    self.win_condition = random:table{'time', 'wave'}
-    if self.level % 3 == 0 then self.win_condition = 'wave' end
-    if self.level == 18 and self.trailer then self.win_condition = 'wave' end
-    if self.win_condition == 'wave' then
-      self.level_to_max_waves = {
-        1, 2, random:int(2, 3),
-        3, 3, 3, random:int(3, 4),
-        4, 4, 4, 4, random:int(4, 5),
-        5, 5, 5, 5, 5, random:int(5, 6),
-        6, 7, 8, 9, 9, 10, 12
-      }
-      self.max_waves = self.level_to_max_waves[self.level]
-      self.wave = 0
-      self.start_time = 3
-      self.t:after(1, function()
-        self.t:every(1, function()
-          if self.start_time > 1 then alert1:play{volume = 0.5} end
-          self.start_time = self.start_time - 1
+    self.win_condition = 'wave'
+    self.level_to_max_waves = {
+      2, 3, 4,
+      3, 4, 4, 5,
+      5, 5, 5, 5, 7,
+      6, 6, 7, 7, 7, 10,
+      6, 8, 10, 12, 14, 16, 25,
+    }
+    self.level_to_distributed_enemies_chance = {
+      0, 5, 10,
+      10, 15, 15, 20,
+      20, 20, 20, 20, 25,
+      25, 25, 25, 25, 25, 30,
+      20, 25, 30, 35, 40, 45, 50,
+    }
+    self.max_waves = self.level_to_max_waves[self.level]
+    self.wave = 0
+    self.start_time = 3
+    self.t:after(1, function()
+      self.t:every(1, function()
+        if self.start_time > 1 then alert1:play{volume = 0.5} end
+        self.start_time = self.start_time - 1
+        self.hfx:use('condition1', 0.25, 200, 10)
+      end, 3, function()
+        alert1:play{pitch = 1.2, volume = 0.5}
+        camera:shake(4, 0.25)
+        SpawnEffect{group = self.effects, x = gw/2, y = gh/2 - 48}
+        self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 0 end, function()
+          self.wave = self.wave + 1
+          if self.wave > self.max_waves then return end
           self.hfx:use('condition1', 0.25, 200, 10)
-        end, 3, function()
-          alert1:play{pitch = 1.2, volume = 0.5}
-          camera:shake(4, 0.25)
-          SpawnEffect{group = self.effects, x = gw/2, y = gh/2 - 48}
-          self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 0 end, function()
-            self.wave = self.wave + 1
-            if self.wave > self.max_waves then return end
-            self.hfx:use('condition1', 0.25, 200, 10)
-            self.hfx:pull('condition2', 0.0625)
-            self.t:after(0.5, function()
+          self.hfx:pull('condition2', 0.0625)
+          self.t:after(0.5, function()
+            if random:bool(self.level_to_distributed_enemies_chance[self.level]) then
+              local n = math.ceil((8 + (self.wave-1)*2)/7)
+              for i = 1, n do
+                self.t:after((i-1)*2, function()
+                  self:spawn_distributed_enemies()
+                end)
+              end
+            else
               local spawn_type = random:table{'left', 'middle', 'right'}
               local spawn_points = {left = {x = self.x1 + 32, y = gh/2}, middle = {x = gw/2, y = gh/2}, right = {x = self.x2 - 32, y = gh/2}}
               local p = spawn_points[spawn_type]
               SpawnMarker{group = self.effects, x = p.x, y = p.y}
               self.t:after(0.75, function() self:spawn_n_enemies(p, nil, 8 + (self.wave-1)*2) end)
-            end)
-          end, self.max_waves+1)
-        end)
-        self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 0 and self.wave > self.max_waves end, function() self.can_quit = true end)
-      end)
-
-    elseif self.win_condition == 'time' then
-      self.level_to_time_left = {
-        20, 20, random:int(20, 25),
-        25, 25, 25, random:int(25, 30),
-        30, 30, 30, 30, random:int(30, 35),
-        35, 35, 35, 35, 35, random:int(35, 40),
-        40, 45, 50, 55, 55, 60, 80
-      }
-      self.time_left = self.level_to_time_left[self.level]
-      self.start_time = 3
-      self.t:after(1, function()
-        self.t:every(1, function()
-          if self.start_time > 1 then alert1:play{volume = 0.5} end
-          self.start_time = self.start_time - 1
-          self.hfx:use('condition1', 0.25, 200, 10)
-        end, 3, function()
-          alert1:play{pitch = 1.2, volume = 0.5}
-          camera:shake(4, 0.25)
-          SpawnEffect{group = self.effects, x = gw/2, y = gh/2 - 48}
-          self.t:every(1, function()
-            self.time_left = self.time_left - 1
-            self.hfx:use('condition1', 0.25, 200, 10)
-            self.hfx:pull('condition2', 0.0625)
-          end, self.time_left)
-
-          self.t:every_immediate(2, function()
-            if #self.main:get_objects_by_classes(self.enemies) <= 0 or love.timer.getTime() - self.last_spawn_enemy_time >= 8 and not self.transitioning and not self.can_quit then
-              self:spawn_distributed_enemies()
             end
-          end, self.time_left/2)
-        end)
+          end)
+        end, self.max_waves+1)
       end)
-      self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 0 and self.time_left <= 0 and not self.can_quit end, function() self.can_quit = true end)
-    end
+      self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 0 and self.wave > self.max_waves end, function() self.can_quit = true end)
+    end)
 
     if self.level == 18 and self.trailer then
       Text2{group = self.ui, x = gw/2, y = gh/2 - 24, lines = {{text = '[fg, wavy]SNKRX', font = fat_font, alignment = 'center'}}}
@@ -254,6 +235,7 @@ function Arena:on_enter(from, level, units, passives)
   self.healer_level = class_levels.healer
   self.psyker_level = class_levels.psyker
   self.conjurer_level = class_levels.conjurer
+
 end
 
 
@@ -308,27 +290,18 @@ function Arena:update(dt)
         gold = 2
         passives = {}
         cascade_instance:stop()
+        run_passive_pool_by_tiers = {
+          [1] = { 'wall_echo', 'wall_rider', 'centipede', 'temporal_chains', 'amplify', 'amplify_x', 'ballista', 'ballista_x', 'blunt_arrow', 'berserking', 'unwavering_stance', 'assassination', 'unleash', 'blessing',
+            'hex_master', 'force_push', 'spawning_pool'}, 
+          [2] = {'ouroboros_technique_r', 'ouroboros_technique_l', 'intimidation', 'vulnerability', 'resonance', 'point_blank', 'longshot', 'explosive_arrow', 'chronomancy', 'awakening', 'ultimatum', 'concentrated_fire', 
+            'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
+          [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
+        }
         main:add(BuyScreen'buy_screen')
         main:go_to('buy_screen', 0, {}, passives)
       end, text = Text({{text = '[wavy, bg]restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
     end
-
-    --[[
-    if input.w.pressed then
-      ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-      ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-      system.open_url'https://store.steampowered.com/app/915310/SNKRX/'
-    end
-    ]]--
   end
-
-  --[[
-  if input.w.pressed and self.won then
-    ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-    ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-    system.open_url'https://store.steampowered.com/app/915310/SNKRX/'
-  end
-  ]]--
 
   self:update_game_object(dt*slow_amount)
   cascade_instance.pitch = math.clamp(slow_amount*self.main_slow_amount, 0.05, 1)
@@ -341,26 +314,33 @@ function Arena:update(dt)
 
   if self.can_quit and #self.main:get_objects_by_classes(self.enemies) <= 0 and not self.transitioning then
     self.can_quit = false
+    self.quitting = true
 
     if self.level == 25 then
       if not self.win_text and not self.win_text2 then
         self.won = true
-        camera.x, camera.y = gw/2, gh/2
-        self.win_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 66, lines = {{text = '[wavy_mid, cbyc2]congratulations!', font = fat_font, alignment = 'center'}}}
-        self.t:after(2.5, function()
+        trigger:tween(1, _G, {slow_amount = 0}, math.linear, function() slow_amount = 0 end)
+        trigger:tween(4, camera, {x = gw/2, y = gh/2, r = 0}, math.linear, function() camera.x, camera.y, camera.r = gw/2, gh/2, 0 end)
+        self.win_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 66, force_update = true, lines = {{text = '[wavy_mid, cbyc2]congratulations!', font = fat_font, alignment = 'center'}}}
+        trigger:after(2.5, function()
           if new_game_plus == 10 then
 
           else
-            self.win_text2 = Text2{group = self.ui, x = gw/2, y = gh/2 + 20, lines = {
-              {text = "[fg]you've beaten the game!", font = pixul_font, alignment = 'center', height_multiplier = 1.2},
-              {text = "[fg]i made this game in 3 months as a dev challenge", font = pixul_font, alignment = 'center', height_multiplier = 1.2},
-              {text = "[fg]and i'm happy with how it turned out!", font = pixul_font, alignment = 'center', height_multiplier = 1.2},
-              {text = "[fg]if you liked it too and want to play more games like this:", font = pixul_font, alignment = 'center', height_multiplier = 5},
+            self.win_text2 = Text2{group = self.ui, x = gw/2, y = gh/2 + 20, force_update = true, lines = {
+              {text = "[fg]you've beaten the game!", font = pixul_font, alignment = 'center', height_multiplier = 1.24},
+              {text = "[fg]i made this game in 3 months as a dev challenge", font = pixul_font, alignment = 'center', height_multiplier = 1.24},
+              {text = "[fg]and i'm happy with how it turned out!", font = pixul_font, alignment = 'center', height_multiplier = 1.24},
+              {text = "[fg]if you liked it too and want to play more games like this:", font = pixul_font, alignment = 'center', height_multiplier = 4},
               {text = "[fg]i will release more games this year, so stay tuned!", font = pixul_font, alignment = 'center', height_multiplier = 1.4},
               {text = "[wavy_mid, yellow]thanks for playing!", font = pixul_font, alignment = 'center'},
             }}
-            SteamFollowButton{group = self.ui, x = gw/2, y = gh/2 + 37}
-            RestartButton{group = self.ui, x = gw - 40, y = gh - 20}
+            SteamFollowButton{group = self.ui, x = gw/2, y = gh/2 + 34, force_update = true}
+            RestartButton{group = self.ui, x = gw - 40, y = gh - 20, force_update = true}
+            trigger:after(12, function()
+              self.try_ng_text = Text2{group = self.ui, x = gw - 140, y = gh - 20, force_update = true, lines = {
+                {text = '[cbyc3, wavy_mid]try a harder difficulty:', font = pixul_font},
+              }}
+            end)
           end
         end)
 
@@ -475,13 +455,6 @@ function Arena:update(dt)
           steam.userStats.setAchievement('VOIDERS_WIN')
           steam.userStats.storeStats()
         end
-
-        --[[
-        state.achievement_speed_booster = true
-        system.save_state()
-        steam.userStats.setAchievement('SPEED_BOOSTER')
-        steam.userStats.storeStats()
-        ]]--
       end
 
     else
@@ -495,9 +468,13 @@ function Arena:update(dt)
           local w = 3*card_w + 2*20
           self.choosing_passives = true
           self.cards = {}
-          local passive_1 = random:table(tier_to_passives[random:weighted_pick(unpack(level_to_passive_tier_weights[level or self.level]))])
-          local passive_2 = random:table(tier_to_passives[random:weighted_pick(unpack(level_to_passive_tier_weights[level or self.level]))])
-          local passive_3 = random:table(tier_to_passives[random:weighted_pick(unpack(level_to_passive_tier_weights[level or self.level]))])
+          local tier_1 = random:weighted_pick(unpack(level_to_passive_tier_weights[level or self.level]))
+          local tier_2 = random:weighted_pick(unpack(level_to_passive_tier_weights[level or self.level]))
+          local tier_3 = random:weighted_pick(unpack(level_to_passive_tier_weights[level or self.level]))
+          local passive_pool_copy = table.copy(run_passive_pool_by_tiers)
+          local passive_1 = random:table_remove(passive_pool_copy[tier_1])
+          local passive_2 = random:table_remove(passive_pool_copy[tier_2])
+          local passive_3 = random:table_remove(passive_pool_copy[tier_3])
           table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 0*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, arena = self, passive = passive_1, force_update = true})
           table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 1*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, arena = self, passive = passive_2, force_update = true})
           table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 2*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, arena = self, passive = passive_3, force_update = true})
@@ -540,22 +517,15 @@ function Arena:draw()
     end
   else
     if self.win_condition then
-      if self.win_condition == 'time' then
-        if self.start_time <= 0 then
-          graphics.push(self.x2 - 66, self.y1 - 9, 0, self.hfx.condition2.x, self.hfx.condition2.x)
-            graphics.print_centered('time left:', fat_font, self.x2 - 66, self.y1 - 9, 0, 0.6, 0.6, nil, nil, fg[0])
-          graphics.pop()
-          graphics.push(self.x2 - 18 + fat_font:get_text_width(tostring(self.time_left))/2, self.y1 - 8, 0, self.hfx.condition1.x, self.hfx.condition1.x)
-            graphics.print(tostring(self.time_left), fat_font, self.x2 - 18, self.y1 - 8, 0, 0.75, 0.75, nil, fat_font.h/2, self.hfx.condition1.f and fg[0] or yellow[0])
-          graphics.pop()
-        end
-      elseif self.win_condition == 'wave' then
+      if self.win_condition == 'wave' then
         if self.start_time <= 0 then
           graphics.push(self.x2 - 50, self.y1 - 10, 0, self.hfx.condition2.x, self.hfx.condition2.x)
             graphics.print_centered('wave:', fat_font, self.x2 - 50, self.y1 - 10, 0, 0.6, 0.6, nil, nil, fg[0])
           graphics.pop()
-          graphics.push(self.x2 - 25 + fat_font:get_text_width(self.wave .. '/' .. self.max_waves)/2, self.y1 - 8, 0, self.hfx.condition1.x, self.hfx.condition1.x)
-            graphics.print(self.wave .. '/' .. self.max_waves, fat_font, self.x2 - 25, self.y1 - 8, 0, 0.75, 0.75, nil, fat_font.h/2, self.hfx.condition1.f and fg[0] or yellow[0])
+          local wave = self.wave
+          if wave > self.max_waves then wave = self.max_waves end
+          graphics.push(self.x2 - 25 + fat_font:get_text_width(wave .. '/' .. self.max_waves)/2, self.y1 - 8, 0, self.hfx.condition1.x, self.hfx.condition1.x)
+            graphics.print(wave .. '/' .. self.max_waves, fat_font, self.x2 - 25, self.y1 - 8, 0, 0.75, 0.75, nil, fat_font.h/2, self.hfx.condition1.f and fg[0] or yellow[0])
           graphics.pop()
         end
       end
@@ -590,7 +560,8 @@ end
 function Arena:transition()
   self.transitioning = true
   local gold_gained = random:int(level_to_gold_gained[self.level][1], level_to_gold_gained[self.level][2])
-  gold = gold + gold_gained
+  local interest = math.floor(gold/5)
+  gold = gold + gold_gained + interest
   ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
   TransitionEffect{group = main.transitions, x = self.player.x, y = self.player.y, color = self.color, transition_action = function(t)
     main:add(BuyScreen'buy_screen')
@@ -598,22 +569,22 @@ function Arena:transition()
     t.t:after(0.1, function()
       t.text:set_text({
         {text = '[nudge_down, bg]gold gained: ' .. tostring(gold_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-        {text = '[wavy_lower, bg]damage taken: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-        {text = '[wavy_lower, bg]damage dealt: 0', font = pixul_font, alignment = 'center'}
+        {text = '[wavy_lower, bg]interest: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+        {text = '[wavy_lower, bg]total: 0', font = pixul_font, alignment = 'center'}
       })
       _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       t.t:after(0.2, function()
         t.text:set_text({
           {text = '[wavy_lower, bg]gold gained: ' .. tostring(gold_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-          {text = '[nudge_down, bg]damage taken: ' .. tostring(math.round(self.damage_taken, 0)), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-          {text = '[wavy_lower, bg]damage dealt: 0', font = pixul_font, alignment = 'center'}
+          {text = '[nudge_down, bg]interest: ' .. tostring(interest), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+          {text = '[wavy_lower, bg]total: 0', font = pixul_font, alignment = 'center'}
         })
         _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
         t.t:after(0.2, function()
           t.text:set_text({
             {text = '[wavy_lower, bg]gold gained: ' .. tostring(gold_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-            {text = '[wavy_lower, bg]damage taken: ' .. tostring(math.round(self.damage_taken, 0)), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-            {text = '[nudge_down, bg]damage dealt: ' .. tostring(math.round(self.damage_dealt, 0)), font = pixul_font, alignment = 'center'}
+            {text = '[wavy_lower, bg]interest: ' .. tostring(interest), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+            {text = '[nudge_down, bg]total: ' .. tostring(gold_gained + interest), font = pixul_font, alignment = 'center'}
           })
           _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
         end)
@@ -621,15 +592,17 @@ function Arena:transition()
     end)
   end, text = Text({
     {text = '[wavy_lower, bg]gold gained: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-    {text = '[wavy_lower, bg]damage taken: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-    {text = '[wavy_lower, bg]damage dealt: 0', font = pixul_font, alignment = 'center'}
+    {text = '[wavy_lower, bg]interest: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+    {text = '[wavy_lower, bg]total: 0', font = pixul_font, alignment = 'center'}
   }, global_text_tags)}
 end
 
 
 function Arena:spawn_distributed_enemies()
+  self.spawning_enemies = true
+
   local t = {'4', '4+4', '4+4+4', '2x4', '3x4', '4x2'}
-  local spawn_type = t[random:weighted_pick(40, 20, 5, 15, 5, 15)]
+  local spawn_type = t[random:weighted_pick(20, 20, 10, 15, 10, 15)]
   local spawn_points = table.copy(self.spawn_points)
   if spawn_type == '4' then
     local p = random:table_remove(spawn_points)
@@ -637,6 +610,7 @@ function Arena:spawn_distributed_enemies()
     self.t:after(0.75, function()
       self:spawn_n_enemies(p)
     end)
+    self.t:after(1.5, function() self.spawning_enemies = false end, 'spawning_enemies')
   elseif spawn_type == '4+4' then
     local p = random:table_remove(spawn_points)
     SpawnMarker{group = self.effects, x = p.x, y = p.y}
@@ -644,6 +618,7 @@ function Arena:spawn_distributed_enemies()
       self:spawn_n_enemies(p)
       self.t:after(2, function() self:spawn_n_enemies(p) end)
     end)
+    self.t:after(3.5, function() self.spawning_enemies = false end, 'spawning_enemies')
   elseif spawn_type == '4+4+4' then
     local p = random:table_remove(spawn_points)
     SpawnMarker{group = self.effects, x = p.x, y = p.y}
@@ -656,36 +631,58 @@ function Arena:spawn_distributed_enemies()
         end)
       end)
     end)
+    self.t:after(3.5, function() self.spawning_enemies = false end, 'spawning_enemies')
   elseif spawn_type == '2x4' then
-    local p = random:table_remove(spawn_points)
-    SpawnMarker{group = self.effects, x = p.x, y = p.y}
-    self.t:after(0.75, function() self:spawn_n_enemies(p, 1) end)
-    local p = random:table_remove(spawn_points)
-    SpawnMarker{group = self.effects, x = p.x, y = p.y}
-    self.t:after(0.75, function() self:spawn_n_enemies(p, 2) end)
+    self.t:after({0, 0.2}, function()
+      local p = random:table_remove(spawn_points)
+      SpawnMarker{group = self.effects, x = p.x, y = p.y}
+      self.t:after(0.75, function() self:spawn_n_enemies(p, 1) end)
+    end)
+    self.t:after({0, 0.2}, function()
+      local p = random:table_remove(spawn_points)
+      SpawnMarker{group = self.effects, x = p.x, y = p.y}
+      self.t:after(0.75, function() self:spawn_n_enemies(p, 2) end)
+    end)
+    self.t:after(1.5, function() self.spawning_enemies = false end, 'spawning_enemies')
   elseif spawn_type == '3x4' then
-    local p = random:table_remove(spawn_points)
-    SpawnMarker{group = self.effects, x = p.x, y = p.y}
-    self.t:after(0.75, function() self:spawn_n_enemies(p, 1) end)
-    local p = random:table_remove(spawn_points)
-    SpawnMarker{group = self.effects, x = p.x, y = p.y}
-    self.t:after(0.75, function() self:spawn_n_enemies(p, 2) end)
-    local p = random:table_remove(spawn_points)
-    SpawnMarker{group = self.effects, x = p.x, y = p.y}
-    self.t:after(0.75, function() self:spawn_n_enemies(p, 3) end)
+    self.t:after({0, 0.2}, function()
+      local p = random:table_remove(spawn_points)
+      SpawnMarker{group = self.effects, x = p.x, y = p.y}
+      self.t:after(0.75, function() self:spawn_n_enemies(p, 1) end)
+    end)
+    self.t:after({0, 0.2}, function()
+      local p = random:table_remove(spawn_points)
+      SpawnMarker{group = self.effects, x = p.x, y = p.y}
+      self.t:after(0.75, function() self:spawn_n_enemies(p, 2) end)
+    end)
+    self.t:after({0, 0.2}, function()
+      local p = random:table_remove(spawn_points)
+      SpawnMarker{group = self.effects, x = p.x, y = p.y}
+      self.t:after(0.75, function() self:spawn_n_enemies(p, 3) end)
+    end)
+    self.t:after(1.5, function() self.spawning_enemies = false end, 'spawning_enemies')
   elseif spawn_type == '4x2' then
-    local p = random:table_remove(spawn_points)
-    SpawnMarker{group = self.effects, x = p.x, y = p.y}
-    self.t:after(0.75, function() self:spawn_n_enemies(p, 1, 2) end)
-    local p = random:table_remove(spawn_points)
-    SpawnMarker{group = self.effects, x = p.x, y = p.y}
-    self.t:after(0.75, function() self:spawn_n_enemies(p, 2, 2) end)
-    local p = random:table_remove(spawn_points)
-    SpawnMarker{group = self.effects, x = p.x, y = p.y}
-    self.t:after(0.75, function() self:spawn_n_enemies(p, 3, 2) end)
-    local p = random:table_remove(spawn_points)
-    SpawnMarker{group = self.effects, x = p.x, y = p.y}
-    self.t:after(0.75, function() self:spawn_n_enemies(p, 4, 2) end)
+    self.t:after({0, 0.2}, function()
+      local p = random:table_remove(spawn_points)
+      SpawnMarker{group = self.effects, x = p.x, y = p.y}
+      self.t:after(0.75, function() self:spawn_n_enemies(p, 1, 2) end)
+    end)
+    self.t:after({0, 0.2}, function()
+      local p = random:table_remove(spawn_points)
+      SpawnMarker{group = self.effects, x = p.x, y = p.y}
+      self.t:after(0.75, function() self:spawn_n_enemies(p, 2, 2) end)
+    end)
+    self.t:after({0, 0.2}, function()
+      local p = random:table_remove(spawn_points)
+      SpawnMarker{group = self.effects, x = p.x, y = p.y}
+      self.t:after(0.75, function() self:spawn_n_enemies(p, 3, 2) end)
+    end)
+    self.t:after({0, 0.2}, function()
+      local p = random:table_remove(spawn_points)
+      SpawnMarker{group = self.effects, x = p.x, y = p.y}
+      self.t:after(0.75, function() self:spawn_n_enemies(p, 4, 2) end)
+    end)
+    self.t:after(1.5, function() self.spawning_enemies = false end, 'spawning_enemies')
   end
 end
 
