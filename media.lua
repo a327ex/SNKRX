@@ -11,7 +11,6 @@ function Media:on_enter(from)
   self.effects = Group()
   self.ui = Group()
 
-  self.mode = 'achievements'
   graphics.set_background_color(fg[0])
 end
 
@@ -27,8 +26,11 @@ function Media:draw()
   self.main:draw()
   self.effects:draw()
   self.ui:draw()
-
-  if self.mode == 'achievements' then
-    graphics.print_centered('GG', fat_font, 32, 32, 0, 1, 1, 0, 0, fg[-5])
-  end
 end
+
+--[[
+build your party: hire heroes, rank them up and defeat endless waves of enemies
+make synergies: combine heroes of the same class to unlock unique class passives
+find passive items: further enhance your party with powerful passive items
+create your build: explore the possibilities and combinations to create your own unique build
+]]--

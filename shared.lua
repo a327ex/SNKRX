@@ -19,6 +19,7 @@ function shared_init()
     _G[name .. '_transparent_weak'] = Color(color[0].r, color[0].g, color[0].b, 0.25)
   end
   modal_transparent = Color(0.1, 0.1, 0.1, 0.6)
+  modal_transparent_2 = Color(0.1, 0.1, 0.1, 0.9)
 
   bg_off = Color(46, 46, 46)
   bg_gradient = GradientImage('vertical', Color(128, 128, 128, 0), Color(0, 0, 0, 0.3))
@@ -30,7 +31,10 @@ function shared_init()
   sfx = SoundTag()
   sfx.volume = 0.5
   music = SoundTag()
-  music.volume = 0
+  music.volume = 0.5
+
+  if state.volume_muted then sfx.volume = 0 end
+  if state.music_muted then music.volume = 0 end
 
   fat_font = Font('FatPixelFont', 8)
   pixul_font = Font('PixulBrush', 8)
@@ -40,13 +44,9 @@ function shared_init()
   shadow_shader = Shader(nil, 'shadow.frag')
   star_canvas = Canvas(gw, gh, {stencil = true})
   star_group = Group()
-  local star_positions = {}
+  star_positions = {}
   for i = -30, gh + 30, 15 do table.insert(star_positions, {x = -40, y = i}) end
   for i = -30, gw, 15 do table.insert(star_positions, {x = i, y = gh + 40}) end
-  trigger:every(0.375, function()
-    local p = random:table(star_positions)
-    Star{group = star_group, x = p.x, y = p.y}
-  end)
 end
 
 
@@ -87,7 +87,7 @@ function shared_draw(draw_action)
   end)
 
   background_canvas:draw(0, 0, 0, sx, sy)
-  shadow_canvas:draw(6, 6, 0, sx, sy)
+  shadow_canvas:draw(1.5*sx, 1.5*sy, 0, sx, sy)
   main_canvas:draw(0, 0, 0, sx, sy)
 end
 
@@ -111,6 +111,7 @@ function Star:update(dt)
   self.x = self.x + self.v*math.cos(-math.pi/4)
   self.y = self.y + self.v*math.sin(-math.pi/4)
   self.vr = self.vr + self.dvr*dt
+  if self.x > gw + 64 then self.dead = true end
 end
 
 
@@ -505,6 +506,10 @@ global_text_tags = {
   green5 = TextTag{draw = function(c, i, text) graphics.set_color(green[5]) end},
   blue5 = TextTag{draw = function(c, i, text) graphics.set_color(blue[5]) end},
   bluem5 = TextTag{draw = function(c, i, text) graphics.set_color(blue[-5]) end},
+  redm5 = TextTag{draw = function(c, i, text) graphics.set_color(red[-5]) end},
+  orangem5 = TextTag{draw = function(c, i, text) graphics.set_color(orange[-5]) end},
+  purplem5 = TextTag{draw = function(c, i, text) graphics.set_color(purple[-5]) end},
+  yellowm5 = TextTag{draw = function(c, i, text) graphics.set_color(yellow[-5]) end},
   wavy = TextTag{update = function(c, dt, i, text) c.oy = 2*math.sin(4*time + i) end},
   wavy_mid = TextTag{update = function(c, dt, i, text) c.oy = 0.75*math.sin(3*time + i) end},
   wavy_mid2 = TextTag{update = function(c, dt, i, text) c.oy = 0.5*math.sin(3*time + i) end},

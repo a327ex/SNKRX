@@ -1,24 +1,4 @@
-General balance
-Trailers
-  3-4 pure gameplay playthroughs showcasing different builds
-  1 normal 30-40s trailer
-Misc
-  Squire's Lv.3 effect
-  NG+1-10 (difficulty ramps up faster and goes higher than normal at the end, the player also gains more gold per round, and on NG+1 and NG+5 the maximum number of units is increased by 1 (10->11->12)
-  NG+10 end screen
-  New music
-  Credits
-  Level X/25 text
-
-
-Engine improvements for after SNKRX release
-  on_hit:
-    on_collision_enter/exit are automatically called and automatically call on_hit/on_leave for each object
-    This enables the definition of on_hit on each object and the question of where the logic should stay is solved/dodged
-    Spurred by Wall needing to have its own on_hit function to do something when the player hits it, without having to change player code for all Walls,
-    Defining on_hit on the Wall creation call for that specific Wall, and thus that specific Wall will have this behavior while other walls won't
-    https://i.imgur.com/asPdpnQ.png ?
-    Not sure if I should go all the way with event systems like this or only have it work for specific cases, need to think about it more
-
-Rewrite
-  DPS list - needs every damage event to be logged with source, destination and damage values being detached from intermediary objects (areas, projectiles, etc)
+Lich buff
+Highlander buff
+Concentrated Fire change to "chance to create secondary AoEs on AoE hit" (like Cannoneer's Lv.3)
+Change Cannoneer's Lv.3 to 7 repeats, and each repeat should be slightly slower

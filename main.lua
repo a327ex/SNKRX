@@ -11,8 +11,8 @@ require 'media'
 function init()
   shared_init()
 
-  input:bind('move_left', {'a', 'left', 'dpleft'})
-  input:bind('move_right', {'d', 'right', 'dpright'})
+  input:bind('move_left', {'a', 'left', 'dpleft', 'm1'})
+  input:bind('move_right', {'d', 'right', 'dpright', 'm2'})
   input:bind('move_up', {'w', 'up', 'dpup'})
   input:bind('move_down', {'s', 'down', 'dpdown'})
   input:bind('enter', {'space', 'return', 'fleft', 'fdown', 'fright'})
@@ -99,7 +99,13 @@ function init()
   turret_deploy = Sound('321215__hybrid-v__sci-fi-weapons-deploy.ogg', s)
   rogue_crit1 = Sound('Dagger Stab (Flesh) 4.ogg', s)
   rogue_crit2 = Sound('Sword hits another sword 6.ogg', s)
-  cascade = Sound('Kubbi - Ember - 04 Cascade.ogg', {tags = {music}})
+
+  song1 = Sound('Kubbi - Ember - 01 Pathfinder.ogg', {tags = {music}})
+  song2 = Sound('Kubbi - Ember - 02 Ember.ogg', {tags = {music}})
+  song3 = Sound('Kubbi - Ember - 03 Firelight.ogg', {tags = {music}})
+  song4 = Sound('Kubbi - Ember - 04 Cascade.ogg', {tags = {music}})
+  song5 = Sound('Kubbi - Ember - 05 Compass.ogg', {tags = {music}})
+  death_song = Sound('Kubbi - Ember - 09 Formed by Glaciers.ogg', {tags = {music}})
 
   speed_booster_elite = Image('speed_booster_elite')
   exploder_elite = Image('exploder_elite')
@@ -162,6 +168,7 @@ function init()
   hive = Image('hive')
   void_rift = Image('void_rift')
   star = Image('star')
+  arrow = Image('arrow')
 
   class_colors = {
     ['warrior'] = yellow[0],
@@ -444,7 +451,7 @@ function init()
     ['saboteur'] = function(lvl) return '[fg]calls [yellow]2[fg] saboteurs to seek targets and deal [yellow]' .. get_character_stat('saboteur', lvl, 'dmg') .. ' AoE[fg] damage' end,
     ['stormweaver'] = function(lvl) return '[fg]infuses projectiles with chain lightning that deals [yellow]20%[fg] damage to [yellow]2[fg] enemies' end,
     ['sage'] = function(lvl) return '[fg]shoots a slow projectile that draws enemies in' end,
-    ['squire'] = function(lvl) return '[yellow]+15%[fg] damage and defense to all allies' end, 
+    ['squire'] = function(lvl) return '[yellow]+20%[fg] damage and defense to all allies' end, 
     ['cannoneer'] = function(lvl) return '[fg]shoots a projectile that deals [yellow]' .. 2*get_character_stat('cannoneer', lvl, 'dmg') .. ' AoE[fg] damage' end,
     ['dual_gunner'] = function(lvl) return '[fg]shoots two parallel projectiles, each dealing [yellow]' .. get_character_stat('dual_gunner', lvl, 'dmg') .. '[fg] damage' end,
     ['hunter'] = function(lvl) return '[fg]shoots an arrow that deals [yellow]' .. get_character_stat('hunter', lvl, 'dmg') .. '[fg] damage and has a [yellow]20%[fg] chance to summon a pet' end,
@@ -462,7 +469,7 @@ function init()
     ['beastmaster'] = function(lvl) return '[fg]spawn [yellow]2[fg] small critters if the beastmaster crits' end,
     ['launcher'] = function(lvl) return '[fg]nearby enemies are pushed after [yellow]4[fg] seconds, taking [yellow]' .. 2*get_character_stat('launcher', lvl, 'dmg') .. '[fg] damage on wall hit' end,
     ['bard'] = function(lvl) return "[fg]throws a knife that deals [yellow]" .. get_character_stat('bard', lvl, 'dmg') .. "[fg] damage and inflicts enemies hit with the bard's curse" end,
-    ['assassin'] = function(lvl) return '[fg]throws a piercing knife that deals [yellow]' .. get_character_stat('assassin', lvl, 'dmg') .. '[fg] damage and inflicts poison that deals [yellow]' ..
+    ['assassin'] = function(lvl) return '[fg]throws a piercing knife that deals [yellow]' .. get_character_stat('assassin', lvl, 'dmg') .. '[fg] damage + [yellow]' ..
       get_character_stat('assassin', lvl, 'dmg')/2 .. '[fg] damage per second for [yellow]3[fg] seconds' end,
     ['host'] = function(lvl) return '[fg]periodically spawn [yellow]1[fg] small critter' end,
     ['carver'] = function(lvl) return '[fg]carves a statue that periodically heals [yellow]1[fg] unit for [yellow]20%[fg] max HP if in range' end,
@@ -489,7 +496,7 @@ function init()
     ['saboteur'] = '[orange]Demoman',
     ['stormweaver'] = '[blue]Wide Lightning',
     ['sage'] = '[purple]Dimension Compression',
-    ['squire'] = '[yellow]Repair',
+    ['squire'] = '[yellow]Shiny Gear',
     ['cannoneer'] = '[orange]Cannon Barrage',
     ['dual_gunner'] = '[green]Gun Kata',
     ['hunter'] = '[green]Feral Pack',
@@ -533,7 +540,7 @@ function init()
     ['saboteur'] = '[light_bg]Demoman',
     ['stormweaver'] = '[light_bg]Wide Lightning',
     ['sage'] = '[light_bg]Dimension Compression',
-    ['squire'] = '[light_bg]Repair',
+    ['squire'] = '[light_bg]Shiny Gear',
     ['cannoneer'] = '[light_bg]Cannon Barrage',
     ['dual_gunner'] = '[light_bg]Gun Kata',
     ['hunter'] = '[light_bg]Feral Pack',
@@ -577,7 +584,7 @@ function init()
     ['saboteur'] = function() return '[fg]the explosion has [yellow]50%[fg] chance to crit, increasing in size and dealing [yellow]2x[fg] damage' end,
     ['stormweaver'] = function() return "[fg]chain lightning's trigger area of effect and number of units hit is [yellow]doubled" end,
     ['sage'] = function() return '[fg]when the projectile expires deal [yellow]' .. 3*get_character_stat('sage', 3, 'dmg') .. '[fg] damage to all enemies under its influence' end,
-    ['squire'] = function() return '[fg]you can reroll your item choices once, these opportunities stack if unused' end,
+    ['squire'] = function() return '[yellow]+30%[fg] damage, attack speed, movement speed and defense to all allies' end,
     ['cannoneer'] = function() return '[fg]showers the hit area in [yellow]5[fg] additional cannon shots that deal [yellow]' .. get_character_stat('cannoneer', 3, 'dmg')/2 .. '[fg] AoE damage' end,
     ['dual_gunner'] = function() return '[fg]every 5th attack shoot in rapid succession for [yellow]2[fg] seconds' end,
     ['hunter'] = function() return '[fg]summons [yellow]3[fg] pets and the pets ricochet off walls once' end,
@@ -621,7 +628,7 @@ function init()
     ['saboteur'] = function() return '[light_bg]the explosion has 50% chance to crit, increasing in size and dealing 2x damage' end,
     ['stormweaver'] = function() return "[light_bg]chain lightning's trigger area of effect and number of units hit is doubled" end,
     ['sage'] = function() return '[light_bg]when the projectile expires deal ' .. 3*get_character_stat('sage', 3, 'dmg') .. ' damage to all enemies under its influence' end,
-    ['squire'] = function() return '[light_bg]you can reroll your item choices once, these opportunities stack if unused' end,
+    ['squire'] = function() return '[light_bg]+30% damage, attack speed, movement speed and defense to all allies' end,
     ['cannoneer'] = function() return '[light_bg]showers the hit area in 5 additional cannon shots that deal ' .. get_character_stat('cannoneer', 3, 'dmg')/2 .. ' AoE damage' end,
     ['dual_gunner'] = function() return '[light_bg]every 5th attack shoot in rapid succession for 2 seconds' end,
     ['hunter'] = function() return '[light_bg]summons 3 pets and the pets ricochet off walls once' end,
@@ -648,7 +655,7 @@ function init()
     ['highlander'] = function() return '[light_bg]quickly repeats the attack 3 times' end,
     ['fairy'] = function() return '[light_bg]heals 2 units instead and grants them an additional 100% attack speed' end,
     ['priest'] = function() return '[light_bg]at the start of the round pick 3 units at random and grants them a buff that prevents death once' end,
-    ['infestor'] = function() return '[light_bg][yellow]triples the number of critters released' end,
+    ['infestor'] = function() return '[light_bg]triples the number of critters released' end,
     ['flagellant'] = function() return '[light_bg]deals ' .. 2*get_character_stat('flagellant', 3, 'dmg') .. ' damage to all allies and grants +12% damage to all allies per cast' end,
   }
 
@@ -951,7 +958,7 @@ function init()
     ['magnify'] = '[yellow]+25%[fg] area size',
     ['concentrated_fire'] = '[yellow]-50%[fg] area size and [yellow]+100%[fg] area damage',
     ['unleash'] = '[yellow]+2%[fg] area size and damage per second',
-    ['reinforce'] = '[yellow]+10%[fg] damage, defense and attack speed to all allies if you have at least one enchanter',
+    ['reinforce'] = '[yellow]+10%[fg] damage, defense and attack speed to all allies with at least one enchanter',
     ['payback'] = '[yellow]+5%[fg] damage to all allies whenever an enchanter is hit',
     ['blessing'] = '[yellow]+20%[fg] healing effectiveness',
     ['hex_master'] = '[yellow]+25%[fg] curse duration',
@@ -1031,20 +1038,20 @@ function init()
     [9] = {50, 30, 15, 5},
     [10] = {50, 30, 15, 5},
     [11] = {45, 30, 20, 5},
-    [12] = {45, 30, 20, 5},
-    [13] = {40, 30, 20, 10},
-    [14] = {40, 30, 20, 10},
-    [15] = {35, 35, 20, 10},
-    [16] = {30, 40, 20, 10},
-    [17] = {20, 40, 25, 15},
-    [18] = {20, 40, 25, 15},
-    [19] = {15, 40, 30, 15},
-    [20] = {10, 40, 30, 20},
-    [21] = {5, 40, 35, 20},
-    [22] = {5, 35, 35, 25},
-    [23] = {5, 35, 35, 25},
-    [24] = {0, 30, 40, 30},
-    [25] = {0, 25, 40, 35},
+    [12] = {40, 30, 20, 10},
+    [13] = {35, 30, 25, 10},
+    [14] = {30, 30, 25, 15},
+    [15] = {25, 30, 30, 15},
+    [16] = {25, 25, 30, 20},
+    [17] = {20, 25, 35, 20},
+    [18] = {15, 25, 35, 25},
+    [19] = {10, 25, 40, 25},
+    [20] = {5, 25, 40, 30},
+    [21] = {0, 25, 40, 35},
+    [22] = {0, 20, 40, 40},
+    [23] = {0, 20, 35, 45},
+    [24] = {0, 10, 30, 60},
+    [25] = {0, 0, 0, 100},
   }
 
   level_to_gold_gained = {
@@ -1159,48 +1166,81 @@ function init()
   }
   gold = 2
   passives = {}
+  steam.userStats.requestCurrentStats()
   system.load_state()
   new_game_plus = state.new_game_plus or 0
-  steam.userStats.requestCurrentStats()
-  max_units = 7 + math.floor(new_game_plus/2)
+  max_units = 7 + new_game_plus
 
   main = Main()
+
+  -- main_song_instance = _G[random:table{'song1', 'song2', 'song3', 'song4', 'song5'}]:play{volume = 0.5}
+
   main:add(BuyScreen'buy_screen')
   main:go_to('buy_screen', 0, {}, passives)
-
+  
   --[[
+  main:add(Arena'arena')
+  main:go_to('arena', 20, {
+    {character = 'vagrant', level = 3},
+    {character = 'spellblade', level = 3},
+    {character = 'assassin', level = 3},
+    {character = 'scout', level = 3},
+    {character = 'engineer', level = 3},
+    {character = 'swordsman', level = 3},
+    {character = 'archer', level = 3},
+  }, passives)
+
   main:add(Media'media')
   main:go_to('media')
   ]]--
+
+  trigger:every(2, function()
+    if debugging_memory then
+      for k, v in pairs(system.type_count()) do
+        print(k, v)
+      end
+      print("-- " .. math.round(tonumber(collectgarbage("count"))/1024, 3) .. "MB --")
+      print()
+    end
+  end)
 end
 
 
 function update(dt)
   main:update(dt)
-  star_group:update(dt)
+
+  --[[
+  if input.b.pressed then
+    -- debugging_memory = not debugging_memory
+    for k, v in pairs(system.type_count()) do
+      print(k, v)
+    end
+    print("-- " .. math.round(tonumber(collectgarbage("count"))/1024, 3) .. "MB --")
+    print()
+  end
+  ]]--
 
   if input.n.pressed then
     if sfx.volume == 0.5 then
       sfx.volume = 0
+      state.volume_muted = true
     elseif sfx.volume == 0 then
       sfx.volume = 0.5
+      state.volume_muted = false
     end
   end
 
   if input.m.pressed then
     if music.volume == 0.5 then
+      state.music_muted = true
       music.volume = 0
     elseif music.volume == 0 then
       music.volume = 0.5
+      state.music_muted = false
     end
   end
 
-  if input.k.pressed then
-    steam.userStats.setAchievement('ASCENSION_1')
-    steam.userStats.storeStats()
-  end
-
-  if input.l.pressed then
+  if input.f12.pressed then
     steam.userStats.resetAllStats(true)
     steam.userStats.storeStats()
   end

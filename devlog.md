@@ -1082,3 +1082,8 @@ Once that's done I'll do credits screen, NG+10 (game complete) screen, and find 
 
 Spending a lot of time balancing the game. The end game is pretty hectic and I need to make sure that it's reachable at NG+~7+.
 Basically just playing the game a lot, changing things that are too strong weak, then playing more and seeing if it's better.
+
+# Week 12-13 - 03-17/05/21
+
+These 2 last weeks have been a lot of playtesting and just taking care of details. But now it's finally over.
+I finally finished this game and I'm fairly happy with how it turned out. I'll write more about it in a separate blog post, I don't really have the energy to write much now.

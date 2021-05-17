@@ -204,7 +204,7 @@ function Player:init(args)
 
   elseif self.character == 'juggernaut' then
     self.t:every(8, function()
-      self:attack(64, {juggernaut_push = true})
+      self:attack(96, {juggernaut_push = true})
     end, nil, nil, 'attack')
 
   elseif self.character == 'lich' then
@@ -326,7 +326,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'highlander' then
-    self.attack_sensor = Circle(self.x, self.y, 64)
+    self.attack_sensor = Circle(self.x, self.y, 32)
     self.t:cooldown(4, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       if self.level == 3 then
         self.t:every(0.25, function()
@@ -385,7 +385,7 @@ function Player:init(args)
       local enemies = main.current.main:get_objects_by_classes(main.current.enemies)
       for _, enemy in ipairs(enemies) do
         if self:distance_to_object(enemy) < 128 then
-          enemy:curse('infestor', 6*(self.hex_duration_m or 1), (self.level == 3 and 6 or 2), self.dmg)
+          enemy:curse('infestor', 6*(self.hex_duration_m or 1), (self.level == 3 and 6 or 2), self.dmg, self)
           HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = orange[0], duration = 0.1}
           LightningLine{group = main.current.effects, src = self, dst = enemy, color = orange[0]}
         end
@@ -495,8 +495,10 @@ function Player:init(args)
         end
       end
       local mage = random:table(mages)
-      mage.awakening_aspd_m = 2
-      mage.awakening_dmg_m = 2
+      if mage then
+        mage.awakening_aspd_m = 2
+        mage.awakening_dmg_m = 2
+      end
     end)
   end
 
@@ -552,19 +554,21 @@ function Player:init(args)
   end
 
   if self.reinforce then
-    local units = self:get_all_units()
-    local any_enchanter = false
-    for _, unit in ipairs(units) do
-      if table.any(unit.classes, function(v) return v == 'enchanter' end) then
-        any_enchanter = true
-        break
+    main.current.t:after(0.1, function()
+      local units = self:get_all_units()
+      local any_enchanter = false
+      for _, unit in ipairs(units) do
+        if table.any(unit.classes, function(v) return v == 'enchanter' end) then
+          any_enchanter = true
+          break
+        end
       end
-    end
-    if any_enchanter then
-      self.reinforce_dmg_m = 1.1
-      self.reinforce_def_m = 1.1
-      self.reinforce_aspd_m = 1.1
-    end
+      if any_enchanter then
+        self.reinforce_dmg_m = 1.1
+        self.reinforce_def_m = 1.1
+        self.reinforce_aspd_m = 1.1
+      end
+    end)
   end
 
   if self.payback then
@@ -602,8 +606,14 @@ function Player:update(dt)
   if self.character == 'squire' then
     local all_units = self:get_all_units()
     for _, unit in ipairs(all_units) do
-      unit.squire_dmg_m = 1.15
-      unit.squire_def_m = 1.15
+      unit.squire_dmg_m = 1.2
+      unit.squire_def_m = 1.2
+      if self.level == 3 then
+        unit.squire_dmg_m = 1.5
+        unit.squire_def_m = 1.5
+        unit.squire_aspd_m = 1.3
+        unit.squire_mvspd_m = 1.3
+      end
     end
   elseif self.character == 'chronomancer' then
     local all_units = self:get_all_units()
@@ -733,12 +743,12 @@ function Player:update(dt)
   end
 
   self.buff_def_a = (self.warrior_def_a or 0)
-  self.buff_aspd_m = (self.chronomancer_aspd_m or 1)*(self.vagrant_aspd_m or 1)*(self.outlaw_aspd_m or 1)*(self.fairy_aspd_m or 1)*(self.psyker_aspd_m or 1)*(self.chronomancy_aspd_m or 1)*(self.awakening_aspd_m or 1)*(self.berserking_aspd_m or 1)*(self.reinforce_aspd_m or 1)
+  self.buff_aspd_m = (self.chronomancer_aspd_m or 1)*(self.vagrant_aspd_m or 1)*(self.outlaw_aspd_m or 1)*(self.fairy_aspd_m or 1)*(self.psyker_aspd_m or 1)*(self.chronomancy_aspd_m or 1)*(self.awakening_aspd_m or 1)*(self.berserking_aspd_m or 1)*(self.reinforce_aspd_m or 1)*(self.squire_aspd_m or 1)
   self.buff_dmg_m = (self.squire_dmg_m or 1)*(self.vagrant_dmg_m or 1)*(self.enchanter_dmg_m or 1)*(self.swordsman_dmg_m or 1)*(self.flagellant_dmg_m or 1)*(self.psyker_dmg_m or 1)*(self.ballista_dmg_m or 1)*(self.ballista_x_dmg_m or 1)*(self.awakening_dmg_m or 1)*(self.reinforce_dmg_m or 1)*(self.payback_dmg_m or 1)*(self.immolation_dmg_m or 1)
   self.buff_def_m = (self.squire_def_m or 1)*(self.ouroboros_def_m or 1)*(self.unwavering_stance_def_m or 1)*(self.reinforce_def_m or 1)
   self.buff_area_size_m = (self.nuker_area_size_m or 1)*(self.magnify_area_size_m or 1)*(self.concentrated_fire_area_size_m or 1)*(self.unleash_area_size_m or 1)
   self.buff_area_dmg_m = (self.nuker_area_dmg_m or 1)*(self.amplify_area_dmg_m or 1)*(self.amplify_x_area_dmg_m or 1)*(self.concentrated_fire_area_dmg_m or 1)*(self.unleash_area_dmg_m or 1)
-  self.buff_mvspd_m = (self.wall_rider_mvspd_m or 1)*(self.centipede_mvspd_m or 1)
+  self.buff_mvspd_m = (self.wall_rider_mvspd_m or 1)*(self.centipede_mvspd_m or 1)*(self.squire_mvspd_m or 1)
   self:calculate_stats()
 
   if self.attack_sensor then self.attack_sensor:move_to(self.x, self.y) end
@@ -1424,7 +1434,7 @@ function Projectile:on_collision_enter(other, contact)
         self.ricochet = self.ricochet - 1
       end
       _G[random:table{'arrow_hit_wall1', 'arrow_hit_wall2'}]:play{pitch = random:float(0.9, 1.1), volume = 0.2}
-    elseif self.character == 'scout' or self.character == 'outlaw' or self.character == 'blade' or self.character == 'spellblade' or self.character == 'bard' then
+    elseif self.character == 'scout' or self.character == 'outlaw' or self.character == 'blade' or self.character == 'spellblade' or self.character == 'bard' or self.character == 'beastmaster' then
       self:die(x, y, r, 0)
       knife_hit_wall1:play{pitch = random:float(0.9, 1.1), volume = 0.2}
       local r = Unit.bounce(self, nx, ny)
@@ -1489,7 +1499,7 @@ function Projectile:on_trigger_enter(other, contact)
     end
 
     if self.character == 'archer' or self.character == 'scout' or self.character == 'outlaw' or self.character == 'blade' or self.character == 'hunter' or self.character == 'spellblade' or self.character == 'engineer' or
-    self.character == 'bard' or self.character == 'assassin' or self.character == 'barrager' then
+    self.character == 'bard' or self.character == 'assassin' or self.character == 'barrager' or self.character == 'beastmaster' then
       hit2:play{pitch = random:float(0.95, 1.05), volume = 0.35}
       if self.character == 'spellblade' then
         magic_area1:play{pitch = random:float(0.95, 1.05), volume = 0.15}
@@ -1595,25 +1605,25 @@ function Area:init(args)
     local resonance_dmg = 0
     if self.character == 'elementor' then
       if self.parent.resonance then resonance_dmg = 2*self.dmg*0.05*#enemies end
-      enemy:hit(2*self.dmg + resonance_dmg)
+      enemy:hit(2*self.dmg + resonance_dmg, self)
       if self.level == 3 then
         enemy:slow(0.4, 6)
       end
     elseif self.character == 'swordsman' then
       if self.parent.resonance then resonance_dmg = (self.dmg + self.dmg*0.15*#enemies)*0.05*#enemies end
-      enemy:hit(self.dmg + self.dmg*0.15*#enemies + resonance_dmg)
+      enemy:hit(self.dmg + self.dmg*0.15*#enemies + resonance_dmg, self)
     elseif self.character == 'blade' and self.level == 3 then
       if self.parent.resonance then resonance_dmg = (self.dmg + self.dmg*0.33*#enemies)*0.05*#enemies end
-      enemy:hit(self.dmg + self.dmg*0.33*#enemies + resonance_dmg)
+      enemy:hit(self.dmg + self.dmg*0.33*#enemies + resonance_dmg, self)
     elseif self.character == 'highlander' then
       if self.parent.resonance then resonance_dmg = 6*self.dmg*0.05*#enemies end
-      enemy:hit(6*self.dmg + resonance_dmg)
+      enemy:hit(6*self.dmg + resonance_dmg, self)
     elseif self.character == 'launcher' then
       if self.parent.resonance then resonance_dmg = (self.level == 3 and 6*self.dmg*0.05*#enemies or 2*self.dmg*0.05*#enemies) end
       enemy:curse('launcher', 4*(self.hex_duration_m or 1), (self.level == 3 and 6*self.dmg or 2*self.dmg) + resonance_dmg, self.parent)
     else
       if self.parent.resonance then resonance_dmg = self.dmg*0.05*#enemies end
-      enemy:hit(self.dmg + resonance_dmg)
+      enemy:hit(self.dmg + resonance_dmg, self)
     end
     HitCircle{group = main.current.effects, x = enemy.x, y = enemy.y, rs = 6, color = fg[0], duration = 0.1}
     for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = self.color} end
@@ -1647,7 +1657,7 @@ function Area:init(args)
 
   if self.parent.void_rift and table.any(self.parent.classes, function(v) return v == 'mage' or v == 'nuker' or v == 'voider' end) then
     if random:bool(20) then
-      DotArea{group = main.current.effects, x = self.x, y = self.y, rs = self.parent.area_size_m*24, color = self.color, dmg = self.parent.area_dmg_m*self.dmg*(self.parent.dot_dmg_m or 1), void_rift = true, duration = 1}
+      DotArea{group = main.current.effects, x = self.x, y = self.y, rs = self.parent.area_size_m*24, color = self.color, dmg = self.parent.area_dmg_m*self.dmg*(self.parent.dot_dmg_m or 1), void_rift = true, duration = 1, parent = self.parent}
     end
   end
 
@@ -1705,7 +1715,7 @@ function DotArea:init(args)
             enemy.pyrod = self
           end
         end
-        enemy:hit((self.dot_dmg_m or 1)*self.dmg/5)
+        enemy:hit((self.dot_dmg_m or 1)*self.dmg/5, self)
         HitCircle{group = main.current.effects, x = enemy.x, y = enemy.y, rs = 6, color = fg[0], duration = 0.1}
         for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = self.color} end
         for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = enemy.color} end
@@ -1723,7 +1733,7 @@ function DotArea:init(args)
         if self.level == 3 then
           enemy:slow(0.4, 4)
         end
-        enemy:hit((self.dot_dmg_m or 1)*2*self.dmg)
+        enemy:hit((self.dot_dmg_m or 1)*2*self.dmg, self)
         HitCircle{group = main.current.effects, x = enemy.x, y = enemy.y, rs = 6, color = fg[0], duration = 0.1}
         for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = self.color} end
         for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = enemy.color} end
@@ -1757,7 +1767,7 @@ function DotArea:init(args)
       if #enemies > 0 then self.spring:pull(0.05, 200, 10) end
       for _, enemy in ipairs(enemies) do
         hit2:play{pitch = random:float(0.8, 1.2), volume = 0.2}
-        enemy:hit((self.dot_dmg_m or 1)*self.dmg/5)
+        enemy:hit((self.dot_dmg_m or 1)*self.dmg/5, self)
         HitCircle{group = main.current.effects, x = enemy.x, y = enemy.y, rs = 6, color = fg[0], duration = 0.1}
         for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = self.color} end
         for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = enemy.color} end
@@ -2281,6 +2291,7 @@ end
 
 function Critter:on_trigger_enter(other, contact)
   if other:is(Seeker) then
+    critter2:play{pitch = random:float(0.65, 0.85), volume = 0.1}
     self:hit(1)
     other:hit(self.dmg, self)
   end

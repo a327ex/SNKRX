@@ -97,8 +97,10 @@ function LightningLine:generate()
       end
     end
     local line = table.remove(self.lines, min_i)
-    table.insert(self.points, line.x1)
-    table.insert(self.points, line.y1)
+    if line then
+      table.insert(self.points, line.x1)
+      table.insert(self.points, line.y1)
+    end
   end
 end
 
@@ -230,14 +232,14 @@ function Unit:calculate_stats(first_run)
     if self.boss then
       local x = self.level
       local y = {0, 0, 3, 0, 0, 6, 0, 0, 9, 0, 0, 12, 0, 0, 15, 0, 0, 18, 0, 0, 21, 0, 0, 24, 25}
-      self.base_hp = 100 + (new_game_plus*5) + (100 + new_game_plus*5)*y[x]
-      self.base_dmg = 50 + 15*y[x]
+      self.base_hp = 100 + (new_game_plus*10) + (90 + new_game_plus*14)*y[x]
+      self.base_dmg = (25 + new_game_plus*10) + (7 + new_game_plus*4)*y[x]
       self.base_mvspd = 35 + 1.5*y[x]
     else
       local x = self.level
       local y = {0, 1, 3, 3, 4, 6, 5, 6, 9, 7, 8, 12, 10, 11, 15, 12, 13, 18, 16, 17, 21, 17, 20, 24, 25}
-      self.base_hp = 25 + (new_game_plus*2) + (25 + new_game_plus*2)*y[x]
-      self.base_dmg = 10 + 3*y[x]
+      self.base_hp = 22 + (new_game_plus*3) + (17 + new_game_plus*2.6)*y[x]
+      self.base_dmg = (4 + new_game_plus*1.5) + (2.2 + new_game_plus)*y[x]
       self.base_mvspd = 70 + 3*y[x]
     end
   elseif self:is(Saboteur) then

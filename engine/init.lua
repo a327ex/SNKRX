@@ -47,6 +47,7 @@ function engine_run(config)
   if not web then
     love.filesystem.setIdentity(config.game_name)
     steam.init()
+    system.load_state()
 
     local _, _, flags = love.window.getMode()
     local window_width, window_height = love.window.getDesktopDimensions(flags.display)
@@ -63,7 +64,12 @@ function engine_run(config)
     sx, sy = window_width/(config.game_width or 480), window_height/(config.game_height or 270)
     ww, wh = window_width, window_height
 
-    love.window.setMode(window_width, window_height, {fullscreen = config.fullscreen, vsync = config.vsync, msaa = msaa or 0, display = config.display})
+    if state.sx and state.sy then
+      sx, sy = state.sx, state.sy
+      love.window.setMode(state.sx*gw, state.sy*gh, {fullscreen = state.fullscreen, vsync = config.vsync, msaa = msaa or 0, display = config.display})
+    else
+      love.window.setMode(window_width, window_height, {fullscreen = config.fullscreen, vsync = config.vsync, msaa = msaa or 0, display = config.display})
+    end
     love.window.setTitle(config.game_name)
 
   else
@@ -72,6 +78,7 @@ function engine_run(config)
     ww, wh = 960, 540
   end
 
+  love.window.setIcon(love.image.newImageData('assets/images/icon.png'))
   love.graphics.setBackgroundColor(0, 0, 0, 1)
   love.graphics.setColor(1, 1, 1, 1)
   love.joystick.loadGamepadMappings("engine/gamecontrollerdb.txt")

@@ -14,6 +14,8 @@ function Arena:on_enter(from, level, units, passives)
   self.units = units
   self.passives = passives
 
+  trigger:tween(2, main_song_instance, {volume = 0.5, pitch = 1}, math.linear)
+
   steam.friends.setRichPresence('steam_display', '#StatusFull')
   steam.friends.setRichPresence('text', 'Arena - Level ' .. self.level)
 
@@ -22,6 +24,7 @@ function Arena:on_enter(from, level, units, passives)
   self.post_main = Group()
   self.effects = Group()
   self.ui = Group()
+  self.credits = Group()
   self.main:disable_collision_between('player', 'player')
   self.main:disable_collision_between('player', 'projectile')
   self.main:disable_collision_between('player', 'enemy_projectile')
@@ -39,9 +42,6 @@ function Arena:on_enter(from, level, units, passives)
   self.main_slow_amount = 1
   self.enemies = {Seeker, EnemyCritter}
   self.color = self.color or fg[0]
-
-  self.level = 25
-  self.can_quit = true
 
   -- Spawn solids and player
   self.x1, self.y1 = gw/2 - 0.8*gw/2, gh/2 - 0.8*gh/2
@@ -99,12 +99,23 @@ function Arena:on_enter(from, level, units, passives)
         SpawnEffect{group = self.effects, x = gw/2, y = gh/2 - 48}
         SpawnEffect{group = self.effects, x = gw/2, y = gh/2, action = function(x, y)
           spawn1:play{pitch = random:float(0.8, 1.2), volume = 0.15}
-          self.boss = Seeker{group = self.main, x = x, y = y, character = 'seeker', level = self.level, boss = level_to_boss[self.level]}
+          SpawnMarker{group = self.effects, x = x, y = y}
+          self.t:after(0.75, function()
+            self.boss = Seeker{group = self.main, x = x, y = y, character = 'seeker', level = self.level, boss = level_to_boss[self.level]}
+          end)
         end}
-        self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 0 end, function()
+        self.t:every(function()
+          if self.boss and not self.boss.dead then
+            return (#self.main:get_objects_by_classes(self.enemies) <= 1) and not self.spawning_enemies
+          elseif self.boss and self.boss.dead then
+            return (#self.main:get_objects_by_classes(self.enemies) <= 0) and not self.spawning_enemies
+          end
+        end, function()
           self.hfx:use('condition1', 0.25, 200, 10)
           self.hfx:pull('condition2', 0.0625)
           self.t:after(0.5, function()
+            self.spawning_enemies = true
+            self.t:after((8 + math.floor(self.level/2))*0.1 + 0.5 + 0.75, function() self.spawning_enemies = false end, 'spawning_enemies')
             local spawn_type = random:table{'left', 'middle', 'right'}
             local spawn_points = {left = {x = self.x1 + 32, y = gh/2}, middle = {x = gw/2, y = gh/2}, right = {x = self.x2 - 32, y = gh/2}}
             local p = spawn_points[spawn_type]
@@ -114,7 +125,7 @@ function Arena:on_enter(from, level, units, passives)
         end)
       end)
       self.t:every(function() return self.start_time <= 0 and (self.boss and self.boss.dead) and #self.main:get_objects_by_classes(self.enemies) <= 0 and not self.spawning_enemies and not self.quitting end, function()
-        self.can_quit = true
+        self:quit()
         if self.level == 6 then
           state.achievement_speed_booster = true
           system.save_state()
@@ -172,7 +183,7 @@ function Arena:on_enter(from, level, units, passives)
         alert1:play{pitch = 1.2, volume = 0.5}
         camera:shake(4, 0.25)
         SpawnEffect{group = self.effects, x = gw/2, y = gh/2 - 48}
-        self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 0 end, function()
+        self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 0 and not self.spawning_enemies end, function()
           self.wave = self.wave + 1
           if self.wave > self.max_waves then return end
           self.hfx:use('condition1', 0.25, 200, 10)
@@ -186,6 +197,8 @@ function Arena:on_enter(from, level, units, passives)
                 end)
               end
             else
+              self.spawning_enemies = true
+              self.t:after((8 + (self.wave-1)*2)*0.1 + 0.5 + 0.75, function() self.spawning_enemies = false end, 'spawning_enemies')
               local spawn_type = random:table{'left', 'middle', 'right'}
               local spawn_points = {left = {x = self.x1 + 32, y = gh/2}, middle = {x = gw/2, y = gh/2}, right = {x = self.x2 - 32, y = gh/2}}
               local p = spawn_points[spawn_type]
@@ -195,12 +208,12 @@ function Arena:on_enter(from, level, units, passives)
           end)
         end, self.max_waves+1)
       end)
-      self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 0 and self.wave > self.max_waves end, function() self.can_quit = true end)
+      self.t:every(function() return #self.main:get_objects_by_classes(self.enemies) <= 0 and self.wave > self.max_waves and not self.quitting and not self.spawning_enemies end, function() self:quit() end)
     end)
 
-    if self.level == 18 and self.trailer then
+    if self.level == 20 and self.trailer then
       Text2{group = self.ui, x = gw/2, y = gh/2 - 24, lines = {{text = '[fg, wavy]SNKRX', font = fat_font, alignment = 'center'}}}
-      Text2{group = self.ui, x = gw/2, y = gh/2, sx = 0.5, sy = 0.5, lines = {{text = '[fg, wavy_mid]wishlist now!', font = fat_font, alignment = 'center'}}}
+      Text2{group = self.ui, x = gw/2, y = gh/2, sx = 0.5, sy = 0.5, lines = {{text = '[fg, wavy_mid]play now!', font = fat_font, alignment = 'center'}}}
       Text2{group = self.ui, x = gw/2, y = gh/2 + 24, sx = 0.5, sy = 0.5, lines = {{text = '[light_bg, wavy_mid]music: kubbi - ember', font = fat_font, alignment = 'center'}}}
     end
   end
@@ -236,28 +249,143 @@ function Arena:on_enter(from, level, units, passives)
   self.psyker_level = class_levels.psyker
   self.conjurer_level = class_levels.conjurer
 
+  self.t:every(0.375, function()
+    local p = random:table(star_positions)
+    Star{group = star_group, x = p.x, y = p.y}
+  end)
+end
+
+
+function Arena:on_exit()
+  self.floor:destroy()
+  self.main:destroy()
+  self.post_main:destroy()
+  self.effects:destroy()
+  self.ui:destroy()
+  self.credits:destroy()
+  self.t:destroy()
+  self.floor = nil
+  self.main = nil
+  self.post_main = nil
+  self.effects = nil
+  self.ui = nil
+  self.credits = nil
+  self.units = nil
+  self.passives = nil
+  self.player = nil
+  self.t = nil
+  self.springs = nil
+  self.flashes = nil
+  self.hfx = nil
 end
 
 
 function Arena:update(dt)
-  if input.k.pressed then
-    SpawnEffect{group = self.effects, x = gw/2, y = gh/2, action = function(x, y)
-      spawn1:play{pitch = random:float(0.8, 1.2), volume = 0.15}
-      Seeker{group = self.main, x = x, y = y, character = 'seeker', level = self.level, boss = 'randomizer'}
-    end}
+  if main_song_instance:isStopped() then
+    main_song_instance = _G[random:table{'song1', 'song2', 'song3', 'song4', 'song5'}]:play{volume = 0.5}
   end
 
-  if input.escape.pressed and not self.transitioning then
+  if input.escape.pressed and not self.transitioning and not self.in_credits then
     if not self.paused then
       trigger:tween(0.25, _G, {slow_amount = 0}, math.linear, function()
         slow_amount = 0
         self.paused = true
-        self.paused_t1 = Text2{group = self.ui, x = gw/2, y = gh/2 - 68, sx = 0.6, sy = 0.6, lines = {{text = '[fg]<- or a         -> or d', font = fat_font, alignment = 'center'}}}
-        self.paused_t2 = Text2{group = self.ui, x = gw/2, y = gh/2 - 52, lines = {{text = '[fg]turn left                                      turn right', font = pixul_font, alignment = 'center'}}}
-        self.paused_t3 = Text2{group = self.ui, x = gw/2, y = gh/2 - 22, sx = 0.6, sy = 0.6, lines = {{text = '[fg]n - mute sfx', font = fat_font, alignment = 'center'}}}
-        self.paused_t4 = Text2{group = self.ui, x = gw/2, y = gh/2 + 0, sx = 0.6, sy = 0.6, lines = {{text = '[fg]m - mute music', font = fat_font, alignment = 'center'}}}
-        self.paused_t5 = Text2{group = self.ui, x = gw/2, y = gh/2 + 22, sx = 0.6, sy = 0.6, lines = {{text = '[fg]esc - resume game', font = fat_font, alignment = 'center'}}}
-        self.paused_t6 = Text2{group = self.ui, x = gw/2, y = gh/2 + 44, sx = 0.6, sy = 0.6, lines = {{text = '[fg]r - restart run', font = fat_font, alignment = 'center'}}}
+        self.paused_t1 = Text2{group = self.ui, x = gw/2, y = gh/2 - 68, sx = 0.6, sy = 0.6, lines = {{text = '[bg10]<-, a or m1       ->, d or m2', font = fat_font, alignment = 'center'}}}
+        self.paused_t2 = Text2{group = self.ui, x = gw/2, y = gh/2 - 52, lines = {{text = '[bg10]turn left                                            turn right', font = pixul_font, alignment = 'center'}}}
+
+        self.resume_button = Button{group = self.ui, x = gw/2, y = gh - 160, force_update = true, button_text = 'resume game (esc)', fg_color = 'bg10', bg_color = 'bg', action = function(b)
+          trigger:tween(0.25, _G, {slow_amount = 1}, math.linear, function()
+            slow_amount = 1
+            self.paused = false
+            self.paused_t1.dead = true
+            self.paused_t2.dead = true
+            self.paused_t1 = nil
+            self.paused_t2 = nil
+            if self.resume_button then self.resume_button.dead = true; self.resume_button = nil end
+            if self.restart_button then self.restart_button.dead = true; self.restart_button = nil end
+            if self.sfx_button then self.sfx_button.dead = true; self.sfx_button = nil end
+            if self.music_button then self.music_button.dead = true; self.music_button = nil end
+            if self.video_button_1 then self.video_button_1.dead = true; self.video_button_1 = nil end
+            if self.video_button_2 then self.video_button_2.dead = true; self.video_button_2 = nil end
+            if self.video_button_3 then self.video_button_3.dead = true; self.video_button_3 = nil end
+            if self.quit_button then self.quit_button.dead = true; self.quit_button = nil end
+          end, 'pause')
+        end}
+
+        self.restart_button = Button{group = self.ui, x = gw/2, y = gh - 135, force_update = true, button_text = 'restart run (r)', fg_color = 'bg10', bg_color = 'bg', action = function(b)
+          self.transitioning = true
+          ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+          ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+          ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+          TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = fg[0], transition_action = function()
+            slow_amount = 1
+            gold = 2
+            passives = {}
+            main_song_instance:stop()
+            run_passive_pool_by_tiers = {
+              [1] = { 'wall_echo', 'wall_rider', 'centipede', 'temporal_chains', 'amplify', 'amplify_x', 'ballista', 'ballista_x', 'blunt_arrow', 'berserking', 'unwavering_stance', 'assassination', 'unleash', 'blessing',
+                'hex_master', 'force_push', 'spawning_pool'}, 
+              [2] = {'ouroboros_technique_r', 'ouroboros_technique_l', 'intimidation', 'vulnerability', 'resonance', 'point_blank', 'longshot', 'explosive_arrow', 'chronomancy', 'awakening', 'ultimatum', 'concentrated_fire', 
+                'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
+              [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
+            }
+            main:add(BuyScreen'buy_screen')
+            main:go_to('buy_screen', 0, {}, passives)
+          end, text = Text({{text = '[wavy, bg]restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
+        end}
+
+        self.sfx_button = Button{group = self.ui, x = gw/2, y = gh - 110, force_update = true, button_text = 'toggle sfx (n)', fg_color = 'bg10', bg_color = 'bg', action = function(b)
+          ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+          b.spring:pull(0.2, 200, 10)
+          b.selected = true
+          ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+          if sfx.volume == 0.5 then
+            sfx.volume = 0
+          elseif sfx.volume == 0 then
+            sfx.volume = 0.5
+          end
+        end}
+
+        self.music_button = Button{group = self.ui, x = gw/2, y = gh - 85, force_update = true, button_text = 'toggle music (m)', fg_color = 'bg10', bg_color = 'bg', action = function(b)
+          ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+          b.spring:pull(0.2, 200, 10)
+          b.selected = true
+          ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+          if music.volume == 0.5 then
+            music.volume = 0
+          elseif music.volume == 0 then
+            music.volume = 0.5
+          end
+        end}
+
+        self.video_button_1 = Button{group = self.ui, x = gw/2 - 86, y = gh - 60, force_update = true, button_text = 'window size-', fg_color = 'bg10', bg_color = 'bg', action = function()
+          sx, sy = sx - 1, sy - 1
+          love.window.setMode(480*sx, 270*sy)
+          state.sx, state.sy = sx, sy
+          state.fullscreen = false
+        end}
+
+        self.video_button_2 = Button{group = self.ui, x = gw/2, y = gh - 60, force_update = true, button_text = 'window size+', fg_color = 'bg10', bg_color = 'bg', action = function()
+          sx, sy = sx + 1, sy + 1
+          love.window.setMode(480*sx, 270*sy)
+          state.sx, state.sy = sx, sy
+          state.fullscreen = false
+        end}
+
+        self.video_button_3 = Button{group = self.ui, x = gw/2 + 79, y = gh - 60, force_update = true, button_text = 'fullscreen', fg_color = 'bg10', bg_color = 'bg', action = function()
+          local _, _, flags = love.window.getMode()
+          local window_width, window_height = love.window.getDesktopDimensions(flags.display)
+          sx, sy = window_width/480, window_height/270
+          ww, wh = window_width, window_height
+          love.window.setMode(window_width, window_height, {fullscreen = true})
+          state.fullscreen = true
+        end}
+
+        self.quit_button = Button{group = self.ui, x = gw/2, y = gh - 35, force_update = true, button_text = 'quit', fg_color = 'bg10', bg_color = 'bg', action = function()
+          system.save_state()
+          steam.shutdown()
+          love.event.quit()
+        end}
       end, 'pause')
     else
       trigger:tween(0.25, _G, {slow_amount = 1}, math.linear, function()
@@ -265,21 +393,21 @@ function Arena:update(dt)
         self.paused = false
         self.paused_t1.dead = true
         self.paused_t2.dead = true
-        self.paused_t3.dead = true
-        self.paused_t4.dead = true
-        self.paused_t5.dead = true
-        self.paused_t6.dead = true
         self.paused_t1 = nil
         self.paused_t2 = nil
-        self.paused_t3 = nil
-        self.paused_t4 = nil
-        self.paused_t5 = nil
-        self.paused_t6 = nil
+        if self.resume_button then self.resume_button.dead = true; self.resume_button = nil end
+        if self.restart_button then self.restart_button.dead = true; self.restart_button = nil end
+        if self.sfx_button then self.sfx_button.dead = true; self.sfx_button = nil end
+        if self.music_button then self.music_button.dead = true; self.music_button = nil end
+        if self.video_button_1 then self.video_button_1.dead = true; self.video_button_1 = nil end
+        if self.video_button_2 then self.video_button_2.dead = true; self.video_button_2 = nil end
+        if self.video_button_3 then self.video_button_3.dead = true; self.video_button_3 = nil end
+        if self.quit_button then self.quit_button.dead = true; self.quit_button = nil end
       end, 'pause')
     end
   end
 
-  if self.paused or self.died and not self.transitioning then
+  if self.paused or self.died or self.won and not self.transitioning then
     if input.r.pressed then
       self.transitioning = true
       ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -289,7 +417,7 @@ function Arena:update(dt)
         slow_amount = 1
         gold = 2
         passives = {}
-        cascade_instance:stop()
+        main_song_instance:stop()
         run_passive_pool_by_tiers = {
           [1] = { 'wall_echo', 'wall_rider', 'centipede', 'temporal_chains', 'amplify', 'amplify_x', 'ballista', 'ballista_x', 'blunt_arrow', 'berserking', 'unwavering_stance', 'assassination', 'unleash', 'blessing',
             'hex_master', 'force_push', 'spawning_pool'}, 
@@ -301,189 +429,214 @@ function Arena:update(dt)
         main:go_to('buy_screen', 0, {}, passives)
       end, text = Text({{text = '[wavy, bg]restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
     end
+
+    if input.escape.pressed then
+      self.in_credits = false
+      if self.credits_button then self.credits_button:on_mouse_exit() end
+      for _, object in ipairs(self.credits.objects) do
+        object.dead = true
+      end
+      self.credits:update(0)
+    end
   end
 
   self:update_game_object(dt*slow_amount)
-  cascade_instance.pitch = math.clamp(slow_amount*self.main_slow_amount, 0.05, 1)
+  main_song_instance.pitch = math.clamp(slow_amount*self.main_slow_amount, 0.05, 1)
 
+  star_group:update(dt*slow_amount)
   self.floor:update(dt*slow_amount)
   self.main:update(dt*slow_amount*self.main_slow_amount)
   self.post_main:update(dt*slow_amount)
   self.effects:update(dt*slow_amount)
   self.ui:update(dt*slow_amount)
+  self.credits:update(dt)
+end
 
-  if self.can_quit and #self.main:get_objects_by_classes(self.enemies) <= 0 and not self.transitioning then
-    self.can_quit = false
-    self.quitting = true
 
-    if self.level == 25 then
-      if not self.win_text and not self.win_text2 then
-        self.won = true
-        trigger:tween(1, _G, {slow_amount = 0}, math.linear, function() slow_amount = 0 end)
-        trigger:tween(4, camera, {x = gw/2, y = gh/2, r = 0}, math.linear, function() camera.x, camera.y, camera.r = gw/2, gh/2, 0 end)
-        self.win_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 66, force_update = true, lines = {{text = '[wavy_mid, cbyc2]congratulations!', font = fat_font, alignment = 'center'}}}
-        trigger:after(2.5, function()
-          if new_game_plus == 10 then
-
-          else
-            self.win_text2 = Text2{group = self.ui, x = gw/2, y = gh/2 + 20, force_update = true, lines = {
-              {text = "[fg]you've beaten the game!", font = pixul_font, alignment = 'center', height_multiplier = 1.24},
-              {text = "[fg]i made this game in 3 months as a dev challenge", font = pixul_font, alignment = 'center', height_multiplier = 1.24},
-              {text = "[fg]and i'm happy with how it turned out!", font = pixul_font, alignment = 'center', height_multiplier = 1.24},
-              {text = "[fg]if you liked it too and want to play more games like this:", font = pixul_font, alignment = 'center', height_multiplier = 4},
-              {text = "[fg]i will release more games this year, so stay tuned!", font = pixul_font, alignment = 'center', height_multiplier = 1.4},
-              {text = "[wavy_mid, yellow]thanks for playing!", font = pixul_font, alignment = 'center'},
-            }}
-            SteamFollowButton{group = self.ui, x = gw/2, y = gh/2 + 34, force_update = true}
-            RestartButton{group = self.ui, x = gw - 40, y = gh - 20, force_update = true}
-            trigger:after(12, function()
-              self.try_ng_text = Text2{group = self.ui, x = gw - 140, y = gh - 20, force_update = true, lines = {
-                {text = '[cbyc3, wavy_mid]try a harder difficulty:', font = pixul_font},
-              }}
-            end)
-          end
-        end)
-
-        if new_game_plus == 1 then
-          state.achievement_new_game_1 = true
-          system.save_state()
-          steam.userStats.setAchievement('NEW_GAME_1')
-          steam.userStats.storeStats()
-        end
-
+function Arena:quit()
+  self.quitting = true
+  if self.level == 25 then
+    if not self.win_text and not self.win_text2 then
+      self.won = true
+      trigger:tween(1, _G, {slow_amount = 0}, math.linear, function() slow_amount = 0 end)
+      trigger:tween(4, camera, {x = gw/2, y = gh/2, r = 0}, math.linear, function() camera.x, camera.y, camera.r = gw/2, gh/2, 0 end)
+      self.win_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 66, force_update = true, lines = {{text = '[wavy_mid, cbyc2]congratulations!', font = fat_font, alignment = 'center'}}}
+      trigger:after(2.5, function()
         if new_game_plus == 5 then
-          state.achievement_new_game_5 = true
-          system.save_state()
-          steam.userStats.setAchievement('NEW_GAME_5')
-          steam.userStats.storeStats()
+          self.win_text2 = Text2{group = self.ui, x = gw/2, y = gh/2 + 30, force_update = true, lines = {
+            {text = "[fg]now you've really beaten the game!", font = pixul_font, alignment = 'center', height_multiplier = 1.24},
+            {text = "[fg]thanks a lot for playing it and completing it entirely!", font = pixul_font, alignment = 'center', height_multiplier = 1.24},
+            {text = "[fg]this game was inspired by:", font = pixul_font, alignment = 'center', height_multiplier = 4},
+            {text = "[fg]so check those games out, they're fun!", font = pixul_font, alignment = 'center', height_multiplier = 1.24},
+            {text = "[fg]and to get more games like this in the future:", font = pixul_font, alignment = 'center', height_multiplier = 4},
+            {text = "[wavy_mid, yellow]thanks for playing!", font = pixul_font, alignment = 'center'},
+          }}
+          SteamFollowButton{group = self.ui, x = gw/2, y = gh/2 + 78, force_update = true}
+          Button{group = self.ui, x = gw - 40, y = gh - 44, force_update = true, button_text = 'credits', fg_color = 'bg10', bg_color = 'bg', action = function() self:create_credits() end}
+          Button{group = self.ui, x = gw - 32, y = gh - 20, force_update = true, button_text = 'quit', fg_color = 'bg10', bg_color = 'bg', action = function() love.event.quit() end}
+          local open_url = function(b, url)
+            ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+            b.spring:pull(0.2, 200, 10)
+            b.selected = true
+            ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+            system.open_url(url)
+          end
+          Button{group = self.ui, x = gw/2 - 50, y = gh/2 + 12, force_update = true, button_text = 'nimble quest', fg_color = 'bluem5', bg_color = 'blue', action = function(b) open_url(b, 'https://store.steampowered.com/app/259780/Nimble_Quest/') end}
+          Button{group = self.ui, x = gw/2 + 50, y = gh/2 + 12, force_update = true, button_text = 'dota underlords', fg_color = 'bluem5', bg_color = 'blue', action = function(b) open_url(b, 'https://store.steampowered.com/app/1046930/Dota_Underlords/') end}
+        else
+          self.win_text2 = Text2{group = self.ui, x = gw/2, y = gh/2 + 20, force_update = true, lines = {
+            {text = "[fg]you've beaten the game!", font = pixul_font, alignment = 'center', height_multiplier = 1.24},
+            {text = "[fg]i made this game in 3 months as a dev challenge", font = pixul_font, alignment = 'center', height_multiplier = 1.24},
+            {text = "[fg]and i'm happy with how it turned out!", font = pixul_font, alignment = 'center', height_multiplier = 1.24},
+            {text = "[fg]if you liked it too and want to play more games like this:", font = pixul_font, alignment = 'center', height_multiplier = 4},
+            {text = "[fg]i will release more games this year, so stay tuned!", font = pixul_font, alignment = 'center', height_multiplier = 1.4},
+            {text = "[wavy_mid, yellow]thanks for playing!", font = pixul_font, alignment = 'center'},
+          }}
+          SteamFollowButton{group = self.ui, x = gw/2, y = gh/2 + 34, force_update = true}
+          RestartButton{group = self.ui, x = gw - 40, y = gh - 20, force_update = true}
+          trigger:after(12, function()
+            self.try_ng_text = Text2{group = self.ui, x = gw - 220, y = gh - 20, force_update = true, lines = {
+              {text = '[cbyc3]try a harder difficulty with +1 max snake size:', font = pixul_font},
+            }}
+          end)
+          self.credits_button = Button{group = self.ui, x = gw - 40, y = gh - 44, force_update = true, button_text = 'credits', fg_color = 'bg10', bg_color = 'bg', action = function()
+            self:create_credits()
+          end}
         end
+      end)
 
-        if new_game_plus == 10 then
-          state.achievement_game_complete = true
-          system.save_state()
-          steam.userStats.setAchievement('GAME_COMPLETE')
-          steam.userStats.storeStats()
-        end
-
-        if self.ranger_level >= 2 then
-          state.achievement_rangers_win = true
-          system.save_state()
-          steam.userStats.setAchievement('RANGERS_WIN')
-          steam.userStats.storeStats()
-        end
-
-        if self.warrior_level >= 2 then
-          state.achievement_warriors_win = true
-          system.save_state()
-          steam.userStats.setAchievement('WARRIORS_WIN')
-          steam.userStats.storeStats()
-        end
-
-        if self.mage_level >= 2 then
-          state.achievement_mages_win = true
-          system.save_state()
-          steam.userStats.setAchievement('MAGES_WIN')
-          steam.userStats.storeStats()
-        end
-
-        if self.rogue_level >= 2 then
-          state.achievement_rogues_win = true
-          system.save_state()
-          steam.userStats.setAchievement('ROGUES_WIN')
-          steam.userStats.storeStats()
-        end
-
-        if self.healer_level >= 2 then
-          state.achievement_healers_win = true
-          system.save_state()
-          steam.userStats.setAchievement('HEALERS_WIN')
-          steam.userStats.storeStats()
-        end
-
-        if self.enchanter_level >= 2 then
-          state.achievement_enchanters_win = true
-          system.save_state()
-          steam.userStats.setAchievement('ENCHANTERS_WIN')
-          steam.userStats.storeStats()
-        end
-
-        if self.nuker_level >= 2 then
-          state.achievement_nukers_win = true
-          system.save_state()
-          steam.userStats.setAchievement('NUKERS_WIN')
-          steam.userStats.storeStats()
-        end
-
-        if self.conjurer_level >= 2 then
-          state.achievement_conjurers_win = true
-          system.save_state()
-          steam.userStats.setAchievement('CONJURERS_WIN')
-          steam.userStats.storeStats()
-        end
-
-        if self.psyker_level >= 2 then
-          state.achievement_psykers_win = true
-          system.save_state()
-          steam.userStats.setAchievement('PSYKERS_WIN')
-          steam.userStats.storeStats()
-        end
-
-        if self.curser_level >= 2 then
-          state.achievement_cursers_win = true
-          system.save_state()
-          steam.userStats.setAchievement('CURSERS_WIN')
-          steam.userStats.storeStats()
-        end
-
-        if self.forcer_level >= 2 then
-          state.achievement_forcers_win = true
-          system.save_state()
-          steam.userStats.setAchievement('FORCERS_WIN')
-          steam.userStats.storeStats()
-        end
-
-        if self.swarmer_level >= 2 then
-          state.achievement_swarmers_win = true
-          system.save_state()
-          steam.userStats.setAchievement('SWARMERS_WIN')
-          steam.userStats.storeStats()
-        end
-
-        if self.voider_level >= 2 then
-          state.achievement_voiders_win = true
-          system.save_state()
-          steam.userStats.setAchievement('VOIDERS_WIN')
-          steam.userStats.storeStats()
-        end
+      if new_game_plus == 1 then
+        state.achievement_new_game_1 = true
+        system.save_state()
+        steam.userStats.setAchievement('NEW_GAME_1')
+        steam.userStats.storeStats()
       end
 
-    else
-      if not self.arena_clear_text then self.arena_clear_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 48, lines = {{text = '[wavy_mid, cbyc]arena clear!', font = fat_font, alignment = 'center'}}} end
-      self.t:after(3, function()
-        if self.level % 3 == 0 then
-          self.arena_clear_text.dead = true
-          trigger:tween(1, _G, {slow_amount = 0}, math.linear, function() slow_amount = 0 end)
-          trigger:tween(4, camera, {x = gw/2, y = gh/2, r = 0}, math.linear, function() camera.x, camera.y, camera.r = gw/2, gh/2, 0 end)
-          local card_w, card_h = 100, 100
-          local w = 3*card_w + 2*20
-          self.choosing_passives = true
-          self.cards = {}
-          local tier_1 = random:weighted_pick(unpack(level_to_passive_tier_weights[level or self.level]))
-          local tier_2 = random:weighted_pick(unpack(level_to_passive_tier_weights[level or self.level]))
-          local tier_3 = random:weighted_pick(unpack(level_to_passive_tier_weights[level or self.level]))
-          local passive_pool_copy = table.copy(run_passive_pool_by_tiers)
-          local passive_1 = random:table_remove(passive_pool_copy[tier_1])
-          local passive_2 = random:table_remove(passive_pool_copy[tier_2])
-          local passive_3 = random:table_remove(passive_pool_copy[tier_3])
-          table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 0*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, arena = self, passive = passive_1, force_update = true})
-          table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 1*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, arena = self, passive = passive_2, force_update = true})
-          table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 2*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, arena = self, passive = passive_3, force_update = true})
-          self.passive_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 65, lines = {{text = '[fg, wavy]choose one', font = fat_font, alignment = 'center'}}}
-        else
-          self:transition()
-        end
-      end, 'transition')
+      if new_game_plus == 5 then
+        state.achievement_new_game_5 = true
+        system.save_state()
+        steam.userStats.setAchievement('GAME_COMPLETE')
+        steam.userStats.storeStats()
+      end
+
+      if self.ranger_level >= 2 then
+        state.achievement_rangers_win = true
+        system.save_state()
+        steam.userStats.setAchievement('RANGERS_WIN')
+        steam.userStats.storeStats()
+      end
+
+      if self.warrior_level >= 2 then
+        state.achievement_warriors_win = true
+        system.save_state()
+        steam.userStats.setAchievement('WARRIORS_WIN')
+        steam.userStats.storeStats()
+      end
+
+      if self.mage_level >= 2 then
+        state.achievement_mages_win = true
+        system.save_state()
+        steam.userStats.setAchievement('MAGES_WIN')
+        steam.userStats.storeStats()
+      end
+
+      if self.rogue_level >= 2 then
+        state.achievement_rogues_win = true
+        system.save_state()
+        steam.userStats.setAchievement('ROGUES_WIN')
+        steam.userStats.storeStats()
+      end
+
+      if self.healer_level >= 2 then
+        state.achievement_healers_win = true
+        system.save_state()
+        steam.userStats.setAchievement('HEALERS_WIN')
+        steam.userStats.storeStats()
+      end
+
+      if self.enchanter_level >= 2 then
+        state.achievement_enchanters_win = true
+        system.save_state()
+        steam.userStats.setAchievement('ENCHANTERS_WIN')
+        steam.userStats.storeStats()
+      end
+
+      if self.nuker_level >= 2 then
+        state.achievement_nukers_win = true
+        system.save_state()
+        steam.userStats.setAchievement('NUKERS_WIN')
+        steam.userStats.storeStats()
+      end
+
+      if self.conjurer_level >= 2 then
+        state.achievement_conjurers_win = true
+        system.save_state()
+        steam.userStats.setAchievement('CONJURERS_WIN')
+        steam.userStats.storeStats()
+      end
+
+      if self.psyker_level >= 2 then
+        state.achievement_psykers_win = true
+        system.save_state()
+        steam.userStats.setAchievement('PSYKERS_WIN')
+        steam.userStats.storeStats()
+      end
+
+      if self.curser_level >= 2 then
+        state.achievement_cursers_win = true
+        system.save_state()
+        steam.userStats.setAchievement('CURSERS_WIN')
+        steam.userStats.storeStats()
+      end
+
+      if self.forcer_level >= 2 then
+        state.achievement_forcers_win = true
+        system.save_state()
+        steam.userStats.setAchievement('FORCERS_WIN')
+        steam.userStats.storeStats()
+      end
+
+      if self.swarmer_level >= 2 then
+        state.achievement_swarmers_win = true
+        system.save_state()
+        steam.userStats.setAchievement('SWARMERS_WIN')
+        steam.userStats.storeStats()
+      end
+
+      if self.voider_level >= 2 then
+        state.achievement_voiders_win = true
+        system.save_state()
+        steam.userStats.setAchievement('VOIDERS_WIN')
+        steam.userStats.storeStats()
+      end
     end
+
+  else
+    if not self.arena_clear_text then self.arena_clear_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 48, lines = {{text = '[wavy_mid, cbyc]arena clear!', font = fat_font, alignment = 'center'}}} end
+    self.t:after(3, function()
+      if self.level % 3 == 0 then
+        self.arena_clear_text.dead = true
+        trigger:tween(1, _G, {slow_amount = 0}, math.linear, function() slow_amount = 0 end)
+        trigger:tween(4, camera, {x = gw/2, y = gh/2, r = 0}, math.linear, function() camera.x, camera.y, camera.r = gw/2, gh/2, 0 end)
+        local card_w, card_h = 100, 100
+        local w = 3*card_w + 2*20
+        self.choosing_passives = true
+        self.cards = {}
+        local tier_1 = random:weighted_pick(unpack(level_to_passive_tier_weights[level or self.level]))
+        local tier_2 = random:weighted_pick(unpack(level_to_passive_tier_weights[level or self.level]))
+        local tier_3 = random:weighted_pick(unpack(level_to_passive_tier_weights[level or self.level]))
+        local passive_pool_copy = table.copy(run_passive_pool_by_tiers)
+        local passive_1 = random:table_remove(passive_pool_copy[tier_1])
+        local passive_2 = random:table_remove(passive_pool_copy[tier_2])
+        local passive_3 = random:table_remove(passive_pool_copy[tier_3])
+        table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 0*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, arena = self, passive = passive_1, force_update = true})
+        table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 1*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, arena = self, passive = passive_2, force_update = true})
+        table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 2*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, arena = self, passive = passive_3, force_update = true})
+        self.passive_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 65, lines = {{text = '[fg, wavy]choose one', font = fat_font, alignment = 'center'}}}
+      else
+        self:transition()
+      end
+    end, 'transition')
   end
 end
 
@@ -533,10 +686,12 @@ function Arena:draw()
   end
   camera:detach()
 
-  if self.level == 18 and self.trailer then graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent) end
+  if self.level == 20 and self.trailer then graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent) end
   if self.choosing_passives or self.won or self.paused or self.died then graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent) end
-
   self.ui:draw()
+
+  if self.in_credits then graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent_2) end
+  self.credits:draw()
 end
 
 
@@ -548,12 +703,90 @@ function Arena:die()
       {text = '[wavy_mid, cbyc]you died...', font = fat_font, alignment = 'center', height_multiplier = 1.25},
     }}
     self.t:after(2, function()
-      self.death_info_text = Text2{group = self.ui, x = gw/2, y = gh/2 + 24, sx = 0.7, sy = 0.7, lines = {
+      self.death_info_text = Text2{group = self.ui, x = gw/2, y = gh/2, sx = 0.7, sy = 0.7, lines = {
         {text = '[wavy_mid, fg]level reached: [wavy_mid, yellow]' .. self.level, font = fat_font, alignment = 'center'},
-        {text = '[wavy_mid, fg]r - start new run', font = fat_font, alignment = 'center'},
       }}
+      self.restart_button = Button{group = self.ui, x = gw/2, y = gh/2 + 24, force_update = true, button_text = 'restart run (r)', fg_color = 'bg10', bg_color = 'bg', action = function(b)
+        self.transitioning = true
+        ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+        ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+        ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+        TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = fg[0], transition_action = function()
+          slow_amount = 1
+          gold = 2
+          passives = {}
+          main_song_instance:stop()
+          run_passive_pool_by_tiers = {
+            [1] = { 'wall_echo', 'wall_rider', 'centipede', 'temporal_chains', 'amplify', 'amplify_x', 'ballista', 'ballista_x', 'blunt_arrow', 'berserking', 'unwavering_stance', 'assassination', 'unleash', 'blessing',
+              'hex_master', 'force_push', 'spawning_pool'}, 
+            [2] = {'ouroboros_technique_r', 'ouroboros_technique_l', 'intimidation', 'vulnerability', 'resonance', 'point_blank', 'longshot', 'explosive_arrow', 'chronomancy', 'awakening', 'ultimatum', 'concentrated_fire', 
+              'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
+            [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
+          }
+          main:add(BuyScreen'buy_screen')
+          main:go_to('buy_screen', 0, {}, passives)
+        end, text = Text({{text = '[wavy, bg]restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
+      end}
     end)
   end
+end
+
+
+function Arena:create_credits()
+  local open_url = function(b, url)
+    ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    b.spring:pull(0.2, 200, 10)
+    b.selected = true
+    ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    system.open_url(url)
+  end
+
+  self.in_credits = true
+  Text2{group = self.credits, x = 60, y = 20, lines = {{text = '[bg10]main dev: ', font = pixul_font}}}
+  Button{group = self.credits, x = 117, y = 20, button_text = 'a327ex', fg_color = 'bg10', bg_color = 'bg', credits_button = true, action = function(b) open_url(b, 'https://store.steampowered.com/dev/a327ex/') end}
+  Text2{group = self.credits, x = 60, y = 50, lines = {{text = '[blue]code: ', font = pixul_font}}}
+  Button{group = self.credits, x = 102, y = 50, button_text = 'love2d', fg_color = 'bluem5', bg_color = 'blue', credits_button = true, action = function(b) open_url(b, 'https://love2d.org') end}
+  Button{group = self.credits, x = 159, y = 50, button_text = 'bakpakin', fg_color = 'bluem5', bg_color = 'blue', credits_button = true, action = function(b) open_url(b, 'https://github.com/bakpakin/binser') end}
+  Button{group = self.credits, x = 226, y = 50, button_text = 'davisdude', fg_color = 'bluem5', bg_color = 'blue', credits_button = true, action = function(b) open_url(b, 'https://github.com/davisdude/mlib') end}
+  Button{group = self.credits, x = 295, y = 50, button_text = 'tesselode', fg_color = 'bluem5', bg_color = 'blue', credits_button = true, action = function(b) open_url(b, 'https://github.com/tesselode/ripple') end}
+  Text2{group = self.credits, x = 60, y = 80, lines = {{text = '[green]music: ', font = pixul_font}}}
+  Button{group = self.credits, x = 100, y = 80, button_text = 'kubbi', fg_color = 'greenm5', bg_color = 'green', credits_button = true, action = function(b) open_url(b, 'https://kubbimusic.com/album/ember') end}
+  Text2{group = self.credits, x = 60, y = 110, lines = {{text = '[yellow]sounds: ', font = pixul_font}}}
+  Button{group = self.credits, x = 135, y = 110, button_text = 'sidearm studios', fg_color = 'yellowm5', bg_color = 'yellow', credits_button = true, action = function(b)
+    open_url(b, 'https://sidearm-studios.itch.io/ultimate-sound-fx-bundle') end}
+  Button{group = self.credits, x = 217, y = 110, button_text = 'justinbw', fg_color = 'yellowm5', bg_color = 'yellow', credits_button = true, action = function(b)
+    open_url(b, 'https://freesound.org/people/JustinBW/sounds/80921/') end}
+  Button{group = self.credits, x = 279, y = 110, button_text = 'jcallison', fg_color = 'yellowm5', bg_color = 'yellow', credits_button = true, action = function(b)
+    open_url(b, 'https://freesound.org/people/jcallison/sounds/258269/') end}
+  Button{group = self.credits, x = 342, y = 110, button_text = 'hybrid_v', fg_color = 'yellowm5', bg_color = 'yellow', credits_button = true, action = function(b)
+    open_url(b, 'https://freesound.org/people/Hybrid_V/sounds/321215/') end}
+  Button{group = self.credits, x = 427, y = 110, button_text = 'womb_affliction', fg_color = 'yellowm5', bg_color = 'yellow', credits_button = true, action = function(b)
+    open_url(b, 'https://freesound.org/people/womb_affliction/sounds/376532/') end}
+  Button{group = self.credits, x = 106, y = 130, button_text = 'bajko', fg_color = 'yellowm5', bg_color = 'yellow', credits_button = true, action = function(b)
+    open_url(b, 'https://freesound.org/people/bajko/sounds/399656/') end}
+  Button{group = self.credits, x = 157, y = 130, button_text = 'benzix2', fg_color = 'yellowm5', bg_color = 'yellow', credits_button = true, action = function(b)
+    open_url(b, 'https://freesound.org/people/benzix2/sounds/467951/') end}
+  Button{group = self.credits, x = 204, y = 130, button_text = 'lord', fg_color = 'yellowm5', bg_color = 'yellow', credits_button = true, action = function(b)
+    open_url(b, 'https://store.steampowered.com/developer/T_TGames') end}
+  Text2{group = self.credits, x = 70, y = 160, lines = {{text = '[red]playtesters: ', font = pixul_font}}}
+  Button{group = self.credits, x = 130, y = 160, button_text = 'Jofer', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
+    open_url(b, 'https://twitter.com/JofersGames') end}
+  Button{group = self.credits, x = 172, y = 160, button_text = 'ekun', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
+    open_url(b, 'https://twitter.com/ekunenuke') end}
+  Button{group = self.credits, x = 224, y = 160, button_text = 'cvisy_GN', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
+    open_url(b, 'https://twitter.com/cvisy_GN') end}
+  Button{group = self.credits, x = 292, y = 160, button_text = 'Blue Fairy', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
+    open_url(b, 'https://twitter.com/blue9fairy') end}
+  Button{group = self.credits, x = 362, y = 160, button_text = 'Phil Blank', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
+    open_url(b, 'https://twitter.com/PhilBlankGames') end}
+  Button{group = self.credits, x = 440, y = 160, button_text = 'DefineDoddy', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
+    open_url(b, 'https://twitter.com/DefineDoddy') end}
+  Button{group = self.credits, x = 140, y = 180, button_text = 'Ge0force', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
+    open_url(b, 'https://twitter.com/Ge0forceBE') end}
+  Button{group = self.credits, x = 193, y = 180, button_text = 'Vlad', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
+    open_url(b, 'https://twitter.com/thecryru') end}
+  Button{group = self.credits, x = 223, y = 180, button_text = 'F', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
+    open_url(b, 'https://twitter.com/notyps') end}
 end
 
 
@@ -689,6 +922,9 @@ end
 
 function Arena:spawn_n_enemies(p, j, n)
   if self.died then return end
+  if self.arena_clear_text then return end
+  if self.quitting then return end
+
   j = j or 1
   n = n or 4
   self.last_spawn_enemy_time = love.timer.getTime()

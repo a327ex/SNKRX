@@ -180,6 +180,11 @@ function Trigger:resolve_delay(delay)
 end
 
 
+function Trigger:destroy()
+  self.triggers = nil
+end
+
+
 function Trigger:update(dt)
   for tag, trigger in pairs(self.triggers) do
     if trigger.timer then

@@ -35,7 +35,8 @@ function system.count_all(f)
     seen[t] = true
     for k, v in pairs(t) do
       if type(v) == "table" then count_table(v)
-      elseif type(v) == "userdata" then f(v) end
+      elseif type(v) == "userdata" then f(v)
+      end
     end
   end
   count_table(_G)
@@ -45,8 +46,13 @@ end
 function system.type_count()
   local counts = {}
   local enumerate = function(o)
-    local t = system.type_name(o)
-    counts[t] = (counts[t] or 0) + 1
+    if type(o) == 'function' then
+      local upvalues = {}
+
+    else
+      local t = system.type_name(o)
+      counts[t] = (counts[t] or 0) + 1
+    end
   end
   system.count_all(enumerate)
   return counts
