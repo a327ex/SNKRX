@@ -497,6 +497,7 @@ global_text_tags = {
   purple = TextTag{draw = function(c, i, text) graphics.set_color(purple[0]) end},
   blue = TextTag{draw = function(c, i, text) graphics.set_color(blue[0]) end},
   bg = TextTag{draw = function(c, i, text) graphics.set_color(bg[0]) end},
+  bg3 = TextTag{draw = function(c, i, text) graphics.set_color(bg[3]) end},
   bg10 = TextTag{draw = function(c, i, text) graphics.set_color(bg[10]) end},
   light_bg = TextTag{draw = function(c, i, text) graphics.set_color(bg[5]) end},
   fg = TextTag{draw = function(c, i, text) graphics.set_color(fg[0]) end},

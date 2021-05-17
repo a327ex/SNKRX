@@ -1240,6 +1240,20 @@ function update(dt)
     end
   end
 
+  if input.k.pressed then
+    sx, sy = sx - 1, sy - 1
+    love.window.setMode(480*sx, 270*sy)
+    state.sx, state.sy = sx, sy
+    state.fullscreen = false
+  end
+
+  if input.l.pressed then
+    sx, sy = sx + 1, sy + 1
+    love.window.setMode(480*sx, 270*sy)
+    state.sx, state.sy = sx, sy
+    state.fullscreen = false
+  end
+
   if input.f12.pressed then
     steam.userStats.resetAllStats(true)
     steam.userStats.storeStats()
