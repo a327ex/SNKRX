@@ -611,6 +611,36 @@ function Arena:quit()
         steam.userStats.setAchievement('VOIDERS_WIN')
         steam.userStats.storeStats()
       end
+
+      local units = self.player:get_all_units()
+      local all_units_level_2 = true
+      for _, unit in ipairs(units) do
+        if unit.level ~= 2 then
+          all_units_level_2 = false
+          break
+        end
+      end
+      if all_units_level_2 then
+        state.achievement_level_2_win = true
+        system.save_state()
+        steam.userStats.setAchievement('LEVEL_2_WIN')
+        steam.userStats.storeStats()
+      end
+
+      local units = self.player:get_all_units()
+      local all_units_level_3 = true
+      for _, unit in ipairs(units) do
+        if unit.level ~= 3 then
+          all_units_level_3 = false
+          break
+        end
+      end
+      if all_units_level_3 then
+        state.achievement_level_3_win = true
+        system.save_state()
+        steam.userStats.setAchievement('LEVEL_3_WIN')
+        steam.userStats.storeStats()
+      end
     end
 
   else

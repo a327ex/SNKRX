@@ -1241,10 +1241,12 @@ function update(dt)
   end
 
   if input.k.pressed then
-    sx, sy = sx - 1, sy - 1
-    love.window.setMode(480*sx, 270*sy)
-    state.sx, state.sy = sx, sy
-    state.fullscreen = false
+    if sx > 1 and sy > 1 then
+      sx, sy = sx - 1, sy - 1
+      love.window.setMode(480*sx, 270*sy)
+      state.sx, state.sy = sx, sy
+      state.fullscreen = false
+    end
   end
 
   if input.l.pressed then
@@ -1254,10 +1256,12 @@ function update(dt)
     state.fullscreen = false
   end
 
+  --[[
   if input.f12.pressed then
     steam.userStats.resetAllStats(true)
     steam.userStats.storeStats()
   end
+  ]]--
 end
 
 
