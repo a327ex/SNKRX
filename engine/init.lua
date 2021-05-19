@@ -48,6 +48,7 @@ function engine_run(config)
     love.filesystem.setIdentity(config.game_name)
     steam.init()
     system.load_state()
+    if type(state) ~= 'table' then state = {} end
 
     local _, _, flags = love.window.getMode()
     local window_width, window_height = love.window.getDesktopDimensions(flags.display)

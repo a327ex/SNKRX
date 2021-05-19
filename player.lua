@@ -1438,7 +1438,7 @@ function Projectile:on_collision_enter(other, contact)
       self:die(x, y, r, 0)
       knife_hit_wall1:play{pitch = random:float(0.9, 1.1), volume = 0.2}
       local r = Unit.bounce(self, nx, ny)
-      trigger:after(0.01, function()
+      self.parent.t:after(0.01, function()
         WallKnife{group = main.current.main, x = x, y = y, r = r, v = self.v*0.1, color = self.color}
       end)
       if self.character == 'spellblade' then

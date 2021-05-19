@@ -392,9 +392,10 @@ function Seeker:hit(damage, projectile)
   if self.push_invulnerable then return end
   self:show_hp()
   
-  local actual_damage = self:calculate_damage(damage)*(self.stun_dmg_m or 1)*(self.bane_dmg_m or 1)
+  local actual_damage = math.max(self:calculate_damage(damage)*(self.stun_dmg_m or 1)*(self.bane_dmg_m or 1), 0)
   if self.vulnerable then actual_damage = actual_damage*1.2 end
   self.hp = self.hp - actual_damage
+  if self.hp > self.max_hp then self.hp = self.max_hp end
   main.current.damage_dealt = main.current.damage_dealt + actual_damage
 
   if projectile and projectile.spawn_critters_on_hit then
