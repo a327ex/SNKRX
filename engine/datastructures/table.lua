@@ -391,11 +391,12 @@ end
 function table.tostring(t)
   if type(t) == "table" then
     local str = "{"
-    for k, v in ipairs(t) do
+    for k, v in pairs(t) do
       if type(k) ~= "number" then k = '"' .. k .. '"' end
       str = str .. "[" .. k .. "] = " .. table.tostring(v) .. ", "
     end
-    return str:sub(1, -3) .. "}"
+    if str ~= "{" then return str:sub(1, -3) .. "}"
+    else return str .. "}" end
   else return tostring(t) end
 end
 

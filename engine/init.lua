@@ -48,7 +48,6 @@ function engine_run(config)
     love.filesystem.setIdentity(config.game_name)
     steam.init()
     system.load_state()
-    if type(state) ~= 'table' then state = {} end
 
     local _, _, flags = love.window.getMode()
     local window_width, window_height = love.window.getDesktopDimensions(flags.display)
@@ -69,6 +68,7 @@ function engine_run(config)
       sx, sy = state.sx, state.sy
       love.window.setMode(state.sx*gw, state.sy*gh, {fullscreen = state.fullscreen, vsync = config.vsync, msaa = msaa or 0, display = config.display})
     else
+      state.sx, state.sy = sx, sy
       love.window.setMode(window_width, window_height, {fullscreen = config.fullscreen, vsync = config.vsync, msaa = msaa or 0, display = config.display})
     end
     love.window.setTitle(config.game_name)

@@ -232,14 +232,14 @@ function Unit:calculate_stats(first_run)
     if self.boss then
       local x = self.level
       local y = {0, 0, 3, 0, 0, 6, 0, 0, 9, 0, 0, 12, 0, 0, 15, 0, 0, 18, 0, 0, 21, 0, 0, 24, 25}
-      self.base_hp = 100 + (new_game_plus*10) + (90 + new_game_plus*14)*y[x]
-      self.base_dmg = (25 + new_game_plus*10) + (7 + new_game_plus*4)*y[x]
+      self.base_hp = 100 + (new_game_plus*5) + (90 + new_game_plus*10)*y[x]
+      self.base_dmg = (12 + new_game_plus*2) + (2 + new_game_plus)*y[x]
       self.base_mvspd = 35 + 1.5*y[x]
     else
       local x = self.level
       local y = {0, 1, 3, 3, 4, 6, 5, 6, 9, 7, 8, 12, 10, 11, 15, 12, 13, 18, 16, 17, 21, 17, 20, 24, 25}
-      self.base_hp = 22 + (new_game_plus*3) + (17 + new_game_plus*2.6)*y[x]
-      self.base_dmg = (4 + new_game_plus*1.5) + (2.2 + new_game_plus)*y[x]
+      self.base_hp = 22 + (new_game_plus*3) + (15 + new_game_plus*2.4)*y[x]
+      self.base_dmg = (4 + new_game_plus*1) + (2 + new_game_plus)*y[x]
       self.base_mvspd = 70 + 3*y[x]
     end
   elseif self:is(Saboteur) then

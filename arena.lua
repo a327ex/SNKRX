@@ -327,10 +327,11 @@ function Arena:update(dt)
             run_passive_pool_by_tiers = {
               [1] = { 'wall_echo', 'wall_rider', 'centipede', 'temporal_chains', 'amplify', 'amplify_x', 'ballista', 'ballista_x', 'blunt_arrow', 'berserking', 'unwavering_stance', 'assassination', 'unleash', 'blessing',
                 'hex_master', 'force_push', 'spawning_pool'}, 
-              [2] = {'ouroboros_technique_r', 'ouroboros_technique_l', 'intimidation', 'vulnerability', 'resonance', 'point_blank', 'longshot', 'explosive_arrow', 'chronomancy', 'awakening', 'ultimatum', 'concentrated_fire', 
+              [2] = {'ouroboros_technique_r', 'ouroboros_technique_l', 'intimidation', 'vulnerability', 'resonance', 'point_blank', 'longshot', 'explosive_arrow', 'chronomancy', 'awakening', 'ultimatum', 'echo_barrage', 
                 'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
               [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
             }
+            max_units = 7 + new_game_plus
             main:add(BuyScreen'buy_screen')
             main:go_to('buy_screen', 0, {}, passives)
           end, text = Text({{text = '[wavy, bg]restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
@@ -423,10 +424,11 @@ function Arena:update(dt)
         run_passive_pool_by_tiers = {
           [1] = { 'wall_echo', 'wall_rider', 'centipede', 'temporal_chains', 'amplify', 'amplify_x', 'ballista', 'ballista_x', 'blunt_arrow', 'berserking', 'unwavering_stance', 'assassination', 'unleash', 'blessing',
             'hex_master', 'force_push', 'spawning_pool'}, 
-          [2] = {'ouroboros_technique_r', 'ouroboros_technique_l', 'intimidation', 'vulnerability', 'resonance', 'point_blank', 'longshot', 'explosive_arrow', 'chronomancy', 'awakening', 'ultimatum', 'concentrated_fire', 
+          [2] = {'ouroboros_technique_r', 'ouroboros_technique_l', 'intimidation', 'vulnerability', 'resonance', 'point_blank', 'longshot', 'explosive_arrow', 'chronomancy', 'awakening', 'ultimatum', 'echo_barrage', 
             'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
           [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
         }
+        max_units = 7 + new_game_plus
         main:add(BuyScreen'buy_screen')
         main:go_to('buy_screen', 0, {}, passives)
       end, text = Text({{text = '[wavy, bg]restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
@@ -460,7 +462,7 @@ function Arena:quit()
   if self.level == 25 then
     if not self.win_text and not self.win_text2 then
       self.won = true
-      trigger:tween(1, _G, {slow_amount = 0}, math.linear, function() slow_amount = 0 end)
+      trigger:tween(1, _G, {slow_amount = 0}, math.linear, function() slow_amount = 0 end, 'slow_amount')
       trigger:tween(4, camera, {x = gw/2, y = gh/2, r = 0}, math.linear, function() camera.x, camera.y, camera.r = gw/2, gh/2, 0 end)
       self.win_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 66, force_update = true, lines = {{text = '[wavy_mid, cbyc2]congratulations!', font = fat_font, alignment = 'center'}}}
       trigger:after(2.5, function()
@@ -496,13 +498,35 @@ function Arena:quit()
           }}
           SteamFollowButton{group = self.ui, x = gw/2, y = gh/2 + 34, force_update = true}
           RestartButton{group = self.ui, x = gw - 40, y = gh - 20, force_update = true}
-          trigger:after(12, function()
+          trigger:after(8, function()
             self.try_ng_text = Text2{group = self.ui, x = gw - 220, y = gh - 20, force_update = true, lines = {
               {text = '[cbyc3]try a harder difficulty with +1 max snake size:', font = pixul_font},
             }}
           end)
           self.credits_button = Button{group = self.ui, x = gw - 40, y = gh - 44, force_update = true, button_text = 'credits', fg_color = 'bg10', bg_color = 'bg', action = function()
             self:create_credits()
+          end}
+          self.restart_button = Button{group = self.ui, x = gw - 40, y = gh - 68, force_update = true, button_text = 'restart', fg_color = 'bg10', bg_color = 'bg', action = function(b)
+            self.transitioning = true
+            ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+            ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+            ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+            TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = fg[0], transition_action = function()
+              slow_amount = 1
+              gold = 2
+              passives = {}
+              main_song_instance:stop()
+              run_passive_pool_by_tiers = {
+                [1] = { 'wall_echo', 'wall_rider', 'centipede', 'temporal_chains', 'amplify', 'amplify_x', 'ballista', 'ballista_x', 'blunt_arrow', 'berserking', 'unwavering_stance', 'assassination', 'unleash', 'blessing',
+                  'hex_master', 'force_push', 'spawning_pool'}, 
+                [2] = {'ouroboros_technique_r', 'ouroboros_technique_l', 'intimidation', 'vulnerability', 'resonance', 'point_blank', 'longshot', 'explosive_arrow', 'chronomancy', 'awakening', 'ultimatum', 'echo_barrage', 
+                  'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
+                [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
+              }
+              max_units = 7 + new_game_plus
+              main:add(BuyScreen'buy_screen')
+              main:go_to('buy_screen', 0, {}, passives)
+            end, text = Text({{text = '[wavy, bg]restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
           end}
         end
       end)
@@ -648,7 +672,7 @@ function Arena:quit()
     self.t:after(3, function()
       if self.level % 3 == 0 then
         self.arena_clear_text.dead = true
-        trigger:tween(1, _G, {slow_amount = 0}, math.linear, function() slow_amount = 0 end)
+        trigger:tween(1, _G, {slow_amount = 0}, math.linear, function() slow_amount = 0 end, 'slow_amount')
         trigger:tween(4, camera, {x = gw/2, y = gh/2, r = 0}, math.linear, function() camera.x, camera.y, camera.r = gw/2, gh/2, 0 end)
         local card_w, card_h = 100, 100
         local w = 3*card_w + 2*20
@@ -657,18 +681,38 @@ function Arena:quit()
         local tier_1 = random:weighted_pick(unpack(level_to_passive_tier_weights[level or self.level]))
         local tier_2 = random:weighted_pick(unpack(level_to_passive_tier_weights[level or self.level]))
         local tier_3 = random:weighted_pick(unpack(level_to_passive_tier_weights[level or self.level]))
-        local passive_pool_copy = table.copy(run_passive_pool_by_tiers)
-        local passive_1 = random:table_remove(passive_pool_copy[tier_1])
-        local passive_2 = random:table_remove(passive_pool_copy[tier_2])
-        local passive_3 = random:table_remove(passive_pool_copy[tier_3])
-        table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 0*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, arena = self, passive = passive_1, force_update = true})
-        table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 1*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, arena = self, passive = passive_2, force_update = true})
-        table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 2*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, arena = self, passive = passive_3, force_update = true})
+        local passive_1 = random:table_remove(run_passive_pool_by_tiers[tier_1])
+        local passive_2 = random:table_remove(run_passive_pool_by_tiers[tier_2])
+        local passive_3 = random:table_remove(run_passive_pool_by_tiers[tier_3])
+        if passive_1 then
+          table.insert(self.cards,
+            PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 0*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, card_i = 1, tier = tier_1, arena = self, passive = passive_1, force_update = true})
+        end
+        if passive_2 then
+          table.insert(self.cards,
+            PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 1*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, card_i = 2, tier = tier_2, arena = self, passive = passive_2, force_update = true})
+        end
+        if passive_3 then
+          table.insert(self.cards,
+            PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 2*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, card_i = 3, tier = tier_3, arena = self, passive = passive_3, force_update = true})
+        end
         self.passive_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 65, lines = {{text = '[fg, wavy]choose one', font = fat_font, alignment = 'center'}}}
+        if not passive_1 and not passive_2 and not passive_3 then
+          self:transition()
+        end
       else
         self:transition()
       end
     end, 'transition')
+  end
+end
+
+
+function Arena:restore_passives_to_pool(j)
+  for i = 1, 3 do
+    if i ~= j then
+      table.insert(run_passive_pool_by_tiers[self.cards[i].tier], self.cards[i].passive)
+    end
   end
 end
 
@@ -751,10 +795,11 @@ function Arena:die()
           run_passive_pool_by_tiers = {
             [1] = { 'wall_echo', 'wall_rider', 'centipede', 'temporal_chains', 'amplify', 'amplify_x', 'ballista', 'ballista_x', 'blunt_arrow', 'berserking', 'unwavering_stance', 'assassination', 'unleash', 'blessing',
               'hex_master', 'force_push', 'spawning_pool'}, 
-            [2] = {'ouroboros_technique_r', 'ouroboros_technique_l', 'intimidation', 'vulnerability', 'resonance', 'point_blank', 'longshot', 'explosive_arrow', 'chronomancy', 'awakening', 'ultimatum', 'concentrated_fire', 
+            [2] = {'ouroboros_technique_r', 'ouroboros_technique_l', 'intimidation', 'vulnerability', 'resonance', 'point_blank', 'longshot', 'explosive_arrow', 'chronomancy', 'awakening', 'ultimatum', 'echo_barrage', 
               'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
             [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
           }
+          max_units = 7 + new_game_plus
           main:add(BuyScreen'buy_screen')
           main:go_to('buy_screen', 0, {}, passives)
         end, text = Text({{text = '[wavy, bg]restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
@@ -825,10 +870,11 @@ end
 function Arena:transition()
   self.transitioning = true
   local gold_gained = random:int(level_to_gold_gained[self.level][1], level_to_gold_gained[self.level][2])
-  local interest = math.floor(gold/5)
+  local interest = math.min(math.floor(gold/5), 5)
   gold = gold + gold_gained + interest
   ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
   TransitionEffect{group = main.transitions, x = self.player.x, y = self.player.y, color = self.color, transition_action = function(t)
+    slow_amount = 1
     main:add(BuyScreen'buy_screen')
     main:go_to('buy_screen', self.level, self.units, passives)
     t.t:after(0.1, function()

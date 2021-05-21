@@ -97,7 +97,7 @@ function Seeker:init(args)
           enemy:hit(10000)
           shoot1:play{pitch = random:float(0.95, 1.05), volume = 0.4}
           local n = 8 + new_game_plus*2
-          for i = 1, n do EnemyProjectile{group = main.current.main, x = enemy.x, y = enemy.y, color = blue[0], r = (i-1)*math.pi/(n/2), v = 150 + 5*enemy.level, dmg = (1 + 0.2*new_game_plus)*enemy.dmg} end
+          for i = 1, n do EnemyProjectile{group = main.current.main, x = enemy.x, y = enemy.y, color = blue[0], r = (i-1)*math.pi/(n/2), v = 150 + 5*enemy.level, dmg = (1 + 0.1*new_game_plus)*enemy.dmg} end
         end
       end)
 
@@ -212,8 +212,8 @@ function Seeker:init(args)
             self.hfx:use('hit', 0.25, 200, 10, 0.1)
             local r = self.r
             HitCircle{group = main.current.effects, x = self.x + 0.8*self.shape.w*math.cos(r), y = self.y + 0.8*self.shape.w*math.sin(r), rs = 6}
-            EnemyProjectile{group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), color = fg[0], r = r, v = 150 + 5*self.level + 10*new_game_plus,
-              dmg = (new_game_plus*0.2 + 1)*self.dmg}
+            EnemyProjectile{group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), color = fg[0], r = r, v = 150 + 5*self.level + 8*new_game_plus,
+              dmg = (new_game_plus*0.1 + 1)*self.dmg}
           end)
         end
       end, nil, nil, 'shooter')

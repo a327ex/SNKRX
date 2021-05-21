@@ -439,8 +439,16 @@ function RestartButton:update(dt)
       gold = 2
       passives = {}
       main_song_instance:stop()
+      run_passive_pool_by_tiers = {
+        [1] = { 'wall_echo', 'wall_rider', 'centipede', 'temporal_chains', 'amplify', 'amplify_x', 'ballista', 'ballista_x', 'blunt_arrow', 'berserking', 'unwavering_stance', 'assassination', 'unleash', 'blessing',
+          'hex_master', 'force_push', 'spawning_pool'}, 
+        [2] = {'ouroboros_technique_r', 'ouroboros_technique_l', 'intimidation', 'vulnerability', 'resonance', 'point_blank', 'longshot', 'explosive_arrow', 'chronomancy', 'awakening', 'ultimatum', 'echo_barrage', 
+          'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
+        [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
+      }
       new_game_plus = new_game_plus + 1
       state.new_game_plus = new_game_plus
+      max_units = 7 + new_game_plus
       system.save_state()
       main:add(BuyScreen'buy_screen')
       main:go_to('buy_screen', 0, {}, passives)
@@ -868,7 +876,7 @@ function PassiveCard:update(dt)
   if self.selected and input.m1.pressed and self.arena.choosing_passives then
     self.arena.choosing_passives = false
     table.insert(passives, self.passive)
-    table.delete(run_passive_pool_by_tiers[passive_tiers[self.passive]], self.passive)
+    self.arena:restore_passives_to_pool(self.card_i)
     trigger:tween(0.25, _G, {slow_amount = 1}, math.linear, function()
       slow_amount = 1
       self.arena:transition()

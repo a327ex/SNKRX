@@ -34,7 +34,7 @@ function Player:init(args)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
       if closest_enemy then
-        self:shoot(self:angle_to_object(closest_enemy), {chain = (self.level == 3 and 5 or 0)})
+        self:shoot(self:angle_to_object(closest_enemy), {chain = (self.level == 3 and 3 or 0)})
       end
     end, nil, nil, 'shoot')
 
@@ -212,7 +212,7 @@ function Player:init(args)
     self.t:cooldown(4, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
       if closest_enemy then
-        self:shoot(self:angle_to_object(closest_enemy), {chain = (self.level == 3 and 14 or 7), v = 70})
+        self:shoot(self:angle_to_object(closest_enemy), {chain = (self.level == 3 and 14 or 7), v = 140})
       end
     end, nil, nil, 'shoot')
 
@@ -326,14 +326,14 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'highlander' then
-    self.attack_sensor = Circle(self.x, self.y, 32)
+    self.attack_sensor = Circle(self.x, self.y, 48)
     self.t:cooldown(4, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       if self.level == 3 then
         self.t:every(0.25, function()
-          self:attack(48)
+          self:attack(72)
         end, 3)
       else
-        self:attack(48)
+        self:attack(72)
       end
     end, nil, nil, 'attack')
 
@@ -536,11 +536,6 @@ function Player:init(args)
     self.magnify_area_size_m = 1.25
   end
 
-  if self.concentrated_fire then
-    self.concentrated_fire_area_size_m = 0.66
-    self.concentrated_fire_area_dmg_m = 2
-  end
-
   if self.unleash then
     self.unleash_area_dmg_m = 1
     self.unleash_area_size_m = 1
@@ -596,7 +591,6 @@ function Player:init(args)
       end
     end)
   end
-
 end
 
 
@@ -677,8 +671,8 @@ function Player:update(dt)
   else self.conjurer_buff_m = 1 end
 
   if table.any(self.classes, function(v) return v == 'rogue' end) then
-    if main.current.rogue_level == 2 then self.chance_to_crit = 20
-    elseif main.current.rogue_level == 1 then self.chance_to_crit = 10
+    if main.current.rogue_level == 2 then self.chance_to_crit = 30
+    elseif main.current.rogue_level == 1 then self.chance_to_crit = 15
     elseif main.current.rogue_level == 0 then self.chance_to_crit = 0 end
   end
 
@@ -702,11 +696,11 @@ function Player:update(dt)
     if class_levels.swarmer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
     if class_levels.voider >= 1 then number_of_active_sets = number_of_active_sets + 1 end
     if main.current.psyker_level == 2 then
-      self.psyker_dmg_m = 1 + 0.1*number_of_active_sets
-      self.psyker_aspd_m = 1 + 0.1*number_of_active_sets
+      self.psyker_dmg_m = 1 + 0.2*number_of_active_sets
+      self.psyker_aspd_m = 1 + 0.2*number_of_active_sets
     elseif main.current.psyker_level == 1 then
-      self.psyker_dmg_m = 1 + 0.05*number_of_active_sets
-      self.psyker_aspd_m = 1 + 0.05*number_of_active_sets
+      self.psyker_dmg_m = 1 + 0.10*number_of_active_sets
+      self.psyker_aspd_m = 1 + 0.10*number_of_active_sets
     else
       self.psyker_dmg_m = 1
       self.psyker_aspd_m = 1
@@ -746,8 +740,8 @@ function Player:update(dt)
   self.buff_aspd_m = (self.chronomancer_aspd_m or 1)*(self.vagrant_aspd_m or 1)*(self.outlaw_aspd_m or 1)*(self.fairy_aspd_m or 1)*(self.psyker_aspd_m or 1)*(self.chronomancy_aspd_m or 1)*(self.awakening_aspd_m or 1)*(self.berserking_aspd_m or 1)*(self.reinforce_aspd_m or 1)*(self.squire_aspd_m or 1)
   self.buff_dmg_m = (self.squire_dmg_m or 1)*(self.vagrant_dmg_m or 1)*(self.enchanter_dmg_m or 1)*(self.swordsman_dmg_m or 1)*(self.flagellant_dmg_m or 1)*(self.psyker_dmg_m or 1)*(self.ballista_dmg_m or 1)*(self.ballista_x_dmg_m or 1)*(self.awakening_dmg_m or 1)*(self.reinforce_dmg_m or 1)*(self.payback_dmg_m or 1)*(self.immolation_dmg_m or 1)
   self.buff_def_m = (self.squire_def_m or 1)*(self.ouroboros_def_m or 1)*(self.unwavering_stance_def_m or 1)*(self.reinforce_def_m or 1)
-  self.buff_area_size_m = (self.nuker_area_size_m or 1)*(self.magnify_area_size_m or 1)*(self.concentrated_fire_area_size_m or 1)*(self.unleash_area_size_m or 1)
-  self.buff_area_dmg_m = (self.nuker_area_dmg_m or 1)*(self.amplify_area_dmg_m or 1)*(self.amplify_x_area_dmg_m or 1)*(self.concentrated_fire_area_dmg_m or 1)*(self.unleash_area_dmg_m or 1)
+  self.buff_area_size_m = (self.nuker_area_size_m or 1)*(self.magnify_area_size_m or 1)*(self.unleash_area_size_m or 1)
+  self.buff_area_dmg_m = (self.nuker_area_dmg_m or 1)*(self.amplify_area_dmg_m or 1)*(self.amplify_x_area_dmg_m or 1)*(self.unleash_area_dmg_m or 1)
   self.buff_mvspd_m = (self.wall_rider_mvspd_m or 1)*(self.centipede_mvspd_m or 1)*(self.squire_mvspd_m or 1)
   self:calculate_stats()
 
@@ -1292,7 +1286,7 @@ function Projectile:init(args)
   if self.parent.divine_machine_arrow and table.any(self.parent.classes, function(v) return v == 'ranger' end) then
     if random:bool(40) then
       self.homing = true
-      self.pierce = 5
+      self.pierce = 4
     end
   end
 
@@ -1398,17 +1392,20 @@ function Projectile:die(x, y, r, n)
   self.dead = true
 
   if self.character == 'wizard' then
-    Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.parent.area_size_m*32, color = self.color, dmg = self.parent.area_dmg_m*self.dmg, character = self.character, level = self.level, parent = self}
+    Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.parent.area_size_m*32, color = self.color, dmg = self.parent.area_dmg_m*self.dmg, character = self.character, level = self.level, parent = self,
+      void_rift = self.parent.void_rift, echo_barrage = self.parent.echo_barrage}
   elseif self.character == 'blade' then
-    Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.parent.area_size_m*64, color = self.color, dmg = self.parent.area_dmg_m*self.dmg, character = self.character, level = self.level, parent = self}
+    Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.parent.area_size_m*64, color = self.color, dmg = self.parent.area_dmg_m*self.dmg, character = self.character, level = self.level, parent = self,
+      void_rift = self.parent.void_rift, echo_barrage = self.parent.echo_barrage}
   elseif self.character == 'cannoneer' then
-    Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.parent.area_size_m*96, color = self.color, dmg = 2*self.parent.area_dmg_m*self.dmg, character = self.character, level = self.level, parent = self}
+    Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.parent.area_size_m*96, color = self.color, dmg = 2*self.parent.area_dmg_m*self.dmg, character = self.character, level = self.level, parent = self,
+      void_rift = self.parent.void_rift, echo_barrage = self.parent.echo_barrage}
     if self.level == 3 then
-      self.parent.t:every(0.2, function()
+      self.parent.t:every(0.3, function()
         _G[random:table{'cannoneer1', 'cannoneer2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
         Area{group = main.current.effects, x = self.x + random:float(-32, 32), y = self.y + random:float(-32, 32), r = self.r + random:float(0, 2*math.pi), w = self.parent.area_size_m*48, color = self.color, 
-          dmg = 0.5*self.parent.area_dmg_m*self.dmg, character = self.character, level = self.level, parent = self}
-      end, 5)
+          dmg = 0.5*self.parent.area_dmg_m*self.dmg, character = self.character, level = self.level, parent = self, void_rift = self.parent.void_rift, echo_barrage = self.parent.echo_barrage}
+      end, 7)
     end
   end
 end
@@ -1513,7 +1510,8 @@ function Projectile:on_trigger_enter(other, contact)
     other:hit(self.dmg*(self.distance_dmg_m or 1), self)
 
     if self.character == 'wizard' and self.level == 3 then
-      Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.parent.area_size_m*32, color = self.color, dmg = self.parent.area_dmg_m*self.dmg, character = self.character, parent = self}
+      Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.parent.area_size_m*32, color = self.color, dmg = self.parent.area_dmg_m*self.dmg, character = self.character, parent = self,
+        void_rift = self.parent.void_rift, echo_barrage = self.parent.echo_barrage}
     end
 
     if self.character == 'hunter' and random:bool(40) then
@@ -1580,7 +1578,7 @@ function Projectile:on_trigger_enter(other, contact)
       if random:bool(30) then
         _G[random:table{'cannoneer1', 'cannoneer2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
         Area{group = main.current.effects, x = self.x, y = self.y, r = self.r + random:float(0, 2*math.pi), w = self.parent.area_size_m*32, color = self.color, 
-          dmg = 0.2*self.parent.area_dmg_m*self.dmg, character = self.character, level = self.level, parent = self}
+          dmg = 0.2*self.parent.area_dmg_m*self.dmg, character = self.character, level = self.level, parent = self, void_rift = self.parent.void_rift, echo_barrage = self.parent.echo_barrage}
       end
     end
 
@@ -1655,9 +1653,38 @@ function Area:init(args)
     end
   end
 
-  if self.parent.void_rift and table.any(self.parent.classes, function(v) return v == 'mage' or v == 'nuker' or v == 'voider' end) then
-    if random:bool(20) then
-      DotArea{group = main.current.effects, x = self.x, y = self.y, rs = self.parent.area_size_m*24, color = self.color, dmg = self.parent.area_dmg_m*self.dmg*(self.parent.dot_dmg_m or 1), void_rift = true, duration = 1, parent = self.parent}
+  if self.parent:is(Projectile) then
+    local p = self.parent.parent
+    if p.void_rift and table.any(p.classes, function(v) return v == 'mage' or v == 'nuker' or v == 'voider' end) then
+      if random:bool(20) then
+        DotArea{group = main.current.effects, x = self.x, y = self.y, rs = p.area_size_m*24, color = self.color, dmg = p.area_dmg_m*self.dmg*(p.dot_dmg_m or 1),
+          void_rift = true, duration = 1, parent = p}
+      end
+    end
+    if p.echo_barrage and not self.echo_barrage_area then
+      if random:bool(20) then
+        p.t:every(0.3, function()
+          _G[random:table{'cannoneer1', 'cannoneer2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+          Area{group = main.current.effects, x = self.x + random:float(-32, 32), y = self.y + random:float(-32, 32), r = self.r + random:float(0, 2*math.pi), w = p.area_size_m*48, color = p.color, 
+            dmg = 0.5*p.area_dmg_m*self.dmg, character = self.character, level = p.level, parent = p, echo_barrage_area = true}
+        end, 3)
+      end
+    end
+  else
+    if self.parent.void_rift and table.any(self.parent.classes, function(v) return v == 'mage' or v == 'nuker' or v == 'voider' end) then
+      if random:bool(20) then
+        DotArea{group = main.current.effects, x = self.x, y = self.y, rs = self.parent.area_size_m*24, color = self.color, dmg = self.parent.area_dmg_m*self.dmg*(self.parent.dot_dmg_m or 1),
+          void_rift = true, duration = 1, parent = self.parent}
+      end
+    end
+    if self.parent.echo_barrage and not self.echo_barrage_area then
+      if random:bool(20) then
+        self.parent.t:every(0.3, function()
+          _G[random:table{'cannoneer1', 'cannoneer2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+          Area{group = main.current.effects, x = self.x + random:float(-32, 32), y = self.y + random:float(-32, 32), r = self.r + random:float(0, 2*math.pi), w = self.parent.area_size_m*48, color = self.parent.color, 
+            dmg = 0.5*self.parent.area_dmg_m*self.dmg, character = self.character, level = self.parent.level, parent = self.parent, echo_barrage_area = true}
+        end, 3)
+      end
     end
   end
 
@@ -2144,6 +2171,9 @@ end
 
 function Saboteur:update(dt)
   self:update_game_object(dt)
+
+  self.buff_area_size_m = self.parent.buff_area_size_m
+  self.buff_area_dmg_m = self.parent.buff_area_dmg_m
   self:calculate_stats()
 
   if not self.target then self.target = random:table(self.group:get_objects_by_classes(main.current.enemies)) end

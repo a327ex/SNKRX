@@ -1,5 +1,4 @@
 system = {}
-local state_path = love.filesystem.getSaveDirectory() .. "/state"
 
 
 function system.update(dt)
@@ -119,18 +118,22 @@ end
 
 
 function system.save_state()
-  if not system.does_file_exist(love.filesystem.getSaveDirectory()) then love.filesystem.createDirectory("") end
-  local file = io.open(state_path, "r")
-  if file then
-    file:close()
-    binser.w(state_path, state or {})
-  end
+  love.filesystem.createDirectory("")
+  local str = "return " .. table.tostring(state or {})
+  love.filesystem.write("state.txt", str)
 end
 
 
 function system.load_state()
-  if not system.does_file_exist(state_path) then system.save_state() end
-  state = binser.r(state_path)[1]
+  if love.filesystem.getInfo("state") then
+    state = binser.r(love.filesystem.getSaveDirectory() .. '/state')[1]
+    love.filesystem.createDirectory("old_save_backup")
+    os.rename(love.filesystem.getSaveDirectory() .. '/state', love.filesystem.getSaveDirectory() .. '/old_save_backup/state')
+    system.save_state()
+  end
+  local chunk = love.filesystem.load("state.txt")
+  if chunk then state = chunk()
+  else state = {} end
 end
 
 

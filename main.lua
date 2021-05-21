@@ -152,7 +152,7 @@ function init()
   flying_daggers = Image('flying_daggers')
   assassination = Image('assassination')
   magnify = Image('magnify')
-  concentrated_fire = Image('concentrated_fire')
+  echo_barrage = Image('echo_barrage')
   unleash = Image('unleash')
   reinforce = Image('reinforce')
   payback = Image('payback')
@@ -574,7 +574,7 @@ function init()
   character_effect_descriptions = {
     ['vagrant'] = function() return '[yellow]+10%[fg] damage and [yellow]+5%[fg] attack speed per active set' end,
     ['swordsman'] = function() return "[fg]the swordsman's damage is [yellow]doubled" end,
-    ['wizard'] = function() return '[fg]the projectile chains [yellow]5[fg] times' end,
+    ['wizard'] = function() return '[fg]the projectile chains [yellow]3[fg] times' end,
     ['archer'] = function() return '[fg]the arrow ricochets off walls [yellow]3[fg] times' end,
     ['scout'] = function() return '[yellow]+25%[fg] damage per chain and [yellow]+3[fg] chains' end,
     ['cleric'] = function() return '[fg]heals all units' end,
@@ -585,7 +585,7 @@ function init()
     ['stormweaver'] = function() return "[fg]chain lightning's trigger area of effect and number of units hit is [yellow]doubled" end,
     ['sage'] = function() return '[fg]when the projectile expires deal [yellow]' .. 3*get_character_stat('sage', 3, 'dmg') .. '[fg] damage to all enemies under its influence' end,
     ['squire'] = function() return '[yellow]+30%[fg] damage, attack speed, movement speed and defense to all allies' end,
-    ['cannoneer'] = function() return '[fg]showers the hit area in [yellow]5[fg] additional cannon shots that deal [yellow]' .. get_character_stat('cannoneer', 3, 'dmg')/2 .. '[fg] AoE damage' end,
+    ['cannoneer'] = function() return '[fg]showers the hit area in [yellow]7[fg] additional cannon shots that deal [yellow]' .. get_character_stat('cannoneer', 3, 'dmg')/2 .. '[fg] AoE damage' end,
     ['dual_gunner'] = function() return '[fg]every 5th attack shoot in rapid succession for [yellow]2[fg] seconds' end,
     ['hunter'] = function() return '[fg]summons [yellow]3[fg] pets and the pets ricochet off walls once' end,
     ['chronomancer'] = function() return '[fg]enemies take damave over time [yellow]50%[fg] faster' end,
@@ -618,7 +618,7 @@ function init()
   character_effect_descriptions_gray = {
     ['vagrant'] = function() return '[light_bg]+10% damage and +5% attack speed per active set' end,
     ['swordsman'] = function() return "[light_bg]the swordsman's damage is doubled" end,
-    ['wizard'] = function() return '[light_bg]the projectile chains 5 times' end,
+    ['wizard'] = function() return '[light_bg]the projectile chains 3 times' end,
     ['archer'] = function() return '[light_bg]the arrow ricochets off walls 3 times' end,
     ['scout'] = function() return '[light_bg]+25% damage per chain and +3 chains' end,
     ['cleric'] = function() return '[light_bg]heals all units' end,
@@ -629,7 +629,7 @@ function init()
     ['stormweaver'] = function() return "[light_bg]chain lightning's trigger area of effect and number of units hit is doubled" end,
     ['sage'] = function() return '[light_bg]when the projectile expires deal ' .. 3*get_character_stat('sage', 3, 'dmg') .. ' damage to all enemies under its influence' end,
     ['squire'] = function() return '[light_bg]+30% damage, attack speed, movement speed and defense to all allies' end,
-    ['cannoneer'] = function() return '[light_bg]showers the hit area in 5 additional cannon shots that deal ' .. get_character_stat('cannoneer', 3, 'dmg')/2 .. ' AoE damage' end,
+    ['cannoneer'] = function() return '[light_bg]showers the hit area in 7 additional cannon shots that deal ' .. get_character_stat('cannoneer', 3, 'dmg')/2 .. ' AoE damage' end,
     ['dual_gunner'] = function() return '[light_bg]every 5th attack shoot in rapid succession for 2 seconds' end,
     ['hunter'] = function() return '[light_bg]summons 3 pets and the pets ricochet off walls once' end,
     ['chronomancer'] = function() return '[light_bg]enemies take damave over time 50% faster' end,
@@ -729,12 +729,12 @@ function init()
     ['ranger'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[' .. ylb2(lvl) .. ']/6 [fg]- [' .. ylb1(lvl) .. ']8%[' .. ylb2(lvl) .. ']/16% [fg]chance to release a barrage on attack to allied rangers' end,
     ['warrior'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[' .. ylb2(lvl) .. ']/6 [fg]- [' .. ylb1(lvl) .. ']+25[' .. ylb2(lvl) .. ']/+50 [fg]defense to allied warriors' end,
     ['mage'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[' .. ylb2(lvl) .. ']/6 [fg]- [' .. ylb1(lvl) .. ']-15[' .. ylb2(lvl) .. ']/-30 [fg]enemy defense' end,
-    ['rogue'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[' .. ylb2(lvl) .. ']/6 [fg]- [' .. ylb1(lvl) .. ']10%[' .. ylb2(lvl) .. ']/20% [fg]chance to crit to allied rogues, dealing [yellow]4x[] damage' end,
+    ['rogue'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[' .. ylb2(lvl) .. ']/6 [fg]- [' .. ylb1(lvl) .. ']15%[' .. ylb2(lvl) .. ']/30% [fg]chance to crit to allied rogues, dealing [yellow]4x[] damage' end,
     ['healer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+15%[' .. ylb2(lvl) .. ']/+30% [fg]healing effectiveness' end,
     ['enchanter'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+15%[' .. ylb2(lvl) .. ']/+25% [fg]damage to all allies' end,
     ['nuker'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[' .. ylb2(lvl) .. ']/6 [fg]- [' .. ylb1(lvl) .. ']+15%[' .. ylb2(lvl) .. ']/+25% [fg]area damage and size to allied nukers' end,
     ['conjurer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+25%[' .. ylb2(lvl) .. ']/+50% [fg]summon damage and duration' end,
-    ['psyker'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+5%[' .. ylb2(lvl) .. ']/+10% [fg]damage and attack speed per active set to allied psykers' end,
+    ['psyker'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+10%[' .. ylb2(lvl) .. ']/+20% [fg]damage and attack speed per active set to allied psykers' end,
     ['curser'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+25%[' .. ylb2(lvl) .. ']/+50% [fg]curse duration' end,
     ['forcer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+25%[' .. ylb2(lvl) .. ']/+50% [fg]knockback force to all allies' end,
     ['swarmer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+1[' .. ylb2(lvl) .. ']/+3 [fg]hits to critters' end,
@@ -911,7 +911,7 @@ function init()
     ['flying_daggers'] = 'Flying Daggers',
     ['assassination'] = 'Assassination',
     ['magnify'] = 'Magnify',
-    ['concentrated_fire'] = 'Concentrated Fire',
+    ['echo_barrage'] = 'Echo Barrage',
     ['unleash'] = 'Unleash',
     ['reinforce'] = 'Reinforce',
     ['payback'] = 'Payback',
@@ -946,7 +946,7 @@ function init()
     ['longshot'] = '[fg]projectiles deal up to [yellow]+100%[fg] damage far away and down to [yellow]-50%[fg] up close',
     ['blunt_arrow'] = '[fg]all arrows fired by rangers have a [yellow]20%[fg] chance to knockback',
     ['explosive_arrow'] = '[fg]arrows fired by rangers have a [yellow]30%[fg] chance to explode, dealing [yellow]20%[fg] AoE damage',
-    ['divine_machine_arrow'] = '[fg]arrows fired by rangers have a [yellow]40%[fg] chance to seek enemies and pierce [yellow]5[fg] times',
+    ['divine_machine_arrow'] = '[fg]arrows fired by rangers have a [yellow]40%[fg] chance to seek enemies and pierce [yellow]4[fg] times',
     ['chronomancy'] = '[fg]all mages cast their spells [yellow]25%[fg] faster',
     ['awakening'] = '[fg]every round [yellow]1[fg] mage is granted [yellow]+100%[fg] attack speed and damage for that round',
     ['divine_punishment'] = '[fg]periodically deal [yellow]10X[fg] damage to all enemies, where [yellow]X[fg] is how many mages you have',
@@ -956,7 +956,7 @@ function init()
     ['flying_daggers'] = '[fg]all knives thrown by rogues chain [yellow]+2[fg] times',
     ['assassination'] = '[fg]crits from rogues deal [yellow]8x[fg] damage but normal attacks deal [yellow]half[fg] damage',
     ['magnify'] = '[yellow]+25%[fg] area size',
-    ['concentrated_fire'] = '[yellow]-50%[fg] area size and [yellow]+100%[fg] area damage',
+    ['echo_barrage'] = '[yellow]20%[fg] chance to create [yellow]3[fg] secondary AoEs on AoE hit',
     ['unleash'] = '[yellow]+2%[fg] area size and damage per second',
     ['reinforce'] = '[yellow]+10%[fg] damage, defense and attack speed to all allies with at least one enchanter',
     ['payback'] = '[yellow]+5%[fg] damage to all allies whenever an enchanter is hit',
@@ -1001,7 +1001,7 @@ function init()
     ['flying_daggers'] = 3,
     ['assassination'] = 1,
     ['magnify'] = 1,
-    ['concentrated_fire'] = 2,
+    ['echo_barrage'] = 2,
     ['unleash'] = 1,
     ['reinforce'] = 2,
     ['payback'] = 2,
@@ -1021,7 +1021,7 @@ function init()
   tier_to_passives = {
     [1] = {'wall_echo', 'wall_rider', 'centipede', 'temporal_chains', 'amplify', 'amplify_x', 'ballista', 'ballista_x', 'blunt_arrow', 'berserking', 'unwavering_stance', 'assassination', 'unleash', 'blessing',
       'hex_master', 'force_push', 'spawning_pool'},
-    [2] = {'ouroboros_technique_r', 'ouroboros_technique_l', 'intimidation', 'vulnerability', 'resonance', 'point_blank', 'longshot', 'explosive_arrow', 'chronomancy', 'awakening', 'ultimatum', 'concentrated_fire',
+    [2] = {'ouroboros_technique_r', 'ouroboros_technique_l', 'intimidation', 'vulnerability', 'resonance', 'point_blank', 'longshot', 'explosive_arrow', 'chronomancy', 'awakening', 'ultimatum', 'echo_barrage',
       'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
     [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
   }
@@ -1160,15 +1160,15 @@ function init()
   run_passive_pool_by_tiers = {
     [1] = { 'wall_echo', 'wall_rider', 'centipede', 'temporal_chains', 'amplify', 'amplify_x', 'ballista', 'ballista_x', 'blunt_arrow', 'berserking', 'unwavering_stance', 'assassination', 'unleash', 'blessing',
       'hex_master', 'force_push', 'spawning_pool'}, 
-    [2] = {'ouroboros_technique_r', 'ouroboros_technique_l', 'intimidation', 'vulnerability', 'resonance', 'point_blank', 'longshot', 'explosive_arrow', 'chronomancy', 'awakening', 'ultimatum', 'concentrated_fire', 
+    [2] = {'ouroboros_technique_r', 'ouroboros_technique_l', 'intimidation', 'vulnerability', 'resonance', 'point_blank', 'longshot', 'explosive_arrow', 'chronomancy', 'awakening', 'ultimatum', 'echo_barrage', 
       'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
     [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
   }
   gold = 2
   passives = {}
   steam.userStats.requestCurrentStats()
-  system.load_state()
   new_game_plus = state.new_game_plus or 0
+  if not state.new_game_plus then state.new_game_plus = new_game_plus end
   max_units = 7 + new_game_plus
 
   main = Main()
@@ -1254,6 +1254,10 @@ function update(dt)
     love.window.setMode(480*sx, 270*sy)
     state.sx, state.sy = sx, sy
     state.fullscreen = false
+  end
+
+  if input.p.pressed then
+    system.save_state()
   end
 
   --[[
