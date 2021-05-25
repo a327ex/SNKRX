@@ -397,6 +397,8 @@ function table.tostring(t)
     end
     if str ~= "{" then return str:sub(1, -3) .. "}"
     else return str .. "}" end
+  elseif type(t) == "string" then
+    return '"' .. tostring(t) .. '"'
   else return tostring(t) end
 end
 

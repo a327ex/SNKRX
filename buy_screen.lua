@@ -451,6 +451,7 @@ function RestartButton:update(dt)
       max_units = 7 + new_game_plus
       system.save_state()
       main:add(BuyScreen'buy_screen')
+      system.save_run(0, gold, {}, passives, run_passive_pool_by_tiers)
       main:go_to('buy_screen', 0, {}, passives)
     end, text = Text({{text = '[wavy, bg]restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
   end

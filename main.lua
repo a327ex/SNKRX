@@ -1157,15 +1157,16 @@ function init()
     [25] = {'speed_booster', 'exploder', 'headbutter', 'tank', 'shooter', 'spawner'},
   }
 
-  run_passive_pool_by_tiers = {
+  local run = system.load_run()
+  run_passive_pool_by_tiers = run.passive_pool_by_tiers or {
     [1] = { 'wall_echo', 'wall_rider', 'centipede', 'temporal_chains', 'amplify', 'amplify_x', 'ballista', 'ballista_x', 'blunt_arrow', 'berserking', 'unwavering_stance', 'assassination', 'unleash', 'blessing',
       'hex_master', 'force_push', 'spawning_pool'}, 
     [2] = {'ouroboros_technique_r', 'ouroboros_technique_l', 'intimidation', 'vulnerability', 'resonance', 'point_blank', 'longshot', 'explosive_arrow', 'chronomancy', 'awakening', 'ultimatum', 'echo_barrage', 
       'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
     [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
   }
-  gold = 2
-  passives = {}
+  gold = run.gold or 2
+  passives = run.passives or {}
   steam.userStats.requestCurrentStats()
   new_game_plus = state.new_game_plus or 0
   if not state.new_game_plus then state.new_game_plus = new_game_plus end
@@ -1173,10 +1174,12 @@ function init()
 
   main = Main()
 
-  -- main_song_instance = _G[random:table{'song1', 'song2', 'song3', 'song4', 'song5'}]:play{volume = 0.5}
+  if run.level ~= 0 then
+    main_song_instance = _G[random:table{'song1', 'song2', 'song3', 'song4', 'song5'}]:play{volume = 0.5}
+  end
 
   main:add(BuyScreen'buy_screen')
-  main:go_to('buy_screen', 0, {}, passives)
+  main:go_to('buy_screen', run.level or 0, run.units or {}, passives)
   
   --[[
   main:add(Arena'arena')
