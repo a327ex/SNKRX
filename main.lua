@@ -1158,7 +1158,7 @@ function init()
   }
 
   local run = system.load_run()
-  run_passive_pool_by_tiers = run.passive_pool_by_tiers or {
+  run_passive_pool_by_tiers = run.run_passive_pool_by_tiers or {
     [1] = { 'wall_echo', 'wall_rider', 'centipede', 'temporal_chains', 'amplify', 'amplify_x', 'ballista', 'ballista_x', 'blunt_arrow', 'berserking', 'unwavering_stance', 'assassination', 'unleash', 'blessing',
       'hex_master', 'force_push', 'spawning_pool'}, 
     [2] = {'ouroboros_technique_r', 'ouroboros_technique_l', 'intimidation', 'vulnerability', 'resonance', 'point_blank', 'longshot', 'explosive_arrow', 'chronomancy', 'awakening', 'ultimatum', 'echo_barrage', 

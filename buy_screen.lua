@@ -137,6 +137,10 @@ function BuyScreen:update(dt)
   if self.in_tutorial and input.escape.pressed then
     self:quit_tutorial()
   end
+
+  for _, part in ipairs(self.characters) do
+    part.y = 40 + (part.i-1)*19
+  end
 end
 
 
@@ -159,6 +163,18 @@ function BuyScreen:draw()
   self.effects:draw()
   if self.items_text then self.items_text:draw(32, 145) end
   self.ui:draw()
+
+  if self.unit_grabbed then
+    local x, y = camera:get_mouse_position()
+    y = math.clamp(y, 40, 40 + (#self.units-1)*19)
+    graphics.push(self.unit_grabbed.x, y, 0)
+      graphics.rectangle(self.unit_grabbed.x, y, 14, 14, 3, 3, bg[5])
+      graphics.print_centered(self.unit_grabbed.level, pixul_font, self.unit_grabbed.x + 0.5, y + 2, 0, 1, 1, 0, 0, bg[10])
+      for _, part in ipairs(self.unit_grabbed.parts) do
+        part:draw(y)
+      end
+    graphics.pop()
+  end
 
   if self.shop_text then self.shop_text:draw(64, 20) end
   if self.sets_text then self.sets_text:draw(328, 20) end
@@ -740,6 +756,45 @@ end
 function CharacterPart:update(dt)
   self:update_game_object(dt)
 
+  if not self.parent:is(CharacterPart) then
+    if input.m1.pressed and self.colliding_with_mouse then
+      self.grabbed = true
+      self.parent.unit_grabbed = self
+    end
+
+    if self.grabbed and input.m1.released then
+      self.grabbed = false
+      self.parent.unit_grabbed = false
+      self.spring:pull(0.2, 200, 10)
+      --[[
+      for i, unit in ipairs(self.parent.units) do
+        print(unit.character)
+      end
+      for i, character in ipairs(self.parent.characters) do
+        print(character.y, character.character, character.shape.y)
+      end
+      ]]--
+    end
+
+    for _, part in ipairs(self.parts) do
+      part.grabbed = self.grabbed
+    end
+
+    if self.parent.unit_grabbed and self.parent.unit_grabbed == self then
+      local x, y = camera:get_mouse_position()
+      local i
+      if y >= self.y - 19 and y <= self.y + 19 then i = self.i
+      elseif y < self.y - 19 then i = self.i - 1
+      elseif y > self.y + 19 then i = self.i + 1
+      end
+      i = math.clamp(i, 1, #self.parent.units)
+      -- i = math.clamp(math.floor((y - 40)/19) + 1, 1, #self.parent.units)
+      self.parent.units[self.i], self.parent.units[i] = self.parent.units[i], self.parent.units[self.i]
+      self.parent.characters[self.i], self.parent.characters[i] = self.parent.characters[i], self.parent.characters[self.i]
+      self.parent.characters[self.i].i, self.parent.characters[i].i = self.i, i
+    end
+  end
+
   if self.selected and input.m2.pressed and not self.just_created then
     _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     if self.reserve then
@@ -754,13 +809,29 @@ function CharacterPart:update(dt)
       self.parent.parent:set_party_and_sets()
     end
   end
+
+  self.shape:move_to(self.x, self.y)
+  for _, part in ipairs(self.parts) do
+    part.y = self.y
+  end
 end
 
 
-function CharacterPart:draw()
+function CharacterPart:draw(y)
   graphics.push(self.x, self.y, 0, self.sx*self.spring.x, self.sy*self.spring.x)
-    graphics.rectangle(self.x, self.y, 14, 14, 3, 3, self.highlighted and fg[0] or character_colors[self.character])
-    graphics.print_centered(self.level, pixul_font, self.x + 0.5, self.y + 2, 0, 1, 1, 0, 0, self.highlighted and fg[-5] or _G[character_color_strings[self.character]][-5])
+    if self.grabbed then
+      --[[
+      graphics.rectangle(self.x, self.y, 14, 14, 3, 3, bg[5])
+      graphics.print_centered(self.level, pixul_font, self.x + 0.5, self.y + 2, 0, 1, 1, 0, 0, bg[10])
+      ]]--
+    else
+      graphics.rectangle(self.x, self.y, 14, 14, 3, 3, self.highlighted and fg[0] or character_colors[self.character])
+      graphics.print_centered(self.level, pixul_font, self.x + 0.5, self.y + 2, 0, 1, 1, 0, 0, self.highlighted and fg[-5] or _G[character_color_strings[self.character]][-5])
+    end
+    if y then
+      graphics.rectangle(self.x, y, 14, 14, 3, 3, bg[5])
+      graphics.print_centered(self.level, pixul_font, self.x + 0.5, y + 2, 0, 1, 1, 0, 0, bg[10])
+    end
   graphics.pop()
 end
 
