@@ -1175,7 +1175,7 @@ function init()
 
   main = Main()
 
-  if run.level ~= 0 then
+  if run.level and run.level > 0 then
     main_song_instance = _G[random:table{'song1', 'song2', 'song3', 'song4', 'song5'}]:play{volume = 0.5}
   end
 

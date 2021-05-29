@@ -306,7 +306,7 @@ end
 -- Higher frequency means jerkier movement, lower frequency means smoother movement
 -- camera:shake(10, 1, 120) -> shakes the camera with 10 intensity for 1 second and 120 frequency
 function Camera:shake(intensity, duration, frequency)
-  if state.no_camera_shake then return end
+  if state.no_screen_shake then return end
   table.insert(self.shakes.x, Shake(intensity, 1000*(duration or 0), frequency or 60))
   table.insert(self.shakes.y, Shake(intensity, 1000*(duration or 0), frequency or 60))
 end
@@ -316,7 +316,7 @@ end
 -- k and d are stiffness and damping spring values (see spring file for more)
 -- camera:shake(10, math.pi/4) -> shakes the camera with 10 intensity diagonally
 function Camera:spring_shake(intensity, r, k, d)
-  if state.no_camera_shake then return end
+  if state.no_screen_shake then return end
   self.spring.x:pull(-intensity*math.cos(r or 0), k, d)
   self.spring.y:pull(-intensity*math.sin(r or 0), k, d)
 end

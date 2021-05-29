@@ -863,6 +863,8 @@ end
 function CharacterPart:update(dt)
   self:update_game_object(dt)
 
+  if self.cant_click then return end
+
   if not self.parent:is(CharacterPart) then
     if input.m1.pressed and self.colliding_with_mouse then
       self.grabbed = true

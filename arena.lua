@@ -545,7 +545,7 @@ function Arena:quit()
       trigger:after(2.5, function()
         self.build_text = Text2{group = self.ui, x = 40, y = 20, force_update = true, lines = {{text = "[wavy_mid, fg]your build", font = pixul_font, alignment = 'center'}}}
         for i, unit in ipairs(self.units) do
-          CharacterPart{group = self.ui, x = 40, y = 40 + (i-1)*19, character = unit.character, level = unit.level, force_update = true, parent = self}
+          CharacterPart{group = self.ui, x = 40, y = 40 + (i-1)*19, character = unit.character, level = unit.level, force_update = true, cant_click = true, parent = self}
         end
 
         if new_game_plus == 5 then
