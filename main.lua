@@ -1184,7 +1184,7 @@ function init()
   
   --[[
   main:add(Arena'arena')
-  main:go_to('arena', 9, {
+  main:go_to('arena', 23, {
     {character = 'dual_gunner', level = 3},
     {character = 'engineer', level = 3},
     {character = 'spellblade', level = 3},
@@ -1193,6 +1193,10 @@ function init()
     {character = 'engineer', level = 3},
     {character = 'swordsman', level = 3},
     {character = 'archer', level = 3},
+    {character = 'infestor', level = 3},
+    {character = 'host', level = 3},
+    {character = 'lich', level = 3},
+    {character = 'psykino', level = 3},
   }, passives)
   ]]--
 

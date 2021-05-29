@@ -264,10 +264,10 @@ function Unit:calculate_stats(first_run)
     self.base_mvspd = 75
   elseif self:is(EnemyCritter) or self:is(Critter) then
     local x = self.level
-      local y = {0, 1, 3, 3, 4, 6, 5, 6, 9, 7, 8, 12, 10, 11, 15, 12, 13, 18, 16, 17, 21, 17, 20, 24, 25}
-    self.base_hp = 25 + 30*y[x]
-    self.base_dmg = 10 + 3*y[x]
-    self.base_mvspd = 60 + 3*y[x]
+    local y = {0, 1, 3, 3, 4, 6, 5, 6, 9, 7, 8, 12, 10, 11, 15, 12, 13, 18, 16, 17, 21, 17, 20, 24, 25}
+    self.base_hp = 25 + 30*(y[x] or 1)
+    self.base_dmg = 10 + 3*(y[x] or 1)
+    self.base_mvspd = 60 + 3*(y[x] or 1)
   elseif self:is(Overlord) then
     self.base_hp = 50*math.pow(2, self.level-1)
     self.base_dmg = 10*math.pow(2, self.level-1)

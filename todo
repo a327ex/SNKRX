@@ -3,6 +3,7 @@
 * Conjurer buff - buff saboteur, buff engineer
 * Vagrant buff - increase "active set" bonuses
 * AoE nerf - Unleash 1%, rephrase it to more clear
+* Cryomancer buff - double tick rate
 * Save runs
 * Move units
 * Lock shop button
@@ -10,13 +11,12 @@
 * Increase boss HP on levels 24 and 25
 * Show next level in shop (also if elite or not)
 * Restart run button on shop
-View synergy after beating game
-Option to turn off screen shake
-Option to show cooldowns on snake
-New game plus decrease button
-Crashes:
-https://i.imgur.com/CLtk9nZ.png
-https://i.imgur.com/WWP8GBn.png
-https://i.imgur.com/AU3O0u9.png, https://i.imgur.com/UE78u7f.png
-https://i.imgur.com/5TquKsS.png
-https://i.imgur.com/XbtACuy.png <- probably the cause of most of those mysterious crashes and slow downs i havent been able to track down
+* View synergy after beating game
+* Option to turn off screen shake
+* Option to show cooldowns on snake
+* New game plus decrease button
+* https://i.imgur.com/CLtk9nZ.png
+* https://i.imgur.com/WWP8GBn.png
+* https://i.imgur.com/AU3O0u9.png, https://i.imgur.com/UE78u7f.png
+* https://i.imgur.com/5TquKsS.png
+* https://i.imgur.com/XbtACuy.png <- probably the cause of most of those mysterious crashes and slow downs i havent been able to track down

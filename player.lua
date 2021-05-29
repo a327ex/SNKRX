@@ -1756,7 +1756,7 @@ function DotArea:init(args)
     end, nil, nil, 'dot')
 
   elseif self.character == 'cryomancer' then
-    self.t:every(2, function()
+    self.t:every(1, function()
       local enemies = main.current.main:get_objects_in_shape(self.shape, main.current.enemies)
       if #enemies > 0 then
         self.spring:pull(0.15, 200, 10)
@@ -2256,6 +2256,7 @@ function Critter:update(dt)
   else
     if not self.target then self.target = random:table(self.group:get_objects_by_classes(main.current.enemies)) end
     if self.target and self.target.dead then self.target = random:table(self.group:get_objects_by_classes(main.current.enemies)) end
+    if not self.seek_f then return end
     if not self.target then
       self:seek_point(gw/2, gh/2)
       self:wander(50, 200, 50)
