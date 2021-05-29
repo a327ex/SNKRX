@@ -20,6 +20,7 @@ function BuyScreen:on_exit()
   self.sets_text = nil
   self.items_text = nil
   self.ng_text = nil
+  self.level_text = nil
   self.characters = nil
   self.sets = nil
   self.cards = nil
@@ -31,6 +32,8 @@ function BuyScreen:on_exit()
   self.springs = nil
   self.flashes = nil
   self.hfx = nil
+  self.tutorial_button = nil
+  self.restart_button = nil
 end
 
 
@@ -54,7 +57,10 @@ function BuyScreen:on_enter(from, level, units, passives)
   self.ui = Group()
   self.tutorial = Group()
 
-  self:set_cards()
+  self.locked = locked_state and locked_state.locked
+  LockButton{group = self.main, x = 210, y = 18, parent = self}
+
+  self:set_cards(nil, nil, true)
   self:set_party_and_sets()
   self:set_items()
 
@@ -63,10 +69,11 @@ function BuyScreen:on_enter(from, level, units, passives)
   self.sets_text = Text({{text = '[wavy_mid, fg]classes', font = pixul_font, alignment = 'center'}}, global_text_tags)
   self.items_text = Text({{text = '[wavy_mid, fg]items', font = pixul_font, alignment = 'center'}}, global_text_tags)
   self.ng_text = Text({{text = '[fg]NG+' .. new_game_plus, font = pixul_font, alignment = 'center'}}, global_text_tags)
+  self.level_text = Text({{text = '[fg]Lv.' .. tostring(level == 0 and 1 or self.level+1) .. tostring((self.level+1) % 3 == 0 and ' (elite)' or ''), font = pixul_font, alignment = 'center'}}, global_text_tags)
 
   if not self.first_screen then RerollButton{group = self.main, x = 150, y = 18, parent = self} end
   GoButton{group = self.main, x = gw - 90, y = gh - 20, parent = self}
-  self.tutorial_button = Button{group = self.main, x = gw/2 + 142, y = 18, button_text = '?', fg_color = 'yellowm5', bg_color = 'yellow', action = function()
+  self.tutorial_button = Button{group = self.main, x = gw/2 + 136, y = 18, button_text = '?', fg_color = 'bg10', bg_color = 'bg', action = function()
     self.in_tutorial = true
     self.title_text = Text2{group = self.tutorial, x = gw/2, y = 35, lines = {{text = '[fg]WELCOME TO SNKRX!', font = fat_font, alignment = 'center'}}}
     self.tutorial_text = Text2{group = self.tutorial, x = 228, y = 160, lines = {
@@ -103,6 +110,30 @@ function BuyScreen:on_enter(from, level, units, passives)
     end}
   end}
 
+  self.restart_button = Button{group = self.ui, x = gw/2 + 154, y = 18, force_update = true, button_text = 'R', fg_color = 'bg10', bg_color = 'bg', action = function(b)
+    self.transitioning = true
+    ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = fg[0], transition_action = function()
+      slow_amount = 1
+      gold = 2
+      passives = {}
+      main_song_instance:stop()
+      run_passive_pool_by_tiers = {
+        [1] = {'wall_echo', 'wall_rider', 'centipede', 'temporal_chains', 'amplify', 'amplify_x', 'ballista', 'ballista_x', 'blunt_arrow', 'berserking', 'unwavering_stance', 'assassination', 'unleash', 'blessing',
+          'hex_master', 'force_push', 'spawning_pool'}, 
+        [2] = {'ouroboros_technique_r', 'ouroboros_technique_l', 'intimidation', 'vulnerability', 'resonance', 'point_blank', 'longshot', 'explosive_arrow', 'chronomancy', 'awakening', 'ultimatum', 'echo_barrage', 
+          'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
+        [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
+      }
+      max_units = 7 + new_game_plus
+      main:add(BuyScreen'buy_screen')
+      system.save_run(0, gold, {}, passives, run_passive_pool_by_tiers)
+      main:go_to('buy_screen', 0, {}, passives)
+    end, text = Text({{text = '[wavy, bg]restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
+  end}
+
   trigger:tween(1, main_song_instance, {volume = 0.2}, math.linear)
 
   if self.level == 1 then
@@ -130,6 +161,7 @@ function BuyScreen:update(dt)
     if self.party_text then self.party_text:update(dt) end
     if self.items_text then self.items_text:update(dt) end
     if self.ng_text then self.ng_text:update(dt) end
+    if self.level_text then self.level_text:update(dt) end
   else
     self.tutorial:update(dt*slow_amount)
   end
@@ -162,6 +194,7 @@ function BuyScreen:draw()
   self.main:draw()
   self.effects:draw()
   if self.items_text then self.items_text:draw(32, 145) end
+  if self.level_text then self.level_text:draw(260, gh - 20) end
   self.ui:draw()
 
   if self.unit_grabbed then
@@ -179,9 +212,7 @@ function BuyScreen:draw()
   if self.shop_text then self.shop_text:draw(64, 20) end
   if self.sets_text then self.sets_text:draw(328, 20) end
   if self.party_text then self.party_text:draw(440, 20) end
-  if new_game_plus > 0 then
-    self.ng_text:draw(240, 20)
-  end
+  if new_game_plus > 0 then self.ng_text:draw(240, 20) end
 
   if self.in_tutorial then
     graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent_2)
@@ -264,7 +295,7 @@ function BuyScreen:gain_gold(amount)
 end
 
 
-function BuyScreen:set_cards(level, dont_spawn_effect)
+function BuyScreen:set_cards(level, dont_spawn_effect, first_call)
   if self.cards then for i = 1, 3 do if self.cards[i] then self.cards[i]:die(dont_spawn_effect) end end end
   self.cards = {}
   local all_units = {}
@@ -277,9 +308,15 @@ function BuyScreen:set_cards(level, dont_spawn_effect)
     unit_3 = random:table(tier_to_characters[random:weighted_pick(unpack(level_to_tier_weights[level or self.level]))])
     all_units = {unit_1, unit_2, unit_3}
   until not table.all(all_units, function(v) return table.any(non_attacking_characters, function(u) return v == u end) end)
-  self.cards[1] = ShopCard{group = self.main, x = 60, y = 75, w = 80, h = 90, unit = unit_1, parent = self, i = 1}
-  self.cards[2] = ShopCard{group = self.main, x = 140, y = 75, w = 80, h = 90, unit = unit_2, parent = self, i = 2}
-  self.cards[3] = ShopCard{group = self.main, x = 220, y = 75, w = 80, h = 90, unit = unit_3, parent = self, i = 3}
+  if first_call and self.locked then
+    if locked_state.cards[1] then self.cards[1] = ShopCard{group = self.main, x = 60, y = 75, w = 80, h = 90, unit = locked_state.cards[1], parent = self, i = 1} end
+    if locked_state.cards[2] then self.cards[2] = ShopCard{group = self.main, x = 140, y = 75, w = 80, h = 90, unit = locked_state.cards[2], parent = self, i = 2} end
+    if locked_state.cards[3] then self.cards[3] = ShopCard{group = self.main, x = 220, y = 75, w = 80, h = 90, unit = locked_state.cards[3], parent = self, i = 3} end
+  else
+    self.cards[1] = ShopCard{group = self.main, x = 60, y = 75, w = 80, h = 90, unit = unit_1, parent = self, i = 1}
+    self.cards[2] = ShopCard{group = self.main, x = 140, y = 75, w = 80, h = 90, unit = unit_2, parent = self, i = 2}
+    self.cards[3] = ShopCard{group = self.main, x = 220, y = 75, w = 80, h = 90, unit = unit_3, parent = self, i = 3}
+  end
 end
 
 
@@ -467,7 +504,7 @@ function RestartButton:update(dt)
       max_units = 7 + new_game_plus
       system.save_state()
       main:add(BuyScreen'buy_screen')
-      system.save_run(0, gold, {}, passives, run_passive_pool_by_tiers)
+      system.save_run(0, gold, {}, passives, run_passive_pool_by_tiers, locked_state)
       main:go_to('buy_screen', 0, {}, passives)
     end, text = Text({{text = '[wavy, bg]restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
   end
@@ -546,6 +583,13 @@ function Button:on_mouse_exit()
 end
 
 
+function Button:set_text(text)
+  self.button_text = text
+  self.text:set_text{{text = '[' .. self.fg_color .. ']' .. self.button_text, font = pixul_font, alignment = 'center'}}
+  self.spring:pull(0.2, 200, 10)
+end
+
+
 
 
 GoButton = Object:extend()
@@ -574,6 +618,7 @@ function GoButton:update(dt)
       self.t:after(2, function() self.info_text:deactivate(); self.info_text.dead = true; self.info_text = nil end, 'info_text')
 
     else
+      if self.parent.locked then locked_state = {locked = true, cards = {self.parent.cards[1] and self.parent.cards[1].unit, self.parent.cards[2] and self.parent.cards[2].unit, self.parent.cards[3] and self.parent.cards[3].unit}} end
       ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       self.spring:pull(0.2, 200, 10)
       self.selected = true
@@ -608,6 +653,58 @@ end
 
 function GoButton:on_mouse_exit()
   self.text:set_text{{text = '[greenm5]GO!', font = pixul_font, alignment = 'center'}}
+  self.selected = false
+end
+
+
+LockButton = Object:extend()
+LockButton:implement(GameObject)
+function LockButton:init(args)
+  self:init_game_object(args)
+  self.shape = Rectangle(self.x, self.y, 32, 16)
+  self.interact_with_mouse = true
+  if self.parent.locked then self.shape.w = 44
+  else self.shape.w = 32 end
+  if self.parent.locked then self.text = Text({{text = '[fgm5]' .. tostring(self.parent.locked and 'unlock' or 'lock'), font = pixul_font, alignment = 'center'}}, global_text_tags)
+  else self.text = Text({{text = '[bg10]' .. tostring(self.parent.locked and 'unlock' or 'lock'), font = pixul_font, alignment = 'center'}}, global_text_tags) end
+end
+
+
+function LockButton:update(dt)
+  self:update_game_object(dt)
+
+  if self.selected and input.m1.pressed then
+    self.parent.locked = not self.parent.locked
+    if not self.parent.locked then locked_state = nil end
+    ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    self.selected = true
+    self.spring:pull(0.2, 200, 10)
+    self.text:set_text{{text = '[fgm5]' .. tostring(self.parent.locked and 'unlock' or 'lock'), font = pixul_font, alignment = 'center'}}
+    if self.parent.locked then self.shape.w = 44
+    else self.shape.w = 32 end
+  end
+end
+
+
+function LockButton:draw()
+  graphics.push(self.x, self.y, 0, self.spring.x, self.spring.y)
+    graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 4, 4, (self.selected or self.parent.locked) and fg[0] or bg[1])
+    self.text:draw(self.x, self.y + 1)
+  graphics.pop()
+end
+
+
+function LockButton:on_mouse_enter()
+  ui_hover1:play{pitch = random:float(1.3, 1.5), volume = 0.5}
+  pop2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+  self.selected = true
+  self.text:set_text{{text = '[fgm5]' .. tostring(self.parent.locked and 'unlock' or 'lock'), font = pixul_font, alignment = 'center'}}
+  self.spring:pull(0.2, 200, 10)
+end
+
+
+function LockButton:on_mouse_exit()
+  if not self.parent.locked then self.text:set_text{{text = '[bg10]' .. tostring(self.parent.locked and 'unlock' or 'lock'), font = pixul_font, alignment = 'center'}} end
   self.selected = false
 end
 

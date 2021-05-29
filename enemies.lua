@@ -265,7 +265,6 @@ function Seeker:update(dt)
   self:calculate_stats()
 
   self.stun_dmg_m = (self.barbarian_stunned and 2 or 1)
-  self.bane_dmg_m = (self.baned and 1.5 or 1)
 
   if self.shooter then
     self.t:set_every_multiplier('shooter', (1 - self.level*0.02))
@@ -392,7 +391,7 @@ function Seeker:hit(damage, projectile)
   if self.push_invulnerable then return end
   self:show_hp()
   
-  local actual_damage = math.max(self:calculate_damage(damage)*(self.stun_dmg_m or 1)*(self.bane_dmg_m or 1), 0)
+  local actual_damage = math.max(self:calculate_damage(damage)*(self.stun_dmg_m or 1), 0)
   if self.vulnerable then actual_damage = actual_damage*1.2 end
   self.hp = self.hp - actual_damage
   if self.hp > self.max_hp then self.hp = self.max_hp end
@@ -473,6 +472,27 @@ function Seeker:hit(damage, projectile)
         end
       end)
     end
+
+    if self.jester_cursed then
+      trigger:after(0.01, function()
+        _G[random:table{'scout1', 'scout2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.35}
+        HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6}
+        local r = random:float(0, 2*math.pi)
+        for i = 1, 3 do
+          local t = {group = main.current.main, x = self.x + 8*math.cos(r), y = self.y + 8*math.sin(r), v = 250, r = r, color = red[0], dmg = self.jester_ref.dmg,
+            pierce = self.jester_lvl3 and 2 or 0, homing = self.jester_lvl3, character = self.jester_ref.character, parent = self.jester_ref}
+          Projectile(table.merge(t, mods or {}))
+          r = r + math.pi/1.5
+        end
+      end)
+    end
+
+    if self.bane_cursed then
+      trigger:after(0.01, function()
+        DotArea{group = main.current.effects, x = self.x, y = self.y, rs = (self.bane_ref.level == 3 and 2 or 1)*self.bane_ref.area_size_m*18, color = purple[0],
+          dmg = self.bane_ref.area_dmg_m*self.bane_ref.dmg*(self.bane_ref.dot_dmg_m or 1), void_rift = true, duration = 1}
+      end)
+    end
   end
 end
 
@@ -528,11 +548,16 @@ function Seeker:curse(curse, duration, arg1, arg2, arg3)
       self.launcher = arg2
       self:push(random:float(50, 75)*self.launcher.knockback_m, random:table{0, math.pi, math.pi/2, -math.pi/2})
     end, 'launcher_curse')
-  elseif curse == 'bard' then
-    self.bard_cursed = true
+  elseif curse == 'jester' then
+    self.jester_cursed = true
+    self.jester_lvl3 = arg1
+    self.jester_ref = arg2
+    self.t:after(duration*curse_m, function() self.jester_cursed = false end, 'jester_curse')
   elseif curse == 'bane' then
-    self.baned = true
-    self.t:after(duration*curse_m, function() self.baned = false end, 'bane_curse')
+    self.bane_cursed = true
+    self.bane_lvl3 = arg1
+    self.bane_ref = arg2
+    self.t:after(duration*curse_m, function() self.bane_cursed = false end, 'bane_curse')
   elseif curse == 'infestor' then
     self.infested = arg1
     self.infested_dmg = arg2
@@ -703,11 +728,16 @@ function EnemyCritter:curse(curse, duration, arg1, arg2, arg3)
       self.launcher = arg2
       self:push(random:float(50, 75)*self.launcher.knockback_m, random:table{0, math.pi, math.pi/2, -math.pi/2})
     end, 'launcher_curse')
-  elseif curse == 'bard' then
-    self.bard_cursed = true
+  elseif curse == 'jester' then
+    self.jester_cursed = true
+    self.jester_lvl3 = arg1
+    self.jester_ref = arg2
+    self.t:after(duration*curse_m, function() self.jester_cursed = false end, 'jester_curse')
   elseif curse == 'bane' then
-    self.baned = true
-    self.t:after(duration*curse_m, function() self.baned = false end, 'bane_curse')
+    self.bane_cursed = true
+    self.bane_lvl3 = arg1
+    self.bane_ref = arg2
+    self.t:after(duration*curse_m, function() self.bane_cursed = false end, 'bane_curse')
   elseif curse == 'infestor' then
     self.infested = arg1
     self.infested_dmg = arg2

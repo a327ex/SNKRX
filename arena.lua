@@ -777,6 +777,7 @@ end
 function Arena:die()
   if not self.died_text and not self.won then
     self.died = true
+    system.save_run(0, gold, {}, passives, run_passive_pool_by_tiers)
     self.t:tween(2, self, {main_slow_amount = 0}, math.linear, function() self.main_slow_amount = 0 end)
     self.died_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 32, lines = {
       {text = '[wavy_mid, cbyc]you died...', font = fat_font, alignment = 'center', height_multiplier = 1.25},

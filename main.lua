@@ -232,7 +232,7 @@ function init()
     ['corruptor'] = 'Corruptor',
     ['beastmaster'] = 'Beastmaster',
     ['launcher'] = 'Launcher',
-    ['bard'] = 'Bard',
+    ['jester'] = 'Jester',
     ['assassin'] = 'Assassin',
     ['host'] = 'Host',
     ['carver'] = 'Carver',
@@ -276,7 +276,7 @@ function init()
     ['corruptor'] = orange[0],
     ['beastmaster'] = red[0],
     ['launcher'] = yellow[0],
-    ['bard'] = red[0],
+    ['jester'] = red[0],
     ['assassin'] = purple[0],
     ['host'] = orange[0],
     ['carver'] = green[0],
@@ -320,7 +320,7 @@ function init()
     ['corruptor'] = 'orange',
     ['beastmaster'] = 'red',
     ['launcher'] = 'yellow',
-    ['bard'] = 'red',
+    ['jester'] = 'red',
     ['assassin'] = 'purple',
     ['host'] = 'orange',
     ['carver'] = 'green',
@@ -364,7 +364,7 @@ function init()
     ['corruptor'] = {'ranger', 'swarmer'},
     ['beastmaster'] = {'rogue', 'swarmer'},
     ['launcher'] = {'curser', 'forcer'},
-    ['bard'] = {'curser', 'rogue'},
+    ['jester'] = {'curser', 'rogue'},
     ['assassin'] = {'rogue', 'voider'},
     ['host'] = {'swarmer'},
     ['carver'] = {'conjurer', 'healer'},
@@ -408,7 +408,7 @@ function init()
     ['corruptor'] = '[green]Ranger, [orange]Swarmer',
     ['beastmaster'] = '[red]Rogue, [orange]Swarmer',
     ['launcher'] = '[yellow]Forcer, [purple]Curser',
-    ['bard'] = '[purple]Curser, [red]Rogue',
+    ['jester'] = '[purple]Curser, [red]Rogue',
     ['assassin'] = '[red]Rogue, [purple]Voider',
     ['host'] = '[orange]Swarmer',
     ['carver'] = '[orange]Conjurer, [green]Healer',
@@ -467,19 +467,19 @@ function init()
     ['pyromancer'] = function(lvl) return '[fg]nearby enemies take [yellow]' .. get_character_stat('pyromancer', lvl, 'dmg') .. '[fg] damage per second' end,
     ['corruptor'] = function(lvl) return '[fg]spawn [yellow]3[fg] small critters if the corruptor kills an enemy' end,
     ['beastmaster'] = function(lvl) return '[fg]spawn [yellow]2[fg] small critters if the beastmaster crits' end,
-    ['launcher'] = function(lvl) return '[fg]nearby enemies are pushed after [yellow]4[fg] seconds, taking [yellow]' .. 2*get_character_stat('launcher', lvl, 'dmg') .. '[fg] damage on wall hit' end,
-    ['bard'] = function(lvl) return "[fg]throws a knife that deals [yellow]" .. get_character_stat('bard', lvl, 'dmg') .. "[fg] damage and inflicts enemies hit with the bard's curse" end,
+    ['launcher'] = function(lvl) return '[fg]all nearby enemies are pushed after [yellow]4[fg] seconds, taking [yellow]' .. 2*get_character_stat('launcher', lvl, 'dmg') .. '[fg] damage on wall hit' end,
+    ['jester'] = function(lvl) return "[fg]curses [yellow]5[fg] nearby enemies for [yellow]6[fg] seconds, they will explode into [yellow]3[fg] knives on death" end,
     ['assassin'] = function(lvl) return '[fg]throws a piercing knife that deals [yellow]' .. get_character_stat('assassin', lvl, 'dmg') .. '[fg] damage + [yellow]' ..
       get_character_stat('assassin', lvl, 'dmg')/2 .. '[fg] damage per second for [yellow]3[fg] seconds' end,
     ['host'] = function(lvl) return '[fg]periodically spawn [yellow]1[fg] small critter' end,
     ['carver'] = function(lvl) return '[fg]carves a statue that periodically heals [yellow]1[fg] unit for [yellow]20%[fg] max HP if in range' end,
-    ['bane'] = function(lvl) return '[fg]creates a large area that curses enemies to take [yellow]+50%[fg] damage' end,
+    ['bane'] = function(lvl) return '[fg]curser [yellow]5[fg] nearby enemies for [yellow]6[fg] seconds, they will create small void rifts on death' end,
     ['psykino'] = function(lvl) return '[fg]pulls enemies together for [yellow]2[fg] seconds' end,
     ['barrager'] = function(lvl) return '[fg]shoots a barrage of [yellow]3[fg] arrows, each dealing [yellow]' .. get_character_stat('barrager', lvl, 'dmg') .. '[fg] damage and pushing enemies' end,
     ['highlander'] = function(lvl) return '[fg]deals [yellow]' .. 5*get_character_stat('highlander', lvl, 'dmg') .. '[fg] AoE damage' end,
     ['fairy'] = function(lvl) return '[fg]periodically heals [yellow]1[fg] unit at random and grants it [yellow]+100%[fg] attack speed for [yellow]6[fg] seconds' end,
     ['priest'] = function(lvl) return '[fg]heals all allies for [yellow]20%[fg] their max HP' end,
-    ['infestor'] = function(lvl) return '[fg]curses nearby enemies for [yellow]6[fg] seconds, they will release [yellow]2[fg] critters on death' end,
+    ['infestor'] = function(lvl) return '[fg]curses all nearby enemies for [yellow]6[fg] seconds, they will release [yellow]2[fg] critters on death' end,
     ['flagellant'] = function(lvl) return '[fg]deals [yellow]' .. 2*get_character_stat('flagellant', lvl, 'dmg') .. '[fg] damage to self and grants [yellow]+4%[fg] damage to all allies per cast' end,
   }
 
@@ -503,7 +503,7 @@ function init()
     ['chronomancer'] = '[blue]Quicken',
     ['spellblade'] = '[blue]Spiralism',
     ['psykeeper'] = '[fg]Crucio',
-    ['engineer'] = '[orange]Upgrade',
+    ['engineer'] = '[orange]Upgrade!!!',
     ['plague_doctor'] = '[purple]Black Death Steam',
     ['barbarian'] = '[yellow]Seism',
     ['juggernaut'] = '[yellow]Brutal Impact',
@@ -513,7 +513,7 @@ function init()
     ['corruptor'] = '[orange]Corruption',
     ['beastmaster'] = '[red]Call of the Wild',
     ['launcher'] = '[orange]Kineticism',
-    ['bard'] = "[red]The Bard's Song",
+    ['jester'] = "[red]Pandemonium",
     ['assassin'] = '[purple]Toxic Delivery',
     ['host'] = '[orange]Invasion',
     ['carver'] = '[green]World Tree',
@@ -547,7 +547,7 @@ function init()
     ['chronomancer'] = '[light_bg]Quicken',
     ['spellblade'] = '[light_bg]Spiralism',
     ['psykeeper'] = '[light_bg]Crucio',
-    ['engineer'] = '[light_bg]Upgrade',
+    ['engineer'] = '[light_bg]Upgrade!!!',
     ['plague_doctor'] = '[light_bg]Black Death Steam',
     ['barbarian'] = '[light_bg]Seism',
     ['juggernaut'] = '[light_bg]Brutal Impact',
@@ -557,7 +557,7 @@ function init()
     ['corruptor'] = '[light_bg]Corruption',
     ['beastmaster'] = '[light_bg]Call of the Wild',
     ['launcher'] = '[light_bg]Kineticism',
-    ['bard'] = "[light_bg]The Bard's Song",
+    ['jester'] = "[light_bg]Pandemonium",
     ['assassin'] = '[light_bg]Toxic Delivery',
     ['host'] = '[light_bg]Invasion',
     ['carver'] = '[light_bg]World Tree',
@@ -572,7 +572,7 @@ function init()
   }
 
   character_effect_descriptions = {
-    ['vagrant'] = function() return '[yellow]+10%[fg] damage and [yellow]+5%[fg] attack speed per active set' end,
+    ['vagrant'] = function() return '[yellow]+10%[fg] damage and [yellow]+10%[fg] attack speed per active set' end,
     ['swordsman'] = function() return "[fg]the swordsman's damage is [yellow]doubled" end,
     ['wizard'] = function() return '[fg]the projectile chains [yellow]3[fg] times' end,
     ['archer'] = function() return '[fg]the arrow ricochets off walls [yellow]3[fg] times' end,
@@ -591,7 +591,7 @@ function init()
     ['chronomancer'] = function() return '[fg]enemies take damave over time [yellow]50%[fg] faster' end,
     ['spellblade'] = function() return '[fg]faster projectile speed and tighter turns' end,
     ['psykeeper'] = function() return '[fg]also redistributes damage taken as damage to all enemies at [yellow]double[fg] value' end,
-    ['engineer'] = function() return '[fg]every 3rd sentry dropped upgrade all sentries with [yellow]+100%[fg] damage and attack speed' end,
+    ['engineer'] = function() return '[fg]drops [yellow]2[fg] additional turrets and grants all turrets [yellow]+50%[fg] damage and attack speed' end,
     ['plague_doctor'] = function() return '[fg]nearby enemies take an additional [yellow]' .. get_character_stat('plague_doctor', 3, 'dmg') .. '[fg] damage per second' end,
     ['barbarian'] = function() return '[fg]stunned enemies also take [yellow]100%[fg] increased damage' end,
     ['juggernaut'] = function() return '[fg]enemies pushed by the juggernaut take [yellow]' .. 4*get_character_stat('juggernaut', 3, 'dmg') .. '[fg] damage if they hit a wall' end,
@@ -601,11 +601,11 @@ function init()
     ['corruptor'] = function() return '[fg]spawn [yellow]3[fg] small critters if the corruptor hits an enemy' end,
     ['beastmaster'] = function() return '[fg]spawn [yellow]2[fg] small critters if the beastmaster gets hit' end,
     ['launcher'] = function() return '[fg]enemies launched take [yellow]300%[fg] more damage when they hit walls' end,
-    ['bard'] = function() return '[fg]every 8th attack consume the curse to deal [yellow]' .. 4*get_character_stat('bard', 3, 'dmg') .. '[fg] damage to affected enemies' end,
+    ['jester'] = function() return '[fg]all knives seek enemies and pierce [yellow]2[fg] times' end,
     ['assassin'] = function() return '[fg]poison inflicted from crits deals [yellow]8x[fg] damage' end,
     ['host'] = function() return '[fg][yellow]+100%[fg] critter spawn rate and spawn [yellow]2[fg] critters instead' end,
     ['carver'] = function() return '[fg]carves a tree that heals [yellow]twice[fg] as fast, in a bigger area, and heals [yellow]2[fg] units instead' end,
-    ['bane'] = function() return '[fg]the area also deals [yellow]' .. get_character_stat('bane', 3, 'dmg') .. '[fg] damage per second and slows enemies by [yellow]50%[fg]' end,
+    ['bane'] = function() return "[yellow]100%[fg] increased area for bane's void rifts" end,
     ['psykino'] = function() return '[fg]enemies take [yellow]' .. 4*get_character_stat('psykino', 3, 'dmg') .. '[fg] damage and are pushed away when the area expires' end,
     ['barrager'] = function() return '[fg]every 3rd attack the barrage shoots [yellow]15[fg] projectiles and they push harder' end,
     ['highlander'] = function() return '[fg]quickly repeats the attack [yellow]3[fg] times' end,
@@ -616,7 +616,7 @@ function init()
   }
 
   character_effect_descriptions_gray = {
-    ['vagrant'] = function() return '[light_bg]+10% damage and +5% attack speed per active set' end,
+    ['vagrant'] = function() return '[light_bg]+10% damage and +10% attack speed per active set' end,
     ['swordsman'] = function() return "[light_bg]the swordsman's damage is doubled" end,
     ['wizard'] = function() return '[light_bg]the projectile chains 3 times' end,
     ['archer'] = function() return '[light_bg]the arrow ricochets off walls 3 times' end,
@@ -635,7 +635,7 @@ function init()
     ['chronomancer'] = function() return '[light_bg]enemies take damave over time 50% faster' end,
     ['spellblade'] = function() return '[light_bg]faster projectile speed and tighter turns' end,
     ['psykeeper'] = function() return '[light_bg]also redistributes damage taken as damage to all enemies at double value' end,
-    ['engineer'] = function() return '[light_bg]every 3rd sentry dropped upgrade all sentries with +100% damage and attack speed' end,
+    ['engineer'] = function() return '[light_bg]drops 3 additional turrets and grants all turrets +100% damage and attack speed' end,
     ['plague_doctor'] = function() return '[light_bg]nearby enemies take an additional ' .. get_character_stat('plague_doctor', 3, 'dmg') .. ' damage per second' end,
     ['barbarian'] = function() return '[light_bg]stunned enemies also take 100% increased damage' end,
     ['juggernaut'] = function() return '[light_bg]enemies pushed by the juggernaut take ' .. 4*get_character_stat('juggernaut', 3, 'dmg') .. ' damage if they hit a wall' end,
@@ -645,11 +645,11 @@ function init()
     ['corruptor'] = function() return '[light_bg]spawn 3 small critters if the corruptor hits an enemy' end,
     ['beastmaster'] = function() return '[light_bg]spawn 2 small critters if the beastmaster gets hit' end,
     ['launcher'] = function() return '[light_bg]enemies launched take 300% more damage when they hit walls' end,
-    ['bard'] = function() return '[light_bg]every 8th attack consume the curse to deal ' .. 4*get_character_stat('bard', 3, 'dmg') .. ' damage to affected enemies' end,
+    ['jester'] = function() return '[light_bg]curses 6 enemies and all knives seek enemies and pierce 2 times' end,
     ['assassin'] = function() return '[light_bg]poison inflicted from crits deals 8x damage' end,
     ['host'] = function() return '[light_bg]+100% critter spawn rate and spawn 2 critters instead' end,
     ['carver'] = function() return '[light_bg]carves a tree that heals twice as fast, in a bigger area, and heals 2 units instead' end,
-    ['bane'] = function() return '[light_bg]the area also deals ' .. get_character_stat('bane', 3, 'dmg') .. ' damage per second and slows enemies by 50%' end,
+    ['bane'] = function() return "[light_bg]100% increased area for bane's void rifts" end,
     ['psykino'] = function() return '[light_bg]enemies take ' .. 4*get_character_stat('psykino', 3, 'dmg') .. ' damage and are pushed away when the area expires' end,
     ['barrager'] = function() return '[light_bg]every 3rd attack the barrage shoots 15 projectiles and they push harder' end,
     ['highlander'] = function() return '[light_bg]quickly repeats the attack 3 times' end,
@@ -689,7 +689,7 @@ function init()
     ['corruptor'] = function(lvl) return get_character_stat_string('corruptor', lvl) end,
     ['beastmaster'] = function(lvl) return get_character_stat_string('beastmaster', lvl) end,
     ['launcher'] = function(lvl) return get_character_stat_string('launcher', lvl) end,
-    ['bard'] = function(lvl) return get_character_stat_string('bard', lvl) end,
+    ['jester'] = function(lvl) return get_character_stat_string('jester', lvl) end,
     ['assassin'] = function(lvl) return get_character_stat_string('assassin', lvl) end,
     ['host'] = function(lvl) return get_character_stat_string('host', lvl) end,
     ['carver'] = function(lvl) return get_character_stat_string('carver', lvl) end,
@@ -743,7 +743,7 @@ function init()
 
   tier_to_characters = {
     [1] = {'vagrant', 'swordsman', 'wizard', 'archer', 'scout', 'cleric'},
-    [2] = {'saboteur', 'sage', 'squire', 'dual_gunner', 'hunter', 'chronomancer', 'barbarian', 'cryomancer', 'beastmaster', 'launcher', 'bard', 'carver'},
+    [2] = {'saboteur', 'sage', 'squire', 'dual_gunner', 'hunter', 'chronomancer', 'barbarian', 'cryomancer', 'beastmaster', 'launcher', 'jester', 'carver'},
     [3] = {'outlaw', 'elementor', 'stormweaver', 'spellblade', 'psykeeper', 'engineer', 'juggernaut', 'pyromancer', 'corruptor', 'assassin', 'bane', 'barrager', 'infestor', 'flagellant'},
     [4] = {'priest', 'highlander', 'psykino', 'lich', 'host', 'fairy', 'blade', 'plague_doctor', 'cannoneer'},
   }
@@ -780,7 +780,7 @@ function init()
     ['corruptor'] = 3,
     ['beastmaster'] = 2,
     ['launcher'] = 2,
-    ['bard'] = 2,
+    ['jester'] = 2,
     ['assassin'] = 3,
     ['host'] = 4,
     ['carver'] = 2,
@@ -957,7 +957,7 @@ function init()
     ['assassination'] = '[fg]crits from rogues deal [yellow]8x[fg] damage but normal attacks deal [yellow]half[fg] damage',
     ['magnify'] = '[yellow]+25%[fg] area size',
     ['echo_barrage'] = '[yellow]20%[fg] chance to create [yellow]3[fg] secondary AoEs on AoE hit',
-    ['unleash'] = '[yellow]+2%[fg] area size and damage per second',
+    ['unleash'] = '[yellow]+1%[fg] area size and damage per second',
     ['reinforce'] = '[yellow]+10%[fg] damage, defense and attack speed to all allies with at least one enchanter',
     ['payback'] = '[yellow]+5%[fg] damage to all allies whenever an enchanter is hit',
     ['blessing'] = '[yellow]+20%[fg] healing effectiveness',
@@ -1167,6 +1167,7 @@ function init()
   }
   gold = run.gold or 2
   passives = run.passives or {}
+  locked_state = run.locked_state
   steam.userStats.requestCurrentStats()
   new_game_plus = state.new_game_plus or 0
   if not state.new_game_plus then state.new_game_plus = new_game_plus end
@@ -1183,8 +1184,9 @@ function init()
   
   --[[
   main:add(Arena'arena')
-  main:go_to('arena', 20, {
-    {character = 'vagrant', level = 3},
+  main:go_to('arena', 9, {
+    {character = 'dual_gunner', level = 3},
+    {character = 'engineer', level = 3},
     {character = 'spellblade', level = 3},
     {character = 'assassin', level = 3},
     {character = 'scout', level = 3},
@@ -1192,9 +1194,6 @@ function init()
     {character = 'swordsman', level = 3},
     {character = 'archer', level = 3},
   }, passives)
-
-  main:add(Media'media')
-  main:go_to('media')
   ]]--
 
   trigger:every(2, function()
