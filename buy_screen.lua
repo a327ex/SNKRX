@@ -78,7 +78,7 @@ function BuyScreen:on_enter(from, level, units, passives)
 
   if not self.first_screen then RerollButton{group = self.main, x = 150, y = 18, parent = self} end
   GoButton{group = self.main, x = gw - 90, y = gh - 20, parent = self}
-  self.tutorial_button = Button{group = self.main, x = gw/2 + 136, y = 18, button_text = '?', fg_color = 'bg10', bg_color = 'bg', action = function()
+  self.tutorial_button = Button{group = self.main, x = gw/2 + 134, y = 18, button_text = '?', fg_color = 'bg10', bg_color = 'bg', action = function()
     self.in_tutorial = true
     self.title_text = Text2{group = self.tutorial, x = gw/2, y = 35, lines = {{text = '[fg]WELCOME TO SNKRX!', font = fat_font, alignment = 'center'}}}
     self.tutorial_text = Text2{group = self.tutorial, x = 228, y = 160, lines = {
@@ -113,9 +113,19 @@ function BuyScreen:on_enter(from, level, units, passives)
         self:quit_tutorial()
       end)
     end}
+  end, mouse_enter = function(b)
+    b.info_text = InfoText{group = main.current.ui, force_update = true}
+    b.info_text:activate({
+      {text = '[fg]tutorial', font = pixul_font, alignment = 'center'},
+    }, nil, nil, nil, nil, 16, 4, nil, 2)
+    b.info_text.x, b.info_text.y = b.x, b.y + 16
+  end, mouse_exit = function(b)
+    b.info_text:deactivate()
+    b.info_text.dead = true
+    b.info_text = nil
   end}
 
-  self.restart_button = Button{group = self.ui, x = gw/2 + 154, y = 18, force_update = true, button_text = 'R', fg_color = 'bg10', bg_color = 'bg', action = function(b)
+  self.restart_button = Button{group = self.ui, x = gw/2 + 156, y = 18, force_update = true, button_text = 'R', fg_color = 'bg10', bg_color = 'bg', action = function(b)
     self.transitioning = true
     ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -137,6 +147,16 @@ function BuyScreen:on_enter(from, level, units, passives)
       system.save_run()
       main:go_to('buy_screen', 0, {}, passives)
     end, text = Text({{text = '[wavy, bg]restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
+  end, mouse_enter = function(b)
+    b.info_text = InfoText{group = main.current.ui, force_update = true}
+    b.info_text:activate({
+      {text = '[fg]restart run', font = pixul_font, alignment = 'center'},
+    }, nil, nil, nil, nil, 16, 4, nil, 2)
+    b.info_text.x, b.info_text.y = b.x, b.y + 16
+  end, mouse_exit = function(b)
+    b.info_text:deactivate()
+    b.info_text.dead = true
+    b.info_text = nil
   end}
 
   trigger:tween(1, main_song_instance, {volume = 0.2}, math.linear)
@@ -578,6 +598,7 @@ function Button:on_mouse_enter()
   self.selected = true
   self.text:set_text{{text = '[fgm5]' .. self.button_text, font = pixul_font, alignment = 'center'}}
   self.spring:pull(0.2, 200, 10)
+  if self.mouse_enter then self:mouse_enter() end
 end
 
 
@@ -585,6 +606,7 @@ function Button:on_mouse_exit()
   if main.current.in_credits and not self.credits_button then return end
   self.text:set_text{{text = '[' .. self.fg_color .. ']' .. self.button_text, font = pixul_font, alignment = 'center'}}
   self.selected = false
+  if self.mouse_exit then self:mouse_exit() end
 end
 
 

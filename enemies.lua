@@ -97,7 +97,7 @@ function Seeker:init(args)
           enemy:hit(10000)
           shoot1:play{pitch = random:float(0.95, 1.05), volume = 0.4}
           local n = 8 + new_game_plus*2
-          for i = 1, n do EnemyProjectile{group = main.current.main, x = enemy.x, y = enemy.y, color = blue[0], r = (i-1)*math.pi/(n/2), v = 150 + 5*enemy.level, dmg = (1 + 0.1*new_game_plus)*enemy.dmg} end
+          for i = 1, n do EnemyProjectile{group = main.current.main, x = enemy.x, y = enemy.y, color = blue[0], r = (i-1)*math.pi/(n/2), v = 120 + 5*enemy.level, dmg = (1 + 0.1*new_game_plus)*enemy.dmg} end
         end
       end)
 

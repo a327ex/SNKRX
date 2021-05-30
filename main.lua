@@ -470,7 +470,7 @@ function init()
     ['launcher'] = function(lvl) return '[fg]all nearby enemies are pushed after [yellow]4[fg] seconds, taking [yellow]' .. 2*get_character_stat('launcher', lvl, 'dmg') .. '[fg] damage on wall hit' end,
     ['jester'] = function(lvl) return "[fg]curses [yellow]5[fg] nearby enemies for [yellow]6[fg] seconds, they will explode into [yellow]3[fg] knives on death" end,
     ['assassin'] = function(lvl) return '[fg]throws a piercing knife that deals [yellow]' .. get_character_stat('assassin', lvl, 'dmg') .. '[fg] damage + [yellow]' ..
-      get_character_stat('assassin', lvl, 'dmg')/2 .. '[fg] damage per second for [yellow]3[fg] seconds' end,
+      get_character_stat('assassin', lvl, 'dmg')/2 .. '[fg] damage per second' end,
     ['host'] = function(lvl) return '[fg]periodically spawn [yellow]1[fg] small critter' end,
     ['carver'] = function(lvl) return '[fg]carves a statue that periodically heals [yellow]1[fg] unit for [yellow]20%[fg] max HP if in range' end,
     ['bane'] = function(lvl) return '[fg]curses [yellow]5[fg] nearby enemies for [yellow]6[fg] seconds, they will create small void rifts on death' end,
@@ -610,7 +610,7 @@ function init()
     ['barrager'] = function() return '[fg]every 3rd attack the barrage shoots [yellow]15[fg] projectiles and they push harder' end,
     ['highlander'] = function() return '[fg]quickly repeats the attack [yellow]3[fg] times' end,
     ['fairy'] = function() return '[fg]heals [yellow]2[fg] units instead and grants them an additional [yellow]100%[fg] attack speed' end,
-    ['priest'] = function() return '[fg]at the start of the round pick [yellow]3[fg] units at random and grants them a buff that prevents death once' end,
+    ['priest'] = function() return '[fg]picks [yellow]3[fg] units at random and grants them a buff that prevents death once' end,
     ['infestor'] = function() return '[fg][yellow]triples[fg] the number of critters released' end,
     ['flagellant'] = function() return '[fg]deals [yellow]' .. 2*get_character_stat('flagellant', 3, 'dmg') .. '[fg] damage to all allies and grants [yellow]+12%[fg] damage to all allies per cast' end,
   }
@@ -654,7 +654,7 @@ function init()
     ['barrager'] = function() return '[light_bg]every 3rd attack the barrage shoots 15 projectiles and they push harder' end,
     ['highlander'] = function() return '[light_bg]quickly repeats the attack 3 times' end,
     ['fairy'] = function() return '[light_bg]heals 2 units instead and grants them an additional 100% attack speed' end,
-    ['priest'] = function() return '[light_bg]at the start of the round pick 3 units at random and grants them a buff that prevents death once' end,
+    ['priest'] = function() return '[light_bg]picks 3 units at random and grants them a buff that prevents death once' end,
     ['infestor'] = function() return '[light_bg]triples the number of critters released' end,
     ['flagellant'] = function() return '[light_bg]deals ' .. 2*get_character_stat('flagellant', 3, 'dmg') .. ' damage to all allies and grants +12% damage to all allies per cast' end,
   }
