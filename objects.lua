@@ -239,8 +239,8 @@ function Unit:calculate_stats(first_run)
       else
         local x = self.level
         local y = {0, 1, 3, 3, 4, 6, 5, 6, 9, 7, 8, 12, 10, 11, 15, 12, 13, 18, 16, 17, 21, 17, 20, 24, 25}
-        self.base_hp = 28 + 18*y[x]
-        self.base_dmg = 5 + 3*y[x]
+        self.base_hp = 25 + 16.5*y[x]
+        self.base_dmg = 4.5 + 2.5*y[x]
         self.base_mvspd = 70 + 3*y[x]
       end
     else

@@ -1,4 +1,15 @@
 Hide cursor during waves
 Mouse follow control?
-Bench - https://i.imgur.com/B1gNVKk.png
-Item reroll for 10 gold
+Item reroll for 15 gold
+Option to have an arrow at the head of the snake - https://imgur.com/a/poXVsoN
+Balance option for when there are more sets - https://i.imgur.com/JMynwbL.png
+Bench? - https://i.imgur.com/B1gNVKk.png
+
+Patch Notes:
+Decreased projectile speed for the exploder (blue enemy)
+Added tooltips for "restart run" and "tutorial" buttons on the shop
+Added a hold mechanism to the restart button, now it will only trigger a restart if you hold the button down for 1 second
+Fixed text that was going outside the screen for the Priest and the Assassin
+Fixed bug where Divine Punishment would continue triggering after death
+Removed cooldown visuals on snake for units that don't have cooldowns (Squire, Chronomancer and Psykeeper)
+Slightly decreased base game's difficulty

@@ -118,14 +118,14 @@ function BuyScreen:on_enter(from, level, units, passives)
     b.info_text:activate({
       {text = '[fg]tutorial', font = pixul_font, alignment = 'center'},
     }, nil, nil, nil, nil, 16, 4, nil, 2)
-    b.info_text.x, b.info_text.y = b.x, b.y + 16
+    b.info_text.x, b.info_text.y = b.x, b.y + 20
   end, mouse_exit = function(b)
     b.info_text:deactivate()
     b.info_text.dead = true
     b.info_text = nil
   end}
 
-  self.restart_button = Button{group = self.ui, x = gw/2 + 156, y = 18, force_update = true, button_text = 'R', fg_color = 'bg10', bg_color = 'bg', action = function(b)
+  self.restart_button = Button{group = self.ui, x = gw/2 + 156, y = 18, force_update = true, hold_button = 1, button_text = 'R', fg_color = 'bg10', bg_color = 'bg', action = function(b)
     self.transitioning = true
     ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -152,7 +152,7 @@ function BuyScreen:on_enter(from, level, units, passives)
     b.info_text:activate({
       {text = '[fg]restart run', font = pixul_font, alignment = 'center'},
     }, nil, nil, nil, nil, 16, 4, nil, 2)
-    b.info_text.x, b.info_text.y = b.x, b.y + 16
+    b.info_text.x, b.info_text.y = b.x, b.y + 20
   end, mouse_exit = function(b)
     b.info_text:deactivate()
     b.info_text.dead = true
@@ -577,14 +577,38 @@ function Button:update(dt)
   self:update_game_object(dt)
   if main.current.in_credits and not self.credits_button then return end
 
-  if self.selected and input.m1.pressed then
-    self:action()
+  if self.hold_button then
+    if self.selected and input.m1.pressed then
+      self.press_time = love.timer.getTime()
+      self.spring:pull(0.2, 200, 10)
+    end
+    if self.press_time then
+      if input.m1.down and love.timer.getTime() - self.press_time > self.hold_button then
+        self:action()
+        self.press_time = nil
+        self.spring:pull(0.1, 200, 10)
+      end
+    end
+    if input.m1.released then
+      self.press_time = nil
+      self.spring:pull(0.1, 200, 10)
+    end
+  else
+    if self.selected and input.m1.pressed then
+      self:action()
+    end
   end
 end
 
 
 function Button:draw()
   graphics.push(self.x, self.y, 0, self.spring.x, self.spring.y)
+    if self.hold_button and self.press_time then
+      graphics.set_line_width(5)
+      graphics.set_color(fg[-5])
+      graphics.arc('open', self.x, self.y, 0.6*self.shape.w, 0, math.remap(love.timer.getTime() - self.press_time, 0, self.hold_button, 0, 1)*2*math.pi)
+      graphics.set_line_width(1)
+    end
     graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 4, 4, self.selected and fg[0] or _G[self.bg_color][0])
     self.text:draw(self.x, self.y + 1, 0, 1, 1)
   graphics.pop()

@@ -858,6 +858,7 @@ end
 
 function Arena:die()
   if not self.died_text and not self.won then
+    self.t:cancel('divine_punishment')
     self.died = true
     system.save_run()
     self.t:tween(2, self, {main_slow_amount = 0}, math.linear, function() self.main_slow_amount = 0 end)
@@ -1162,6 +1163,7 @@ function CharacterHP:draw()
   graphics.pop()
 
   if state.cooldown_snake then
+    if table.any(non_cooldown_characters, function(v) return v == self.parent.character end) then return end
     local p = self.parent
     graphics.push(p.x, p.y, 0, self.hfx.hit.x, self.hfx.hit.y)
       if not p.dead then

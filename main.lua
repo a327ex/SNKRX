@@ -749,6 +749,7 @@ function init()
   }
 
   non_attacking_characters = {'cleric', 'stormweaver', 'squire', 'chronomancer', 'sage', 'psykeeper', 'bane', 'carver', 'fairy', 'priest', 'flagellant'}
+  non_cooldown_characters = {'squire', 'chronomancer', 'psykeeper'}
 
   character_tiers = {
     ['vagrant'] = 1,
@@ -1185,18 +1186,11 @@ function init()
   --[[
   main:add(Arena'arena')
   main:go_to('arena', 23, {
-    {character = 'dual_gunner', level = 3},
-    {character = 'engineer', level = 3},
-    {character = 'spellblade', level = 3},
-    {character = 'assassin', level = 3},
-    {character = 'scout', level = 3},
-    {character = 'engineer', level = 3},
-    {character = 'swordsman', level = 3},
-    {character = 'archer', level = 3},
-    {character = 'infestor', level = 3},
-    {character = 'host', level = 3},
-    {character = 'lich', level = 3},
-    {character = 'psykino', level = 3},
+    {character = 'wizard', level = 1},
+    {character = 'spellblade', level = 1},
+    {character = 'chronomancer', level = 1},
+    {character = 'lich', level = 1},
+    {character = 'psykino', level = 1},
   }, passives)
   ]]--
 

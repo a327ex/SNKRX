@@ -548,7 +548,7 @@ function Player:init(args)
         LightningLine{group = main.current.effects, src = {x = enemy.x, y = enemy.y - 32}, dst = enemy, color = blue[0], duration = 0.2}
         _G[random:table{'spark1', 'spark2', 'spark3'}]:play{pitch = random:float(0.9, 1.1), volume = 0.3}
       end
-    end)
+    end, nil, nil, 'divine_punishment')
   end
 
   if self.unwavering_stance and table.any(self.classes, function(v) return v == 'warrior' end) then
