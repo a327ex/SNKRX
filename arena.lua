@@ -331,7 +331,7 @@ function Arena:update(dt)
         self.paused = true
         self.paused_t1 = Text2{group = self.ui, x = gw/2, y = gh/2 - 108, sx = 0.6, sy = 0.6, lines = {{text = '[bg10]<-, a or m1       ->, d or m2', font = fat_font, alignment = 'center'}}}
         self.paused_t2 = Text2{group = self.ui, x = gw/2, y = gh/2 - 92, lines = {{text = '[bg10]turn left                                            turn right', font = pixul_font, alignment = 'center'}}}
-        self.ng_t = Text2{group = self.ui, x = gw/2 + 33, y = gh - 50, lines = {{text = '[bg10]current: ' .. new_game_plus, font = pixul_font, alignment = 'center'}}}
+        self.ng_t = Text2{group = self.ui, x = gw/2 + 63, y = gh - 50, lines = {{text = '[bg10]current: ' .. current_new_game_plus, font = pixul_font, alignment = 'center'}}}
 
         self.resume_button = Button{group = self.ui, x = gw/2, y = gh - 200, force_update = true, button_text = 'resume game (esc)', fg_color = 'bg10', bg_color = 'bg', action = function(b)
           trigger:tween(0.25, _G, {slow_amount = 1}, math.linear, function()
@@ -353,7 +353,8 @@ function Arena:update(dt)
             if self.quit_button then self.quit_button.dead = true; self.quit_button = nil end
             if self.screen_shake_button then self.screen_shake_button.dead = true; self.screen_shake_button = nil end
             if self.cooldown_snake_button then self.cooldown_snake_button.dead = true; self.cooldown_snake_button = nil end
-            if self.ng_plus_button then self.ng_plus_button.dead = true; self.ng_plus_button = nil end
+            if self.ng_plus_plus_button then self.ng_plus_plus_button.dead = true; self.ng_plus_plus_button = nil end
+            if self.ng_plus_minus_button then self.ng_plus_minus_button.dead = true; self.ng_plus_minus_button = nil end
             system.save_state()
           end, 'pause')
         end}
@@ -375,7 +376,7 @@ function Arena:update(dt)
                 'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
               [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
             }
-            max_units = 7 + new_game_plus
+            max_units = 7 + current_new_game_plus
             main:add(BuyScreen'buy_screen')
             system.save_run()
             main:go_to('buy_screen', 0, {}, passives)
@@ -446,11 +447,22 @@ function Arena:update(dt)
           b:set_text('cooldowns on snake: ' .. tostring(state.cooldown_snake and 'yes' or 'no'))
         end}
 
-        self.ng_plus_button = Button{group = self.ui, x = gw/2 - 53, y = gh - 50, force_update = true, button_text = 'NG+ difficulty-', fg_color = 'bg10', bg_color = 'bg', action = function()
+        self.ng_plus_minus_button = Button{group = self.ui, x = gw/2 - 58, y = gh - 50, force_update = true, button_text = 'NG+ down', fg_color = 'bg10', bg_color = 'bg', action = function(b)
           ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-          new_game_plus = math.clamp(new_game_plus - 1, 0, 5)
-          state.new_game_plus = new_game_plus
-          self.ng_t.text:set_text({{text = '[bg10]current: ' .. new_game_plus, font = pixul_font, alignment = 'center'}})
+          b.spring:pull(0.2, 200, 10)
+          b.selected = true
+          current_new_game_plus = math.clamp(current_new_game_plus - 1, 0, 5)
+          state.current_new_game_plus = current_new_game_plus
+          self.ng_t.text:set_text({{text = '[bg10]current: ' .. current_new_game_plus, font = pixul_font, alignment = 'center'}})
+        end}
+
+        self.ng_plus_plus_button = Button{group = self.ui, x = gw/2 + 5, y = gh - 50, force_update = true, button_text = 'NG+ up', fg_color = 'bg10', bg_color = 'bg', action = function(b)
+          ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+          b.spring:pull(0.2, 200, 10)
+          b.selected = true
+          current_new_game_plus = math.clamp(current_new_game_plus + 1, 0, new_game_plus)
+          state.current_new_game_plus = current_new_game_plus
+          self.ng_t.text:set_text({{text = '[bg10]current: ' .. current_new_game_plus, font = pixul_font, alignment = 'center'}})
         end}
 
         self.quit_button = Button{group = self.ui, x = gw/2, y = gh - 25, force_update = true, button_text = 'quit', fg_color = 'bg10', bg_color = 'bg', action = function()
@@ -479,7 +491,8 @@ function Arena:update(dt)
         if self.screen_shake_button then self.screen_shake_button.dead = true; self.screen_shake_button = nil end
         if self.cooldown_snake_button then self.cooldown_snake_button.dead = true; self.cooldown_snake_button = nil end
         if self.quit_button then self.quit_button.dead = true; self.quit_button = nil end
-        if self.ng_plus_button then self.ng_plus_button.dead = true; self.ng_plus_button = nil end
+        if self.ng_plus_plus_button then self.ng_plus_plus_button.dead = true; self.ng_plus_plus_button = nil end
+        if self.ng_plus_minus_button then self.ng_plus_minus_button.dead = true; self.ng_plus_minus_button = nil end
         system.save_state()
       end, 'pause')
     end
@@ -503,7 +516,7 @@ function Arena:update(dt)
             'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
           [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
         }
-        max_units = 7 + new_game_plus
+        max_units = 7 + current_new_game_plus
         main:add(BuyScreen'buy_screen')
         system.save_run()
         main:go_to('buy_screen', 0, {}, passives)
@@ -548,7 +561,7 @@ function Arena:quit()
           CharacterPart{group = self.ui, x = 40, y = 40 + (i-1)*19, character = unit.character, level = unit.level, force_update = true, cant_click = true, parent = self}
         end
 
-        if new_game_plus == 5 then
+        if current_new_game_plus == 5 then
           self.win_text2 = Text2{group = self.ui, x = gw/2, y = gh/2 + 30, force_update = true, lines = {
             {text = "[fg]now you've really beaten the game!", font = pixul_font, alignment = 'center', height_multiplier = 1.24},
             {text = "[fg]thanks a lot for playing it and completing it entirely!", font = pixul_font, alignment = 'center', height_multiplier = 1.24},
@@ -605,7 +618,7 @@ function Arena:quit()
                   'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
                 [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
               }
-              max_units = 7 + new_game_plus
+              max_units = 7 + current_new_game_plus
               main:add(BuyScreen'buy_screen')
               system.save_run()
               main:go_to('buy_screen', 0, {}, passives)
@@ -614,14 +627,14 @@ function Arena:quit()
         end
       end)
 
-      if new_game_plus == 1 then
+      if current_new_game_plus == 1 then
         state.achievement_new_game_1 = true
         system.save_state()
         steam.userStats.setAchievement('NEW_GAME_1')
         steam.userStats.storeStats()
       end
 
-      if new_game_plus == 5 then
+      if current_new_game_plus == 5 then
         state.achievement_new_game_5 = true
         system.save_state()
         steam.userStats.setAchievement('GAME_COMPLETE')
@@ -886,7 +899,7 @@ function Arena:die()
               'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
             [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
           }
-          max_units = 7 + new_game_plus
+          max_units = 7 + current_new_game_plus
           main:add(BuyScreen'buy_screen')
           system.save_run()
           main:go_to('buy_screen', 0, {}, passives)

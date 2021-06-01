@@ -2,14 +2,36 @@ Hide cursor during waves
 Mouse follow control?
 Item reroll for 15 gold
 Option to have an arrow at the head of the snake - https://imgur.com/a/poXVsoN
-Balance option for when there are more sets - https://i.imgur.com/JMynwbL.png
-Bench? - https://i.imgur.com/B1gNVKk.png
+Option to turn off camera movement
+Headbutter damage should falloff faster after it strikes
+https://i.imgur.com/QN0Ntq2.png
+https://i.imgur.com/YfhqDYr.png
+https://i.imgur.com/ps4OA7o.png
+Remove level 3 units from rotation
+Fix highlight colors and highlight reserve
+Fix bug where quitting on level 1 jumps to level 2
+Fix lock bug after death/win - https://i.imgur.com/iUyOtLk.png
+Options menu from buy screen
+Fix fullscreen with different resolutions that don't scale properly
+Volume slider
+
+Sorcerer = sorcerers repeat their attacks once every 3/2 attacks 
+Sorcerer + Conjurer = Illusionist - launches a projectile that deals X damage and creates copies that do the same, Lv.3 effect - doubles the number of copies created and they release additional projectiles on death
+Sorcerer + Voider = Witch - creates an area that deals X damage over time and seeks nearby enemies, Lv.3 effect - the area periodically releases homing projectiles that pierce 2 times
+Sorcerer + Curser = Linker - links 3 enemies together, they share damage taken, Lv.3 effect - link 6 enemies instead and damage shared is doubled
+Sorcerer + Nuker = Vulcanist - creates a volcano that explodes the nearby area 5 times, Lv.3 effect - the volcano spawn also deals damage and doubles the number of explosions
+Sorcerer + Forcer = Warden - creates a force field around a random unit that prevents enemies from entering, Lv.3 effect - creates the force field around 2 other random units
 
 Patch Notes:
 Decreased projectile speed for the exploder (blue enemy)
 Added tooltips for "restart run" and "tutorial" buttons on the shop
-Added a hold mechanism to the restart button, now it will only trigger a restart if you hold the button down for 1 second
 Fixed text that was going outside the screen for the Priest and the Assassin
 Fixed bug where Divine Punishment would continue triggering after death
 Removed cooldown visuals on snake for units that don't have cooldowns (Squire, Chronomancer and Psykeeper)
 Slightly decreased base game's difficulty
+Fixed NG+ difficulty only being able to be lowered, now you can lower or increase it (up to your maximum acquired value)
+
+Future ideas:
+Chaos related class = Invoker - shoots a projectile with random properties, Lv.3 effect - ???
+Bench? - https://i.imgur.com/B1gNVKk.png
+Balance option for when there are more sets - https://i.imgur.com/JMynwbL.png

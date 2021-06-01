@@ -22,7 +22,7 @@ function Seeker:init(args)
           HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = green[0], duration = 0.1}
           for _, enemy in ipairs(enemies) do
             LightningLine{group = main.current.effects, src = self, dst = enemy, color = green[0]}
-            enemy:speed_boost(3 + self.level*0.05 + new_game_plus*0.2)
+            enemy:speed_boost(3 + self.level*0.05 + current_new_game_plus*0.2)
           end
         end
       end)
@@ -96,8 +96,8 @@ function Seeker:init(args)
           LightningLine{group = main.current.effects, src = self, dst = enemy, color = blue[0]}
           enemy:hit(10000)
           shoot1:play{pitch = random:float(0.95, 1.05), volume = 0.4}
-          local n = 8 + new_game_plus*2
-          for i = 1, n do EnemyProjectile{group = main.current.main, x = enemy.x, y = enemy.y, color = blue[0], r = (i-1)*math.pi/(n/2), v = 120 + 5*enemy.level, dmg = (1 + 0.1*new_game_plus)*enemy.dmg} end
+          local n = 8 + current_new_game_plus*2
+          for i = 1, n do EnemyProjectile{group = main.current.main, x = enemy.x, y = enemy.y, color = blue[0], r = (i-1)*math.pi/(n/2), v = 120 + 5*enemy.level, dmg = (1 + 0.1*current_new_game_plus)*enemy.dmg} end
         end
       end)
 
@@ -113,8 +113,8 @@ function Seeker:init(args)
             LightningLine{group = main.current.effects, src = self, dst = enemy, color = blue[0]}
             enemy:hit(10000)
             shoot1:play{pitch = random:float(0.95, 1.05), volume = 0.4}
-            local n = 8 + new_game_plus*2
-            for i = 1, n do EnemyProjectile{group = main.current.main, x = enemy.x, y = enemy.y, color = blue[0], r = (i-1)*math.pi/(n/2), v = 150 + 5*enemy.level, dmg = (1 + 0.2*new_game_plus)*enemy.dmg} end
+            local n = 8 + current_new_game_plus*2
+            for i = 1, n do EnemyProjectile{group = main.current.main, x = enemy.x, y = enemy.y, color = blue[0], r = (i-1)*math.pi/(n/2), v = 150 + 5*enemy.level, dmg = (1 + 0.2*current_new_game_plus)*enemy.dmg} end
           end
         elseif attack == 'swarm' then
           local enemies = self:get_objects_in_shape(Circle(self.x, self.y, 128), {Seeker})
@@ -145,7 +145,7 @@ function Seeker:init(args)
             HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = green[0], duration = 0.1}
             for _, enemy in ipairs(enemies) do
               LightningLine{group = main.current.effects, src = self, dst = enemy, color = green[0]}
-              enemy:speed_boost(3 + self.level*0.05 + new_game_plus*0.2)
+              enemy:speed_boost(3 + self.level*0.05 + current_new_game_plus*0.2)
             end
           end
         end
@@ -212,8 +212,8 @@ function Seeker:init(args)
             self.hfx:use('hit', 0.25, 200, 10, 0.1)
             local r = self.r
             HitCircle{group = main.current.effects, x = self.x + 0.8*self.shape.w*math.cos(r), y = self.y + 0.8*self.shape.w*math.sin(r), rs = 6}
-            EnemyProjectile{group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), color = fg[0], r = r, v = 150 + 5*self.level + 8*new_game_plus,
-              dmg = (new_game_plus*0.1 + 1)*self.dmg}
+            EnemyProjectile{group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), color = fg[0], r = r, v = 150 + 5*self.level + 8*current_new_game_plus,
+              dmg = (current_new_game_plus*0.1 + 1)*self.dmg}
           end)
         end
       end, nil, nil, 'shooter')
@@ -248,8 +248,8 @@ function Seeker:update(dt)
   if self.headbutt_charging or self.headbutting then self.buff_def_m = 3 end
 
   if self.speed_boosting then
-    local n = math.remap(love.timer.getTime() - self.speed_boosting, 0, (3 + 0.05*self.level + new_game_plus*0.2), 1, 0.5)
-    self.speed_boosting_mvspd_m = (3 + 0.05*self.level + 0.2*new_game_plus)*n
+    local n = math.remap(love.timer.getTime() - self.speed_boosting, 0, (3 + 0.05*self.level + current_new_game_plus*0.2), 1, 0.5)
+    self.speed_boosting_mvspd_m = (3 + 0.05*self.level + 0.2*current_new_game_plus)*n
     if not self.speed_booster and not self.exploder and not self.headbutter and not self.tank and not self.shooter and not self.spawner then
       self.color.r = math.remap(n, 1, 0.5, green[0].r, red[0].r)
       self.color.g = math.remap(n, 1, 0.5, green[0].g, red[0].g)
@@ -432,7 +432,7 @@ function Seeker:hit(damage, projectile)
     if self.exploder then
       shoot1:play{pitch = random:float(0.95, 1.05), volume = 0.4}
       trigger:after(0.01, function()
-        local n = 8 + new_game_plus*2
+        local n = 8 + current_new_game_plus*2
         for i = 1, n do
           EnemyProjectile{group = main.current.main, x = self.x, y = self.y, color = blue[0], r = (i-1)*math.pi/(n/2), v = 150 + 5*self.level, dmg = 2*self.dmg}
         end

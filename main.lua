@@ -1172,6 +1172,8 @@ function init()
   steam.userStats.requestCurrentStats()
   new_game_plus = state.new_game_plus or 0
   if not state.new_game_plus then state.new_game_plus = new_game_plus end
+  current_new_game_plus = state.current_new_game_plus or new_game_plus
+  if not state.current_new_game_plus then state.current_new_game_plus = current_new_game_plus end
   max_units = 7 + new_game_plus
 
   main = Main()

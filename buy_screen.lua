@@ -68,7 +68,7 @@ function BuyScreen:on_enter(from, level, units, passives)
   self.party_text = Text({{text = '[wavy_mid, fg]party', font = pixul_font, alignment = 'center'}}, global_text_tags)
   self.sets_text = Text({{text = '[wavy_mid, fg]classes', font = pixul_font, alignment = 'center'}}, global_text_tags)
   self.items_text = Text({{text = '[wavy_mid, fg]items', font = pixul_font, alignment = 'center'}}, global_text_tags)
-  self.ng_text = Text({{text = '[fg]NG+' .. new_game_plus, font = pixul_font, alignment = 'center'}}, global_text_tags)
+  self.ng_text = Text({{text = '[fg]NG+' .. current_new_game_plus, font = pixul_font, alignment = 'center'}}, global_text_tags)
   local get_elite_str = function(lvl)
     if lvl == 6 or lvl == 12 or lvl == 18 or lvl == 24 or lvl == 25 then return ' (elite)'
     elseif lvl % 3 == 0 then return ' (hard)'
@@ -125,7 +125,7 @@ function BuyScreen:on_enter(from, level, units, passives)
     b.info_text = nil
   end}
 
-  self.restart_button = Button{group = self.ui, x = gw/2 + 156, y = 18, force_update = true, hold_button = 1, button_text = 'R', fg_color = 'bg10', bg_color = 'bg', action = function(b)
+  self.restart_button = Button{group = self.ui, x = gw/2 + 156, y = 18, force_update = true, button_text = 'R', fg_color = 'bg10', bg_color = 'bg', action = function(b)
     self.transitioning = true
     ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -142,7 +142,7 @@ function BuyScreen:on_enter(from, level, units, passives)
           'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
         [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
       }
-      max_units = 7 + new_game_plus
+      max_units = 7 + current_new_game_plus
       main:add(BuyScreen'buy_screen')
       system.save_run()
       main:go_to('buy_screen', 0, {}, passives)
@@ -237,7 +237,7 @@ function BuyScreen:draw()
   if self.shop_text then self.shop_text:draw(64, 20) end
   if self.sets_text then self.sets_text:draw(328, 20) end
   if self.party_text then self.party_text:draw(440, 20) end
-  if new_game_plus > 0 then self.ng_text:draw(260, 20) end
+  if current_new_game_plus > 0 then self.ng_text:draw(260, 20) end
 
   if self.in_tutorial then
     graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent_2)
@@ -499,7 +499,7 @@ function RestartButton:init(args)
   self:init_game_object(args)
   self.shape = Rectangle(self.x, self.y, pixul_font:get_text_width('restart') + 4, pixul_font.h + 4)
   self.interact_with_mouse = true
-  self.text = Text({{text = '[bg10]NG+' .. tostring(new_game_plus+1), font = pixul_font, alignment = 'center'}}, global_text_tags)
+  self.text = Text({{text = '[bg10]NG+' .. tostring(current_new_game_plus+1), font = pixul_font, alignment = 'center'}}, global_text_tags)
 end
 
 
@@ -524,9 +524,13 @@ function RestartButton:update(dt)
           'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
         [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
       }
-      new_game_plus = new_game_plus + 1
-      state.new_game_plus = new_game_plus
-      max_units = 7 + new_game_plus
+      if current_new_game_plus == new_game_plus then
+        new_game_plus = new_game_plus + 1
+        state.new_game_plus = new_game_plus
+      end
+      current_new_game_plus = current_new_game_plus + 1
+      state.current_new_game_plus = current_new_game_plus
+      max_units = 7 + current_new_game_plus
       system.save_state()
       main:add(BuyScreen'buy_screen')
       system.save_run()
@@ -549,14 +553,14 @@ function RestartButton:on_mouse_enter()
   ui_hover1:play{pitch = random:float(1.3, 1.5), volume = 0.5}
   pop2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
   self.selected = true
-  self.text:set_text{{text = '[fgm5]NG+' .. tostring(new_game_plus+1), font = pixul_font, alignment = 'center'}}
+  self.text:set_text{{text = '[fgm5]NG+' .. tostring(current_new_game_plus+1), font = pixul_font, alignment = 'center'}}
   self.spring:pull(0.2, 200, 10)
 end
 
 
 function RestartButton:on_mouse_exit()
   if main.current.in_credits then return end
-  self.text:set_text{{text = '[bg10]NG+' .. tostring(new_game_plus+1), font = pixul_font, alignment = 'center'}}
+  self.text:set_text{{text = '[bg10]NG+' .. tostring(current_new_game_plus+1), font = pixul_font, alignment = 'center'}}
   self.selected = false
 end
 
