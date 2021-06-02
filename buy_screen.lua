@@ -319,6 +319,23 @@ function BuyScreen:gain_gold(amount)
   self.shop_text:set_text{{text = '[wavy_mid, fg]shop [fg]- [fg, nudge_down]gold: [yellow, nudge_down]' .. gold, font = pixul_font, alignment = 'center'}}
 end
 
+function BuyScreen:roll_till_valid()
+  local unit
+  local reroll
+  local unit_index
+  repeat
+    reroll = false
+    unit = random:table(tier_to_characters[random:weighted_pick(unpack(level_to_tier_weights[level or self.level]))])
+    unit_index = table.contains(self.units, function(v) return v.character == unit end)
+    if unit_index then
+      if self.units[unit_index].level == 3 then
+        reroll = true
+      end
+    end
+  until not reroll
+  return unit
+end
+
 
 function BuyScreen:set_cards(level, dont_spawn_effect, first_call)
   if self.cards then for i = 1, 3 do if self.cards[i] then self.cards[i]:die(dont_spawn_effect) end end end
@@ -328,9 +345,9 @@ function BuyScreen:set_cards(level, dont_spawn_effect, first_call)
   local unit_2
   local unit_3
   repeat
-    unit_1 = nil_if_unit_is_max(random:table(tier_to_characters[random:weighted_pick(unpack(level_to_tier_weights[level or self.level]))]))
-    unit_2 = nil_if_unit_is_max(random:table(tier_to_characters[random:weighted_pick(unpack(level_to_tier_weights[level or self.level]))]))
-    unit_3 = nil_if_unit_is_max(random:table(tier_to_characters[random:weighted_pick(unpack(level_to_tier_weights[level or self.level]))]))
+    unit_1 = self:roll_till_valid()
+    unit_2 = self:roll_till_valid()
+    unit_3 = self:roll_till_valid()
     all_units = {unit_1, unit_2, unit_3}
   until not table.all(all_units, function(v) return table.any(non_attacking_characters, function(u) return v == u end) end)
   if first_call and self.locked then
