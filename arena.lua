@@ -250,6 +250,7 @@ function Arena:on_enter(from, level, units, passives)
   self.healer_level = class_levels.healer
   self.psyker_level = class_levels.psyker
   self.conjurer_level = class_levels.conjurer
+  self.sorcerer_level = class_levels.sorcerer
 
   self.t:every(0.375, function()
     local p = random:table(star_positions)
@@ -729,6 +730,13 @@ function Arena:quit()
         state.achievement_voiders_win = true
         system.save_state()
         steam.userStats.setAchievement('VOIDERS_WIN')
+        steam.userStats.storeStats()
+      end
+
+      if self.sorcerer_level >= 3 then
+        state.achievement_sorcerers_win = true
+        system.save_state()
+        steam.userStats.setAchievement('SORCERERS_WIN')
         steam.userStats.storeStats()
       end
 

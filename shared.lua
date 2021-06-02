@@ -12,6 +12,7 @@ function shared_init()
     green = ColorRamp(Color'#8bbf40', 0.025),
     red = ColorRamp(Color'#e91d39', 0.025),
     purple = ColorRamp(Color'#8e559e', 0.025),
+    blue2 = ColorRamp(Color'#4778ba', 0.025),
   }
   for name, color in pairs(colors) do
     _G[name] = color
@@ -765,7 +766,11 @@ end
 
 function HitParticle:draw()
   graphics.push(self.x, self.y, self.r)
-  graphics.rectangle(self.x, self.y, self.w, self.h, 2, 2, self.color)
+  if self.parent and not self.parent.dead then
+    graphics.rectangle(self.x, self.y, self.w, self.h, 2, 2, self.parent.hfx.hit.f and fg[0] or self.color)
+  else
+    graphics.rectangle(self.x, self.y, self.w, self.h, 2, 2, self.color)
+  end
   graphics.pop()
 end
 

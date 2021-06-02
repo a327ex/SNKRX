@@ -180,7 +180,8 @@ function Seeker:init(args)
   elseif self.headbutter then
     self.color = orange[0]:clone()
     self.last_headbutt_time = 0
-    self.t:every(function() return math.distance(self.x, self.y, main.current.player.x, main.current.player.y) < 64 and love.timer.getTime() - self.last_headbutt_time > 10 end, function()
+    local n = math.remap(current_new_game_plus, 0, 5, 1, 0.5)
+    self.t:every(function() return math.distance(self.x, self.y, main.current.player.x, main.current.player.y) < 64 and love.timer.getTime() - self.last_headbutt_time > 10*n end, function()
       if self.headbutt_charging or self.headbutting then return end
       self.headbutt_charging = true
       self.t:tween(2, self.color, {r = fg[0].r, b = fg[0].b, g = fg[0].g}, math.cubic_in_out, function()
@@ -191,19 +192,20 @@ function Seeker:init(args)
         self.last_headbutt_time = love.timer.getTime()
         self:set_damping(0)
         self:apply_steering_impulse(300, self:angle_to_object(main.current.player), 0.75)
-        self.t:after(0.75, function()
+        self.t:after(0.5, function()
           self.headbutting = false
         end)
       end)
     end)
   elseif self.tank then
     self.color = yellow[0]:clone()
-    self.buff_hp_m = 1.25 + (0.025*self.level)
+    self.buff_hp_m = 1.25 + (0.025*self.level) + (0.2*current_new_game_plus)
     self:calculate_stats()
     self.hp = self.max_hp
   elseif self.shooter then
     self.color = fg[0]:clone()
-    self.t:after({2, 4}, function()
+    local n = math.remap(current_new_game_plus, 0, 5, 1, 0.5)
+    self.t:after({2*n, 4*n}, function()
       self.shooting = true
       self.t:every({3, 5}, function()
         for i = 1, 3 do
@@ -434,7 +436,7 @@ function Seeker:hit(damage, projectile)
       trigger:after(0.01, function()
         local n = 8 + current_new_game_plus*2
         for i = 1, n do
-          EnemyProjectile{group = main.current.main, x = self.x, y = self.y, color = blue[0], r = (i-1)*math.pi/(n/2), v = 150 + 5*self.level, dmg = 2*self.dmg}
+          EnemyProjectile{group = main.current.main, x = self.x, y = self.y, color = blue[0], r = (i-1)*math.pi/(n/2), v = 120 + 5*self.level, dmg = 2*self.dmg}
         end
       end)
     end
@@ -442,8 +444,8 @@ function Seeker:hit(damage, projectile)
     if self.spawner then
       critter1:play{pitch = random:float(0.95, 1.05), volume = 0.35}
       trigger:after(0.01, function()
-        for i = 1, random:int(3, 6) do
-          EnemyCritter{group = main.current.main, x = self.x, y = self.y, color = purple[0], r = random:float(0, 2*math.pi), v = 5 + 0.1*self.level, dmg = self.dmg, projectile = projectile}
+        for i = 1, random:int(5, 8) do
+          EnemyCritter{group = main.current.main, x = self.x, y = self.y, color = purple[0], r = random:float(0, 2*math.pi), v = 10 + 0.1*self.level, dmg = 2*self.dmg, projectile = projectile}
         end
       end)
     end

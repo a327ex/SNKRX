@@ -262,6 +262,10 @@ function Unit:calculate_stats(first_run)
     self.base_hp = 100*math.pow(2, self.level-1)
     self.base_dmg = 10*math.pow(2, self.level-1)
     self.base_mvspd = 75
+  elseif self:is(Illusion) then
+    self.base_hp = 100*math.pow(2, self.level-1)
+    self.base_dmg = 10*math.pow(2, self.level-1)
+    self.base_mvspd = 15
   elseif self:is(EnemyCritter) or self:is(Critter) then
     local x = self.level
     local y = {0, 1, 3, 3, 4, 6, 5, 6, 9, 7, 8, 12, 10, 11, 15, 12, 13, 18, 16, 17, 21, 17, 20, 24, 25}
