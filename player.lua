@@ -60,7 +60,7 @@ function Player:init(args)
     self.last_heal_time = love.timer.getTime()
     self.t:every(2, function()
       local all_units = self:get_all_units()
-      local unit_index = table.contains(all_units, function(v) return not v.dead and v.hp <= 0.5*v.max_hp end)
+      local unit_index = table.contains(all_units, function(v) return not v.dead and v.hp <= math.ceil(0.5 * v.max_hp) end)
       if unit_index and love.timer.getTime() - self.last_heal_time > 6 then
         local unit = all_units[unit_index]
         self.last_heal_time = love.timer.getTime()
