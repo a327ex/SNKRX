@@ -1012,7 +1012,7 @@ end
 
 function Player:get_all_units()
   local followers
-  local leader = (self.leader and self) or self.parent
+  local leader = self:get_leader()
   if self.leader then followers = self.followers else followers = self.parent.followers end
   return {leader, unpack(followers)}
 end
