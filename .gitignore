@@ -1,2 +1,8 @@
 steam/
 builds/
+
+.pytest_cache
+coverage
+libsteam_api.dylib
+luasteam.so
+steam_appid.txt
