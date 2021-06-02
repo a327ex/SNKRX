@@ -60,7 +60,7 @@ function Player:init(args)
     self.last_heal_time = love.timer.getTime()
     self.t:every(2, function()
       local all_units = self:get_all_units()
-      local unit_index = table.contains(all_units, function(v) return v.hp <= 0.5*v.max_hp end)
+      local unit_index = table.contains(all_units, function(v) return not v.dead and v.hp <= math.ceil(0.5 * v.max_hp) end)
       if unit_index and love.timer.getTime() - self.last_heal_time > 6 then
         local unit = all_units[unit_index]
         self.last_heal_time = love.timer.getTime()
@@ -1012,7 +1012,7 @@ end
 
 function Player:get_all_units()
   local followers
-  local leader = (self.leader and self) or self.parent
+  local leader = self:get_leader()
   if self.leader then followers = self.followers else followers = self.parent.followers end
   return {leader, unpack(followers)}
 end
@@ -1413,7 +1413,7 @@ function Projectile:die(x, y, r, n)
     if self.level == 3 then
       self.parent.t:every(0.3, function()
         _G[random:table{'cannoneer1', 'cannoneer2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-        Area{group = main.current.effects, x = self.x + random:float(-32, 32), y = self.y + random:float(-32, 32), r = self.r + random:float(0, 2*math.pi), w = self.parent.area_size_m*48, color = self.color, 
+        Area{group = main.current.effects, x = self.x + random:float(-32, 32), y = self.y + random:float(-32, 32), r = self.r + random:float(0, 2*math.pi), w = self.parent.area_size_m*48, color = self.color,
           dmg = 0.5*self.parent.area_dmg_m*self.dmg, character = self.character, level = self.level, parent = self, void_rift = self.parent.void_rift, echo_barrage = self.parent.echo_barrage}
       end, 7)
     end
@@ -1562,7 +1562,7 @@ function Projectile:on_trigger_enter(other, contact)
         if dst then
           dst:hit(0.2*self.dmg*(self.distance_dmg_m or 1))
           LightningLine{group = main.current.effects, src = src, dst = dst}
-          src = dst 
+          src = dst
         end
       end
     end
@@ -1583,7 +1583,7 @@ function Projectile:on_trigger_enter(other, contact)
     if self.parent.explosive_arrow and table.any(self.parent.classes, function(v) return v == 'ranger' end) then
       if random:bool(30) then
         _G[random:table{'cannoneer1', 'cannoneer2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-        Area{group = main.current.effects, x = self.x, y = self.y, r = self.r + random:float(0, 2*math.pi), w = self.parent.area_size_m*32, color = self.color, 
+        Area{group = main.current.effects, x = self.x, y = self.y, r = self.r + random:float(0, 2*math.pi), w = self.parent.area_size_m*32, color = self.color,
           dmg = 0.2*self.parent.area_dmg_m*self.dmg, character = self.character, level = self.level, parent = self, void_rift = self.parent.void_rift, echo_barrage = self.parent.echo_barrage}
       end
     end
@@ -1671,7 +1671,7 @@ function Area:init(args)
       if random:bool(20) then
         p.t:every(0.3, function()
           _G[random:table{'cannoneer1', 'cannoneer2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-          Area{group = main.current.effects, x = self.x + random:float(-32, 32), y = self.y + random:float(-32, 32), r = self.r + random:float(0, 2*math.pi), w = p.area_size_m*48, color = p.color, 
+          Area{group = main.current.effects, x = self.x + random:float(-32, 32), y = self.y + random:float(-32, 32), r = self.r + random:float(0, 2*math.pi), w = p.area_size_m*48, color = p.color,
             dmg = 0.5*p.area_dmg_m*self.dmg, character = self.character, level = p.level, parent = p, echo_barrage_area = true}
         end, 3)
       end
@@ -1687,7 +1687,7 @@ function Area:init(args)
       if random:bool(20) then
         self.parent.t:every(0.3, function()
           _G[random:table{'cannoneer1', 'cannoneer2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-          Area{group = main.current.effects, x = self.x + random:float(-32, 32), y = self.y + random:float(-32, 32), r = self.r + random:float(0, 2*math.pi), w = self.parent.area_size_m*48, color = self.parent.color, 
+          Area{group = main.current.effects, x = self.x + random:float(-32, 32), y = self.y + random:float(-32, 32), r = self.r + random:float(0, 2*math.pi), w = self.parent.area_size_m*48, color = self.parent.color,
             dmg = 0.5*self.parent.area_dmg_m*self.dmg, character = self.character, level = self.parent.level, parent = self.parent, echo_barrage_area = true}
         end, 3)
       end
@@ -1870,7 +1870,7 @@ ForceArea:implement(Physics)
 function ForceArea:init(args)
   self:init_game_object(args)
   self.shape = Circle(self.x, self.y, self.rs)
-  
+
   self.color = fg[0]
   self.color_transparent = Color(args.color.r, args.color.g, args.color.b, 0.08)
   self.rs = 0
@@ -2015,7 +2015,7 @@ function Turret:init(args)
   self.color = orange[0]
   self.attack_sensor = Circle(self.x, self.y, 256)
   turret_deploy:play{pitch = 1.2, volume = 0.2}
-  
+
   self.t:every({2.75, 3.5}, function()
     self.t:every({0.1, 0.2}, function()
       self.hfx:use('hit', 0.25, 200, 10)
@@ -2034,7 +2034,7 @@ function Turret:init(args)
     HitCircle{group = main.current.effects, x = self.x, y = self.y}:scale_down()
     self.dead = true
   end)
-  
+
   self.upgrade_dmg_m = 1
   self.upgrade_aspd_m = 1
 end
@@ -2163,7 +2163,7 @@ function Saboteur:init(args)
   self:init_unit()
   self:set_as_rectangle(8, 8, 'dynamic', 'player')
   self:set_restitution(0.5)
-  
+
   self.color = character_colors.saboteur
   self.character = 'saboteur'
   self.classes = character_classes.saboteur
@@ -2208,7 +2208,7 @@ end
 function Saboteur:on_collision_enter(other, contact)
   if table.any(main.current.enemies, function(v) return other:is(v) end) then
     camera:shake(4, 0.5)
-    local t = {group = main.current.effects, x = self.x, y = self.y, r = self.r, w = (self.crit and 1.5 or 1)*self.area_size_m*64, color = self.color, 
+    local t = {group = main.current.effects, x = self.x, y = self.y, r = self.r, w = (self.crit and 1.5 or 1)*self.area_size_m*64, color = self.color,
       dmg = (self.crit and 2 or 1)*self.area_dmg_m*self.actual_dmg*(self.conjurer_buff_m or 1), character = self.character, parent = self.parent}
     Area(table.merge(t, mods or {}))
     self.dead = true
