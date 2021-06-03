@@ -16,6 +16,7 @@ function Seeker:init(args)
     if self.boss == 'speed_booster' then
       self.color = green[0]:clone()
       self.t:every(8, function()
+        if self.silenced then return end
         local enemies = table.head(self:get_objects_in_shape(Circle(self.x, self.y, 128), main.current.enemies), 4)
         if #enemies > 0 then
           buff1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -30,6 +31,7 @@ function Seeker:init(args)
     elseif self.boss == 'forcer' then
       self.color = yellow[0]:clone()
       self.t:every(6, function()
+        if self.silenced then return end
         local enemies = main.current.main:get_objects_by_classes(main.current.enemies)
         local x, y = 0, 0
         if #enemies > 0 then
@@ -74,6 +76,7 @@ function Seeker:init(args)
     elseif self.boss == 'swarmer' then
       self.color = purple[0]:clone()
       self.t:every(4, function()
+        if self.silenced then return end
         local enemies = table.select(main.current.main:get_objects_by_classes(main.current.enemies), function(v) return v.id ~= self.id and v:is(Seeker) end)
         local enemy = random:table(enemies)
         if enemy then
@@ -89,6 +92,7 @@ function Seeker:init(args)
     elseif self.boss == 'exploder' then
       self.color = blue[0]:clone()
       self.t:every(4, function()
+        if self.silenced then return end
         local enemies = table.select(main.current.main:get_objects_by_classes(main.current.enemies), function(v) return v.id ~= self.id and v:is(Seeker) end)
         local enemy = random:table(enemies)
         if enemy then
@@ -104,6 +108,7 @@ function Seeker:init(args)
     elseif self.boss == 'randomizer' then
       self.t:every_immediate(0.07, function() self.color = _G[random:table{'green', 'purple', 'yellow', 'blue'}][0]:clone() end)
       self.t:every(6, function()
+        if self.silenced then return end
         local attack = random:table{'explode', 'swarm', 'force', 'speed_boost'}
         if attack == 'explode' then
           local enemies = self:get_objects_in_shape(Circle(self.x, self.y, 128), {Seeker})
@@ -182,6 +187,7 @@ function Seeker:init(args)
     self.last_headbutt_time = 0
     local n = math.remap(current_new_game_plus, 0, 5, 1, 0.5)
     self.t:every(function() return math.distance(self.x, self.y, main.current.player.x, main.current.player.y) < 64 and love.timer.getTime() - self.last_headbutt_time > 10*n end, function()
+      if self.silenced then return end
       if self.headbutt_charging or self.headbutting then return end
       self.headbutt_charging = true
       self.t:tween(2, self.color, {r = fg[0].r, b = fg[0].b, g = fg[0].g}, math.cubic_in_out, function()
@@ -208,6 +214,7 @@ function Seeker:init(args)
     self.t:after({2*n, 4*n}, function()
       self.shooting = true
       self.t:every({3, 5}, function()
+        if self.silenced then return end
         for i = 1, 3 do
           self.t:after((1 - self.level*0.01)*0.15*(i-1), function()
             shoot1:play{pitch = random:float(0.95, 1.05), volume = 0.1}
@@ -420,6 +427,7 @@ function Seeker:hit(damage, projectile)
     end
 
     if self.speed_booster then
+      if self.silenced then return end
       local enemies = self:get_objects_in_shape(self.area_sensor, main.current.enemies)
       if #enemies > 0 then
         buff1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -432,6 +440,7 @@ function Seeker:hit(damage, projectile)
     end
 
     if self.exploder then
+      if self.silenced then return end
       shoot1:play{pitch = random:float(0.95, 1.05), volume = 0.4}
       trigger:after(0.01, function()
         local n = 8 + current_new_game_plus*2
@@ -442,6 +451,7 @@ function Seeker:hit(damage, projectile)
     end
 
     if self.spawner then
+      if self.silenced then return end
       critter1:play{pitch = random:float(0.95, 1.05), volume = 0.35}
       trigger:after(0.01, function()
         for i = 1, random:int(5, 8) do
@@ -565,6 +575,9 @@ function Seeker:curse(curse, duration, arg1, arg2, arg3)
     self.infested_dmg = arg2
     self.infested_ref = arg3
     self.t:after(duration*curse_m, function() self.infested = false end, 'infestor_curse')
+  elseif curse == 'silencer' then
+    self.silenced = true
+    self.t:after(duration*curse_m, function() self.silenced = false end, 'silencer_curse')
   end
 end
 
@@ -745,6 +758,9 @@ function EnemyCritter:curse(curse, duration, arg1, arg2, arg3)
     self.infested_dmg = arg2
     self.infested_ref = arg3
     self.t:after(duration*curse_m, function() self.infested = false end, 'infestor_curse')
+  elseif curse == 'silencer' then
+    self.silenced = true
+    self.t:after(duration*curse_m, function() self.silenced = false end, 'silencer_curse')
   end
 end
 
