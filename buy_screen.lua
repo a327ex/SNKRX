@@ -116,7 +116,7 @@ function BuyScreen:on_enter(from, level, units, passives)
   end, mouse_enter = function(b)
     b.info_text = InfoText{group = main.current.ui, force_update = true}
     b.info_text:activate({
-      {text = '[fg]tutorial', font = pixul_font, alignment = 'center'},
+      {text = '[fg]guide', font = pixul_font, alignment = 'center'},
     }, nil, nil, nil, nil, 16, 4, nil, 2)
     b.info_text.x, b.info_text.y = b.x, b.y + 20
   end, mouse_exit = function(b)
@@ -733,7 +733,7 @@ function LockButton:update(dt)
     if not self.parent.locked then locked_state = nil end
     if self.parent.locked then
       locked_state = {locked = true, cards = {self.parent.cards[1] and self.parent.cards[1].unit, self.parent.cards[2] and self.parent.cards[2].unit, self.parent.cards[3] and self.parent.cards[3].unit}}
-      system.save_run(self.parent.level, gold, self.parent.units, passives, run_passive_pool_by_tiers, locked_state)
+      system.save_run(self.parent.level == 1 and 0 or self.parent.level, gold, self.parent.units, passives, run_passive_pool_by_tiers, locked_state)
     end
     ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     self.selected = true
@@ -802,7 +802,7 @@ function RerollButton:update(dt)
       self.spring:pull(0.2, 200, 10)
       gold = gold - 2
       self.parent.shop_text:set_text{{text = '[wavy_mid, fg]shop [fg]- [fg, nudge_down]gold: [yellow, nudge_down]' .. gold, font = pixul_font, alignment = 'center'}}
-      system.save_run(self.parent.level, gold, self.parent.units, passives, run_passive_pool_by_tiers, locked_state)
+      system.save_run(self.parent.level == 1 and 0 or self.parent.level, gold, self.parent.units, passives, run_passive_pool_by_tiers, locked_state)
     end
   end
 end
@@ -1107,6 +1107,7 @@ function PassiveCard:update(dt)
   if self.selected and input.m1.pressed and self.arena.choosing_passives then
     self.arena.choosing_passives = false
     table.insert(passives, self.passive)
+    table.insert(self.arena.passives, self.passive)
     self.arena:restore_passives_to_pool(self.card_i)
     trigger:tween(0.25, _G, {slow_amount = 1}, math.linear, function()
       slow_amount = 1
@@ -1242,7 +1243,7 @@ function ShopCard:update(dt)
       _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       self:die()
       self.parent.cards[self.i] = nil
-      system.save_run(self.parent.level, gold, self.parent.units, passives, run_passive_pool_by_tiers, locked_state)
+      system.save_run(self.parent.level == 1 and 0 or self.parent.level, gold, self.parent.units, passives, run_passive_pool_by_tiers, locked_state)
     else
       error1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       self.spring:pull(0.2, 200, 10)

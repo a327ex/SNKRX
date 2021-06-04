@@ -1212,11 +1212,14 @@ function Player:hit(damage)
     else
       hit4:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       slow(0.25, 1)
-      self.dead = true
       for i = 1, random:int(4, 6) do HitParticle{group = main.current.effects, x = self.x, y = self.y, color = self.color} end
       HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 12}:scale_down(0.3):change_color(0.5, self.color)
       if self.leader and #self.followers == 0 then
-        main.current:die()
+        if main.current:die() then
+          self.dead = true
+        else
+          self.hp = 1
+        end
       else
         if self.leader then self:recalculate_followers()
         else self.parent:recalculate_followers() end
@@ -1669,7 +1672,7 @@ function Projectile:die(x, y, r, n)
   self.dead = true
 
   if self.character == 'wizard' then
-    Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.parent.area_size_m*32, color = self.color, dmg = self.parent.area_dmg_m*self.dmg, character = self.character, level = self.level, parent = self,
+    Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.parent.area_size_m*24, color = self.color, dmg = self.parent.area_dmg_m*self.dmg, character = self.character, level = self.level, parent = self,
       void_rift = self.parent.void_rift, echo_barrage = self.parent.echo_barrage}
   elseif self.character == 'blade' then
     Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.parent.area_size_m*64, color = self.color, dmg = self.parent.area_dmg_m*self.dmg, character = self.character, level = self.level, parent = self,

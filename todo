@@ -11,39 +11,30 @@ Sorcerer update
     Rename tutorial to guide or manual
     Add visuals for defensive ouroboros
     Unlock automatically on shop enter
-  Bug fixes
-    Headbutter damage should falloff faster after it strikes
-    https://i.imgur.com/QN0Ntq2.png
-    https://i.imgur.com/YfhqDYr.png
-    https://i.imgur.com/ps4OA7o.png
-    https://i.imgur.com/j1LS3zt.png
-    https://i.imgur.com/XXJn4uW.png
-    Fix bug where quitting on level 1 jumps to level 2
-    Fix lock bug after death/win - https://i.imgur.com/iUyOtLk.png
-    Fix enemies still spawning after arena clear (this happens with the extra enemy spawns that were blocked earlier)
-    Fix death + win at the same time bug
-    Fix leader distance being off on certain speeds
   Balance
     Buff tanks, maybe add a simple forcer ability to them
     Buff 24/25 HP again
     Buff headbutter (+ trigger range)
-  * New
-    * Sorcerer = sorcerers repeat their attacks once every 4/3/2 attacks 
-    * Arcanist (tier 1 sorcerer) - launches a slow piercing orb that launches other piercing projectiles, Lv.3 effect - 50% increased attack speed for the orb and 2 projectiles are released per cast
-    * Sorcerer + Conjurer = Illusionist - launches a projectile that deals X damage and creates copies that do the same, Lv.3 effect - doubles the number of copies created and they release 12 projectiles on death that pierce and ricochet once
-    * Sorcerer + Voider = Witch - creates an area that ricochets around the arena and deals X damage over time, Lv.3 effect - the area periodically releases projectiles that chain once
-    * Sorcerer + Curser = Silencer - curses 6 nearby enemies for 6 seconds, preventing them from using special attacks, Lv.3 effect - the curse also deals X damage over time
-    * Sorcerer + Nuker = Vulcanist - creates a volcano that explodes the nearby area 4 times, Lv.3 effect - the number and speed of explosions is doubled
-    * Sorcerer + Forcer = Warden - creates a force field around a random unit that prevents enemies from entering, Lv.3 effect - creates the force field around 2 units instead
-    * Sorcerer + Psyker = Psychic - creates a small area that deals X damage, Lv.3 effect - the attack can happen from any distance and repeats twice
-    * Magician (tier 1 mage) - creates a small area that deals X damage, Lv.3 effect - the magician becomes invulnerable for 6 seconds
+  Bugs
+    Fix leader (snake head) distance being off by 1 or 2 pixels on certain snake speeds
 
 Sorcerer update patch notes
+Summary: This update adds 1 new class with 8 new units, implements more QoL features, further balance changes and lots of bug fixes.
+  Added sorcerer class: sorcerers repeat their attacks once every 4/3/2 attacks 
+  Added 8 new units:
+    Arcanist (tier 1 sorcerer) - launches a slow piercing orb that launches other piercing projectiles, Lv.3 effect - 50% increased attack speed for the orb and 2 projectiles are released per cast
+    Illusionist (tier 3 sorcerer, conjurer) - launches a projectile that deals X damage and creates copies that do the same, Lv.3 effect - doubles the number of copies created and they release 12 projectiles on death that pierce and ricochet once
+    Witch (tier 2 sorcerer, voider) - creates an area that ricochets around the arena and deals X damage over time, Lv.3 effect - the area periodically releases projectiles that chain once
+    Silencer (tier 2 sorcerer, curser) - curses 6 nearby enemies for 6 seconds, preventing them from using special attacks, Lv.3 effect - the curse also deals X damage over time
+    Vulcanist (tier 4 sorcerer, nuker) - creates a volcano that explodes the nearby area 4 times, Lv.3 effect - the number and speed of explosions is doubled
+    Warden (tier 4 sorcerer, forcer) - creates a force field around a random unit that prevents enemies from entering, Lv.3 effect - creates the force field around 2 units instead
+    Psychic (tier 2 sorcerer, psyker) - creates a small area that deals X damage, Lv.3 effect - the attack can happen from any distance and repeats twice
+    Magician (tier 1 mage) - creates a small area that deals X damage, Lv.3 effect - the magician becomes invulnerable for 6 seconds
   Changed cursers to trigger only when near enemies
   Decreased projectile speed for the exploder (blue enemy)
   Changed shooters (white enemy) to scale with NG+ difficulty
   Increased damage and movement speed for enemy swarmers (small purple enemies)
-  Added tooltips for "restart run" and "tutorial" buttons on the shop
+  Added tooltips for "restart run" and "guide" buttons on the shop
   Fixed text that was going outside the screen for the Priest and the Assassin
   Fixed bug where Divine Punishment would continue triggering after death
   Removed cooldown visuals on snake for units that don't have cooldowns (Squire, Chronomancer and Psykeeper)
@@ -61,6 +52,15 @@ Sorcerer update patch notes
   Added Nuker class to Wizard
   Change Wizard's Lv.3 effect's chain to 2 (from 3)
   Fixed Blade's Lv.3 effect's damage text not being rounded
+  Fixed headbutter (orange enemy) damage buff lasting too long after an attack
+  Fixed a crash whenever the Fairy would try to select a unit that just died this or last frame
+  Fixed a crash that would happen when trying to restart the game through the menu on the passive selection screen
+  Fixed a bug where you could die and win at the same time
+  Fixed a crash triggered by infested enemies on death rarely
+  Fixed a bug where quitting on level 1 would automatically jump to level 2
+  Fixed a bug where lock state would carry over after a run death/win/restart
+  Fixed a bug where items from a previous restarted run would remain after the 1st round 
+
 
 ---
 
@@ -71,6 +71,8 @@ Trappers:
   Triangler - drops a trap and the 3rd trap will trigger the area, dealing X AoE damage 2-3 times
 Brawlers: units focused on crashing on enemies
   https://i.imgur.com/5YubukS.png - unit idea
+Conjurer unit that creates an unit that actively protects you from enemy projectiles
+Passive that makes critters and summons block enemy projectiles
 Hexblaster? - curser that consumes curses to deal damage
 Bench? - https://i.imgur.com/B1gNVKk.png
 Balance option for when there are more sets - https://i.imgur.com/JMynwbL.png
@@ -80,6 +82,7 @@ Remove level 3 units from rotation
 Hide cursor during waves
 Mouse follow control?
 Visuals for divine intervertion, fairy buff
+Fix enemies still spawning after arena clear (this happens with the extra enemy spawns that were blocked earlier)
 
 Roguelite update:
 Slay the Spire-like node selection map (copy code from SHOOTRX repo as this is already implemented there)

@@ -265,6 +265,8 @@ function Arena:on_enter(from, level, units, passives)
     if self.arena_clear_text then return end
     if self.quitting then return end
     if self.spawning_enemies then return end
+    if self.won then return end
+    if self.choosing_passives then return end
 
     local n = self.enemy_spawns_prevented
     if math.floor(n/4) <= 0 then return end
@@ -327,7 +329,7 @@ function Arena:update(dt)
 
   -- print(self.enemy_spawns_prevented)
 
-  if input.escape.pressed and not self.transitioning and not self.in_credits then
+  if input.escape.pressed and not self.transitioning and not self.in_credits and not self.choosing_passives then
     if not self.paused then
       trigger:tween(0.25, _G, {slow_amount = 0}, math.linear, function()
         slow_amount = 0
@@ -381,6 +383,7 @@ function Arena:update(dt)
             }
             max_units = 7 + current_new_game_plus
             main:add(BuyScreen'buy_screen')
+            locked_state = nil
             system.save_run()
             main:go_to('buy_screen', 0, {}, passives)
           end, text = Text({{text = '[wavy, bg]restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
@@ -521,6 +524,7 @@ function Arena:update(dt)
         }
         max_units = 7 + current_new_game_plus
         main:add(BuyScreen'buy_screen')
+        locked_state = nil
         system.save_run()
         main:go_to('buy_screen', 0, {}, passives)
       end, text = Text({{text = '[wavy, bg]restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
@@ -550,10 +554,13 @@ end
 
 
 function Arena:quit()
+  if self.died then return end
+
   self.quitting = true
   if self.level == 25 then
     if not self.win_text and not self.win_text2 then
       self.won = true
+      locked_state = nil
       system.save_run()
       trigger:tween(1, _G, {slow_amount = 0}, math.linear, function() slow_amount = 0 end, 'slow_amount')
       trigger:tween(4, camera, {x = gw/2, y = gh/2, r = 0}, math.linear, function() camera.x, camera.y, camera.r = gw/2, gh/2, 0 end)
@@ -880,9 +887,10 @@ end
 
 
 function Arena:die()
-  if not self.died_text and not self.won then
+  if not self.died_text and not self.won and not self.arena_clear_text then
     self.t:cancel('divine_punishment')
     self.died = true
+    locked_state = nil
     system.save_run()
     self.t:tween(2, self, {main_slow_amount = 0}, math.linear, function() self.main_slow_amount = 0 end)
     self.died_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 32, lines = {
@@ -916,6 +924,7 @@ function Arena:die()
         end, text = Text({{text = '[wavy, bg]restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
       end}
     end)
+    return true
   end
 end
 
@@ -988,8 +997,8 @@ function Arena:transition()
   TransitionEffect{group = main.transitions, x = self.player.x, y = self.player.y, color = self.color, transition_action = function(t)
     slow_amount = 1
     main:add(BuyScreen'buy_screen')
-    system.save_run(self.level, gold, self.units, passives, run_passive_pool_by_tiers, locked_state)
-    main:go_to('buy_screen', self.level, self.units, passives)
+    system.save_run(self.level, gold, self.units, self.passives, run_passive_pool_by_tiers, locked_state)
+    main:go_to('buy_screen', self.level, self.units, self.passives)
     t.t:after(0.1, function()
       t.text:set_text({
         {text = '[nudge_down, bg]gold gained: ' .. tostring(gold_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
@@ -1115,6 +1124,8 @@ function Arena:spawn_n_enemies(p, j, n, pass)
   if self.died then return end
   if self.arena_clear_text then return end
   if self.quitting then return end
+  if self.won then return end
+  if self.choosing_passives then return end
   if n and n <= 0 then return end
 
   j = j or 1

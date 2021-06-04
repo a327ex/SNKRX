@@ -479,8 +479,10 @@ function Seeker:hit(damage, projectile)
     if self.infested then
       critter1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       trigger:after(0.01, function()
-        for i = 1, self.infested do
-          Critter{group = main.current.main, x = self.x, y = self.y, color = orange[0], r = random:float(0, 2*math.pi), v = 10, dmg = self.infested_dmg, parent = self.infested_ref}
+        if type(self.infested) == 'number' then
+          for i = 1, self.infested do
+            Critter{group = main.current.main, x = self.x, y = self.y, color = orange[0], r = random:float(0, 2*math.pi), v = 10, dmg = self.infested_dmg, parent = self.infested_ref}
+          end
         end
       end)
     end

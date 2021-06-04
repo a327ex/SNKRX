@@ -1389,10 +1389,6 @@ function update(dt)
     state.fullscreen = false
   end
 
-  if input.p.pressed then
-    system.save_state()
-  end
-
   --[[
   if input.f12.pressed then
     steam.userStats.resetAllStats(true)
