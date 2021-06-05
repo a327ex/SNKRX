@@ -29,7 +29,7 @@ function init()
   thunder1 = Sound('399656__bajko__sfx-thunder-blast.ogg', s)
   flagellant1 = Sound('Whipping Horse 3.ogg', s)
   bard2 = Sound('376532__womb-affliction__flute-trill.ogg', s)
-  bard1 = Sound('Magical Impact 12.ogg', s)
+  arcane2 = Sound('Magical Impact 12.ogg', s)
   frost1 = Sound('Frost Bolt 20.ogg', s)
   arcane1 = Sound('Magical Impact 26.ogg', s)
   pyro1 = Sound('Fire bolt 5.ogg', s)
@@ -383,7 +383,7 @@ function init()
     ['elementor'] = {'mage', 'nuker'},
     ['saboteur'] = {'rogue', 'conjurer', 'nuker'},
     ['stormweaver'] = {'enchanter'},
-    ['sage'] = {'forcer', 'nuker'},
+    ['sage'] = {'nuker', 'forcer'},
     ['squire'] = {'warrior', 'enchanter'},
     ['cannoneer'] = {'ranger', 'nuker'},
     ['dual_gunner'] = {'ranger', 'rogue'},
@@ -435,7 +435,7 @@ function init()
     ['elementor'] = '[blue]Mage, [red]Nuker',
     ['saboteur'] = '[red]Rogue, [orange]Conjurer, [red]Nuker',
     ['stormweaver'] = '[blue]Enchanter',
-    ['sage'] = '[red]Nuker',
+    ['sage'] = '[red]Nuker, [yellow]Forcer',
     ['squire'] = '[yellow]Warrior, [blue]Enchanter',
     ['cannoneer'] = '[green]Ranger, [red]Nuker',
     ['dual_gunner'] = '[green]Ranger, [red]Rogue',
@@ -494,7 +494,7 @@ function init()
     ['swordsman'] = function(lvl) return '[fg]deals [yellow]' .. get_character_stat('swordsman', lvl, 'dmg') .. '[fg] damage in an area, deals extra [yellow]' ..
       math.round(get_character_stat('swordsman', lvl, 'dmg')*0.15, 2) .. '[fg] damage per unit hit' end,
     ['wizard'] = function(lvl) return '[fg]shoots a projectile that deals [yellow]' .. get_character_stat('wizard', lvl, 'dmg') .. ' AoE[fg] damage' end,
-    ['magician'] = function(lvl) return '[fg]creates a small area that deals [yellow]' .. get_character_stat('magician', lvl, 'dmg') .. 'AoE[fg] damage' end,
+    ['magician'] = function(lvl) return '[fg]creates a small area that deals [yellow]' .. get_character_stat('magician', lvl, 'dmg') .. ' AoE[fg] damage' end,
     ['archer'] = function(lvl) return '[fg]shoots an arrow that deals [yellow]' .. get_character_stat('archer', lvl, 'dmg') .. '[fg] damage and pierces' end,
     ['scout'] = function(lvl) return '[fg]throws a knife that deals [yellow]' .. get_character_stat('scout', lvl, 'dmg') .. '[fg] damage and chains [yellow]3[fg] times' end,
     ['cleric'] = function(lvl) return '[fg]heals a unit for [yellow]20%[fg] of its max hp when it drops below [yellow]50%[fg] max hp' end,
@@ -538,16 +538,16 @@ function init()
     ['illusionist'] = function(lvl) return '[fg]launches a projectile that deals [yellow]' .. get_character_stat('illusionist', lvl, 'dmg') .. '[fg] damage and creates copies that do the same' end,
     ['witch'] = function(lvl) return '[fg]creates an area that ricochets around the arena and deals [yellow]' .. get_character_stat('witch', lvl, 'dmg') .. '[fg] damage per second' end,
     ['silencer'] = function(lvl) return '[fg]curses [yellow]5[fg] nearby enemies for [yellow]6[fg] seconds, preventing them from using special attacks' end,
-    ['vulcanist'] = function(lvl) return '[fg]creates a volcano that explodes the nearby area [yellow]4[fg] times, dealing [yellow]' .. get_character_stat('vulcanist', lvl, 'dmg') .. 'AoE [fg]damage' end,
+    ['vulcanist'] = function(lvl) return '[fg]creates a volcano that explodes the nearby area [yellow]4[fg] times, dealing [yellow]' .. get_character_stat('vulcanist', lvl, 'dmg') .. ' AoE [fg]damage' end,
     ['warden'] = function(lvl) return '[fg]creates a force field around a random unit that prevents enemies from entering' end,
-    ['psychic'] = function(lvl) return '[fg]creates a small area that deals [yellow]' .. get_character_stat('psychic', lvl, 'dmg') .. 'AoE[fg] damage' end,
+    ['psychic'] = function(lvl) return '[fg]creates a small area that deals [yellow]' .. get_character_stat('psychic', lvl, 'dmg') .. ' AoE[fg] damage' end,
   }
 
   character_effect_names = {
     ['vagrant'] = '[fg]Champion',
     ['swordsman'] = '[yellow]Cleave',
     ['wizard'] = '[blue]Magic Missile',
-    ['magician'] = '[blue]Teleportation',
+    ['magician'] = '[blue]Ethereal Form',
     ['archer'] = '[green]Bounce Shot',
     ['scout'] = '[red]Dagger Resonance',
     ['cleric'] = '[green]Mass Heal ',
@@ -599,7 +599,7 @@ function init()
     ['vagrant'] = '[light_bg]Champion',
     ['swordsman'] = '[light_bg]Cleave',
     ['wizard'] = '[light_bg]Magic Missile',
-    ['magician'] = '[light_bg]Teleportation',
+    ['magician'] = '[light_bg]Ethereal Form',
     ['archer'] = '[light_bg]Bounce Shot',
     ['scout'] = '[light_bg]Dagger Resonance',
     ['cleric'] = '[light_bg]Mass Heal ',
@@ -651,7 +651,7 @@ function init()
     ['vagrant'] = function() return '[yellow]+10%[fg] damage and [yellow]+10%[fg] attack speed per active set' end,
     ['swordsman'] = function() return "[fg]the swordsman's damage is [yellow]doubled" end,
     ['wizard'] = function() return '[fg]the projectile chains [yellow]2[fg] times' end,
-    ['magician'] = function() return '[fg]the magician becomes invulnerable for [yellow]6[fg] seconds' end,
+    ['magician'] = function() return '[fg]the magician becomes invulnerable for [yellow]6[fg] seconds but also cannot attack' end,
     ['archer'] = function() return '[fg]the arrow ricochets off walls [yellow]3[fg] times' end,
     ['scout'] = function() return '[yellow]+25%[fg] damage per chain and [yellow]+3[fg] chains' end,
     ['cleric'] = function() return '[fg]heals all units' end,
@@ -690,20 +690,20 @@ function init()
     ['priest'] = function() return '[fg]picks [yellow]3[fg] units at random and grants them a buff that prevents death once' end,
     ['infestor'] = function() return '[fg][yellow]triples[fg] the number of critters released' end,
     ['flagellant'] = function() return '[fg]deals [yellow]' .. 2*get_character_stat('flagellant', 3, 'dmg') .. '[fg] damage to all allies and grants [yellow]+12%[fg] damage to all allies per cast' end,
-    ['arcanist'] = function() return '[yellow]+100%[fg] attack speed for the orb and [yellow]2[fg] projectiles are released per cast' end,
+    ['arcanist'] = function() return '[yellow]+50%[fg] attack speed for the orb and [yellow]2[fg] projectiles are released per cast' end,
     ['illusionist'] = function() return '[yellow]doubles[fg] the number of copies created and they release [yellow]12[fg] projectiles on death that pierce and ricochet once' end,
     ['witch'] = function() return '[fg]the area periodically releases projectiles, each dealing [yellow]' .. get_character_stat('witch', 3, 'dmg') .. '[fg] damage and chaining once' end,
     ['silencer'] = function() return '[fg]the curse also deals [yellow]' .. get_character_stat('silencer', 3, 'dmg') .. '[fg] damage per second' end,
     ['vulcanist'] = function() return '[fg]the number and speed of explosions is [yellow]doubled[fg]' end,
-    ['warden'] = function() return '[fg]creates the force field around [yellow]2[fg] units, and they are always the [yellow]head[fg] and [yellow]tail[fg] of the snake' end,
-    ['psychic'] = function() return '[fg]the attack can happen from any distance and deals [yellow]double[fg] damage' end,
+    ['warden'] = function() return '[fg]creates the force field around [yellow]2[fg] units' end,
+    ['psychic'] = function() return '[fg]the attack can happen from any distance and repeats once' end,
   }
 
   character_effect_descriptions_gray = {
     ['vagrant'] = function() return '[light_bg]+10% damage and +10% attack speed per active set' end,
     ['swordsman'] = function() return "[light_bg]the swordsman's damage is doubled" end,
     ['wizard'] = function() return '[light_bg]the projectile chains 3 times' end,
-    ['magician'] = function() return '[light_bg]the magician becomes invulnerable for 6 seconds' end,
+    ['magician'] = function() return '[light_bg]the magician becomes invulnerable for 6 seconds but also cannot attack' end,
     ['archer'] = function() return '[light_bg]the arrow ricochets off walls 3 times' end,
     ['scout'] = function() return '[light_bg]+25% damage per chain and +3 chains' end,
     ['cleric'] = function() return '[light_bg]heals all units' end,
@@ -742,13 +742,13 @@ function init()
     ['priest'] = function() return '[light_bg]picks 3 units at random and grants them a buff that prevents death once' end,
     ['infestor'] = function() return '[light_bg]triples the number of critters released' end,
     ['flagellant'] = function() return '[light_bg]deals ' .. 2*get_character_stat('flagellant', 3, 'dmg') .. ' damage to all allies and grants +12% damage to all allies per cast' end,
-    ['arcanist'] = function() return '[light_bg]+100% attack speed for the orb and 2 projectiles are released per cast' end,
+    ['arcanist'] = function() return '[light_bg]+50% attack speed for the orb and 2 projectiles are released per cast' end,
     ['illusionist'] = function() return '[light_bg]doubles the number of copies created and they release 12 projectiles on death that pierce and ricochet once' end,
     ['witch'] = function() return '[light_bg]the area periodically releases projectiles, each dealing ' .. get_character_stat('witch', 3, 'dmg') .. ' damage and chaining once' end,
     ['silencer'] = function() return '[light_bg]the curse also deals ' .. get_character_stat('silencer', 3, 'dmg') .. ' damage per second' end,
     ['vulcanist'] = function() return '[light_bg]the number and speed of explosions is doubled' end,
-    ['warden'] = function() return '[light_bg]creates the force field around 2 units, and they are always the head and tail of the snake' end,
-    ['psychic'] = function() return '[light_bg]the attack can happen from any distance and deals double damage' end,
+    ['warden'] = function() return '[light_bg]creates the force field around 2 units' end,
+    ['psychic'] = function() return '[light_bg]the attack can happen from any distance and repeats once' end,
   }
 
   character_stats = {
@@ -1196,12 +1196,12 @@ function init()
     [4] = {3, 5},
     [5] = {4, 7},
     [6] = {6, 10},
-    [7] = {6, 7}, 
-    [8] = {7, 8},
-    [9] = {10, 16},
-    [10] = {10, 12},
-    [11] = {12, 14},
-    [12] = {18, 20},
+    [7] = {10, 14}, 
+    [8] = {12, 16},
+    [9] = {14, 18},
+    [10] = {10, 14},
+    [11] = {12, 16},
+    [12] = {20, 24},
     [13] = {12, 16},
     [14] = {14, 18},
     [15] = {16, 20},
@@ -1234,13 +1234,13 @@ function init()
     [3] = {10},
     [4] = {4, 4},
     [5] = {4, 3, 2},
-    [6] = {14},
+    [6] = {12},
     [7] = {5, 3, 2},
     [8] = {6, 3, 3, 3},
-    [9] = {18},
+    [9] = {14},
     [10] = {8, 4},
     [11] = {8, 6, 2},
-    [12] = {18},
+    [12] = {16},
     [13] = {8, 8},
     [14] = {12, 6},
     [15] = {18},
@@ -1319,12 +1319,19 @@ function init()
 
   main:add(BuyScreen'buy_screen')
   main:go_to('buy_screen', run.level or 0, run.units or {}, passives)
+  -- main:go_to('buy_screen', 2, run.units or {}, passives)
   
   --[[
   main:add(Arena'arena')
-  main:go_to('arena', 14, {
-    {character = 'magician', level = 3},
+  main:go_to('arena', 1, {
+    {character = 'dual_gunner', level = 1},
+    {character = 'scout', level = 1},
   }, passives)
+  ]]--
+
+  --[[
+  main:add(Media'media')
+  main:go_to('media')
   ]]--
 
   trigger:every(2, function()
@@ -1336,6 +1343,8 @@ function init()
       print()
     end
   end)
+
+  print(table.tostring(love.graphics.getSupported()))
 end
 
 

@@ -23,7 +23,7 @@ function Seeker:init(args)
           HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = green[0], duration = 0.1}
           for _, enemy in ipairs(enemies) do
             LightningLine{group = main.current.effects, src = self, dst = enemy, color = green[0]}
-            enemy:speed_boost(3 + self.level*0.05 + current_new_game_plus*0.2)
+            enemy:speed_boost(3 + self.level*0.025 + current_new_game_plus*0.1)
           end
         end
       end)
@@ -85,7 +85,7 @@ function Seeker:init(args)
           enemy:hit(10000)
           critter1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
           critter3:play{pitch = random:float(0.95, 1.05), volume = 0.6}
-          for i = 1, random:int(4, 6) do EnemyCritter{group = main.current.main, x = enemy.x, y = enemy.y, color = purple[0], r = random:float(0, 2*math.pi), v = 5 + 0.1*enemy.level, dmg = enemy.dmg} end
+          for i = 1, random:int(4, 6) do EnemyCritter{group = main.current.main, x = enemy.x, y = enemy.y, color = purple[0], r = random:float(0, 2*math.pi), v = 8 + 0.1*enemy.level, dmg = 2*enemy.dmg} end
         end
       end)
 
@@ -100,7 +100,7 @@ function Seeker:init(args)
           LightningLine{group = main.current.effects, src = self, dst = enemy, color = blue[0]}
           enemy:hit(10000)
           shoot1:play{pitch = random:float(0.95, 1.05), volume = 0.4}
-          local n = 8 + current_new_game_plus*2
+          local n = math.floor(8 + current_new_game_plus*1.5)
           for i = 1, n do EnemyProjectile{group = main.current.main, x = enemy.x, y = enemy.y, color = blue[0], r = (i-1)*math.pi/(n/2), v = 120 + 5*enemy.level, dmg = (1 + 0.1*current_new_game_plus)*enemy.dmg} end
         end
       end)
@@ -119,7 +119,7 @@ function Seeker:init(args)
             enemy:hit(10000)
             shoot1:play{pitch = random:float(0.95, 1.05), volume = 0.4}
             local n = 8 + current_new_game_plus*2
-            for i = 1, n do EnemyProjectile{group = main.current.main, x = enemy.x, y = enemy.y, color = blue[0], r = (i-1)*math.pi/(n/2), v = 150 + 5*enemy.level, dmg = (1 + 0.2*current_new_game_plus)*enemy.dmg} end
+            for i = 1, n do EnemyProjectile{group = main.current.main, x = enemy.x, y = enemy.y, color = blue[0], r = (i-1)*math.pi/(n/2), v = 125 + 5*enemy.level, dmg = (1 + 0.2*current_new_game_plus)*enemy.dmg} end
           end
         elseif attack == 'swarm' then
           local enemies = self:get_objects_in_shape(Circle(self.x, self.y, 128), {Seeker})
@@ -130,7 +130,7 @@ function Seeker:init(args)
             enemy:hit(10000)
             critter1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
             critter3:play{pitch = random:float(0.95, 1.05), volume = 0.6}
-            for i = 1, random:int(4, 6) do EnemyCritter{group = main.current.main, x = enemy.x, y = enemy.y, color = purple[0], r = random:float(0, 2*math.pi), v = 5 + 0.1*enemy.level, dmg = enemy.dmg} end
+            for i = 1, random:int(4, 6) do EnemyCritter{group = main.current.main, x = enemy.x, y = enemy.y, color = purple[0], r = random:float(0, 2*math.pi), v = 8 + 0.1*enemy.level, dmg = 2*enemy.dmg} end
           end
         elseif attack == 'force' then
           local enemies = self:get_objects_in_shape(Circle(self.x, self.y, 64), {Seeker})
@@ -150,7 +150,7 @@ function Seeker:init(args)
             HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = green[0], duration = 0.1}
             for _, enemy in ipairs(enemies) do
               LightningLine{group = main.current.effects, src = self, dst = enemy, color = green[0]}
-              enemy:speed_boost(3 + self.level*0.05 + current_new_game_plus*0.2)
+              enemy:speed_boost(3 + self.level*0.025 + current_new_game_plus*0.1)
             end
           end
         end
@@ -186,7 +186,7 @@ function Seeker:init(args)
     self.color = orange[0]:clone()
     self.last_headbutt_time = 0
     local n = math.remap(current_new_game_plus, 0, 5, 1, 0.5)
-    self.t:every(function() return math.distance(self.x, self.y, main.current.player.x, main.current.player.y) < 64 and love.timer.getTime() - self.last_headbutt_time > 10*n end, function()
+    self.t:every(function() return math.distance(self.x, self.y, main.current.player.x, main.current.player.y) < 76 and love.timer.getTime() - self.last_headbutt_time > 10*n end, function()
       if self.silenced then return end
       if self.headbutt_charging or self.headbutting then return end
       self.headbutt_charging = true
@@ -198,16 +198,24 @@ function Seeker:init(args)
         self.last_headbutt_time = love.timer.getTime()
         self:set_damping(0)
         self:apply_steering_impulse(300, self:angle_to_object(main.current.player), 0.75)
-        self.t:after(0.5, function()
+        self.t:after(0.75, function()
           self.headbutting = false
         end)
       end)
     end)
   elseif self.tank then
     self.color = yellow[0]:clone()
-    self.buff_hp_m = 1.25 + (0.025*self.level) + (0.2*current_new_game_plus)
+    self.buff_hp_m = 1.25 + (0.1*self.level) + (0.4*current_new_game_plus)
     self:calculate_stats()
     self.hp = self.max_hp
+    local n = math.remap(current_new_game_plus, 0, 5, 1, 0.75)
+    self.t:every({3*n, 5*n}, function()
+      local enemy = self:get_closest_object_in_shape(Circle(self.x, self.y, 128), main.current.enemies)
+      if enemy then
+        wizard1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+        enemy:push(random:float(40, 80), enemy:angle_to_object(main.current.player), true)
+      end
+    end)
   elseif self.shooter then
     self.color = fg[0]:clone()
     local n = math.remap(current_new_game_plus, 0, 5, 1, 0.5)
@@ -221,7 +229,7 @@ function Seeker:init(args)
             self.hfx:use('hit', 0.25, 200, 10, 0.1)
             local r = self.r
             HitCircle{group = main.current.effects, x = self.x + 0.8*self.shape.w*math.cos(r), y = self.y + 0.8*self.shape.w*math.sin(r), rs = 6}
-            EnemyProjectile{group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), color = fg[0], r = r, v = 150 + 5*self.level + 8*current_new_game_plus,
+            EnemyProjectile{group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), color = fg[0], r = r, v = 140 + 5*self.level + 4*current_new_game_plus,
               dmg = (current_new_game_plus*0.1 + 1)*self.dmg}
           end)
         end
@@ -257,8 +265,8 @@ function Seeker:update(dt)
   if self.headbutt_charging or self.headbutting then self.buff_def_m = 3 end
 
   if self.speed_boosting then
-    local n = math.remap(love.timer.getTime() - self.speed_boosting, 0, (3 + 0.05*self.level + current_new_game_plus*0.2), 1, 0.5)
-    self.speed_boosting_mvspd_m = (3 + 0.05*self.level + 0.2*current_new_game_plus)*n
+    local n = math.remap(love.timer.getTime() - self.speed_boosting, 0, (3 + 0.025*self.level + current_new_game_plus*0.1), 1, 0.5)
+    self.speed_boosting_mvspd_m = (3 + 0.025*self.level + 0.1*current_new_game_plus)*n
     if not self.speed_booster and not self.exploder and not self.headbutter and not self.tank and not self.shooter and not self.spawner then
       self.color.r = math.remap(n, 1, 0.5, green[0].r, red[0].r)
       self.color.g = math.remap(n, 1, 0.5, green[0].g, red[0].g)
@@ -269,7 +277,7 @@ function Seeker:update(dt)
   if self.slowed then self.slow_mvspd_m = self.slowed
   else self.slow_mvspd_m = 1 end
 
-  self.buff_mvspd_m = (self.speed_boosting_mvspd_m or 1)*(self.slow_mvspd_m or 1)*(self.temporal_chains_mvspd_m or 1)
+  self.buff_mvspd_m = (self.speed_boosting_mvspd_m or 1)*(self.slow_mvspd_m or 1)*(self.temporal_chains_mvspd_m or 1)*(self.tank and 0.35 or 1)
 
   self:calculate_stats()
 
@@ -368,6 +376,10 @@ function Seeker:on_collision_enter(other, contact)
       end
     end
 
+    if self.headbutter and self.headbutting then
+      self.headbutting = false
+    end
+
   elseif table.any(main.current.enemies, function(v) return other:is(v) end) then
     if self.being_pushed and math.length(self:get_velocity()) > 60 then
       other:hit(math.floor(self.push_force/4))
@@ -382,9 +394,11 @@ function Seeker:on_collision_enter(other, contact)
       HitCircle{group = main.current.effects, x = x, y = y, rs = 6, color = fg[0], duration = 0.1}
       for i = 1, 2 do HitParticle{group = main.current.effects, x = x, y = y, color = self.color} end
       hit2:play{pitch = random:float(0.95, 1.05), volume = 0.35}
+      if other:is(Seeker) then self.headbutting = false end
     end
   
   elseif other:is(Turret) then
+    self.headbutting = false
     _G[random:table{'player_hit1', 'player_hit2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.35}
     self:hit(0)
     self:push(random:float(2.5, 7), other:angle_to_object(self))
@@ -443,9 +457,9 @@ function Seeker:hit(damage, projectile)
       if self.silenced then return end
       shoot1:play{pitch = random:float(0.95, 1.05), volume = 0.4}
       trigger:after(0.01, function()
-        local n = 8 + current_new_game_plus*2
+        local n = math.floor(8 + current_new_game_plus*1.5)
         for i = 1, n do
-          EnemyProjectile{group = main.current.main, x = self.x, y = self.y, color = blue[0], r = (i-1)*math.pi/(n/2), v = 120 + 5*self.level, dmg = 2*self.dmg}
+          EnemyProjectile{group = main.current.main, x = self.x, y = self.y, color = blue[0], r = (i-1)*math.pi/(n/2), v = 120 + 5*self.level, dmg = 1.5*self.dmg}
         end
       end)
     end

@@ -41,6 +41,7 @@ function Player:init(args)
   elseif self.character == 'magician' then
     self.attack_sensor = Circle(self.x, self.y, 96)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
+      if self.magician_invulnerable then return end
       local enemy = self:get_random_object_in_shape(self.attack_sensor, main.current.enemies)
       if enemy then
         self:attack(32, {x = enemy.x, y = enemy.y})
@@ -91,7 +92,7 @@ function Player:init(args)
   elseif self.character == 'arcanist' then
     self.sorcerer_count = 0
     self.attack_sensor = Circle(self.x, self.y, 128)
-    self.t:cooldown(3, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
+    self.t:cooldown(4, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
       if closest_enemy then
         self:shoot(self:angle_to_object(closest_enemy), {pierce = 1000, v = 40})
@@ -838,7 +839,6 @@ function Player:init(args)
       local unit_1 = random:table_remove(units)
       local unit_2 = random:table_remove(units)
       local unit_3 = random:table_remove(units)
-      print(unit_1, unit_2, unit_3)
       if unit_1 then unit_1.t:every(2, function() unit_1:hit(0.05*unit_1.max_hp) end) end
       if unit_2 then unit_2.t:every(2, function() unit_2:hit(0.05*unit_2.max_hp) end) end
       if unit_3 then unit_3.t:every(2, function() unit_3:hit(0.05*unit_3.max_hp) end) end
@@ -889,6 +889,7 @@ function Player:update(dt)
     if class_levels.forcer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
     if class_levels.swarmer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
     if class_levels.voider >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.sorcerer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
     self.vagrant_dmg_m = 1 + 0.1*number_of_active_sets
     self.vagrant_aspd_m = 1 + 0.1*number_of_active_sets
   end
@@ -953,6 +954,7 @@ function Player:update(dt)
     if class_levels.forcer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
     if class_levels.swarmer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
     if class_levels.voider >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.sorcerer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
     if main.current.psyker_level == 2 then
       self.psyker_dmg_m = 1 + 0.2*number_of_active_sets
       self.psyker_aspd_m = 1 + 0.2*number_of_active_sets
@@ -1021,21 +1023,24 @@ function Player:update(dt)
     for _, unit in ipairs(units) do
       total_v = total_v + unit.max_v
     end
-    total_v = total_v/#units
+    total_v = math.floor(total_v/#units)
+    self.total_v = total_v
 
     self:set_velocity(total_v*math.cos(self.r), total_v*math.sin(self.r))
 
     if not main.current.won and not main.current.choosing_passives then
-      local vx, vy = self:get_velocity()
-      local hd = math.remap(math.abs(self.x - gw/2), 0, 192, 1, 0)
-      local vd = math.remap(math.abs(self.y - gh/2), 0, 108, 1, 0)
-      camera.x = camera.x + math.remap(vx, -100, 100, -24*hd, 24*hd)*dt
-      camera.y = camera.y + math.remap(vy, -100, 100, -8*vd, 8*vd)*dt
-      if input.move_right.down then camera.r = math.lerp_angle_dt(0.01, dt, camera.r, math.pi/256)
-      elseif input.move_left.down then camera.r = math.lerp_angle_dt(0.01, dt, camera.r, -math.pi/256)
-      elseif input.move_down.down then camera.r = math.lerp_angle_dt(0.01, dt, camera.r, math.pi/256)
-      elseif input.move_up.down then camera.r = math.lerp_angle_dt(0.01, dt, camera.r, -math.pi/256)
-      else camera.r = math.lerp_angle_dt(0.005, dt, camera.r, 0) end
+      if not state.no_screen_movement then
+        local vx, vy = self:get_velocity()
+        local hd = math.remap(math.abs(self.x - gw/2), 0, 192, 1, 0)
+        local vd = math.remap(math.abs(self.y - gh/2), 0, 108, 1, 0)
+        camera.x = camera.x + math.remap(vx, -100, 100, -24*hd, 24*hd)*dt
+        camera.y = camera.y + math.remap(vy, -100, 100, -8*vd, 8*vd)*dt
+        if input.move_right.down then camera.r = math.lerp_angle_dt(0.01, dt, camera.r, math.pi/256)
+        elseif input.move_left.down then camera.r = math.lerp_angle_dt(0.01, dt, camera.r, -math.pi/256)
+        elseif input.move_down.down then camera.r = math.lerp_angle_dt(0.01, dt, camera.r, math.pi/256)
+        elseif input.move_up.down then camera.r = math.lerp_angle_dt(0.01, dt, camera.r, -math.pi/256)
+        else camera.r = math.lerp_angle_dt(0.005, dt, camera.r, 0) end
+      end
     end
 
     self:set_angle(self.r)
@@ -1049,7 +1054,7 @@ function Player:update(dt)
       local distance_to_previous = math.distance(previous.x, previous.y, point.x, point.y)
       distance_sum = distance_sum + distance_to_previous
       if distance_sum >= target_distance then
-        p = point
+        p = self.parent.previous_positions[i-1]
         break
       end
       previous = point
@@ -1078,6 +1083,12 @@ function Player:draw()
       graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 3, 3, blue_transparent)
     else
       graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 3, 3, (self.hfx.hit.f or self.hfx.shoot.f) and fg[0] or self.color)
+    end
+
+    if self.leader and state.arrow_snake then
+      local x, y = self.x + 0.9*self.shape.w, self.y
+      graphics.line(x + 3, y, x, y - 3, character_colors[self.character], 1)
+      graphics.line(x + 3, y, x, y + 3, character_colors[self.character], 1)
     end
   end
   graphics.pop()
@@ -1148,7 +1159,7 @@ function Player:hit(damage)
   self.hfx:use('hit', 0.25, 200, 10)
   self:show_hp()
 
-  local actual_damage = self:calculate_damage(damage)
+  local actual_damage = math.max(self:calculate_damage(damage), 0)
   self.hp = self.hp - actual_damage
   _G[random:table{'player_hit1', 'player_hit2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
   camera:shake(4, 0.5)
@@ -1221,6 +1232,7 @@ function Player:hit(damage)
           self.hp = 1
         end
       else
+        self.dead = true
         if self.leader then self:recalculate_followers()
         else self.parent:recalculate_followers() end
       end
@@ -1546,6 +1558,7 @@ function Projectile:init(args)
     self.t:every(self.parent.level == 3 and 0.54 or 0.8, function()
       local enemies = table.head(self:get_objects_in_shape(Circle(self.x, self.y, 128), main.current.enemies), self.level == 3 and 2 or 1)
       for _, enemy in ipairs(enemies) do
+        arcane2:play{pitch = random:float(0.7, 1.3), volume = 0.15}
         self.hfx:use('hit', 0.5)
         local r = self:angle_to_object(enemy)
         local t = {group = main.current.main, x = self.x + 8*math.cos(r), y = self.y + 8*math.sin(r), v = 250, r = r, color = self.parent.color, dmg = self.parent.dmg, pierce = 1000, character = 'arcanist_projectile',

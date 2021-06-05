@@ -327,6 +327,7 @@ function Arena:update(dt)
     main_song_instance = _G[random:table{'song1', 'song2', 'song3', 'song4', 'song5'}]:play{volume = 0.5}
   end
 
+  if self.shop_text then self.shop_text:update(dt) end
   -- print(self.enemy_spawns_prevented)
 
   if input.escape.pressed and not self.transitioning and not self.in_credits and not self.choosing_passives then
@@ -338,7 +339,7 @@ function Arena:update(dt)
         self.paused_t2 = Text2{group = self.ui, x = gw/2, y = gh/2 - 92, lines = {{text = '[bg10]turn left                                            turn right', font = pixul_font, alignment = 'center'}}}
         self.ng_t = Text2{group = self.ui, x = gw/2 + 63, y = gh - 50, lines = {{text = '[bg10]current: ' .. current_new_game_plus, font = pixul_font, alignment = 'center'}}}
 
-        self.resume_button = Button{group = self.ui, x = gw/2, y = gh - 200, force_update = true, button_text = 'resume game (esc)', fg_color = 'bg10', bg_color = 'bg', action = function(b)
+        self.resume_button = Button{group = self.ui, x = gw/2, y = gh - 225, force_update = true, button_text = 'resume game (esc)', fg_color = 'bg10', bg_color = 'bg', action = function(b)
           trigger:tween(0.25, _G, {slow_amount = 1}, math.linear, function()
             slow_amount = 1
             self.paused = false
@@ -357,14 +358,16 @@ function Arena:update(dt)
             if self.video_button_3 then self.video_button_3.dead = true; self.video_button_3 = nil end
             if self.quit_button then self.quit_button.dead = true; self.quit_button = nil end
             if self.screen_shake_button then self.screen_shake_button.dead = true; self.screen_shake_button = nil end
+            if self.screen_movement_button then self.screen_movement_button.dead = true; self.screen_movement_button = nil end
             if self.cooldown_snake_button then self.cooldown_snake_button.dead = true; self.cooldown_snake_button = nil end
+            if self.arrow_snake_button then self.arrow_snake_button.dead = true; self.arrow_snake_button = nil end
             if self.ng_plus_plus_button then self.ng_plus_plus_button.dead = true; self.ng_plus_plus_button = nil end
             if self.ng_plus_minus_button then self.ng_plus_minus_button.dead = true; self.ng_plus_minus_button = nil end
             system.save_state()
           end, 'pause')
         end}
 
-        self.restart_button = Button{group = self.ui, x = gw/2, y = gh - 175, force_update = true, button_text = 'restart run (r)', fg_color = 'bg10', bg_color = 'bg', action = function(b)
+        self.restart_button = Button{group = self.ui, x = gw/2, y = gh - 200, force_update = true, button_text = 'restart run (r)', fg_color = 'bg10', bg_color = 'bg', action = function(b)
           self.transitioning = true
           ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
           ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -389,7 +392,7 @@ function Arena:update(dt)
           end, text = Text({{text = '[wavy, bg]restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
         end}
 
-        self.sfx_button = Button{group = self.ui, x = gw/2, y = gh - 150, force_update = true, button_text = 'toggle sfx (n)', fg_color = 'bg10', bg_color = 'bg', action = function(b)
+        self.sfx_button = Button{group = self.ui, x = gw/2, y = gh - 175, force_update = true, button_text = 'toggle sfx (n)', fg_color = 'bg10', bg_color = 'bg', action = function(b)
           ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
           b.spring:pull(0.2, 200, 10)
           b.selected = true
@@ -401,7 +404,7 @@ function Arena:update(dt)
           end
         end}
 
-        self.music_button = Button{group = self.ui, x = gw/2, y = gh - 125, force_update = true, button_text = 'toggle music (m)', fg_color = 'bg10', bg_color = 'bg', action = function(b)
+        self.music_button = Button{group = self.ui, x = gw/2, y = gh - 150, force_update = true, button_text = 'toggle music (m)', fg_color = 'bg10', bg_color = 'bg', action = function(b)
           ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
           b.spring:pull(0.2, 200, 10)
           b.selected = true
@@ -413,7 +416,7 @@ function Arena:update(dt)
           end
         end}
 
-        self.video_button_1 = Button{group = self.ui, x = gw/2 - 86, y = gh - 100, force_update = true, button_text = 'window size-', fg_color = 'bg10', bg_color = 'bg', action = function()
+        self.video_button_1 = Button{group = self.ui, x = gw/2 - 86, y = gh - 125, force_update = true, button_text = 'window size-', fg_color = 'bg10', bg_color = 'bg', action = function()
           ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
           sx, sy = sx - 1, sy - 1
           love.window.setMode(480*sx, 270*sy)
@@ -421,7 +424,7 @@ function Arena:update(dt)
           state.fullscreen = false
         end}
 
-        self.video_button_2 = Button{group = self.ui, x = gw/2, y = gh - 100, force_update = true, button_text = 'window size+', fg_color = 'bg10', bg_color = 'bg', action = function()
+        self.video_button_2 = Button{group = self.ui, x = gw/2, y = gh - 125, force_update = true, button_text = 'window size+', fg_color = 'bg10', bg_color = 'bg', action = function()
           ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
           sx, sy = sx + 1, sy + 1
           love.window.setMode(480*sx, 270*sy)
@@ -429,7 +432,7 @@ function Arena:update(dt)
           state.fullscreen = false
         end}
 
-        self.video_button_3 = Button{group = self.ui, x = gw/2 + 79, y = gh - 100, force_update = true, button_text = 'fullscreen', fg_color = 'bg10', bg_color = 'bg', action = function()
+        self.video_button_3 = Button{group = self.ui, x = gw/2 + 79, y = gh - 125, force_update = true, button_text = 'fullscreen', fg_color = 'bg10', bg_color = 'bg', action = function()
           ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
           local _, _, flags = love.window.getMode()
           local window_width, window_height = love.window.getDesktopDimensions(flags.display)
@@ -439,18 +442,36 @@ function Arena:update(dt)
           state.fullscreen = true
         end}
 
-        self.screen_shake_button = Button{group = self.ui, x = gw/2 - 57, y = gh - 75, w = 110, force_update = true, button_text = '[bg10]screen shake: ' .. tostring(state.no_screen_shake and 'no' or 'yes'), 
+        self.screen_shake_button = Button{group = self.ui, x = gw/2 - 57, y = gh - 100, w = 110, force_update = true, button_text = '[bg10]screen shake: ' .. tostring(state.no_screen_shake and 'no' or 'yes'), 
         fg_color = 'bg10', bg_color = 'bg', action = function(b)
           ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
           state.no_screen_shake = not state.no_screen_shake
           b:set_text('screen shake: ' .. tostring(state.no_screen_shake and 'no' or 'yes'))
         end}
 
-        self.cooldown_snake_button = Button{group = self.ui, x = gw/2 + 75, y = gh - 75, w = 145, force_update = true, button_text = '[bg10]cooldowns on snake: ' .. tostring(state.cooldown_snake and 'yes' or 'no'), 
+        self.cooldown_snake_button = Button{group = self.ui, x = gw/2 + 75, y = gh - 100, w = 145, force_update = true, button_text = '[bg10]cooldowns on snake: ' .. tostring(state.cooldown_snake and 'yes' or 'no'), 
         fg_color = 'bg10', bg_color = 'bg', action = function(b)
           ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
           state.cooldown_snake = not state.cooldown_snake
           b:set_text('cooldowns on snake: ' .. tostring(state.cooldown_snake and 'yes' or 'no'))
+        end}
+
+        self.arrow_snake_button = Button{group = self.ui, x = gw/2 + 65, y = gh - 75, w = 125, force_update = true, button_text = '[bg10]arrow on snake: ' .. tostring(state.arrow_snake and 'yes' or 'no'),
+        fg_color = 'bg10', bg_color = 'bg', action = function(b)
+          ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+          state.arrow_snake = not state.arrow_snake
+          b:set_text('arrow on snake: ' .. tostring(state.arrow_snake and 'yes' or 'no'))
+        end}
+
+        self.screen_movement_button = Button{group = self.ui, x = gw/2 - 69, y = gh - 75, w = 135, force_update = true, button_text = '[bg10]screen movement: ' .. tostring(state.no_screen_movement and 'no' or 'yes'), 
+        fg_color = 'bg10', bg_color = 'bg', action = function(b)
+          ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+          state.no_screen_movement = not state.no_screen_movement
+          if state.no_screen_movement then
+            camera.x, camera.y = gw/2, gh/2
+            camera.r = 0
+          end
+          b:set_text('screen movement: ' .. tostring(state.no_screen_movement and 'no' or 'yes'))
         end}
 
         self.ng_plus_minus_button = Button{group = self.ui, x = gw/2 - 58, y = gh - 50, force_update = true, button_text = 'NG+ down', fg_color = 'bg10', bg_color = 'bg', action = function(b)
@@ -495,7 +516,9 @@ function Arena:update(dt)
         if self.video_button_2 then self.video_button_2.dead = true; self.video_button_2 = nil end
         if self.video_button_3 then self.video_button_3.dead = true; self.video_button_3 = nil end
         if self.screen_shake_button then self.screen_shake_button.dead = true; self.screen_shake_button = nil end
+        if self.screen_movement_button then self.screen_movement_button.dead = true; self.screen_movement_button = nil end
         if self.cooldown_snake_button then self.cooldown_snake_button.dead = true; self.cooldown_snake_button = nil end
+        if self.arrow_snake_button then self.arrow_snake_button.dead = true; self.arrow_snake_button = nil end
         if self.quit_button then self.quit_button.dead = true; self.quit_button = nil end
         if self.ng_plus_plus_button then self.ng_plus_plus_button.dead = true; self.ng_plus_plus_button = nil end
         if self.ng_plus_minus_button then self.ng_plus_minus_button.dead = true; self.ng_plus_minus_button = nil end
@@ -787,36 +810,51 @@ function Arena:quit()
         self.arena_clear_text.dead = true
         trigger:tween(1, _G, {slow_amount = 0}, math.linear, function() slow_amount = 0 end, 'slow_amount')
         trigger:tween(4, camera, {x = gw/2, y = gh/2, r = 0}, math.linear, function() camera.x, camera.y, camera.r = gw/2, gh/2, 0 end)
-        local card_w, card_h = 100, 100
-        local w = 3*card_w + 2*20
-        self.choosing_passives = true
-        self.cards = {}
-        local tier_1 = random:weighted_pick(unpack(level_to_passive_tier_weights[level or self.level]))
-        local tier_2 = random:weighted_pick(unpack(level_to_passive_tier_weights[level or self.level]))
-        local tier_3 = random:weighted_pick(unpack(level_to_passive_tier_weights[level or self.level]))
-        local passive_1 = random:table_remove(run_passive_pool_by_tiers[tier_1])
-        local passive_2 = random:table_remove(run_passive_pool_by_tiers[tier_2])
-        local passive_3 = random:table_remove(run_passive_pool_by_tiers[tier_3])
-        if passive_1 then
-          table.insert(self.cards,
-            PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 0*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, card_i = 1, tier = tier_1, arena = self, passive = passive_1, force_update = true})
-        end
-        if passive_2 then
-          table.insert(self.cards,
-            PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 1*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, card_i = 2, tier = tier_2, arena = self, passive = passive_2, force_update = true})
-        end
-        if passive_3 then
-          table.insert(self.cards,
-            PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 2*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, card_i = 3, tier = tier_3, arena = self, passive = passive_3, force_update = true})
-        end
-        self.passive_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 65, lines = {{text = '[fg, wavy]choose one', font = fat_font, alignment = 'center'}}}
-        if not passive_1 and not passive_2 and not passive_3 then
-          self:transition()
-        end
+        self:set_passives()
+        RerollButton{group = main.current.ui, x = 40, y = 40, parent = self, force_update = true}
+        self.shop_text = Text({{text = '[wavy_mid, fg]gold: [yellow]' .. gold, font = pixul_font, alignment = 'center'}}, global_text_tags)
       else
         self:transition()
       end
     end, 'transition')
+  end
+end
+
+
+function Arena:set_passives(from_reroll)
+  if from_reroll then
+    self:restore_passives_to_pool(0)
+    self.cards[1].dead = true
+    self.cards[2].dead = true
+    self.cards[3].dead = true
+    self.cards = {}
+  end
+
+  local card_w, card_h = 100, 100
+  local w = 3*card_w + 2*20
+  self.choosing_passives = true
+  self.cards = {}
+  local tier_1 = random:weighted_pick(unpack(level_to_passive_tier_weights[level or self.level]))
+  local tier_2 = random:weighted_pick(unpack(level_to_passive_tier_weights[level or self.level]))
+  local tier_3 = random:weighted_pick(unpack(level_to_passive_tier_weights[level or self.level]))
+  local passive_1 = random:table_remove(run_passive_pool_by_tiers[tier_1])
+  local passive_2 = random:table_remove(run_passive_pool_by_tiers[tier_2])
+  local passive_3 = random:table_remove(run_passive_pool_by_tiers[tier_3])
+  if passive_1 then
+    table.insert(self.cards,
+      PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 0*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, card_i = 1, tier = tier_1, arena = self, passive = passive_1, force_update = true})
+  end
+  if passive_2 then
+    table.insert(self.cards,
+      PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 1*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, card_i = 2, tier = tier_2, arena = self, passive = passive_2, force_update = true})
+  end
+  if passive_3 then
+    table.insert(self.cards,
+      PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 2*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, card_i = 3, tier = tier_3, arena = self, passive = passive_3, force_update = true})
+  end
+  self.passive_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 65, lines = {{text = '[fg, wavy]choose one', font = fat_font, alignment = 'center'}}}
+  if not passive_1 and not passive_2 and not passive_3 then
+    self:transition()
   end
 end
 
@@ -880,6 +918,8 @@ function Arena:draw()
   if self.level == 20 and self.trailer then graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent) end
   if self.choosing_passives or self.won or self.paused or self.died then graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent) end
   self.ui:draw()
+
+  if self.shop_text then self.shop_text:draw(40, 20) end
 
   if self.in_credits then graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent_2) end
   self.credits:draw()

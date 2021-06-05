@@ -232,7 +232,7 @@ function Unit:calculate_stats(first_run)
     if current_new_game_plus == 0 then
       if self.boss then
         local x = self.level
-        local y = {0, 0, 3, 0, 0, 6, 0, 0, 9, 0, 0, 12, 0, 0, 18, 0, 0, 24, 0, 0, 32, 0, 0, 40, 48}
+        local y = {0, 0, 3, 0, 0, 6, 0, 0, 9, 0, 0, 12, 0, 0, 18, 0, 0, 40, 0, 0, 32, 0, 0, 64, 96}
         self.base_hp = 100 + (current_new_game_plus*5) + (90 + current_new_game_plus*10)*y[x]
         self.base_dmg = (12 + current_new_game_plus*2) + (2 + current_new_game_plus)*y[x]
         self.base_mvspd = 35 + 1.5*y[x]
@@ -246,7 +246,7 @@ function Unit:calculate_stats(first_run)
     else
       if self.boss then
         local x = self.level
-        local y = {0, 0, 3, 0, 0, 6, 0, 0, 9, 0, 0, 12, 0, 0, 18, 0, 0, 24, 0, 0, 32, 0, 0, 40, 48}
+        local y = {0, 0, 3, 0, 0, 6, 0, 0, 9, 0, 0, 12, 0, 0, 18, 0, 0, 40, 0, 0, 32, 0, 0, 64, 96}
         self.base_hp = 100 + (current_new_game_plus*5) + (90 + current_new_game_plus*10)*y[x]
         self.base_dmg = (12 + current_new_game_plus*2) + (2 + current_new_game_plus)*y[x]
         self.base_mvspd = 35 + 1.5*y[x]
@@ -254,7 +254,7 @@ function Unit:calculate_stats(first_run)
         local x = self.level
         local y = {0, 1, 3, 3, 4, 6, 5, 6, 9, 7, 8, 12, 10, 11, 15, 12, 13, 18, 16, 17, 21, 17, 20, 24, 25}
         self.base_hp = 22 + (current_new_game_plus*3) + (15 + current_new_game_plus*2.7)*y[x]
-        self.base_dmg = (4 + current_new_game_plus*1.25) + (2 + current_new_game_plus*1.2)*y[x]
+        self.base_dmg = (4 + current_new_game_plus*1.15) + (2 + current_new_game_plus*1)*y[x]
         self.base_mvspd = 70 + 3*y[x]
       end
     end

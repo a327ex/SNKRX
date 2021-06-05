@@ -773,9 +773,14 @@ RerollButton = Object:extend()
 RerollButton:implement(GameObject)
 function RerollButton:init(args)
   self:init_game_object(args)
-  self.shape = Rectangle(self.x, self.y, 54, 16)
   self.interact_with_mouse = true
-  self.text = Text({{text = '[bg10]reroll: [yellow]2', font = pixul_font, alignment = 'center'}}, global_text_tags)
+  if self.parent:is(BuyScreen) then
+    self.shape = Rectangle(self.x, self.y, 54, 16)
+    self.text = Text({{text = '[bg10]reroll: [yellow]2', font = pixul_font, alignment = 'center'}}, global_text_tags)
+  elseif self.parent:is(Arena) then
+    self.shape = Rectangle(self.x, self.y, 60, 16)
+    self.text = Text({{text = '[bg10]reroll: [yellow]15', font = pixul_font, alignment = 'center'}}, global_text_tags)
+  end
 end
 
 
@@ -783,26 +788,49 @@ function RerollButton:update(dt)
   self:update_game_object(dt)
 
   if self.selected and input.m1.pressed then
-    if gold < 2 then
-      self.spring:pull(0.2, 200, 10)
-      self.selected = true
-      error1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-      if not self.info_text then
-        self.info_text = InfoText{group = main.current.ui}
-        self.info_text:activate({
-          {text = '[fg]not enough gold', font = pixul_font, alignment = 'center'},
-        }, nil, nil, nil, nil, 16, 4, nil, 2)
-        self.info_text.x, self.info_text.y = gw/2, gh/2 + 10
+    if self.parent:is(BuyScreen) then
+      if gold < 2 then
+        self.spring:pull(0.2, 200, 10)
+        self.selected = true
+        error1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+        if not self.info_text then
+          self.info_text = InfoText{group = main.current.ui}
+          self.info_text:activate({
+            {text = '[fg]not enough gold', font = pixul_font, alignment = 'center'},
+          }, nil, nil, nil, nil, 16, 4, nil, 2)
+          self.info_text.x, self.info_text.y = gw/2, gh/2 + 10
+        end
+        self.t:after(2, function() self.info_text:deactivate(); self.info_text.dead = true; self.info_text = nil end, 'info_text')
+      else
+        ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+        self.parent:set_cards(random:int(1, 25), true)
+        self.selected = true
+        self.spring:pull(0.2, 200, 10)
+        gold = gold - 2
+        self.parent.shop_text:set_text{{text = '[wavy_mid, fg]shop [fg]- [fg, nudge_down]gold: [yellow, nudge_down]' .. gold, font = pixul_font, alignment = 'center'}}
+        system.save_run(self.parent.level == 1 and 0 or self.parent.level, gold, self.parent.units, passives, run_passive_pool_by_tiers, locked_state)
       end
-      self.t:after(2, function() self.info_text:deactivate(); self.info_text.dead = true; self.info_text = nil end, 'info_text')
-    else
-      ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-      self.parent:set_cards(random:int(1, 25), true)
-      self.selected = true
-      self.spring:pull(0.2, 200, 10)
-      gold = gold - 2
-      self.parent.shop_text:set_text{{text = '[wavy_mid, fg]shop [fg]- [fg, nudge_down]gold: [yellow, nudge_down]' .. gold, font = pixul_font, alignment = 'center'}}
-      system.save_run(self.parent.level == 1 and 0 or self.parent.level, gold, self.parent.units, passives, run_passive_pool_by_tiers, locked_state)
+    elseif self.parent:is(Arena) then
+      if gold < 15 then
+        self.spring:pull(0.2, 200, 10)
+        self.selected = true
+        error1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+        if not self.info_text then
+          self.info_text = InfoText{group = main.current.ui, force_update = true}
+          self.info_text:activate({
+            {text = '[fg]not enough gold', font = pixul_font, alignment = 'center'},
+          }, nil, nil, nil, nil, 16, 4, nil, 2)
+          self.info_text.x, self.info_text.y = gw/2, gh/2 + 10
+        end
+        self.t:after(2, function() self.info_text:deactivate(); self.info_text.dead = true; self.info_text = nil end, 'info_text')
+      else
+        ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+        self.parent:set_passives(true)
+        self.selected = true
+        self.spring:pull(0.2, 200, 10)
+        gold = gold - 15
+        self.parent.shop_text:set_text{{text = '[fg, nudge_down]gold: [yellow, nudge_down]' .. gold, font = pixul_font, alignment = 'center'}}
+      end
     end
   end
 end
@@ -820,13 +848,21 @@ function RerollButton:on_mouse_enter()
   ui_hover1:play{pitch = random:float(1.3, 1.5), volume = 0.5}
   pop2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
   self.selected = true
-  self.text:set_text{{text = '[fgm5]reroll: 2', font = pixul_font, alignment = 'center'}}
+  if self.parent:is(BuyScreen) then
+    self.text:set_text{{text = '[fgm5]reroll: 2', font = pixul_font, alignment = 'center'}}
+  elseif self.parent:is(Arena) then
+    self.text:set_text{{text = '[fgm5]reroll: 15', font = pixul_font, alignment = 'center'}}
+  end
   self.spring:pull(0.2, 200, 10)
 end
 
 
 function RerollButton:on_mouse_exit()
-  self.text:set_text{{text = '[bg10]reroll: [yellow]2', font = pixul_font, alignment = 'center'}}
+  if self.parent:is(BuyScreen) then
+    self.text:set_text{{text = '[bg10]reroll: [yellow]2', font = pixul_font, alignment = 'center'}}
+  elseif self.parent:is(Arena) then
+    self.text:set_text{{text = '[fgm5]reroll: [yellow]15', font = pixul_font, alignment = 'center'}}
+  end
   self.selected = false
 end
 
@@ -1106,7 +1142,6 @@ function PassiveCard:update(dt)
 
   if self.selected and input.m1.pressed and self.arena.choosing_passives then
     self.arena.choosing_passives = false
-    table.insert(passives, self.passive)
     table.insert(self.arena.passives, self.passive)
     self.arena:restore_passives_to_pool(self.card_i)
     trigger:tween(0.25, _G, {slow_amount = 1}, math.linear, function()
@@ -1324,7 +1359,6 @@ function CharacterIcon:init(args)
   self:init_game_object(args)
   self.shape = Rectangle(self.x, self.y, 40, 20)
   self.interact_with_mouse = true
-  print(character_color_strings[self.character])
   self.character_text = Text({{text = '[' .. character_color_strings[self.character] .. ']' .. string.lower(character_names[self.character]), font = pixul_font, alignment = 'center'}}, global_text_tags)
 end
 
@@ -1480,7 +1514,11 @@ function ClassIcon:draw()
     local next_n
     if self.parent:is(ShopCard) then
       next_n = n+1
-      if next_n > j then next_n = nil end
+      if k then
+        if next_n > k then next_n = nil end
+      else
+        if next_n > j then next_n = nil end
+      end
       if table.any(self.units, function(v) return v.character == self.character end) then next_n = nil end
     end
 
