@@ -652,7 +652,7 @@ local function newbinser()
         end
     end
 
-    -- Used to serialize classes withh custom serializers and deserializers.
+    -- Used to serialize classes with custom serializers and deserializers.
     -- If no _serialize or _deserialize (or no _template) value is found in the
     -- metatable, then the metatable is registered as a resources.
     local function register(metatable, name, serialize, deserialize)

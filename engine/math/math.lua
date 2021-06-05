@@ -188,7 +188,7 @@ function math.lerp_dt(f, dt, src, dst)
 end
 
 
--- Same as math.lerp_angle except correted for usage with delta time.
+-- Same as math.lerp_angle except corrected for usage with delta time.
 -- math.lerp_angle_dt(0.1, dt, enemy.r, enemy:angle_to_object(player)) -> will cover 90% of the distance between enemy.r and and the enemy's angle to the player per second
 function math.lerp_angle_dt(f, dt, src, dst)
   return math.lerp_angle((1-f^dt), src, dst)
