@@ -1178,7 +1178,7 @@ function Arena:spawn_n_enemies(p, j, n, pass)
       spawn1:play{pitch = random:float(0.8, 1.2), volume = 0.15}
       if not pass then
         check_circle:move_to(x, y)
-        local objects = self.main:get_objects_in_shape(check_circle, {Seeker, EnemyCritter, Critter, Player})
+        local objects = self.main:get_objects_in_shape(check_circle, {Seeker, EnemyCritter, Critter, Player, Illusion, Volcano, Saboteur, Pet, Turret})
         if #objects > 0 then self.enemy_spawns_prevented = self.enemy_spawns_prevented + 1; return end
       end
 

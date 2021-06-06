@@ -1317,15 +1317,22 @@ function init()
   end
   -- main_song_instance = _G[random:table{'song1', 'song2', 'song3', 'song4', 'song5'}]:play{volume = 0.5}
 
+
   main:add(BuyScreen'buy_screen')
   main:go_to('buy_screen', run.level or 0, run.units or {}, passives)
   -- main:go_to('buy_screen', 2, run.units or {}, passives)
   
   --[[
   main:add(Arena'arena')
-  main:go_to('arena', 1, {
-    {character = 'dual_gunner', level = 1},
-    {character = 'scout', level = 1},
+  main:go_to('arena', 21, {
+    {character = 'arcanist', level = 3},
+    {character = 'silencer', level = 2},
+    {character = 'warden', level = 2},
+    {character = 'chronomancer', level = 1},
+    {character = 'witch', level = 2},
+    {character = 'illusionist', level = 3},
+    {character = 'psychic', level = 2},
+    {character = 'vulcanist', level = 2},
   }, passives)
   ]]--
 
@@ -1345,6 +1352,13 @@ function init()
   end)
 
   print(table.tostring(love.graphics.getSupported()))
+  print(love.graphics.getRendererInfo())
+  local formats = love.graphics.getImageFormats()
+  for f, s in pairs(formats) do print(f, tostring(s)) end
+  local canvasformats = love.graphics.getCanvasFormats()
+  for f, s in pairs(canvasformats) do print(f, tostring(s)) end
+  print(table.tostring(love.graphics.getSystemLimits()))
+  print(table.tostring(love.graphics.getStats()))
 end
 
 

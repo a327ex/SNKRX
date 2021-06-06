@@ -130,7 +130,9 @@ function Player:init(args)
       self.t:every(0.25, function()
         SpawnEffect{group = main.current.effects, x = self.x, y = self.y, color = self.color, action = function(x, y)
           illusion1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-          Illusion{group = main.current.main, x = x, y = y, parent = self, level = self.level, conjurer_buff_m = self.conjurer_buff_m or 1, crit = (self.level == 3) and random:bool(50)}
+          local check_circle = Circle(self.x, self.y, 2)
+          local objects = main.current.main:get_objects_in_shape(check_circle, {Seeker, EnemyCritter, Critter, Illusion, Volcano, Saboteur, Pet, Turret})
+          if #objects == 0 then Illusion{group = main.current.main, x = x, y = y, parent = self, level = self.level, conjurer_buff_m = self.conjurer_buff_m or 1} end
         end}
         if main.current.sorcerer_level > 0 then
           self.sorcerer_count = self.sorcerer_count + 1
@@ -139,7 +141,9 @@ function Player:init(args)
             self.t:after(0.25, function()
               SpawnEffect{group = main.current.effects, x = self.x, y = self.y, color = self.color, action = function(x, y)
                 illusion1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-                Illusion{group = main.current.main, x = x, y = y, parent = self, level = self.level, conjurer_buff_m = self.conjurer_buff_m or 1, crit = (self.level == 3) and random:bool(50)}
+                local check_circle = Circle(self.x, self.y, 2)
+                local objects = main.current.main:get_objects_in_shape(check_circle, {Seeker, EnemyCritter, Critter, Illusion, Volcano, Saboteur, Pet, Turret})
+                if #objects == 0 then Illusion{group = main.current.main, x = x, y = y, parent = self, level = self.level, conjurer_buff_m = self.conjurer_buff_m or 1} end
               end}
             end)
           end
@@ -1563,7 +1567,9 @@ function Projectile:init(args)
         local r = self:angle_to_object(enemy)
         local t = {group = main.current.main, x = self.x + 8*math.cos(r), y = self.y + 8*math.sin(r), v = 250, r = r, color = self.parent.color, dmg = self.parent.dmg, pierce = 1000, character = 'arcanist_projectile',
         parent = self.parent, level = self.parent.level}
-        Projectile(table.merge(t, mods or {}))
+        local check_circle = Circle(t.x, t.y, 2)
+        local objects = main.current.main:get_objects_in_shape(check_circle, {Player, Seeker, EnemyCritter, Critter, Illusion, Volcano, Saboteur, Pet, Turret})
+        if #objects == 0 then Projectile(table.merge(t, mods or {})) end
       end
     end)
 
@@ -2716,12 +2722,12 @@ function Illusion:update(dt)
     self:seek_point(gw/2, gh/2)
     self:wander(50, 200, 50)
     self:rotate_towards_velocity(1)
-    self:steering_separate(32, {Illusion, Seeker})
+    self:steering_separate(32, {Seeker})
   else
     self:seek_point(self.target.x, self.target.y)
     self:wander(50, 200, 50)
     self:rotate_towards_velocity(1)
-    self:steering_separate(32, {Illusion, Seeker})
+    self:steering_separate(32, {Seeker})
   end
   self.r = self:get_angle()
 
