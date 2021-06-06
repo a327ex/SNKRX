@@ -142,13 +142,7 @@ function BuyScreen:on_enter(from, level, units, passives, shop_level, shop_xp)
       gold = 3
       passives = {}
       main_song_instance:stop()
-      run_passive_pool_by_tiers = {
-        [1] = {'wall_echo', 'wall_rider', 'centipede', 'temporal_chains', 'amplify', 'amplify_x', 'ballista', 'ballista_x', 'blunt_arrow', 'berserking', 'unwavering_stance', 'assassination', 'unleash', 'blessing',
-          'hex_master', 'force_push', 'spawning_pool'}, 
-        [2] = {'ouroboros_technique_r', 'ouroboros_technique_l', 'intimidation', 'vulnerability', 'resonance', 'point_blank', 'longshot', 'explosive_arrow', 'chronomancy', 'awakening', 'ultimatum', 'echo_barrage', 
-          'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
-        [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
-      }
+      run_passive_pool_by_tiers = table.shallow_copy(tier_to_passives)
       max_units = 7 + current_new_game_plus
       main:add(BuyScreen'buy_screen')
       system.save_run()
@@ -526,13 +520,7 @@ function RestartButton:update(dt)
       gold = 3
       passives = {}
       main_song_instance:stop()
-      run_passive_pool_by_tiers = {
-        [1] = { 'wall_echo', 'wall_rider', 'centipede', 'temporal_chains', 'amplify', 'amplify_x', 'ballista', 'ballista_x', 'blunt_arrow', 'berserking', 'unwavering_stance', 'assassination', 'unleash', 'blessing',
-          'hex_master', 'force_push', 'spawning_pool'}, 
-        [2] = {'ouroboros_technique_r', 'ouroboros_technique_l', 'intimidation', 'vulnerability', 'resonance', 'point_blank', 'longshot', 'explosive_arrow', 'chronomancy', 'awakening', 'ultimatum', 'echo_barrage', 
-          'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
-        [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
-      }
+      run_passive_pool_by_tiers = table.shallow_copy(tier_to_passives)
       system.save_state()
       main:add(BuyScreen'buy_screen')
       system.save_run()

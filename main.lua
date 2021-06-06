@@ -923,13 +923,6 @@ function init()
     ['mercenary'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+10%[' .. ylb2(lvl) .. ']/+20% [fg]chance for enemies to drop gold on death' end,
   }
 
-  tier_to_characters = {
-    [1] = {'vagrant', 'swordsman', 'magician', 'archer', 'scout', 'cleric', 'arcanist', 'miner'},
-    [2] = {'wizard', 'saboteur', 'sage', 'squire', 'dual_gunner', 'hunter', 'chronomancer', 'barbarian', 'cryomancer', 'beastmaster', 'jester', 'carver', 'psychic', 'witch', 'silencer', 'outlaw', 'merchant'},
-    [3] = {'elementor', 'stormweaver', 'spellblade', 'psykeeper', 'engineer', 'juggernaut', 'pyromancer', 'host', 'assassin', 'bane', 'barrager', 'infestor', 'flagellant', 'illusionist', 'usurer', 'gambler'},
-    [4] = {'priest', 'highlander', 'psykino', 'fairy', 'blade', 'plague_doctor', 'cannoneer', 'vulcanist', 'warden', 'corruptor', 'thief'},
-  }
-
   non_attacking_characters = {'cleric', 'stormweaver', 'squire', 'chronomancer', 'sage', 'psykeeper', 'bane', 'carver', 'fairy', 'priest', 'flagellant', 'merchant', 'miner'}
   non_cooldown_characters = {'squire', 'chronomancer', 'psykeeper', 'merchant', 'miner'}
 
@@ -989,6 +982,12 @@ function init()
     ['gambler'] = 3,
     ['thief'] = 4,
   }
+
+  tier_to_characters = { {}, {}, {}, {} } -- max tier 4
+  for k, v in pairs(character_tiers) do
+    table.insert(tier_to_characters[v], k)
+  end
+
 
   get_number_of_units_per_class = function(units)
     local rangers = 0
@@ -1227,13 +1226,10 @@ function init()
     ['void_rift'] = 3,
   }
 
-  tier_to_passives = {
-    [1] = {'wall_echo', 'wall_rider', 'centipede', 'temporal_chains', 'amplify', 'amplify_x', 'ballista', 'ballista_x', 'blunt_arrow', 'berserking', 'unwavering_stance', 'assassination', 'unleash', 'blessing',
-      'hex_master', 'force_push', 'spawning_pool'},
-    [2] = {'ouroboros_technique_r', 'ouroboros_technique_l', 'intimidation', 'vulnerability', 'resonance', 'point_blank', 'longshot', 'explosive_arrow', 'chronomancy', 'awakening', 'ultimatum', 'echo_barrage',
-      'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
-    [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
-  }
+  tier_to_passives = { {}, {}, {} } -- max tier 3
+  for k,v in pairs(passive_tiers) do
+    table.insert(tier_to_passives[v], k)
+  end
 
   level_to_tier_weights = {
     [1] = {90, 10, 0, 0},
@@ -1435,13 +1431,7 @@ function init()
   end
 
   local run = system.load_run()
-  run_passive_pool_by_tiers = run.run_passive_pool_by_tiers or {
-    [1] = { 'wall_echo', 'wall_rider', 'centipede', 'temporal_chains', 'amplify', 'amplify_x', 'ballista', 'ballista_x', 'blunt_arrow', 'berserking', 'unwavering_stance', 'assassination', 'unleash', 'blessing',
-      'hex_master', 'force_push', 'spawning_pool'}, 
-    [2] = {'ouroboros_technique_r', 'ouroboros_technique_l', 'intimidation', 'vulnerability', 'resonance', 'point_blank', 'longshot', 'explosive_arrow', 'chronomancy', 'awakening', 'ultimatum', 'echo_barrage', 
-      'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
-    [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
-  }
+  run_passive_pool_by_tiers = run.run_passive_pool_by_tiers or table.shallow_copy(tier_to_passives)
   gold = run.gold or 3
   passives = run.passives or {}
   locked_state = run.locked_state
