@@ -236,6 +236,9 @@ function Unit:calculate_stats(first_run)
         self.base_hp = 100 + (current_new_game_plus*5) + (90 + current_new_game_plus*10)*y[x]
         self.base_dmg = (12 + current_new_game_plus*2) + (2 + current_new_game_plus)*y[x]
         self.base_mvspd = 35 + 1.5*y[x]
+        if x == 25 then
+          self.base_mvspd = 35 + 1.2*y[x]
+        end
       else
         local x = self.level
         local y = {0, 1, 3, 3, 4, 6, 5, 6, 9, 7, 8, 12, 10, 11, 15, 12, 13, 18, 16, 17, 21, 17, 20, 24, 25}
@@ -250,6 +253,9 @@ function Unit:calculate_stats(first_run)
         self.base_hp = 100 + (current_new_game_plus*5) + (90 + current_new_game_plus*10)*y[x]
         self.base_dmg = (12 + current_new_game_plus*2) + (2 + current_new_game_plus)*y[x]
         self.base_mvspd = 35 + 1.5*y[x]
+        if x == 25 then
+          self.base_mvspd = 35 + 1.2*y[x]
+        end
       else
         local x = self.level
         local y = {0, 1, 3, 3, 4, 6, 5, 6, 9, 7, 8, 12, 10, 11, 15, 12, 13, 18, 16, 17, 21, 17, 20, 24, 25}

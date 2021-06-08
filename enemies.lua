@@ -670,7 +670,7 @@ function EnemyCritter:hit(damage, projectile)
   -- print(projectile == self.invulnerable_to)
   if projectile == self.invulnerable_to then return end
   self.hfx:use('hit', 0.25, 200, 10)
-  self.hp = self.hp - damage
+  self.hp = self.hp - math.max(damage, 0)
   self:show_hp()
   if self.hp <= 0 then self:die() end
 end

@@ -634,6 +634,7 @@ function Arena:quit()
           self.credits_button = Button{group = self.ui, x = gw - 40, y = gh - 44, force_update = true, button_text = 'credits', fg_color = 'bg10', bg_color = 'bg', action = function()
             self:create_credits()
           end}
+          --[[
           self.restart_button = Button{group = self.ui, x = gw - 40, y = gh - 68, force_update = true, button_text = 'restart', fg_color = 'bg10', bg_color = 'bg', action = function(b)
             self.transitioning = true
             ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -657,6 +658,7 @@ function Arena:quit()
               main:go_to('buy_screen', 0, {}, passives)
             end, text = Text({{text = '[wavy, bg]restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
           end}
+          ]]--
         end
       end)
 

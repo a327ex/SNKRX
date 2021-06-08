@@ -779,7 +779,12 @@ function RerollButton:init(args)
     self.text = Text({{text = '[bg10]reroll: [yellow]2', font = pixul_font, alignment = 'center'}}, global_text_tags)
   elseif self.parent:is(Arena) then
     self.shape = Rectangle(self.x, self.y, 60, 16)
-    self.text = Text({{text = '[bg10]reroll: [yellow]15', font = pixul_font, alignment = 'center'}}, global_text_tags)
+    if self.parent.level == 3 then
+      self.free_reroll = true
+      self.text = Text({{text = '[bg10]reroll: [yellow]0', font = pixul_font, alignment = 'center'}}, global_text_tags)
+    else
+      self.text = Text({{text = '[bg10]reroll: [yellow]15', font = pixul_font, alignment = 'center'}}, global_text_tags)
+    end
   end
 end
 
@@ -811,7 +816,7 @@ function RerollButton:update(dt)
         system.save_run(self.parent.level == 1 and 0 or self.parent.level, gold, self.parent.units, passives, run_passive_pool_by_tiers, locked_state)
       end
     elseif self.parent:is(Arena) then
-      if gold < 15 then
+      if gold < 15 and not self.free_reroll then
         self.spring:pull(0.2, 200, 10)
         self.selected = true
         error1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -828,8 +833,10 @@ function RerollButton:update(dt)
         self.parent:set_passives(true)
         self.selected = true
         self.spring:pull(0.2, 200, 10)
-        gold = gold - 15
+        if not self.free_reroll then gold = gold - 15 end
         self.parent.shop_text:set_text{{text = '[fg, nudge_down]gold: [yellow, nudge_down]' .. gold, font = pixul_font, alignment = 'center'}}
+        self.free_reroll = false
+        self.text = Text({{text = '[bg10]reroll: [yellow]15', font = pixul_font, alignment = 'center'}}, global_text_tags)
       end
     end
   end
@@ -851,7 +858,11 @@ function RerollButton:on_mouse_enter()
   if self.parent:is(BuyScreen) then
     self.text:set_text{{text = '[fgm5]reroll: 2', font = pixul_font, alignment = 'center'}}
   elseif self.parent:is(Arena) then
-    self.text:set_text{{text = '[fgm5]reroll: 15', font = pixul_font, alignment = 'center'}}
+    if self.free_reroll then
+      self.text:set_text{{text = '[fgm5]reroll: 0', font = pixul_font, alignment = 'center'}}
+    else
+      self.text:set_text{{text = '[fgm5]reroll: 15', font = pixul_font, alignment = 'center'}}
+    end
   end
   self.spring:pull(0.2, 200, 10)
 end
@@ -861,7 +872,11 @@ function RerollButton:on_mouse_exit()
   if self.parent:is(BuyScreen) then
     self.text:set_text{{text = '[bg10]reroll: [yellow]2', font = pixul_font, alignment = 'center'}}
   elseif self.parent:is(Arena) then
-    self.text:set_text{{text = '[fgm5]reroll: [yellow]15', font = pixul_font, alignment = 'center'}}
+    if self.free_reroll then
+      self.text:set_text{{text = '[fgm5]reroll: [yellow]0', font = pixul_font, alignment = 'center'}}
+    else
+      self.text:set_text{{text = '[fgm5]reroll: [yellow]15', font = pixul_font, alignment = 'center'}}
+    end
   end
   self.selected = false
 end
@@ -1061,7 +1076,7 @@ end
 
 function CharacterPart:get_sale_price()
   local total = 0
-  total = total + ((self.level == 1 and character_tiers[self.character]) or (self.level == 2 and 2*character_tiers[self.character]) or (self.level == 3 and 6*character_tiers[self.character]))
+  total = total + ((self.level == 1 and character_tiers[self.character]) or (self.level == 2 and 2*character_tiers[self.character]) or (self.level == 3 and 6*character_tiers[self.character]) or 0)
   if self.reserve then
     if self.reserve[2] then total = total + self.reserve[2]*character_tiers[self.character]*2 end
     if self.reserve[1] then total = total + self.reserve[1]*character_tiers[self.character] end

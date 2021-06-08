@@ -116,6 +116,7 @@ function init()
   song5 = Sound('Kubbi - Ember - 05 Compass.ogg', {tags = {music}})
   death_song = Sound('Kubbi - Ember - 09 Formed by Glaciers.ogg', {tags = {music}})
 
+  lock_image = Image('lock')
   speed_booster_elite = Image('speed_booster_elite')
   exploder_elite = Image('exploder_elite')
   swarmer_elite = Image('swarmer_elite')
@@ -691,7 +692,7 @@ function init()
     ['infestor'] = function() return '[fg][yellow]triples[fg] the number of critters released' end,
     ['flagellant'] = function() return '[fg]deals [yellow]' .. 2*get_character_stat('flagellant', 3, 'dmg') .. '[fg] damage to all allies and grants [yellow]+12%[fg] damage to all allies per cast' end,
     ['arcanist'] = function() return '[yellow]+50%[fg] attack speed for the orb and [yellow]2[fg] projectiles are released per cast' end,
-    ['illusionist'] = function() return '[yellow]doubles[fg] the number of copies created and they release [yellow]12[fg] projectiles on death that pierce and ricochet once' end,
+    ['illusionist'] = function() return '[yellow]doubles[fg] the number of copies created and they release [yellow]12[fg] projectiles on death' end,
     ['witch'] = function() return '[fg]the area periodically releases projectiles, each dealing [yellow]' .. get_character_stat('witch', 3, 'dmg') .. '[fg] damage and chaining once' end,
     ['silencer'] = function() return '[fg]the curse also deals [yellow]' .. get_character_stat('silencer', 3, 'dmg') .. '[fg] damage per second' end,
     ['vulcanist'] = function() return '[fg]the number and speed of explosions is [yellow]doubled[fg]' end,
@@ -743,7 +744,7 @@ function init()
     ['infestor'] = function() return '[light_bg]triples the number of critters released' end,
     ['flagellant'] = function() return '[light_bg]deals ' .. 2*get_character_stat('flagellant', 3, 'dmg') .. ' damage to all allies and grants +12% damage to all allies per cast' end,
     ['arcanist'] = function() return '[light_bg]+50% attack speed for the orb and 2 projectiles are released per cast' end,
-    ['illusionist'] = function() return '[light_bg]doubles the number of copies created and they release 12 projectiles on death that pierce and ricochet once' end,
+    ['illusionist'] = function() return '[light_bg]doubles the number of copies created and they release 12 projectiles on death' end,
     ['witch'] = function() return '[light_bg]the area periodically releases projectiles, each dealing ' .. get_character_stat('witch', 3, 'dmg') .. ' damage and chaining once' end,
     ['silencer'] = function() return '[light_bg]the curse also deals ' .. get_character_stat('silencer', 3, 'dmg') .. ' damage per second' end,
     ['vulcanist'] = function() return '[light_bg]the number and speed of explosions is doubled' end,
@@ -1320,7 +1321,7 @@ function init()
 
   main:add(BuyScreen'buy_screen')
   main:go_to('buy_screen', run.level or 0, run.units or {}, passives)
-  -- main:go_to('buy_screen', 2, run.units or {}, passives)
+  -- main:go_to('buy_screen', 7, run.units or {}, {'unleash'})
   
   --[[
   main:add(Arena'arena')
@@ -1351,6 +1352,7 @@ function init()
     end
   end)
 
+  --[[
   print(table.tostring(love.graphics.getSupported()))
   print(love.graphics.getRendererInfo())
   local formats = love.graphics.getImageFormats()
@@ -1359,6 +1361,7 @@ function init()
   for f, s in pairs(canvasformats) do print(f, tostring(s)) end
   print(table.tostring(love.graphics.getSystemLimits()))
   print(table.tostring(love.graphics.getStats()))
+  ]]--
 end
 
 

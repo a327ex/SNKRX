@@ -1,4 +1,69 @@
-Unleash does not affect Witch
+Shop Update
+  New units
+    Assists (2/4) - +25/50% assist buff effectiveness
+      Ringmaster (tier 4 assist, nuker)
+      Absorber (tier 2 assist, warrior)
+      Pardoner (tier 3 assist, mercenary)
+      Oracle (tier 1 assist)
+      Seraph (tier 2 assist, healer)
+    Mercenaries (3/3) - enemies occasionally drop pieces of gold
+      Treasure Hunter (tier 1 mercenary) 
+      Merchant (tier 2 mercenary)
+      Pardoner (tier 3 assist, mercenary)
+      Gambler (tier 4 mercenary, rogue)
+
+  Shop changes
+    Owned units highlighted in shop
+    Fix highlight colors and highlight reserve
+    Shop level up
+
+  QoL
+    * Added sorcerer achievement
+    * Removed restart button from end screen
+    * First item reroll is now free
+    Gold is given right after the round ends in the arena rather than on the shop for easier item rerolls
+    Show hero HP
+    Endless mode
+    Remove level 3 units from rotation
+    Hide cursor during waves
+    Mouse follow control
+    Volume slider
+    Options menu from buy screen
+    Add visuals for defensive ouroboros, divine intervention, fairy buff
+
+  Balance
+    * Decreased level 25 boss movement speed
+
+  Bug fixes
+    * Fixed a crash when too many illusions would be spawned in short succession
+    * Fixed a bug where enemy critters would sometimes be unkillable
+    * Fixed text for the illusionist's Lv.3 effect going outside the screen
+    * Fixed a rare crash when hovering over your owned in the shop
+    Fix a crash when warden's force field would spawn on top of enemies
+    Fix enemies still spawning after arena clear (this happens with the extra enemy spawns that were blocked earlier)
+    Fix fullscreen with different resolutions that don't scale properly
+    https://i.imgur.com/Lxu8skX.png
+    https://i.imgur.com/mnivI4d.png
+
+Sacrifice Update
+  New mechanics
+    Sacrifice units to level items up
+  New items
+  Reworked items
+    Items shouldn't just be more powerful versions of other items
+    Items should have drawbacks
+    Items that apply to a position on the snake (a good middle step between applying them to individual units like in Underlords)
+  New units
+    Nocturnals/Darks/??? (3/6)
+      Shadowmancer
+      Necromancer
+      Demonologist
+      Demon
+      Lich
+      Lifestealer
+      Zombie
+  QoL
+    Current items visible on item selection screen
 
 
 ---
@@ -17,20 +82,24 @@ Bench? - https://i.imgur.com/B1gNVKk.png
 Balance option for when there are more sets - https://i.imgur.com/JMynwbL.png
 Negative effect: colliding with yourself kills one of your units
 Go through this later https://i.imgur.com/4t7NA32.png <- lots of good improvements
-Remove level 3 units from rotation
-Hide cursor during waves
-Mouse follow control?
-Visuals for divine intervertion, fairy buff
-Fix enemies still spawning after arena clear (this happens with the extra enemy spawns that were blocked earlier)
-Fix highlight colors and highlight reserve
-Add visuals for defensive ouroboros
-Options menu from buy screen
-Volume slider
-Fix fullscreen with different resolutions that don't scale properly
 
 Roguelite update:
-Hades-like no map system, this is more elegant and requires way less work than something like Isaac or StS
-Units die permanently when they die
+  Technical improvements:
+    Spawn tech: spawn every entity in a grid, before spawning check to see if grid position is clear, this will prevent any issues due to entities spawning inside one another
+    Battle stats: DPS, damage taken, etc
+    Key rebinding (for non-QWERTY keyboards)
+StS-like map with nodes, node types:
+  Arena
+  Elite
+  Boss
+  Map (map of bigger size than arena with fixed spawns)
+  Unit shop
+  Item shop
+  Text + reward
+  Training grounds (upgrade unit)
+  Tavern (heal units)
+
+Units die permanently when they die (dead units can be stored in bench to be revived later)
 Units can have items attached to them like in Underlords
 Unit item ideas:
   This unit's projectiles pierce/chain/fork/seek/split/stun/etc
