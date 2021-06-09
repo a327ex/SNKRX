@@ -261,7 +261,14 @@ function Player:init(args)
         if x == 0 and y == 0 then x, y = gw/2, gh/2 end
         x, y = x + self.x, y + self.y
         x, y = x/2, y/2
-        Volcano{group = main.current.main, x = x, y = y, color = self.color, parent = self, rs = 24, level = self.level}
+        trigger:every_immediate(0.1, function()
+          local check_circle = Circle(x, y, 2)
+          local objects = main.current.main:get_objects_in_shape(check_circle, {Player, Seeker, EnemyCritter, Critter, Illusion, Saboteur, Pet, Turret})
+          if #objects == 0 then
+            Volcano{group = main.current.main, x = x, y = y, color = self.color, parent = self, rs = 24, level = self.level}
+            trigger:cancel('volcano_spawn')
+          end
+        end, nil, nil, 'volcano_spawn')
       end
       volcano()
       if main.current.sorcerer_level > 0 then
@@ -596,17 +603,39 @@ function Player:init(args)
           local unit_2 = random:table_remove(units)
           if unit_1 then
             illusion1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-            ForceField{group = main.current.main, x = unit_1.x, y = unit_1.y, parent = unit_1}
+            trigger:every_immediate(0.1, function()
+              local check_circle = Circle(unit_1.x, unit_1.y, 6)
+              local objects = main.current.main:get_objects_in_shape(check_circle, {Seeker, EnemyCritter})
+              if #objects == 0 then
+                ForceField{group = main.current.main, x = unit_1.x, y = unit_1.y, parent = unit_1}
+                trigger:cancel('warden_force_field_1')
+              end
+            end, nil, nil, 'warden_force_field_1')
           end
           if unit_2 then
             illusion1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
             ForceField{group = main.current.main, x = unit_2.x, y = unit_2.y, parent = unit_2}
+            trigger:every_immediate(0.1, function()
+              local check_circle = Circle(unit_2.x, unit_2.y, 6)
+              local objects = main.current.main:get_objects_in_shape(check_circle, {Seeker, EnemyCritter})
+              if #objects == 0 then
+                ForceField{group = main.current.main, x = unit_2.x, y = unit_2.y, parent = unit_2}
+                trigger:cancel('warden_force_field_2')
+              end
+            end, nil, nil, 'warden_force_field_2')
           end
         else
           local unit = random:table(self:get_all_units())
           if unit then
             illusion1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-            ForceField{group = main.current.main, x = unit.x, y = unit.y, parent = unit}
+            trigger:every_immediate(0.1, function()
+              local check_circle = Circle(unit.x, unit.y, 6)
+              local objects = main.current.main:get_objects_in_shape(check_circle, {Seeker, EnemyCritter})
+              if #objects == 0 then
+                ForceField{group = main.current.main, x = unit.x, y = unit.y, parent = unit}
+                trigger:cancel('warden_force_field_0')
+              end
+            end, nil, nil, 'warden_force_field_0')
           end
         end
       end
@@ -1021,6 +1050,11 @@ function Player:update(dt)
     if input.move_right.released then self.move_right_pressed = nil end
     if input.move_left.down then self.r = self.r - 1.66*math.pi*dt end
     if input.move_right.down then self.r = self.r + 1.66*math.pi*dt end
+
+    if state.mouse_control then
+      local v = Vector(math.cos(self.r), math.sin(self.r)):perpendicular():dot(Vector(math.cos(self:angle_to_mouse()), math.sin(self:angle_to_mouse())))
+      self.r = self.r + math.sign(v)*1.66*math.pi*dt
+    end
 
     local total_v = 0
     local units = self:get_all_units()
@@ -2522,6 +2556,7 @@ Pet:implement(GameObject)
 Pet:implement(Physics)
 function Pet:init(args)
   self:init_game_object(args)
+  if tostring(self.x) == tostring(0/0) or tostring(self.y) == tostring(0/0) then self.dead = true; return end
   self:set_as_rectangle(8, 8, 'dynamic', 'projectile')
   self:set_restitution(0.5)
   self.hfx:add('hit', 1)

@@ -637,6 +637,7 @@ function EnemyCritter:update(dt)
   if self.slowed then self.slow_mvspd_m = self.slowed
   else self.slow_mvspd_m = 1 end
   self.buff_mvspd_m = (self.speed_boosting_mvspd_m or 1)*(self.slow_mvspd_m or 1)*(self.temporal_chains_mvspd_m or 1)
+  if not self.classes then return end
   self:calculate_stats()
 
   if self.being_pushed then

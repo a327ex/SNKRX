@@ -43,6 +43,8 @@ function BuyScreen:on_enter(from, level, units, passives)
   self.passives = passives
   camera.x, camera.y = gw/2, gh/2
 
+  input:set_mouse_visible(true)
+
   if self.level == 0 then
     main_song_instance = _G[random:table{'song1', 'song2', 'song3', 'song4', 'song5'}]:play{volume = 0.5}
     self.level = 1

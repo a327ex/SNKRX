@@ -14,6 +14,10 @@ function Arena:on_enter(from, level, units, passives)
   self.units = units
   self.passives = passives
 
+  if not state.mouse_control then
+    input:set_mouse_visible(false)
+  end
+
   trigger:tween(2, main_song_instance, {volume = 0.5, pitch = 1}, math.linear)
 
   steam.friends.setRichPresence('steam_display', '#StatusFull')
@@ -332,6 +336,7 @@ function Arena:update(dt)
 
   if input.escape.pressed and not self.transitioning and not self.in_credits and not self.choosing_passives then
     if not self.paused then
+      input:set_mouse_visible(true)
       trigger:tween(0.25, _G, {slow_amount = 0}, math.linear, function()
         slow_amount = 0
         self.paused = true
@@ -351,6 +356,7 @@ function Arena:update(dt)
             self.ng_t = nil
             if self.resume_button then self.resume_button.dead = true; self.resume_button = nil end
             if self.restart_button then self.restart_button.dead = true; self.restart_button = nil end
+            if self.mouse_button then self.mouse_button.dead = true; self.mouse_button = nil end
             if self.sfx_button then self.sfx_button.dead = true; self.sfx_button = nil end
             if self.music_button then self.music_button.dead = true; self.music_button = nil end
             if self.video_button_1 then self.video_button_1.dead = true; self.video_button_1 = nil end
@@ -392,28 +398,44 @@ function Arena:update(dt)
           end, text = Text({{text = '[wavy, bg]restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
         end}
 
-        self.sfx_button = Button{group = self.ui, x = gw/2, y = gh - 175, force_update = true, button_text = 'toggle sfx (n)', fg_color = 'bg10', bg_color = 'bg', action = function(b)
+        self.mouse_button = Button{group = self.ui, x = gw/2, y = gh - 150, force_update = true, button_text = 'mouse control: ' .. tostring(state.mouse_control and 'yes' or 'no'), fg_color = 'bg10', bg_color = 'bg',
+        action = function(b)
+          ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+          state.mouse_control = not state.mouse_control
+          b:set_text('mouse control: ' .. tostring(state.mouse_control and 'yes' or 'no'))
+          input:set_mouse_visible(state.mouse_control)
+        end}
+
+        self.sfx_button = Button{group = self.ui, x = gw/2 - 46, y = gh - 175, force_update = true, button_text = 'sounds (n): ' .. tostring(state.volume_muted and 'no' or 'yes'), fg_color = 'bg10', bg_color = 'bg',
+        action = function(b)
           ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
           b.spring:pull(0.2, 200, 10)
           b.selected = true
           ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
           if sfx.volume == 0.5 then
             sfx.volume = 0
+            state.volume_muted = true
           elseif sfx.volume == 0 then
             sfx.volume = 0.5
+            state.volume_muted = false
           end
+          b:set_text('sounds (n): ' .. tostring(state.volume_muted and 'no' or 'yes'))
         end}
 
-        self.music_button = Button{group = self.ui, x = gw/2, y = gh - 150, force_update = true, button_text = 'toggle music (m)', fg_color = 'bg10', bg_color = 'bg', action = function(b)
+        self.music_button = Button{group = self.ui, x = gw/2 + 46, y = gh - 175, force_update = true, button_text = 'music (m): ' .. tostring(state.music_muted and 'no' or 'yes'), fg_color = 'bg10', bg_color = 'bg',
+        action = function(b)
           ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
           b.spring:pull(0.2, 200, 10)
           b.selected = true
           ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
           if music.volume == 0.5 then
             music.volume = 0
+            state.music_muted = true
           elseif music.volume == 0 then
             music.volume = 0.5
+            state.music_muted = false
           end
+          b:set_text('music (m): ' .. tostring(state.music_muted and 'no' or 'yes'))
         end}
 
         self.video_button_1 = Button{group = self.ui, x = gw/2 - 86, y = gh - 125, force_update = true, button_text = 'window size-', fg_color = 'bg10', bg_color = 'bg', action = function()
@@ -499,6 +521,9 @@ function Arena:update(dt)
         end}
       end, 'pause')
     else
+      if not state.mouse_control then
+        input:set_mouse_visible(false)
+      end
       trigger:tween(0.25, _G, {slow_amount = 1}, math.linear, function()
         slow_amount = 1
         self.paused = false
@@ -510,6 +535,7 @@ function Arena:update(dt)
         self.ng_t = nil
         if self.resume_button then self.resume_button.dead = true; self.resume_button = nil end
         if self.restart_button then self.restart_button.dead = true; self.restart_button = nil end
+        if self.mouse_button then self.mouse_button.dead = true; self.mouse_button = nil end
         if self.sfx_button then self.sfx_button.dead = true; self.sfx_button = nil end
         if self.music_button then self.music_button.dead = true; self.music_button = nil end
         if self.video_button_1 then self.video_button_1.dead = true; self.video_button_1 = nil end
@@ -807,6 +833,7 @@ function Arena:quit()
 
   else
     if not self.arena_clear_text then self.arena_clear_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 48, lines = {{text = '[wavy_mid, cbyc]arena clear!', font = fat_font, alignment = 'center'}}} end
+    self:gain_gold()
     self.t:after(3, function()
       if self.level % 3 == 0 then
         self.arena_clear_text.dead = true
@@ -1030,11 +1057,15 @@ function Arena:create_credits()
 end
 
 
+function Arena:gain_gold()
+  self.gold_gained = random:int(level_to_gold_gained[self.level][1], level_to_gold_gained[self.level][2])
+  self.interest = math.min(math.floor(gold/5), 5)
+  gold = gold + self.gold_gained + self.interest
+end
+
+
 function Arena:transition()
   self.transitioning = true
-  local gold_gained = random:int(level_to_gold_gained[self.level][1], level_to_gold_gained[self.level][2])
-  local interest = math.min(math.floor(gold/5), 5)
-  gold = gold + gold_gained + interest
   ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
   TransitionEffect{group = main.transitions, x = self.player.x, y = self.player.y, color = self.color, transition_action = function(t)
     slow_amount = 1
@@ -1043,23 +1074,23 @@ function Arena:transition()
     main:go_to('buy_screen', self.level, self.units, self.passives)
     t.t:after(0.1, function()
       t.text:set_text({
-        {text = '[nudge_down, bg]gold gained: ' .. tostring(gold_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+        {text = '[nudge_down, bg]gold gained: ' .. tostring(self.gold_gained or 0), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
         {text = '[wavy_lower, bg]interest: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
         {text = '[wavy_lower, bg]total: 0', font = pixul_font, alignment = 'center'}
       })
       _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       t.t:after(0.2, function()
         t.text:set_text({
-          {text = '[wavy_lower, bg]gold gained: ' .. tostring(gold_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-          {text = '[nudge_down, bg]interest: ' .. tostring(interest), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+          {text = '[wavy_lower, bg]gold gained: ' .. tostring(self.gold_gained or 0), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+          {text = '[nudge_down, bg]interest: ' .. tostring(self.interest or 0), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
           {text = '[wavy_lower, bg]total: 0', font = pixul_font, alignment = 'center'}
         })
         _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
         t.t:after(0.2, function()
           t.text:set_text({
-            {text = '[wavy_lower, bg]gold gained: ' .. tostring(gold_gained), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-            {text = '[wavy_lower, bg]interest: ' .. tostring(interest), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-            {text = '[nudge_down, bg]total: ' .. tostring(gold_gained + interest), font = pixul_font, alignment = 'center'}
+            {text = '[wavy_lower, bg]gold gained: ' .. tostring(self.gold_gained or 0), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+            {text = '[wavy_lower, bg]interest: ' .. tostring(self.interest or 0), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+            {text = '[nudge_down, bg]total: ' .. tostring((self.gold_gained or 0) + (self.interest or 0)), font = pixul_font, alignment = 'center'}
           })
           _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
         end)

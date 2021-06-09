@@ -237,6 +237,7 @@ function Unit:calculate_stats(first_run)
         self.base_dmg = (12 + current_new_game_plus*2) + (2 + current_new_game_plus)*y[x]
         self.base_mvspd = 35 + 1.5*y[x]
         if x == 25 then
+          self.base_dmg = (12 + current_new_game_plus*2) + (1.25 + current_new_game_plus)*y[x]
           self.base_mvspd = 35 + 1.2*y[x]
         end
       else
@@ -254,6 +255,7 @@ function Unit:calculate_stats(first_run)
         self.base_dmg = (12 + current_new_game_plus*2) + (2 + current_new_game_plus)*y[x]
         self.base_mvspd = 35 + 1.5*y[x]
         if x == 25 then
+          self.base_dmg = (12 + current_new_game_plus*2) + (2 + 0.5*current_new_game_plus)*y[x]
           self.base_mvspd = 35 + 1.2*y[x]
         end
       else

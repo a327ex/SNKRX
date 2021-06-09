@@ -9,6 +9,7 @@ require 'media'
 
 
 function init()
+  print('Initializing engine...')
   shared_init()
 
   input:bind('move_left', {'a', 'left', 'dpleft', 'm1'})
@@ -17,6 +18,7 @@ function init()
   input:bind('move_down', {'s', 'down', 'dpdown'})
   input:bind('enter', {'space', 'return', 'fleft', 'fdown', 'fright'})
 
+  print('Loading sounds...')
   local s = {tags = {sfx}}
   psychic1 = Sound('Magical Impact 13.ogg', s)
   fire1 = Sound('Fire bolt 3.ogg', s)
@@ -109,6 +111,7 @@ function init()
   rogue_crit1 = Sound('Dagger Stab (Flesh) 4.ogg', s)
   rogue_crit2 = Sound('Sword hits another sword 6.ogg', s)
 
+  print('Loading songs...')
   song1 = Sound('Kubbi - Ember - 01 Pathfinder.ogg', {tags = {music}})
   song2 = Sound('Kubbi - Ember - 02 Ember.ogg', {tags = {music}})
   song3 = Sound('Kubbi - Ember - 03 Firelight.ogg', {tags = {music}})
@@ -116,6 +119,7 @@ function init()
   song5 = Sound('Kubbi - Ember - 05 Compass.ogg', {tags = {music}})
   death_song = Sound('Kubbi - Ember - 09 Formed by Glaciers.ogg', {tags = {music}})
 
+  print('Loading images...')
   lock_image = Image('lock')
   speed_booster_elite = Image('speed_booster_elite')
   exploder_elite = Image('exploder_elite')
@@ -181,6 +185,7 @@ function init()
   star = Image('star')
   arrow = Image('arrow')
 
+  print('Initializing game...')
   class_colors = {
     ['warrior'] = yellow[0],
     ['ranger'] = green[0],
@@ -1309,7 +1314,7 @@ function init()
   if not state.new_game_plus then state.new_game_plus = new_game_plus end
   current_new_game_plus = state.current_new_game_plus or new_game_plus
   if not state.current_new_game_plus then state.current_new_game_plus = current_new_game_plus end
-  max_units = 7 + new_game_plus
+  max_units = 7 + current_new_game_plus
 
   main = Main()
 
@@ -1325,15 +1330,15 @@ function init()
   
   --[[
   main:add(Arena'arena')
-  main:go_to('arena', 21, {
-    {character = 'arcanist', level = 3},
+  main:go_to('arena', 17, {
+    {character = 'arcanist', level = 2},
     {character = 'silencer', level = 2},
-    {character = 'warden', level = 2},
+    {character = 'warden', level = 3},
     {character = 'chronomancer', level = 1},
-    {character = 'witch', level = 2},
+    {character = 'witch', level = 3},
     {character = 'illusionist', level = 3},
     {character = 'psychic', level = 2},
-    {character = 'vulcanist', level = 2},
+    {character = 'vulcanist', level = 3},
   }, passives)
   ]]--
 
@@ -1380,22 +1385,32 @@ function update(dt)
   ]]--
 
   if input.n.pressed then
-    if sfx.volume == 0.5 then
-      sfx.volume = 0
-      state.volume_muted = true
-    elseif sfx.volume == 0 then
-      sfx.volume = 0.5
-      state.volume_muted = false
+    if main.current.sfx_button then
+      main.current.sfx_button:action()
+      main.current.sfx_button.selected = false
+    else
+      if sfx.volume == 0.5 then
+        sfx.volume = 0
+        state.volume_muted = true
+      elseif sfx.volume == 0 then
+        sfx.volume = 0.5
+        state.volume_muted = false
+      end
     end
   end
 
   if input.m.pressed then
-    if music.volume == 0.5 then
-      state.music_muted = true
-      music.volume = 0
-    elseif music.volume == 0 then
-      music.volume = 0.5
-      state.music_muted = false
+    if main.current.music_button then
+      main.current.music_button:action()
+      main.current.music_button.selected = false
+    else
+      if music.volume == 0.5 then
+        state.music_muted = true
+        music.volume = 0
+      elseif music.volume == 0 then
+        music.volume = 0.5
+        state.music_muted = false
+      end
     end
   end
 
