@@ -253,6 +253,8 @@ function Seeker:init(args)
   if player and player.temporal_chains then
     self.temporal_chains_mvspd_m = 0.8
   end
+
+  self.usurer_count = 0
 end
 
 
@@ -435,6 +437,14 @@ function Seeker:hit(damage, projectile)
     HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 12}:scale_down(0.3):change_color(0.5, self.color)
     _G[random:table{'enemy_die1', 'enemy_die2'}]:play{pitch = random:float(0.9, 1.1), volume = 0.5}
 
+    if main.current.mercenary_level > 0 then
+      if random:bool((main.current.mercenary_level == 2 and 20) or (main.current.mercenary_level == 1 and 10) or 0) then
+        trigger:after(0.01, function()
+          Gold{group = main.current.main, x = self.x, y = self.y}
+        end)
+      end
+    end
+
     if self.boss then
       slow(0.25, 1)
       magic_die1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -594,6 +604,17 @@ function Seeker:curse(curse, duration, arg1, arg2, arg3)
   elseif curse == 'silencer' then
     self.silenced = true
     self.t:after(duration*curse_m, function() self.silenced = false end, 'silencer_curse')
+  elseif curse == 'usurer' then
+    if arg1 then
+      self.usurer_count = self.usurer_count + 1
+      if self.usurer_count == 3 then
+        usurer1:play{pitch = random:float(0.95, 1.05), volume = 1}
+        rogue_crit1:play{pitch = random:float(0.95, 1.05), volume = 1}
+        camera:shake(4, 0.4)
+        self.usurer_count = 0
+        self:hit(50*arg2.dmg)
+      end
+    end
   end
 end
 
@@ -628,6 +649,7 @@ function EnemyCritter:init(args)
   self:push(args.v, args.r)
   self.invulnerable_to = args.projectile
   self.t:after(0.5, function() self.invulnerable_to = false end)
+  self.usurer_count = 0
 end
 
 
@@ -778,6 +800,14 @@ function EnemyCritter:curse(curse, duration, arg1, arg2, arg3)
   elseif curse == 'silencer' then
     self.silenced = true
     self.t:after(duration*curse_m, function() self.silenced = false end, 'silencer_curse')
+  elseif curse == 'usurer' then
+    if arg1 then
+      self.usurer_count = self.usurer_count + 1
+      if self.usurer_count == 3 then
+        self.usurer_count = 0
+        self:hit(10*arg2.dmg)
+      end
+    end
   end
 end
 

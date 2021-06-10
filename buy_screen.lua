@@ -781,7 +781,8 @@ function RerollButton:init(args)
     self.text = Text({{text = '[bg10]reroll: [yellow]2', font = pixul_font, alignment = 'center'}}, global_text_tags)
   elseif self.parent:is(Arena) then
     self.shape = Rectangle(self.x, self.y, 60, 16)
-    if self.parent.level == 3 then
+    local merchant = self.parent.player:get_unit'merchant'
+    if self.parent.level == 3 or (merchant and merchant.level == 3) then
       self.free_reroll = true
       self.text = Text({{text = '[bg10]reroll: [yellow]0', font = pixul_font, alignment = 'center'}}, global_text_tags)
     else
@@ -847,7 +848,11 @@ end
 
 function RerollButton:draw()
   graphics.push(self.x, self.y, 0, self.spring.x, self.spring.y)
-    graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 4, 4, self.selected and fg[0] or bg[1])
+    if self.parent:is(Arena) then
+      graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 4, 4, self.selected and fg[0] or bg[-2])
+    else
+      graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 4, 4, self.selected and fg[0] or bg[1])
+    end
     self.text:draw(self.x, self.y + 1)
   graphics.pop()
 end
@@ -1077,6 +1082,7 @@ end
 
 
 function CharacterPart:get_sale_price()
+  if not character_tiers[self.character] then return 0 end
   local total = 0
   total = total + ((self.level == 1 and character_tiers[self.character]) or (self.level == 2 and 2*character_tiers[self.character]) or (self.level == 3 and 6*character_tiers[self.character]) or 0)
   if self.reserve then

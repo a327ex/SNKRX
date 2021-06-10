@@ -24,7 +24,7 @@ function Arena:on_enter(from, level, units, passives)
   steam.friends.setRichPresence('text', 'Arena - Level ' .. self.level)
 
   self.floor = Group()
-  self.main = Group():set_as_physics_world(32, 0, 0, {'player', 'enemy', 'projectile', 'enemy_projectile', 'force_field'})
+  self.main = Group():set_as_physics_world(32, 0, 0, {'player', 'enemy', 'projectile', 'enemy_projectile', 'force_field', 'ghost'})
   self.post_main = Group()
   self.effects = Group()
   self.ui = Group()
@@ -39,10 +39,19 @@ function Arena:on_enter(from, level, units, passives)
   self.main:disable_collision_between('enemy_projectile', 'enemy_projectile')
   self.main:disable_collision_between('player', 'force_field')
   self.main:disable_collision_between('projectile', 'force_field')
+  self.main:disable_collision_between('ghost', 'player')
+  self.main:disable_collision_between('ghost', 'projectile')
+  self.main:disable_collision_between('ghost', 'enemy')
+  self.main:disable_collision_between('ghost', 'enemy_projectile')
+  self.main:disable_collision_between('ghost', 'ghost')
+  self.main:disable_collision_between('ghost', 'force_field')
   self.main:enable_trigger_between('projectile', 'enemy')
   self.main:enable_trigger_between('enemy_projectile', 'player')
   self.main:enable_trigger_between('player', 'enemy_projectile')
+  self.main:enable_trigger_between('player', 'ghost')
+  self.main:enable_trigger_between('ghost', 'player')
 
+  self.gold_picked_up = 0
   self.damage_dealt = 0
   self.damage_taken = 0
   self.main_slow_amount = 1
@@ -257,6 +266,7 @@ function Arena:on_enter(from, level, units, passives)
   self.psyker_level = class_levels.psyker
   self.conjurer_level = class_levels.conjurer
   self.sorcerer_level = class_levels.sorcerer
+  self.mercenary_level = class_levels.mercenary
 
   self.t:every(0.375, function()
     local p = random:table(star_positions)
@@ -348,12 +358,9 @@ function Arena:update(dt)
           trigger:tween(0.25, _G, {slow_amount = 1}, math.linear, function()
             slow_amount = 1
             self.paused = false
-            self.paused_t1.dead = true
-            self.paused_t2.dead = true
-            self.paused_t1 = nil
-            self.paused_t2 = nil
-            self.ng_t.dead = true
-            self.ng_t = nil
+            if self.paused_t1 then self.paused_t1.dead = true; self.paused_t1 = nil end
+            if self.paused_t2 then self.paused_t2.dead = true; self.paused_t2 = nil end
+            if self.ng_t then self.ng_t.dead = true; self.ng_t = nil end
             if self.resume_button then self.resume_button.dead = true; self.resume_button = nil end
             if self.restart_button then self.restart_button.dead = true; self.restart_button = nil end
             if self.mouse_button then self.mouse_button.dead = true; self.mouse_button = nil end
@@ -527,12 +534,9 @@ function Arena:update(dt)
       trigger:tween(0.25, _G, {slow_amount = 1}, math.linear, function()
         slow_amount = 1
         self.paused = false
-        self.paused_t1.dead = true
-        self.paused_t2.dead = true
-        self.paused_t1 = nil
-        self.paused_t2 = nil
-        self.ng_t.dead = true
-        self.ng_t = nil
+        if self.paused_t1 then self.paused_t1.dead = true; self.paused_t1 = nil end
+        if self.paused_t2 then self.paused_t2.dead = true; self.paused_t2 = nil end
+        if self.ng_t then self.ng_t.dead = true; self.ng_t = nil end
         if self.resume_button then self.resume_button.dead = true; self.resume_button = nil end
         if self.restart_button then self.restart_button.dead = true; self.restart_button = nil end
         if self.mouse_button then self.mouse_button.dead = true; self.mouse_button = nil end
@@ -608,6 +612,7 @@ function Arena:quit()
   self.quitting = true
   if self.level == 25 then
     if not self.win_text and not self.win_text2 then
+      input:set_mouse_visible(true)
       self.won = true
       locked_state = nil
       system.save_run()
@@ -800,6 +805,13 @@ function Arena:quit()
         steam.userStats.storeStats()
       end
 
+      if self.mercenary_level >= 2 then
+        state.achievement_mercenaries_win = true
+        system.save_state()
+        steam.userStats.setAchievement('MERCENARIES_WIN')
+        steam.userStats.storeStats()
+      end
+
       local units = self.player:get_all_units()
       local all_units_level_2 = true
       for _, unit in ipairs(units) do
@@ -836,6 +848,7 @@ function Arena:quit()
     self:gain_gold()
     self.t:after(3, function()
       if self.level % 3 == 0 then
+        input:set_mouse_visible(true)
         self.arena_clear_text.dead = true
         trigger:tween(1, _G, {slow_amount = 0}, math.linear, function() slow_amount = 0 end, 'slow_amount')
         trigger:tween(4, camera, {x = gw/2, y = gh/2, r = 0}, math.linear, function() camera.x, camera.y, camera.r = gw/2, gh/2, 0 end)
@@ -1058,9 +1071,10 @@ end
 
 
 function Arena:gain_gold()
+  local merchant = self.player:get_unit'merchant'
   self.gold_gained = random:int(level_to_gold_gained[self.level][1], level_to_gold_gained[self.level][2])
-  self.interest = math.min(math.floor(gold/5), 5)
-  gold = gold + self.gold_gained + self.interest
+  self.interest = math.min(math.floor(gold/5), 5) + (merchant and math.floor(gold/10) or 0)
+  gold = gold + self.gold_gained + self.gold_picked_up + self.interest
 end
 
 
@@ -1074,30 +1088,30 @@ function Arena:transition()
     main:go_to('buy_screen', self.level, self.units, self.passives)
     t.t:after(0.1, function()
       t.text:set_text({
-        {text = '[nudge_down, bg]gold gained: ' .. tostring(self.gold_gained or 0), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+        {text = '[nudge_down, bg]gold gained: ' .. tostring(self.gold_gained or 0) .. ' + ' .. tostring(self.gold_picked_up or 0), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
         {text = '[wavy_lower, bg]interest: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
         {text = '[wavy_lower, bg]total: 0', font = pixul_font, alignment = 'center'}
       })
       _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       t.t:after(0.2, function()
         t.text:set_text({
-          {text = '[wavy_lower, bg]gold gained: ' .. tostring(self.gold_gained or 0), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+          {text = '[wavy_lower, bg]gold gained: ' .. tostring(self.gold_gained or 0) .. ' + ' .. tostring(self.gold_picked_up or 0), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
           {text = '[nudge_down, bg]interest: ' .. tostring(self.interest or 0), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
           {text = '[wavy_lower, bg]total: 0', font = pixul_font, alignment = 'center'}
         })
         _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
         t.t:after(0.2, function()
           t.text:set_text({
-            {text = '[wavy_lower, bg]gold gained: ' .. tostring(self.gold_gained or 0), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+            {text = '[wavy_lower, bg]gold gained: ' .. tostring(self.gold_gained or 0) .. ' + ' .. tostring(self.gold_picked_up or 0), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
             {text = '[wavy_lower, bg]interest: ' .. tostring(self.interest or 0), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-            {text = '[nudge_down, bg]total: ' .. tostring((self.gold_gained or 0) + (self.interest or 0)), font = pixul_font, alignment = 'center'}
+            {text = '[nudge_down, bg]total: ' .. tostring((self.gold_gained or 0) + (self.interest or 0) + (self.gold_picked_up or 0)), font = pixul_font, alignment = 'center'}
           })
           _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
         end)
       end)
     end)
   end, text = Text({
-    {text = '[wavy_lower, bg]gold gained: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+    {text = '[wavy_lower, bg]gold gained: 0 + 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
     {text = '[wavy_lower, bg]interest: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
     {text = '[wavy_lower, bg]total: 0', font = pixul_font, alignment = 'center'}
   }, global_text_tags)}

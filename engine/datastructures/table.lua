@@ -418,6 +418,16 @@ function table.first(t, n)
 end
 
 
+function table.first2(t, n)
+  if n == 1 then return {t[1]} end
+  local out = {}
+  for i = 1, (n or 1) do
+    table.push(out, t[i])
+  end
+  return out
+end
+
+
 -- Returns the last n values, same as tail
 -- t = {4, 3, 2, 1}
 -- table.last(t) -> 1

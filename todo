@@ -1,24 +1,24 @@
 Shop Update
   New units
-    Assists (2/4) - +25/50% assist buff effectiveness
-      Ringmaster (tier 4 assist, nuker)
-      Absorber (tier 2 assist, warrior)
-      Pardoner (tier 3 assist, mercenary)
-      Oracle (tier 1 assist)
-      Seraph (tier 2 assist, healer)
-    Mercenaries (3/3) - enemies occasionally drop pieces of gold
-      Treasure Hunter (tier 1 mercenary) 
-      Merchant (tier 2 mercenary)
-      Pardoner (tier 3 assist, mercenary)
-      Gambler (tier 4 mercenary, rogue)
+    * Mercenaries (2/4) - +10/20% chance for enemies to drop gold on death
+      * Treasure Hunter (tier 1 mercenary) - picking up gold releases 4 homing projectiles that deal X damage, Lv.3 - release 8 homing projectiles instead and they pierce twice
+      * Merchant (tier 2 mercenary) - gain +1 interest for every 10 gold, Lv.3 - your first item reroll is always free
+      * Usurer (tier 3 curser, mercenary, voider) - curses 3 nearby enemies indefinitely with debt, dealing X damage over time, Lv.3 - if the same enemy is cursed 3 times it takes 50X damage
+      * Gambler (tier 3 mercenary, sorcerer) - deal 2X damage to a single random enemy where X is how much gold you have, Lv.3 effect - 60%/40%/20% chance to cast the attack 2/3/4 times
+      * Thief (tier 4 mercenary, rogue) - throws a knife that deals 2X damage and chains 5 times, Lv.3 - if the knife crits it deals 10X damage, chains 10 times and grants 1 gold
 
   Shop changes
     Owned units highlighted in shop
     Fix highlight colors and highlight reserve
     Shop level up
-    Remove level 3 units from rotation
 
   Item changes
+    Sorcerer items
+    Mercenary items
+
+  Unit changes
+    Launcher - remove
+    Beastmaster
 
   QoL
     * Added sorcerer achievement
@@ -28,7 +28,7 @@ Shop Update
     * Added mouse follow control mode
     * The cursor is now invisible during waves, unless mouse follow mode is enabled
     Options menu from buy screen
-    Add visuals for defensive ouroboros, divine intervention, fairy buff
+    Add visuals for tank attack
 
   Balance
     * Decreased level 25 boss movement speed
@@ -38,34 +38,43 @@ Shop Update
     * Fixed a bug where enemy critters would sometimes be unkillable
     * Fixed a rare crash involving broken enemy critter state
     * Fixed text for the illusionist's Lv.3 effect going outside the screen
-    * Fixed a rare crash when hovering over your owned in the shop
+    * Fixed a crash when hovering over the Lich in the shop due to playing with a save before the sorcerer update
     * Fixed a crash when warden's force field would spawn on top of enemies
+    * Fixed a crash when a volcano would spawn on top of enemies
     * Fixed a crash when a pet would spawn on top of enemies
     * Fixed a bug where the maximum number of units would be wrong on certain conditions
+    * Fixed a crash when clicking too fast after unpausing the game
     Fix bug where quitting on level 2 arena goes back to level 1 shop
     Fix fullscreen with different resolutions that don't scale properly
     Fix enemies still spawning after arena clear (this happens with the extra enemy spawns that were blocked earlier)
+    https://i.imgur.com/ieVqYNI.png
+    https://i.imgur.com/3JCeFuZ.png
+    https://i.imgur.com/cvC1TBz.png
 
 Sacrifice Update
   New mechanics
     Sacrifice units to level items up
   New items
+    https://steamcommunity.com/app/915310/discussions/0/3106901028662504698/
   Reworked items
     Items shouldn't just be more powerful versions of other items
     Items should have drawbacks
     Items that apply to a position on the snake (a good middle step between applying them to individual units like in Underlords)
-  New units
-    Nocturnals/Darks/??? (3/6)
-      Shadowmancer
-      Necromancer
-      Demonologist
-      Demon
-      Lich
-      Lifestealer
-      Zombie
   QoL
     Current items visible on item selection screen
     Endless mode
+    Volume slider
+    Add visuals for defensive ouroboros, divine intervention, fairy buff
+
+Melee Update
+  New Units
+    Guardians - https://i.imgur.com/Ynu5Cdw.png
+    Assists (2/4) - 
+      Ringmaster (tier 4 assist, nuker) - +15% to all stats to adjacent units, Lv.3 effect - create a cross that deals AoE damage 5 times for 10 seconds
+      Absorber (tier 2 assist, warrior) - absorbs 50% damage from adjacent units, Lv.3 effect - absorbs 75% damage from adjacent units and gives the absorber +25% defense
+      Pardoner (tier 3 assist, mercenary) - 
+      Oracle (tier 1 assist) - +10% dodge chance to adjacent units, Lv.3 effect - +20% dodge chance to adjacent units
+      Seraph (tier 2 assist, healer) - periodically chooses 1 random unit and gives it +100% defense for 6 seconds, Lv.3 - choose 2 units instead
 
 
 ---
@@ -83,25 +92,36 @@ Hexblaster? - curser that consumes curses to deal damage
 Bench? - https://i.imgur.com/B1gNVKk.png
 Balance option for when there are more sets - https://i.imgur.com/JMynwbL.png
 Negative effect: colliding with yourself kills one of your units
-Go through this later https://i.imgur.com/4t7NA32.png <- lots of good improvements
+https://i.imgur.com/bxfvA7g.png
+
 
 Roguelite update:
   Technical improvements:
     Spawn tech: spawn every entity in a grid, before spawning check to see if grid position is clear, this will prevent any issues due to entities spawning inside one another
     Battle stats: DPS, damage taken, etc
     Key rebinding (for non-QWERTY keyboards)
-StS-like map with nodes, node types:
-  Arena
-  Elite
-  Boss
-  Map (map of bigger size than arena with fixed spawns)
-  Unit shop
-  Item shop
-  Text + reward
-  Training grounds (upgrade unit)
-  Tavern (heal units)
+  StS-like map with nodes, node types:
+    Arena
+    Elite
+    Boss
+    Map (map of bigger size than arena with fixed spawns)
+    Unit shop
+    Item shop
+    Text + reward
+    Training grounds (upgrade unit)
+    Tavern (heal units)
+  Units die permanently when they die (dead units can be stored in bench to be revived later)
+  Units can have items attached to them like in Underlords
+  Unit item ideas:
+    This unit's projectiles pierce/chain/fork/seek/split/stun/etc
+    This unit is a [class]
+  New stat system:
+    All stats are values from 1 to 10 (can be lower than 1 or higher than due to debuffs/buffs only) that represent consistent internal values between all units
+    i.e. 3 attack speed means the same internal attack rate value (like say 6 seconds) for the entire game
+    In general it's better if units don't have hidden internal multipliers on these stats, although sometimes that may be inevitable
+    Damage:
+      Crash - damage dealt when bumping into enemies
+      Projectile - damage dealt by projectiles
+      AoE - damage dealt in an area
+      DoT - damage dealt over time
 
-Units die permanently when they die (dead units can be stored in bench to be revived later)
-Units can have items attached to them like in Underlords
-Unit item ideas:
-  This unit's projectiles pierce/chain/fork/seek/split/stun/etc

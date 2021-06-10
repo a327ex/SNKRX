@@ -13,6 +13,7 @@ function shared_init()
     red = ColorRamp(Color'#e91d39', 0.025),
     purple = ColorRamp(Color'#8e559e', 0.025),
     blue2 = ColorRamp(Color'#4778ba', 0.025),
+    yellow2 = ColorRamp(Color'#f59f10', 0.025),
   }
   for name, color in pairs(colors) do
     _G[name] = color
@@ -494,6 +495,7 @@ global_text_tags = {
   red = TextTag{draw = function(c, i, text) graphics.set_color(red[0]) end},
   orange = TextTag{draw = function(c, i, text) graphics.set_color(orange[0]) end},
   yellow = TextTag{draw = function(c, i, text) graphics.set_color(yellow[0]) end},
+  yellow2 = TextTag{draw = function(c, i, text) graphics.set_color(yellow2[0]) end},
   green = TextTag{draw = function(c, i, text) graphics.set_color(green[0]) end},
   purple = TextTag{draw = function(c, i, text) graphics.set_color(purple[0]) end},
   blue = TextTag{draw = function(c, i, text) graphics.set_color(blue[0]) end},
@@ -501,6 +503,7 @@ global_text_tags = {
   bg = TextTag{draw = function(c, i, text) graphics.set_color(bg[0]) end},
   bg3 = TextTag{draw = function(c, i, text) graphics.set_color(bg[3]) end},
   bg10 = TextTag{draw = function(c, i, text) graphics.set_color(bg[10]) end},
+  bgm2 = TextTag{draw = function(c, i, text) graphics.set_color(bg[-2]) end},
   light_bg = TextTag{draw = function(c, i, text) graphics.set_color(bg[5]) end},
   fg = TextTag{draw = function(c, i, text) graphics.set_color(fg[0]) end},
   fgm5 = TextTag{draw = function(c, i, text) graphics.set_color(fg[-5]) end},
@@ -511,6 +514,8 @@ global_text_tags = {
   bluem5 = TextTag{draw = function(c, i, text) graphics.set_color(blue[-5]) end},
   blue25 = TextTag{draw = function(c, i, text) graphics.set_color(blue2[5]) end},
   blue2m5 = TextTag{draw = function(c, i, text) graphics.set_color(blue2[-5]) end},
+  yellow25 = TextTag{draw = function(c, i, text) graphics.set_color(yellow2[5]) end},
+  yellow2m5 = TextTag{draw = function(c, i, text) graphics.set_color(yellow2[-5]) end},
   redm5 = TextTag{draw = function(c, i, text) graphics.set_color(red[-5]) end},
   orangem5 = TextTag{draw = function(c, i, text) graphics.set_color(orange[-5]) end},
   purplem5 = TextTag{draw = function(c, i, text) graphics.set_color(purple[-5]) end},

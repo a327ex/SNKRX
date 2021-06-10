@@ -9,7 +9,6 @@ require 'media'
 
 
 function init()
-  print('Initializing engine...')
   shared_init()
 
   input:bind('move_left', {'a', 'left', 'dpleft', 'm1'})
@@ -18,8 +17,11 @@ function init()
   input:bind('move_down', {'s', 'down', 'dpdown'})
   input:bind('enter', {'space', 'return', 'fleft', 'fdown', 'fright'})
 
-  print('Loading sounds...')
   local s = {tags = {sfx}}
+  gambler1 = Sound('Collect 5.ogg', s)
+  usurer1 = Sound('Shadow Punch 2.ogg', s)
+  gold1 = Sound('Collect 5.ogg', s)
+  gold2 = Sound('Coins - Gears - Slot.ogg', s)
   psychic1 = Sound('Magical Impact 13.ogg', s)
   fire1 = Sound('Fire bolt 3.ogg', s)
   fire2 = Sound('Fire bolt 5.ogg', s)
@@ -111,7 +113,6 @@ function init()
   rogue_crit1 = Sound('Dagger Stab (Flesh) 4.ogg', s)
   rogue_crit2 = Sound('Sword hits another sword 6.ogg', s)
 
-  print('Loading songs...')
   song1 = Sound('Kubbi - Ember - 01 Pathfinder.ogg', {tags = {music}})
   song2 = Sound('Kubbi - Ember - 02 Ember.ogg', {tags = {music}})
   song3 = Sound('Kubbi - Ember - 03 Firelight.ogg', {tags = {music}})
@@ -119,7 +120,6 @@ function init()
   song5 = Sound('Kubbi - Ember - 05 Compass.ogg', {tags = {music}})
   death_song = Sound('Kubbi - Ember - 09 Formed by Glaciers.ogg', {tags = {music}})
 
-  print('Loading images...')
   lock_image = Image('lock')
   speed_booster_elite = Image('speed_booster_elite')
   exploder_elite = Image('exploder_elite')
@@ -140,6 +140,7 @@ function init()
   swarmer = Image('swarmer')
   voider = Image('voider')
   sorcerer = Image('sorcerer')
+  mercenary = Image('mercenary')
   ouroboros_technique_r = Image('ouroboros_technique_r')
   ouroboros_technique_l = Image('ouroboros_technique_l')
   wall_echo = Image('wall_echo')
@@ -185,7 +186,6 @@ function init()
   star = Image('star')
   arrow = Image('arrow')
 
-  print('Initializing game...')
   class_colors = {
     ['warrior'] = yellow[0],
     ['ranger'] = green[0],
@@ -201,6 +201,7 @@ function init()
     ['swarmer'] = orange[0],
     ['voider'] = purple[0],
     ['sorcerer'] = blue2[0],
+    ['mercenary'] = yellow2[0],
   }
 
   class_color_strings = {
@@ -218,6 +219,7 @@ function init()
     ['swarmer'] = 'orange',
     ['voider'] = 'purple',
     ['sorcerer'] = 'blue2',
+    ['mercenary'] = 'yellow2',
   }
 
   character_names = {
@@ -270,6 +272,11 @@ function init()
     ['vulcanist'] = 'Vulcanist',
     ['warden'] = 'Warden',
     ['psychic'] = 'Psychic',
+    ['treasure_hunter'] = 'Treasure Hunter',
+    ['merchant'] = 'Merchant',
+    ['usurer'] = 'Usurer',
+    ['gambler'] = 'Gambler',
+    ['thief'] = 'Thief',
   }
 
   character_colors = {
@@ -322,6 +329,11 @@ function init()
     ['vulcanist'] = red[0],
     ['warden'] = yellow[0],
     ['psychic'] = fg[0],
+    ['treasure_hunter'] = yellow2[0],
+    ['merchant'] = yellow2[0],
+    ['usurer'] = purple[0],
+    ['gambler'] = yellow2[0],
+    ['thief'] = red[0],
   }
 
   character_color_strings = {
@@ -374,6 +386,11 @@ function init()
     ['vulcanist'] = 'red',
     ['warden'] = 'yellow',
     ['psychic'] = 'fg',
+    ['treasure_hunter'] = 'yellow2',
+    ['merchant'] = 'yellow2',
+    ['usurer'] = 'purple',
+    ['gambler'] = 'yellow2',
+    ['thief'] = 'red',
   }
 
   character_classes = {
@@ -426,6 +443,11 @@ function init()
     ['vulcanist'] = {'sorcerer', 'nuker'},
     ['warden'] = {'sorcerer', 'forcer'},
     ['psychic'] = {'sorcerer', 'psyker'},
+    ['treasure_hunter'] = {'mercenary'},
+    ['merchant'] = {'mercenary'},
+    ['usurer'] = {'curser', 'mercenary', 'voider'},
+    ['gambler'] = {'mercenary', 'sorcerer'},
+    ['thief'] = {'rogue', 'mercenary'},
   }
 
   character_class_strings = {
@@ -478,6 +500,11 @@ function init()
     ['vulcanist'] = '[blue2]Sorcerer, [red]Nuker',
     ['warden'] = '[blue2]Sorcerer, [yellow]Forcer',
     ['psychic'] = '[blue2]Sorcerer, [fg]Psyker',
+    ['treasure_hunter'] = '[yellow2]Mercenary',
+    ['merchant'] = '[yellow2]Mercenary',
+    ['usurer'] = '[purple]Curser, [yellow2]Mercenary, [purple]Curser',
+    ['gambler'] = '[yellow2]Mercenary, [blue2]Sorcerer',
+    ['thief'] = '[red]Rogue, [yellow2]Mercenary',
   }
 
   get_character_stat_string = function(character, level)
@@ -547,6 +574,11 @@ function init()
     ['vulcanist'] = function(lvl) return '[fg]creates a volcano that explodes the nearby area [yellow]4[fg] times, dealing [yellow]' .. get_character_stat('vulcanist', lvl, 'dmg') .. ' AoE [fg]damage' end,
     ['warden'] = function(lvl) return '[fg]creates a force field around a random unit that prevents enemies from entering' end,
     ['psychic'] = function(lvl) return '[fg]creates a small area that deals [yellow]' .. get_character_stat('psychic', lvl, 'dmg') .. ' AoE[fg] damage' end,
+    ['treasure_hunter'] = function(lvl) return '[fg]picking up gold releases [yellow]4[fg] homing projectiles that each deal [yellow]' .. get_character_stat('treasure_hunter', lvl, 'dmg') .. ' [fg]damage' end,
+    ['merchant'] = function(lvl) return '[fg]gain [yellow]+1[fg] interest for every [yellow]10[fg] gold' end,
+    ['usurer'] = function(lvl) return '[fg]curses [yellow]3[fg] nearby enemies indefinitely with [yellow]debt[fg], dealing [yellow]' .. get_character_stat('usurer', lvl, 'dmg') .. '[fg] damage per second' end,
+    ['gambler'] = function(lvl) return '[fg]deal [yellow]2X[fg] damage to a single random enemy where X is how much gold you have' end,
+    ['thief'] = function(lvl) return '[fg]throws a knife that deals [yellow]' .. 2*get_character_stat('thief', lvl, 'dmg') .. '[fg] damage and chains [yellow]5[fg] times' end,
   }
 
   character_effect_names = {
@@ -598,7 +630,12 @@ function init()
     ['silencer'] = '[blue2]Arcane Curse',
     ['vulcanist'] = '[red]Lava Burst',
     ['warden'] = '[yellow]Magnetic Field',
-    ['psychic'] = '[fg]Mental Strike'
+    ['psychic'] = '[fg]Mental Strike',
+    ['treasure_hunter'] = '[yellow2]Golden Bolts',
+    ['merchant'] = '[yellow2]Item Shop',
+    ['usurer'] = '[purple]Bankruptcy',
+    ['gambler'] = '[yellow2]Multicast',
+    ['thief'] = '[red]Ultrakill',
   }
 
   character_effect_names_gray = {
@@ -650,7 +687,12 @@ function init()
     ['silencer'] = '[light_bg]Arcane Curse',
     ['vulcanist'] = '[light_bg]Lava Burst',
     ['warden'] = '[light_bg]Magnetic Field',
-    ['psychic'] = '[light_bg]Mental Strike'
+    ['psychic'] = '[light_bg]Mental Strike',
+    ['treasure_hunter'] = '[light_bg]Golden Bolts',
+    ['merchant'] = '[light_bg]Item Shop',
+    ['usurer'] = '[light_bg]Bankruptcy',
+    ['gambler'] = '[light_bg]Multicast',
+    ['thief'] = '[light_bg]Ultrakill',
   }
 
   character_effect_descriptions = {
@@ -703,6 +745,11 @@ function init()
     ['vulcanist'] = function() return '[fg]the number and speed of explosions is [yellow]doubled[fg]' end,
     ['warden'] = function() return '[fg]creates the force field around [yellow]2[fg] units' end,
     ['psychic'] = function() return '[fg]the attack can happen from any distance and repeats once' end,
+    ['treasure_hunter'] = function() return '[fg]release [yellow]8[fg] homing projectiles instead and they pierce twice' end,
+    ['merchant'] = function() return '[fg]your first item reroll is always free' end,
+    ['usurer'] = function() return '[fg]if the same enemy is cursed [yellow]3[fg] times it takes [yellow]' .. 10*get_character_stat('usurer', 3, 'dmg') .. '[fg] damage' end,
+    ['gambler'] = function() return '[yellow]60/40/20%[fg] chance to cast the attack [yellow]2/3/4[fg] times' end,
+    ['thief'] = function() return '[fg]if the knife crits it deals [yellow]' .. 10*get_character_stat('thief', 3, 'dmg') .. '[fg] damage, chains [yellow]10[fg] times and grants [yellow]1[fg] gold' end,
   }
 
   character_effect_descriptions_gray = {
@@ -755,6 +802,11 @@ function init()
     ['vulcanist'] = function() return '[light_bg]the number and speed of explosions is doubled' end,
     ['warden'] = function() return '[light_bg]creates the force field around 2 units' end,
     ['psychic'] = function() return '[light_bg]the attack can happen from any distance and repeats once' end,
+    ['treasure_hunter'] = function() return '[light_bg]release 8 homing projectiles instead and they pierce twice' end,
+    ['merchant'] = function() return '[light_bg]your first item reroll is always free' end,
+    ['usurer'] = function() return '[light_bg]if the same enemy is cursed 3 times it takes ' .. 10*get_character_stat('usurer', 3, 'dmg') .. ' damage' end,
+    ['gambler'] = function() return '[light_bg]60/40/20% chance to cast the attack 2/3/4 times' end,
+    ['thief'] = function() return '[light_bg]if the coin crits it deals ' .. 10*get_character_stat('thief', 3, 'dmg') .. ' damage, chains 10 times and grants 1 gold' end,
   }
 
   character_stats = {
@@ -807,6 +859,11 @@ function init()
     ['vulcanist'] = function(lvl) return get_character_stat_string('vulcanist', lvl) end,
     ['warden'] = function(lvl) return get_character_stat_string('warden', lvl) end,
     ['psychic'] = function(lvl) return get_character_stat_string('psychic', lvl) end,
+    ['treasure_hunter'] = function(lvl) return get_character_stat_string('treasure_hunter', lvl) end,
+    ['merchant'] = function(lvl) return get_character_stat_string('merchant', lvl) end,
+    ['usurer'] = function(lvl) return get_character_stat_string('usurer', lvl) end,
+    ['gambler'] = function(lvl) return get_character_stat_string('gambler', lvl) end,
+    ['thief'] = function(lvl) return get_character_stat_string('thief', lvl) end,
   }
 
   class_stat_multipliers = {
@@ -824,6 +881,7 @@ function init()
     ['swarmer'] = {hp = 1.2, dmg = 1, aspd = 1.25, area_dmg = 1, area_size = 1, def = 0.75, mvspd = 0.75},
     ['voider'] = {hp = 0.75, dmg = 1.3, aspd = 1, area_dmg = 0.8, area_size = 0.75, def = 0.6, mvspd = 0.8},
     ['sorcerer'] = {hp = 0.8, dmg = 1.3, aspd = 1, area_dmg = 1.2, area_size = 1, def = 0.8, mvspd = 1},
+    ['mercenary'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 1},
     ['seeker'] = {hp = 0.5, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 0.3},
     ['mini_boss'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 0.3},
     ['enemy_critter'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 0.5},
@@ -862,17 +920,18 @@ function init()
     ['sorcerer'] = function(lvl) 
       return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4[' .. ylb3(lvl) .. ']/6 [fg]- sorcerers repeat their attacks once every [' .. ylb1(lvl) .. ']4/[' .. ylb2(lvl) .. ']3/[' .. ylb3(lvl) .. ']2[fg] attacks'
     end,
+    ['mercenary'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+10%[' .. ylb2(lvl) .. ']/+20% [fg]chance for enemies to drop gold on death' end,
   }
 
   tier_to_characters = {
-    [1] = {'vagrant', 'swordsman', 'magician', 'archer', 'scout', 'cleric', 'arcanist'},
-    [2] = {'wizard', 'saboteur', 'sage', 'squire', 'dual_gunner', 'hunter', 'chronomancer', 'barbarian', 'cryomancer', 'beastmaster', 'launcher', 'jester', 'carver', 'psychic', 'witch', 'silencer', 'outlaw'},
-    [3] = {'elementor', 'stormweaver', 'spellblade', 'psykeeper', 'engineer', 'juggernaut', 'pyromancer', 'host', 'assassin', 'bane', 'barrager', 'infestor', 'flagellant', 'illusionist'},
-    [4] = {'priest', 'highlander', 'psykino', 'fairy', 'blade', 'plague_doctor', 'cannoneer', 'vulcanist', 'warden', 'corruptor'},
+    [1] = {'vagrant', 'swordsman', 'magician', 'archer', 'scout', 'cleric', 'arcanist', 'treasure_hunter'},
+    [2] = {'wizard', 'saboteur', 'sage', 'squire', 'dual_gunner', 'hunter', 'chronomancer', 'barbarian', 'cryomancer', 'beastmaster', 'launcher', 'jester', 'carver', 'psychic', 'witch', 'silencer', 'outlaw', 'merchant'},
+    [3] = {'elementor', 'stormweaver', 'spellblade', 'psykeeper', 'engineer', 'juggernaut', 'pyromancer', 'host', 'assassin', 'bane', 'barrager', 'infestor', 'flagellant', 'illusionist', 'usurer', 'gambler'},
+    [4] = {'priest', 'highlander', 'psykino', 'fairy', 'blade', 'plague_doctor', 'cannoneer', 'vulcanist', 'warden', 'corruptor', 'thief'},
   }
 
-  non_attacking_characters = {'cleric', 'stormweaver', 'squire', 'chronomancer', 'sage', 'psykeeper', 'bane', 'carver', 'fairy', 'priest', 'flagellant'}
-  non_cooldown_characters = {'squire', 'chronomancer', 'psykeeper'}
+  non_attacking_characters = {'cleric', 'stormweaver', 'squire', 'chronomancer', 'sage', 'psykeeper', 'bane', 'carver', 'fairy', 'priest', 'flagellant', 'merchant', 'treasure_hunter'}
+  non_cooldown_characters = {'squire', 'chronomancer', 'psykeeper', 'merchant', 'treasure_hunter'}
 
   character_tiers = {
     ['vagrant'] = 1,
@@ -881,7 +940,6 @@ function init()
     ['archer'] = 1,
     ['scout'] = 1,
     ['cleric'] = 1,
-    ['arcanist'] = 1,
     ['outlaw'] = 2,
     ['blade'] = 4,
     ['elementor'] = 3,
@@ -918,12 +976,18 @@ function init()
     ['priest'] = 4,
     ['infestor'] = 3,
     ['flagellant'] = 3,
-    ['psychic'] = 2,
+    ['arcanist'] = 1,
+    ['illusionist'] = 3,
     ['witch'] = 2,
     ['silencer'] = 2,
-    ['illusionist'] = 3,
-    ['warden'] = 4,
     ['vulcanist'] = 4,
+    ['warden'] = 4,
+    ['psychic'] = 2,
+    ['treasure_hunter'] = 1,
+    ['merchant'] = 2,
+    ['usurer'] = 3,
+    ['gambler'] = 3,
+    ['thief'] = 4,
   }
 
   get_number_of_units_per_class = function(units)
@@ -941,6 +1005,7 @@ function init()
     local swarmers = 0
     local voiders = 0
     local sorcerers = 0
+    local mercenaries = 0
     for _, unit in ipairs(units) do
       for _, unit_class in ipairs(character_classes[unit.character]) do
         if unit_class == 'ranger' then rangers = rangers + 1 end
@@ -957,10 +1022,11 @@ function init()
         if unit_class == 'swarmer' then swarmers = swarmers + 1 end
         if unit_class == 'voider' then voiders = voiders + 1 end
         if unit_class == 'sorcerer' then sorcerers = sorcerers + 1 end
+        if unit_class == 'mercenary' then mercenaries = mercenaries + 1 end
       end
     end
     return {ranger = rangers, warrior = warriors, healer = healers, mage = mages, nuker = nukers, conjurer = conjurers, rogue = rogues,
-      enchanter = enchanters, psyker = psykers, curser = cursers, forcer = forcers, swarmer = swarmers, voider = voiders, sorcerer = sorcerers}
+      enchanter = enchanters, psyker = psykers, curser = cursers, forcer = forcers, swarmer = swarmers, voider = voiders, sorcerer = sorcerers, mercenary = mercenaries}
   end
 
   get_class_levels = function(units)
@@ -970,7 +1036,7 @@ function init()
         if number_of_units >= 6 then return 2
         elseif number_of_units >= 3 then return 1
         else return 0 end
-      elseif class == 'healer' or class == 'conjurer' or class == 'enchanter' or class == 'psyker' or class == 'curser' or class == 'forcer' or class == 'swarmer' or class == 'voider' then
+      elseif class == 'healer' or class == 'conjurer' or class == 'enchanter' or class == 'psyker' or class == 'curser' or class == 'forcer' or class == 'swarmer' or class == 'voider' or class == 'mercenary' then
         if number_of_units >= 4 then return 2
         elseif number_of_units >= 2 then return 1
         else return 0 end
@@ -996,6 +1062,7 @@ function init()
       swarmer = units_to_class_level(units_per_class.swarmer, 'swarmer'),
       voider = units_to_class_level(units_per_class.voider, 'voider'),
       sorcerer = units_to_class_level(units_per_class.sorcerer, 'sorcerer'),
+      mercenary = units_to_class_level(units_per_class.mercenary, 'mercenary'),
     }
   end
 
@@ -1022,6 +1089,7 @@ function init()
     ['swarmer'] = function(units) return 2, 4, nil, get_number_of_units_per_class(units).swarmer end,
     ['voider'] = function(units) return 2, 4, nil, get_number_of_units_per_class(units).voider end,
     ['sorcerer'] = function(units) return 2, 4, 6, get_number_of_units_per_class(units).sorcerer end,
+    ['mercenary'] = function(units) return 2, 4, nil, get_number_of_units_per_class(units).mercenary end,
   }
 
   passive_names = {
@@ -1323,22 +1391,16 @@ function init()
   end
   -- main_song_instance = _G[random:table{'song1', 'song2', 'song3', 'song4', 'song5'}]:play{volume = 0.5}
 
-
   main:add(BuyScreen'buy_screen')
   main:go_to('buy_screen', run.level or 0, run.units or {}, passives)
   -- main:go_to('buy_screen', 7, run.units or {}, {'unleash'})
   
   --[[
   main:add(Arena'arena')
-  main:go_to('arena', 17, {
-    {character = 'arcanist', level = 2},
-    {character = 'silencer', level = 2},
-    {character = 'warden', level = 3},
-    {character = 'chronomancer', level = 1},
-    {character = 'witch', level = 3},
-    {character = 'illusionist', level = 3},
-    {character = 'psychic', level = 2},
-    {character = 'vulcanist', level = 3},
+  main:go_to('arena', 13, {
+    {character = 'thief', level = 3},
+    {character = 'scout', level = 1},
+    {character = 'beastmaster', level = 1},
   }, passives)
   ]]--
 
