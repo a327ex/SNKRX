@@ -389,7 +389,7 @@ function Arena:update(dt)
           ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
           TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = fg[0], transition_action = function()
             slow_amount = 1
-            gold = 2
+            gold = 3
             passives = {}
             main_song_instance:stop()
             run_passive_pool_by_tiers = {
@@ -567,7 +567,7 @@ function Arena:update(dt)
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = fg[0], transition_action = function()
         slow_amount = 1
-        gold = 2
+        gold = 3
         passives = {}
         main_song_instance:stop()
         run_passive_pool_by_tiers = {
@@ -667,31 +667,6 @@ function Arena:quit()
           self.credits_button = Button{group = self.ui, x = gw - 40, y = gh - 44, force_update = true, button_text = 'credits', fg_color = 'bg10', bg_color = 'bg', action = function()
             self:create_credits()
           end}
-          --[[
-          self.restart_button = Button{group = self.ui, x = gw - 40, y = gh - 68, force_update = true, button_text = 'restart', fg_color = 'bg10', bg_color = 'bg', action = function(b)
-            self.transitioning = true
-            ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-            ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-            ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-            TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = fg[0], transition_action = function()
-              slow_amount = 1
-              gold = 2
-              passives = {}
-              main_song_instance:stop()
-              run_passive_pool_by_tiers = {
-                [1] = { 'wall_echo', 'wall_rider', 'centipede', 'temporal_chains', 'amplify', 'amplify_x', 'ballista', 'ballista_x', 'blunt_arrow', 'berserking', 'unwavering_stance', 'assassination', 'unleash', 'blessing',
-                  'hex_master', 'force_push', 'spawning_pool'}, 
-                [2] = {'ouroboros_technique_r', 'ouroboros_technique_l', 'intimidation', 'vulnerability', 'resonance', 'point_blank', 'longshot', 'explosive_arrow', 'chronomancy', 'awakening', 'ultimatum', 'echo_barrage', 
-                  'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
-                [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
-              }
-              max_units = 7 + current_new_game_plus
-              main:add(BuyScreen'buy_screen')
-              system.save_run()
-              main:go_to('buy_screen', 0, {}, passives)
-            end, text = Text({{text = '[wavy, bg]restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
-          end}
-          ]]--
         end
       end)
 
@@ -991,7 +966,7 @@ function Arena:die()
         ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
         TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = fg[0], transition_action = function()
           slow_amount = 1
-          gold = 2
+          gold = 3
           passives = {}
           main_song_instance:stop()
           run_passive_pool_by_tiers = {

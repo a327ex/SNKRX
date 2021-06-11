@@ -138,7 +138,7 @@ function BuyScreen:on_enter(from, level, units, passives, shop_level, shop_xp)
     ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = fg[0], transition_action = function()
       slow_amount = 1
-      gold = 2
+      gold = 3
       passives = {}
       main_song_instance:stop()
       run_passive_pool_by_tiers = {
@@ -522,7 +522,7 @@ function RestartButton:update(dt)
     ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = fg[0], transition_action = function()
       slow_amount = 1
-      gold = 2
+      gold = 3
       passives = {}
       main_song_instance:stop()
       run_passive_pool_by_tiers = {

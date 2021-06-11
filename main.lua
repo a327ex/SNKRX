@@ -1465,8 +1465,14 @@ function init()
   
   --[[
   main:add(Arena'arena')
-  main:go_to('arena', 4, {
-    {character = 'plague_doctor', level = 3},
+  main:go_to('arena', 21, {
+    {character = 'plague_doctor', level = 2},
+    {character = 'swordsman', level = 3},
+    {character = 'barbarian', level = 2},
+    {character = 'outlaw', level = 2},
+    {character = 'warden', level = 2},
+    {character = 'juggernaut', level = 2},
+    {character = 'blade', level = 2},
   }, passives)
   ]]--
 
