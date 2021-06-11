@@ -502,7 +502,7 @@ function init()
     ['psychic'] = '[blue2]Sorcerer, [fg]Psyker',
     ['miner'] = '[yellow2]Mercenary',
     ['merchant'] = '[yellow2]Mercenary',
-    ['usurer'] = '[purple]Curser, [yellow2]Mercenary, [purple]Curser',
+    ['usurer'] = '[purple]Curser, [yellow2]Mercenary, [purple]Voider',
     ['gambler'] = '[yellow2]Mercenary, [blue2]Sorcerer',
     ['thief'] = '[red]Rogue, [yellow2]Mercenary',
   }
@@ -569,7 +569,7 @@ function init()
     ['flagellant'] = function(lvl) return '[fg]deals [yellow]' .. 2*get_character_stat('flagellant', lvl, 'dmg') .. '[fg] damage to self and grants [yellow]+4%[fg] damage to all allies per cast' end,
     ['arcanist'] = function(lvl) return '[fg]launches a slow moving orb that launches projectiles, each dealing [yellow]' .. get_character_stat('arcanist', lvl, 'dmg') .. '[fg] damage' end,
     ['illusionist'] = function(lvl) return '[fg]launches a projectile that deals [yellow]' .. get_character_stat('illusionist', lvl, 'dmg') .. '[fg] damage and creates copies that do the same' end,
-    ['witch'] = function(lvl) return '[fg]creates an area that ricochets around the arena and deals [yellow]' .. get_character_stat('witch', lvl, 'dmg') .. '[fg] damage per second' end,
+    ['witch'] = function(lvl) return '[fg]creates an area that ricochets and deals [yellow]' .. get_character_stat('witch', lvl, 'dmg') .. '[fg] damage per second' end,
     ['silencer'] = function(lvl) return '[fg]curses [yellow]5[fg] nearby enemies for [yellow]6[fg] seconds, preventing them from using special attacks' end,
     ['vulcanist'] = function(lvl) return '[fg]creates a volcano that explodes the nearby area [yellow]4[fg] times, dealing [yellow]' .. get_character_stat('vulcanist', lvl, 'dmg') .. ' AoE [fg]damage' end,
     ['warden'] = function(lvl) return '[fg]creates a force field around a random unit that prevents enemies from entering' end,
@@ -740,7 +740,7 @@ function init()
     ['flagellant'] = function() return '[fg]deals [yellow]' .. 2*get_character_stat('flagellant', 3, 'dmg') .. '[fg] damage to all allies and grants [yellow]+12%[fg] damage to all allies per cast' end,
     ['arcanist'] = function() return '[yellow]+50%[fg] attack speed for the orb and [yellow]2[fg] projectiles are released per cast' end,
     ['illusionist'] = function() return '[yellow]doubles[fg] the number of copies created and they release [yellow]12[fg] projectiles on death' end,
-    ['witch'] = function() return '[fg]the area periodically releases projectiles, each dealing [yellow]' .. get_character_stat('witch', 3, 'dmg') .. '[fg] damage and chaining once' end,
+    ['witch'] = function() return '[fg]the area releases projectiles, each dealing [yellow]' .. get_character_stat('witch', 3, 'dmg') .. '[fg] damage and chaining once' end,
     ['silencer'] = function() return '[fg]the curse also deals [yellow]' .. get_character_stat('silencer', 3, 'dmg') .. '[fg] damage per second' end,
     ['vulcanist'] = function() return '[fg]the number and speed of explosions is [yellow]doubled[fg]' end,
     ['warden'] = function() return '[fg]creates the force field around [yellow]2[fg] units' end,
@@ -806,7 +806,7 @@ function init()
     ['merchant'] = function() return '[light_bg]your first item reroll is always free' end,
     ['usurer'] = function() return '[light_bg]if the same enemy is cursed 3 times it takes ' .. 10*get_character_stat('usurer', 3, 'dmg') .. ' damage' end,
     ['gambler'] = function() return '[light_bg]60/40/20% chance to cast the attack 2/3/4 times' end,
-    ['thief'] = function() return '[light_bg]if the coin crits it deals ' .. 10*get_character_stat('thief', 3, 'dmg') .. ' damage, chains 10 times and grants 1 gold' end,
+    ['thief'] = function() return '[light_bg]if the knife crits it deals ' .. 10*get_character_stat('thief', 3, 'dmg') .. ' damage, chains 10 times and grants 1 gold' end,
   }
 
   character_stats = {
@@ -925,7 +925,7 @@ function init()
 
   tier_to_characters = {
     [1] = {'vagrant', 'swordsman', 'magician', 'archer', 'scout', 'cleric', 'arcanist', 'miner'},
-    [2] = {'wizard', 'saboteur', 'sage', 'squire', 'dual_gunner', 'hunter', 'chronomancer', 'barbarian', 'cryomancer', 'beastmaster', 'launcher', 'jester', 'carver', 'psychic', 'witch', 'silencer', 'outlaw', 'merchant'},
+    [2] = {'wizard', 'saboteur', 'sage', 'squire', 'dual_gunner', 'hunter', 'chronomancer', 'barbarian', 'cryomancer', 'beastmaster', 'jester', 'carver', 'psychic', 'witch', 'silencer', 'outlaw', 'merchant'},
     [3] = {'elementor', 'stormweaver', 'spellblade', 'psykeeper', 'engineer', 'juggernaut', 'pyromancer', 'host', 'assassin', 'bane', 'barrager', 'infestor', 'flagellant', 'illusionist', 'usurer', 'gambler'},
     [4] = {'priest', 'highlander', 'psykino', 'fairy', 'blade', 'plague_doctor', 'cannoneer', 'vulcanist', 'warden', 'corruptor', 'thief'},
   }
@@ -963,7 +963,7 @@ function init()
     ['pyromancer'] = 3,
     ['corruptor'] = 4,
     ['beastmaster'] = 2,
-    ['launcher'] = 2,
+    -- ['launcher'] = 2,
     ['jester'] = 2,
     ['assassin'] = 3,
     ['host'] = 3,
@@ -1156,9 +1156,9 @@ function init()
     ['blunt_arrow'] = '[fg]all arrows fired by rangers have a [yellow]20%[fg] chance to knockback',
     ['explosive_arrow'] = '[fg]arrows fired by rangers have a [yellow]30%[fg] chance to explode, dealing [yellow]20%[fg] AoE damage',
     ['divine_machine_arrow'] = '[fg]arrows fired by rangers have a [yellow]40%[fg] chance to seek enemies and pierce [yellow]4[fg] times',
-    ['chronomancy'] = '[fg]all mages cast their spells [yellow]25%[fg] faster',
-    ['awakening'] = '[fg]every round [yellow]1[fg] mage is granted [yellow]+100%[fg] attack speed and damage for that round',
-    ['divine_punishment'] = '[fg]periodically deal [yellow]10X[fg] damage to all enemies, where [yellow]X[fg] is how many mages you have',
+    ['chronomancy'] = '[fg]all mages and sorcerers cast their spells [yellow]25%[fg] faster',
+    ['awakening'] = '[yellow]+100%[fg] aspd and damage to [yellow]1[fg] mage or sorcerer every round for that round',
+    ['divine_punishment'] = '[fg]repeatedly deal damage to all enemies based on how many mages or sorcerers you have',
     ['berserking'] = '[fg]all warriors have up to [yellow]+50%[fg] attack speed based on missing HP',
     ['unwavering_stance'] = '[fg]all warriors gain [yellow]+5%[fg] defense every [yellow]5[fg] seconds',
     ['ultimatum'] = '[fg]projectiles that chain gain [yellow]+25%[fg] damage with each chain',
@@ -1270,15 +1270,15 @@ function init()
     [4] = {3, 5},
     [5] = {4, 7},
     [6] = {6, 10},
-    [7] = {10, 14}, 
-    [8] = {12, 16},
-    [9] = {14, 18},
-    [10] = {10, 14},
-    [11] = {12, 16},
-    [12] = {20, 24},
-    [13] = {12, 16},
-    [14] = {14, 18},
-    [15] = {16, 20},
+    [7] = {8, 10}, 
+    [8] = {10, 12},
+    [9] = {12, 15},
+    [10] = {10, 13},
+    [11] = {12, 15},
+    [12] = {18, 20},
+    [13] = {10, 14},
+    [14] = {12, 16},
+    [15] = {14, 18},
     [16] = {12, 12},
     [17] = {12, 12},
     [18] = {20, 24}, 
@@ -1372,9 +1372,11 @@ function init()
     elseif lvl == 2 then
       return {50, 30, 15, 5}
     elseif lvl == 3 then
-      return {30, 40, 20, 10}
+      return {25, 45, 20, 10}
     elseif lvl == 4 then
-      return {20, 25, 35, 20}
+      return {10, 25, 45, 20}
+    elseif lvl == 5 then
+      return {5, 15, 30, 50}
     end
   end
 
@@ -1401,9 +1403,9 @@ function init()
       end
     elseif lvl == 3 then
       if tier == 1 then
-        return 30
+        return 25
       elseif tier == 2 then
-        return 40
+        return 45
       elseif tier == 3 then
         return 20
       elseif tier == 4 then
@@ -1411,23 +1413,23 @@ function init()
       end
     elseif lvl == 4 then
       if tier == 1 then
-        return 20
+        return 10
       elseif tier == 2 then
         return 25
       elseif tier == 3 then
-        return 35
+        return 45
       elseif tier == 4 then
         return 20
       end
     elseif lvl == 5 then
       if tier == 1 then
-        return 10
+        return 5
       elseif tier == 2 then
-        return 20
+        return 15
       elseif tier == 3 then
-        return 25
+        return 30
       elseif tier == 4 then
-        return 40
+        return 50
       end
     end
   end
@@ -1440,7 +1442,7 @@ function init()
       'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
     [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
   }
-  gold = run.gold or 2
+  gold = run.gold or 3
   passives = run.passives or {}
   locked_state = run.locked_state
   steam.userStats.requestCurrentStats()
@@ -1463,10 +1465,8 @@ function init()
   
   --[[
   main:add(Arena'arena')
-  main:go_to('arena', 13, {
-    {character = 'thief', level = 3},
-    {character = 'scout', level = 1},
-    {character = 'beastmaster', level = 1},
+  main:go_to('arena', 4, {
+    {character = 'plague_doctor', level = 3},
   }, passives)
   ]]--
 

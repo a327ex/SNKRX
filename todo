@@ -16,27 +16,27 @@ Shop Update
       * Hook probabilities into reroll
 
   Item changes
-    Sorcerer items
-    Mercenary items
+    * Sorcerer items
 
   Unit changes
-    Launcher - remove
-    Beastmaster
+    * Launcher - removed
+    * Jester - changed to 4 projectiles
+
+  Misc additions and changes
+    * Added sorcerer achievement
+    * Added mercenary achievement
 
   QoL
-    * Added sorcerer achievement
     * Removed restart button from end screen
     * First item reroll is now free
     * Gold is given right after the round ends in the arena rather than on the shop for easier item rerolls
     * Added mouse follow control mode
     * The cursor is now invisible during waves, unless mouse follow mode is enabled
-    Options menu from buy screen
-    Add visuals for tank attack
-    Owned units highlighted in shop
-    Fix highlight colors and highlight reserve
+    * Added visuals for tank attack
 
   Balance
     * Decreased level 25 boss movement speed
+    * Change headbutters so they're less likely to kill multiple units at once
 
   Bug fixes
     * Fixed a crash when too many illusions would be spawned in short succession
@@ -49,12 +49,9 @@ Shop Update
     * Fixed a crash when a pet would spawn on top of enemies
     * Fixed a bug where the maximum number of units would be wrong on certain conditions
     * Fixed a crash when clicking too fast after unpausing the game
-    Fix bug where quitting on level 2 arena goes back to level 1 shop
-    Fix fullscreen with different resolutions that don't scale properly
-    Fix enemies still spawning after arena clear (this happens with the extra enemy spawns that were blocked earlier)
-    https://i.imgur.com/ieVqYNI.png
-    https://i.imgur.com/3JCeFuZ.png
-    https://i.imgur.com/cvC1TBz.png
+    * Fixed unit highlight when hovering over classes
+    * Fixed Lv.3 plague doctor moving all his created areas with him
+    * Fixed a bug where quitting on level 2 would go back to level 1
 
 Sacrifice Update
   New mechanics
@@ -70,6 +67,12 @@ Sacrifice Update
     Endless mode
     Volume slider
     Add visuals for defensive ouroboros, divine intervention, fairy buff
+    Options menu from buy screen
+  Bug fixes
+    Fix fullscreen with different resolutions that don't scale properly
+    Fix enemies still spawning after arena clear (this happens with the extra enemy spawns that were blocked earlier)
+    https://i.imgur.com/ieVqYNI.png
+    https://i.imgur.com/3JCeFuZ.png
 
 Melee Update
   New Units

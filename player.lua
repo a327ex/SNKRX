@@ -404,7 +404,7 @@ function Player:init(args)
 
   elseif self.character == 'plague_doctor' then
     self.t:every(5, function()
-      self:dot_attack(24, {duration = 12})
+      self:dot_attack(24, {duration = 12, plague_doctor_unmovable = true})
     end, nil, nil, 'attack')
 
     if self.level == 3 then
@@ -846,7 +846,7 @@ function Player:init(args)
   end
 
   if self.chronomancy then
-    if table.any(self.classes, function(v) return v == 'mage' end) then
+    if table.any(self.classes, function(v) return v == 'mage' end) or table.any(self.classes, function(v) return v == 'sorcerer' end) then
       self.chronomancy_aspd_m = 1.25
     end
   end
@@ -856,7 +856,7 @@ function Player:init(args)
       local units = self:get_all_units()
       local mages = {}
       for _, unit in ipairs(units) do
-        if table.any(unit.classes, function(v) return v == 'mage' end) then
+        if table.any(unit.classes, function(v) return v == 'mage' end) or table.any(unit.classes, function(v) return v == 'sorcerer' end) then
           table.insert(mages, unit)
         end
       end
@@ -873,14 +873,14 @@ function Player:init(args)
       local units = self:get_all_units()
       local mages = {}
       for _, unit in ipairs(units) do
-        if table.any(unit.classes, function(v) return v == 'mage' end) then
+        if table.any(unit.classes, function(v) return v == 'mage' end) or table.any(unit.classes, function(v) return v == 'sorcerer' end) then
           table.insert(mages, unit)
         end
       end
       local leader = main.current.player:get_leader()
       local enemies = main.current.main:get_objects_by_classes(main.current.enemies)
       if #enemies > 0 then
-        thunder1:play{volume = 0.5}
+        thunder1:play{volume = 0.4}
         camera:shake(4, 0.5)
       end
       for _, enemy in ipairs(enemies) do
@@ -2284,7 +2284,7 @@ function DotArea:update(dt)
   self.vr = self.vr + self.dvr*dt
 
   if self.parent then
-    if (self.character == 'plague_doctor' and self.level == 3) or self.character == 'cryomancer' or self.character == 'pyromancer' then
+    if (self.character == 'plague_doctor' and self.level == 3 and not self.plague_doctor_unmovable) or self.character == 'cryomancer' or self.character == 'pyromancer' then
       self.x, self.y = self.parent.x, self.parent.y
       self.shape:move_to(self.x, self.y)
     end

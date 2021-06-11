@@ -11,10 +11,10 @@ function Media:on_enter(from)
   self.effects = Group()
   self.ui = Group()
 
-  graphics.set_background_color(bg[0])
+  graphics.set_background_color(yellow2[0])
   Text2{group = self.ui, x = gw/2, y = gh/2, lines = {
     {text = '[fg]SNKRX', font = fat_font, alignment = 'center', height_offset = -15},
-    {text = '[fg]sorcerer update', font = pixul_font, alignment = 'center'},
+    {text = '[fg]mercenary update', font = pixul_font, alignment = 'center'},
   }}
 end
 
@@ -31,5 +31,5 @@ function Media:draw()
   self.effects:draw()
   self.ui:draw()
 
-  lock_image:draw(30, 30, 0, 1, 1, 0, 0, bg[4])
+  mercenary:draw(30, 30, 0, 1, 1, 0, 0, yellow2[-5])
 end

@@ -66,7 +66,9 @@ function Seeker:init(args)
         end, function()
           wizard1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
           local enemies = self:get_objects_in_shape(self.pull_sensor, main.current.enemies)
+          HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = yellow[0], duration = 0.1}
           for _, enemy in ipairs(enemies) do
+            LightningLine{group = main.current.effects, src = self, dst = enemy, color = yellow[0]}
             enemy:push(random:float(40, 80), enemy:angle_to_object(main.current.player), true)
           end
           self.px, self.py = nil, nil
@@ -213,6 +215,8 @@ function Seeker:init(args)
       local enemy = self:get_closest_object_in_shape(Circle(self.x, self.y, 128), main.current.enemies)
       if enemy then
         wizard1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+        HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = yellow[0], duration = 0.1}
+        LightningLine{group = main.current.effects, src = self, dst = enemy, color = yellow[0]}
         enemy:push(random:float(40, 80), enemy:angle_to_object(main.current.player), true)
       end
     end)
@@ -396,7 +400,7 @@ function Seeker:on_collision_enter(other, contact)
       HitCircle{group = main.current.effects, x = x, y = y, rs = 6, color = fg[0], duration = 0.1}
       for i = 1, 2 do HitParticle{group = main.current.effects, x = x, y = y, color = self.color} end
       hit2:play{pitch = random:float(0.95, 1.05), volume = 0.35}
-      if other:is(Seeker) then self.headbutting = false end
+      if other:is(Seeker) or other:is(Player) then self.headbutting = false end
     end
   
   elseif other:is(Turret) then
@@ -516,11 +520,11 @@ function Seeker:hit(damage, projectile)
         _G[random:table{'scout1', 'scout2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.35}
         HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6}
         local r = random:float(0, 2*math.pi)
-        for i = 1, 3 do
+        for i = 1, 4 do
           local t = {group = main.current.main, x = self.x + 8*math.cos(r), y = self.y + 8*math.sin(r), v = 250, r = r, color = red[0], dmg = self.jester_ref.dmg,
             pierce = self.jester_lvl3 and 2 or 0, homing = self.jester_lvl3, character = self.jester_ref.character, parent = self.jester_ref}
           Projectile(table.merge(t, mods or {}))
-          r = r + math.pi/1.5
+          r = r + math.pi/2
         end
       end)
     end
