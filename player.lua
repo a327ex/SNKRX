@@ -1696,7 +1696,7 @@ function Projectile:init(args)
   elseif self.character == 'witch' and self.level == 3 then
     self.chain = 1
 
-  elseif self.character == 'treasure_hunter' then
+  elseif self.character == 'miner' then
     self.homing = true
     if self.level == 3 then
       self.pierce = 2
@@ -1882,7 +1882,7 @@ function Projectile:on_collision_enter(other, contact)
     elseif self.character == 'cannoneer' then
       self:die(x, y, r, random:int(2, 3))
       cannon_hit_wall1:play{pitch = random:float(0.95, 1.05), volume = 0.1}
-    elseif self.character == 'engineer' or self.character == 'dual_gunner' or self.character == 'treasure_hunter' then
+    elseif self.character == 'engineer' or self.character == 'dual_gunner' or self.character == 'miner' then
       self:die(x, y, r, random:int(2, 3))
       _G[random:table{'turret_hit_wall1', 'turret_hit_wall2'}]:play{pitch = random:float(0.9, 1.1), volume = 0.2}
     else
@@ -1931,7 +1931,7 @@ function Projectile:on_trigger_enter(other, contact)
     end
 
     if self.character == 'archer' or self.character == 'scout' or self.character == 'outlaw' or self.character == 'blade' or self.character == 'hunter' or self.character == 'spellblade' or self.character == 'engineer' or
-    self.character == 'jester' or self.character == 'assassin' or self.character == 'barrager' or self.character == 'beastmaster' or self.character == 'witch' or self.character == 'treasure_hunter' or self.character == 'thief' then
+    self.character == 'jester' or self.character == 'assassin' or self.character == 'barrager' or self.character == 'beastmaster' or self.character == 'witch' or self.character == 'miner' or self.character == 'thief' then
       hit2:play{pitch = random:float(0.95, 1.05), volume = 0.35}
       if self.character == 'spellblade' then
         magic_area1:play{pitch = random:float(0.95, 1.05), volume = 0.15}
@@ -2913,7 +2913,7 @@ function Gold:on_trigger_enter(other, contact)
     local units = other:get_all_units()
     local th
     for _, unit in ipairs(units) do
-      if unit.character == 'treasure_hunter' then
+      if unit.character == 'miner' then
         th = unit
       end
     end

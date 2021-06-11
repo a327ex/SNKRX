@@ -7,12 +7,14 @@ function Arena:init(name)
 end
 
 
-function Arena:on_enter(from, level, units, passives)
+function Arena:on_enter(from, level, units, passives, shop_level, shop_xp)
   self.hfx:add('condition1', 1)
   self.hfx:add('condition2', 1)
   self.level = level or 1
   self.units = units
   self.passives = passives
+  self.shop_level = shop_level or 1
+  self.shop_xp = shop_xp or 0
 
   if not state.mouse_control then
     input:set_mouse_visible(false)
@@ -401,7 +403,7 @@ function Arena:update(dt)
             main:add(BuyScreen'buy_screen')
             locked_state = nil
             system.save_run()
-            main:go_to('buy_screen', 0, {}, passives)
+            main:go_to('buy_screen', 0, {}, passives, 1, 0)
           end, text = Text({{text = '[wavy, bg]restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
         end}
 
@@ -579,7 +581,7 @@ function Arena:update(dt)
         main:add(BuyScreen'buy_screen')
         locked_state = nil
         system.save_run()
-        main:go_to('buy_screen', 0, {}, passives)
+        main:go_to('buy_screen', 0, {}, passives, 1, 0)
       end, text = Text({{text = '[wavy, bg]restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
     end
 
@@ -1002,7 +1004,7 @@ function Arena:die()
           max_units = 7 + current_new_game_plus
           main:add(BuyScreen'buy_screen')
           system.save_run()
-          main:go_to('buy_screen', 0, {}, passives)
+          main:go_to('buy_screen', 0, {}, passives, 1, 0)
         end, text = Text({{text = '[wavy, bg]restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
       end}
     end)
@@ -1082,10 +1084,23 @@ function Arena:transition()
   self.transitioning = true
   ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
   TransitionEffect{group = main.transitions, x = self.player.x, y = self.player.y, color = self.color, transition_action = function(t)
+    if self.level % 2 == 0 and self.shop_level < 5 then
+      self.shop_xp = self.shop_xp + 1
+      local max_xp = 0
+      if self.shop_level == 1 then max_xp = 3
+      elseif self.shop_level == 2 then max_xp = 4
+      elseif self.shop_level == 3 then max_xp = 5
+      elseif self.shop_level == 4 then max_xp = 6
+      elseif self.shop_level == 5 then max_xp = 0 end
+      if self.shop_xp >= max_xp then
+        self.shop_xp = 0
+        self.shop_level = self.shop_level + 1
+      end
+    end
     slow_amount = 1
     main:add(BuyScreen'buy_screen')
-    system.save_run(self.level, gold, self.units, self.passives, run_passive_pool_by_tiers, locked_state)
-    main:go_to('buy_screen', self.level, self.units, self.passives)
+    system.save_run(self.level, gold, self.units, self.passives, self.shop_level, self.shop_xp, run_passive_pool_by_tiers, locked_state)
+    main:go_to('buy_screen', self.level, self.units, self.passives, self.shop_level, self.shop_xp)
     t.t:after(0.1, function()
       t.text:set_text({
         {text = '[nudge_down, bg]gold gained: ' .. tostring(self.gold_gained or 0) .. ' + ' .. tostring(self.gold_picked_up or 0), font = pixul_font, alignment = 'center', height_multiplier = 1.5},

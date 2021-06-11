@@ -1,16 +1,19 @@
 Shop Update
   New units
     * Mercenaries (2/4) - +10/20% chance for enemies to drop gold on death
-      * Treasure Hunter (tier 1 mercenary) - picking up gold releases 4 homing projectiles that deal X damage, Lv.3 - release 8 homing projectiles instead and they pierce twice
+      * Miner (tier 1 mercenary) - picking up gold releases 4 homing projectiles that deal X damage, Lv.3 - release 8 homing projectiles instead and they pierce twice
       * Merchant (tier 2 mercenary) - gain +1 interest for every 10 gold, Lv.3 - your first item reroll is always free
       * Usurer (tier 3 curser, mercenary, voider) - curses 3 nearby enemies indefinitely with debt, dealing X damage over time, Lv.3 - if the same enemy is cursed 3 times it takes 50X damage
       * Gambler (tier 3 mercenary, sorcerer) - deal 2X damage to a single random enemy where X is how much gold you have, Lv.3 effect - 60%/40%/20% chance to cast the attack 2/3/4 times
       * Thief (tier 4 mercenary, rogue) - throws a knife that deals 2X damage and chains 5 times, Lv.3 - if the knife crits it deals 10X damage, chains 10 times and grants 1 gold
 
   Shop changes
-    Owned units highlighted in shop
-    Fix highlight colors and highlight reserve
-    Shop level up
+    * Shop level up
+      * Shop level visual
+      * Shop level up button
+      * Level up logic
+      * Level probabilities
+      * Hook probabilities into reroll
 
   Item changes
     Sorcerer items
@@ -29,6 +32,8 @@ Shop Update
     * The cursor is now invisible during waves, unless mouse follow mode is enabled
     Options menu from buy screen
     Add visuals for tank attack
+    Owned units highlighted in shop
+    Fix highlight colors and highlight reserve
 
   Balance
     * Decreased level 25 boss movement speed
@@ -110,6 +115,8 @@ Roguelite update:
     Text + reward
     Training grounds (upgrade unit)
     Tavern (heal units)
+    Challenge + reward
+      Go through the labyrinth without hitting any walls
   Units die permanently when they die (dead units can be stored in bench to be revived later)
   Units can have items attached to them like in Underlords
   Unit item ideas:

@@ -272,7 +272,7 @@ function init()
     ['vulcanist'] = 'Vulcanist',
     ['warden'] = 'Warden',
     ['psychic'] = 'Psychic',
-    ['treasure_hunter'] = 'Treasure Hunter',
+    ['miner'] = 'Miner',
     ['merchant'] = 'Merchant',
     ['usurer'] = 'Usurer',
     ['gambler'] = 'Gambler',
@@ -329,7 +329,7 @@ function init()
     ['vulcanist'] = red[0],
     ['warden'] = yellow[0],
     ['psychic'] = fg[0],
-    ['treasure_hunter'] = yellow2[0],
+    ['miner'] = yellow2[0],
     ['merchant'] = yellow2[0],
     ['usurer'] = purple[0],
     ['gambler'] = yellow2[0],
@@ -386,7 +386,7 @@ function init()
     ['vulcanist'] = 'red',
     ['warden'] = 'yellow',
     ['psychic'] = 'fg',
-    ['treasure_hunter'] = 'yellow2',
+    ['miner'] = 'yellow2',
     ['merchant'] = 'yellow2',
     ['usurer'] = 'purple',
     ['gambler'] = 'yellow2',
@@ -443,7 +443,7 @@ function init()
     ['vulcanist'] = {'sorcerer', 'nuker'},
     ['warden'] = {'sorcerer', 'forcer'},
     ['psychic'] = {'sorcerer', 'psyker'},
-    ['treasure_hunter'] = {'mercenary'},
+    ['miner'] = {'mercenary'},
     ['merchant'] = {'mercenary'},
     ['usurer'] = {'curser', 'mercenary', 'voider'},
     ['gambler'] = {'mercenary', 'sorcerer'},
@@ -500,7 +500,7 @@ function init()
     ['vulcanist'] = '[blue2]Sorcerer, [red]Nuker',
     ['warden'] = '[blue2]Sorcerer, [yellow]Forcer',
     ['psychic'] = '[blue2]Sorcerer, [fg]Psyker',
-    ['treasure_hunter'] = '[yellow2]Mercenary',
+    ['miner'] = '[yellow2]Mercenary',
     ['merchant'] = '[yellow2]Mercenary',
     ['usurer'] = '[purple]Curser, [yellow2]Mercenary, [purple]Curser',
     ['gambler'] = '[yellow2]Mercenary, [blue2]Sorcerer',
@@ -574,7 +574,7 @@ function init()
     ['vulcanist'] = function(lvl) return '[fg]creates a volcano that explodes the nearby area [yellow]4[fg] times, dealing [yellow]' .. get_character_stat('vulcanist', lvl, 'dmg') .. ' AoE [fg]damage' end,
     ['warden'] = function(lvl) return '[fg]creates a force field around a random unit that prevents enemies from entering' end,
     ['psychic'] = function(lvl) return '[fg]creates a small area that deals [yellow]' .. get_character_stat('psychic', lvl, 'dmg') .. ' AoE[fg] damage' end,
-    ['treasure_hunter'] = function(lvl) return '[fg]picking up gold releases [yellow]4[fg] homing projectiles that each deal [yellow]' .. get_character_stat('treasure_hunter', lvl, 'dmg') .. ' [fg]damage' end,
+    ['miner'] = function(lvl) return '[fg]picking up gold releases [yellow]4[fg] homing projectiles that each deal [yellow]' .. get_character_stat('miner', lvl, 'dmg') .. ' [fg]damage' end,
     ['merchant'] = function(lvl) return '[fg]gain [yellow]+1[fg] interest for every [yellow]10[fg] gold' end,
     ['usurer'] = function(lvl) return '[fg]curses [yellow]3[fg] nearby enemies indefinitely with [yellow]debt[fg], dealing [yellow]' .. get_character_stat('usurer', lvl, 'dmg') .. '[fg] damage per second' end,
     ['gambler'] = function(lvl) return '[fg]deal [yellow]2X[fg] damage to a single random enemy where X is how much gold you have' end,
@@ -631,7 +631,7 @@ function init()
     ['vulcanist'] = '[red]Lava Burst',
     ['warden'] = '[yellow]Magnetic Field',
     ['psychic'] = '[fg]Mental Strike',
-    ['treasure_hunter'] = '[yellow2]Golden Bolts',
+    ['miner'] = '[yellow2]Golden Bolts',
     ['merchant'] = '[yellow2]Item Shop',
     ['usurer'] = '[purple]Bankruptcy',
     ['gambler'] = '[yellow2]Multicast',
@@ -688,7 +688,7 @@ function init()
     ['vulcanist'] = '[light_bg]Lava Burst',
     ['warden'] = '[light_bg]Magnetic Field',
     ['psychic'] = '[light_bg]Mental Strike',
-    ['treasure_hunter'] = '[light_bg]Golden Bolts',
+    ['miner'] = '[light_bg]Golden Bolts',
     ['merchant'] = '[light_bg]Item Shop',
     ['usurer'] = '[light_bg]Bankruptcy',
     ['gambler'] = '[light_bg]Multicast',
@@ -745,7 +745,7 @@ function init()
     ['vulcanist'] = function() return '[fg]the number and speed of explosions is [yellow]doubled[fg]' end,
     ['warden'] = function() return '[fg]creates the force field around [yellow]2[fg] units' end,
     ['psychic'] = function() return '[fg]the attack can happen from any distance and repeats once' end,
-    ['treasure_hunter'] = function() return '[fg]release [yellow]8[fg] homing projectiles instead and they pierce twice' end,
+    ['miner'] = function() return '[fg]release [yellow]8[fg] homing projectiles instead and they pierce twice' end,
     ['merchant'] = function() return '[fg]your first item reroll is always free' end,
     ['usurer'] = function() return '[fg]if the same enemy is cursed [yellow]3[fg] times it takes [yellow]' .. 10*get_character_stat('usurer', 3, 'dmg') .. '[fg] damage' end,
     ['gambler'] = function() return '[yellow]60/40/20%[fg] chance to cast the attack [yellow]2/3/4[fg] times' end,
@@ -802,7 +802,7 @@ function init()
     ['vulcanist'] = function() return '[light_bg]the number and speed of explosions is doubled' end,
     ['warden'] = function() return '[light_bg]creates the force field around 2 units' end,
     ['psychic'] = function() return '[light_bg]the attack can happen from any distance and repeats once' end,
-    ['treasure_hunter'] = function() return '[light_bg]release 8 homing projectiles instead and they pierce twice' end,
+    ['miner'] = function() return '[light_bg]release 8 homing projectiles instead and they pierce twice' end,
     ['merchant'] = function() return '[light_bg]your first item reroll is always free' end,
     ['usurer'] = function() return '[light_bg]if the same enemy is cursed 3 times it takes ' .. 10*get_character_stat('usurer', 3, 'dmg') .. ' damage' end,
     ['gambler'] = function() return '[light_bg]60/40/20% chance to cast the attack 2/3/4 times' end,
@@ -859,7 +859,7 @@ function init()
     ['vulcanist'] = function(lvl) return get_character_stat_string('vulcanist', lvl) end,
     ['warden'] = function(lvl) return get_character_stat_string('warden', lvl) end,
     ['psychic'] = function(lvl) return get_character_stat_string('psychic', lvl) end,
-    ['treasure_hunter'] = function(lvl) return get_character_stat_string('treasure_hunter', lvl) end,
+    ['miner'] = function(lvl) return get_character_stat_string('miner', lvl) end,
     ['merchant'] = function(lvl) return get_character_stat_string('merchant', lvl) end,
     ['usurer'] = function(lvl) return get_character_stat_string('usurer', lvl) end,
     ['gambler'] = function(lvl) return get_character_stat_string('gambler', lvl) end,
@@ -924,14 +924,14 @@ function init()
   }
 
   tier_to_characters = {
-    [1] = {'vagrant', 'swordsman', 'magician', 'archer', 'scout', 'cleric', 'arcanist', 'treasure_hunter'},
+    [1] = {'vagrant', 'swordsman', 'magician', 'archer', 'scout', 'cleric', 'arcanist', 'miner'},
     [2] = {'wizard', 'saboteur', 'sage', 'squire', 'dual_gunner', 'hunter', 'chronomancer', 'barbarian', 'cryomancer', 'beastmaster', 'launcher', 'jester', 'carver', 'psychic', 'witch', 'silencer', 'outlaw', 'merchant'},
     [3] = {'elementor', 'stormweaver', 'spellblade', 'psykeeper', 'engineer', 'juggernaut', 'pyromancer', 'host', 'assassin', 'bane', 'barrager', 'infestor', 'flagellant', 'illusionist', 'usurer', 'gambler'},
     [4] = {'priest', 'highlander', 'psykino', 'fairy', 'blade', 'plague_doctor', 'cannoneer', 'vulcanist', 'warden', 'corruptor', 'thief'},
   }
 
-  non_attacking_characters = {'cleric', 'stormweaver', 'squire', 'chronomancer', 'sage', 'psykeeper', 'bane', 'carver', 'fairy', 'priest', 'flagellant', 'merchant', 'treasure_hunter'}
-  non_cooldown_characters = {'squire', 'chronomancer', 'psykeeper', 'merchant', 'treasure_hunter'}
+  non_attacking_characters = {'cleric', 'stormweaver', 'squire', 'chronomancer', 'sage', 'psykeeper', 'bane', 'carver', 'fairy', 'priest', 'flagellant', 'merchant', 'miner'}
+  non_cooldown_characters = {'squire', 'chronomancer', 'psykeeper', 'merchant', 'miner'}
 
   character_tiers = {
     ['vagrant'] = 1,
@@ -983,7 +983,7 @@ function init()
     ['vulcanist'] = 4,
     ['warden'] = 4,
     ['psychic'] = 2,
-    ['treasure_hunter'] = 1,
+    ['miner'] = 1,
     ['merchant'] = 2,
     ['usurer'] = 3,
     ['gambler'] = 3,
@@ -1366,6 +1366,72 @@ function init()
     [25] = {'speed_booster', 'exploder', 'headbutter', 'tank', 'shooter', 'spawner'},
   }
 
+  get_shop_odds_by_level = function(lvl)
+    if lvl == 1 then
+      return {70, 20, 10, 0}
+    elseif lvl == 2 then
+      return {50, 30, 15, 5}
+    elseif lvl == 3 then
+      return {30, 40, 20, 10}
+    elseif lvl == 4 then
+      return {20, 25, 35, 20}
+    end
+  end
+
+  get_shop_odds = function(lvl, tier)
+    if lvl == 1 then
+      if tier == 1 then
+        return 70
+      elseif tier == 2 then
+        return 20
+      elseif tier == 3 then
+        return 10
+      elseif tier == 4 then
+        return 0
+      end
+    elseif lvl == 2 then
+      if tier == 1 then
+        return 50
+      elseif tier == 2 then
+        return 30
+      elseif tier == 3 then
+        return 15
+      elseif tier == 4 then
+        return 5
+      end
+    elseif lvl == 3 then
+      if tier == 1 then
+        return 30
+      elseif tier == 2 then
+        return 40
+      elseif tier == 3 then
+        return 20
+      elseif tier == 4 then
+        return 10
+      end
+    elseif lvl == 4 then
+      if tier == 1 then
+        return 20
+      elseif tier == 2 then
+        return 25
+      elseif tier == 3 then
+        return 35
+      elseif tier == 4 then
+        return 20
+      end
+    elseif lvl == 5 then
+      if tier == 1 then
+        return 10
+      elseif tier == 2 then
+        return 20
+      elseif tier == 3 then
+        return 25
+      elseif tier == 4 then
+        return 40
+      end
+    end
+  end
+
   local run = system.load_run()
   run_passive_pool_by_tiers = run.run_passive_pool_by_tiers or {
     [1] = { 'wall_echo', 'wall_rider', 'centipede', 'temporal_chains', 'amplify', 'amplify_x', 'ballista', 'ballista_x', 'blunt_arrow', 'berserking', 'unwavering_stance', 'assassination', 'unleash', 'blessing',
@@ -1392,7 +1458,7 @@ function init()
   -- main_song_instance = _G[random:table{'song1', 'song2', 'song3', 'song4', 'song5'}]:play{volume = 0.5}
 
   main:add(BuyScreen'buy_screen')
-  main:go_to('buy_screen', run.level or 0, run.units or {}, passives)
+  main:go_to('buy_screen', run.level or 0, run.units or {}, passives, run.shop_level or 1, run.shop_xp or 0)
   -- main:go_to('buy_screen', 7, run.units or {}, {'unleash'})
   
   --[[
