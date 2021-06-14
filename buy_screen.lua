@@ -65,7 +65,7 @@ function BuyScreen:on_enter(from, level, units, passives, shop_level, shop_xp)
   self.locked = locked_state and locked_state.locked
   LockButton{group = self.main, x = 205, y = 18, parent = self}
 
-  self:set_cards(nil, nil, true)
+  self:set_cards(self.shop_level, nil, true)
   self:set_party_and_sets()
   self:set_items()
 
@@ -136,6 +136,7 @@ function BuyScreen:on_enter(from, level, units, passives, shop_level, shop_xp)
     ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    locked_state = nil
     TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = fg[0], transition_action = function()
       slow_amount = 1
       gold = 3
@@ -507,7 +508,7 @@ function RestartButton:init(args)
   self:init_game_object(args)
   self.shape = Rectangle(self.x, self.y, pixul_font:get_text_width('restart') + 4, pixul_font.h + 4)
   self.interact_with_mouse = true
-  self.text = Text({{text = '[bg10]NG+' .. tostring(current_new_game_plus+1), font = pixul_font, alignment = 'center'}}, global_text_tags)
+  self.text = Text({{text = '[bg10]NG+' .. tostring(current_new_game_plus), font = pixul_font, alignment = 'center'}}, global_text_tags)
 end
 
 
@@ -532,13 +533,6 @@ function RestartButton:update(dt)
           'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
         [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
       }
-      if current_new_game_plus == new_game_plus then
-        new_game_plus = new_game_plus + 1
-        state.new_game_plus = new_game_plus
-      end
-      current_new_game_plus = current_new_game_plus + 1
-      state.current_new_game_plus = current_new_game_plus
-      max_units = 7 + current_new_game_plus
       system.save_state()
       main:add(BuyScreen'buy_screen')
       system.save_run()
@@ -561,14 +555,14 @@ function RestartButton:on_mouse_enter()
   ui_hover1:play{pitch = random:float(1.3, 1.5), volume = 0.5}
   pop2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
   self.selected = true
-  self.text:set_text{{text = '[fgm5]NG+' .. tostring(current_new_game_plus+1), font = pixul_font, alignment = 'center'}}
+  self.text:set_text{{text = '[fgm5]NG+' .. tostring(current_new_game_plus), font = pixul_font, alignment = 'center'}}
   self.spring:pull(0.2, 200, 10)
 end
 
 
 function RestartButton:on_mouse_exit()
   if main.current.in_credits then return end
-  self.text:set_text{{text = '[bg10]NG+' .. tostring(current_new_game_plus+1), font = pixul_font, alignment = 'center'}}
+  self.text:set_text{{text = '[bg10]NG+' .. tostring(current_new_game_plus), font = pixul_font, alignment = 'center'}}
   self.selected = false
 end
 
@@ -681,16 +675,17 @@ function GoButton:update(dt)
       self.t:after(2, function() self.info_text:deactivate(); self.info_text.dead = true; self.info_text = nil end, 'info_text')
 
     else
-      if self.parent.locked then locked_state = {locked = true, cards = {self.parent.cards[1] and self.parent.cards[1].unit, self.parent.cards[2] and self.parent.cards[2].unit, self.parent.cards[3] and self.parent.cards[3].unit}} end
+      locked_state = {locked = self.parent.locked, cards = {self.parent.cards[1] and self.parent.cards[1].unit, self.parent.cards[2] and self.parent.cards[2].unit, self.parent.cards[3] and self.parent.cards[3].unit}} 
       ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       self.spring:pull(0.2, 200, 10)
       self.selected = true
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       ui_transition1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       self.transitioning = true
+      system.save_run(self.parent.level, gold, self.parent.units, passives, self.parent.shop_level, self.parent.shop_xp, run_passive_pool_by_tiers, locked_state)
       TransitionEffect{group = main.transitions, x = self.x, y = self.y, color = character_colors[random:table(self.parent.units).character], transition_action = function()
         main:add(Arena'arena')
-        main:go_to('arena', ((self.parent.first_screen and 1) or (self.parent.level + 1)), self.parent.units, self.parent.passives, self.parent.shop_level, self.parent.shop_xp)
+        main:go_to('arena', ((self.parent.first_screen and 1) or (self.parent.level + 1)), self.parent.units, self.parent.passives, self.parent.shop_level, self.parent.shop_xp, self.parent.locked)
       end, text = Text({{text = '[wavy, bg]level ' .. ((self.parent.first_screen and 1) or (self.parent.level + 1)) .. '/25', font = pixul_font, alignment = 'center'}}, global_text_tags)}
     end
   end
@@ -922,7 +917,7 @@ function RerollButton:init(args)
       self.free_reroll = true
       self.text = Text({{text = '[bg10]reroll: [yellow]0', font = pixul_font, alignment = 'center'}}, global_text_tags)
     else
-      self.text = Text({{text = '[bg10]reroll: [yellow]15', font = pixul_font, alignment = 'center'}}, global_text_tags)
+      self.text = Text({{text = '[bg10]reroll: [yellow]10', font = pixul_font, alignment = 'center'}}, global_text_tags)
     end
   end
 end
@@ -955,7 +950,7 @@ function RerollButton:update(dt)
         system.save_run(self.parent.level, gold, self.parent.units, passives, self.parent.shop_level, self.parent.shop_xp, run_passive_pool_by_tiers, locked_state)
       end
     elseif self.parent:is(Arena) then
-      if gold < 15 and not self.free_reroll then
+      if gold < 10 and not self.free_reroll then
         self.spring:pull(0.2, 200, 10)
         self.selected = true
         error1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -972,10 +967,10 @@ function RerollButton:update(dt)
         self.parent:set_passives(true)
         self.selected = true
         self.spring:pull(0.2, 200, 10)
-        if not self.free_reroll then gold = gold - 15 end
+        if not self.free_reroll then gold = gold - 10 end
         self.parent.shop_text:set_text{{text = '[fg, nudge_down]gold: [yellow, nudge_down]' .. gold, font = pixul_font, alignment = 'center'}}
         self.free_reroll = false
-        self.text = Text({{text = '[bg10]reroll: [yellow]15', font = pixul_font, alignment = 'center'}}, global_text_tags)
+        self.text = Text({{text = '[bg10]reroll: [yellow]10', font = pixul_font, alignment = 'center'}}, global_text_tags)
       end
     end
   end
@@ -1004,7 +999,7 @@ function RerollButton:on_mouse_enter()
     if self.free_reroll then
       self.text:set_text{{text = '[fgm5]reroll: 0', font = pixul_font, alignment = 'center'}}
     else
-      self.text:set_text{{text = '[fgm5]reroll: 15', font = pixul_font, alignment = 'center'}}
+      self.text:set_text{{text = '[fgm5]reroll: 10', font = pixul_font, alignment = 'center'}}
     end
   end
   self.spring:pull(0.2, 200, 10)
@@ -1018,7 +1013,7 @@ function RerollButton:on_mouse_exit()
     if self.free_reroll then
       self.text:set_text{{text = '[fgm5]reroll: [yellow]0', font = pixul_font, alignment = 'center'}}
     else
-      self.text:set_text{{text = '[fgm5]reroll: [yellow]15', font = pixul_font, alignment = 'center'}}
+      self.text:set_text{{text = '[fgm5]reroll: [yellow]10', font = pixul_font, alignment = 'center'}}
     end
   end
   self.selected = false
@@ -1155,11 +1150,13 @@ function CharacterPart:update(dt)
       table.remove(self.parent.units, self.i)
       self:die()
       self.parent:set_party_and_sets()
+      self.parent:refresh_cards()
     else
       self.parent.parent:gain_gold(self:get_sale_price())
       self.parent.parent.units[self.i].reserve[self.level] = self.parent.parent.units[self.i].reserve[self.level] - 1
       self:die()
       self.parent.parent:set_party_and_sets()
+      self.parent.parent:refresh_cards()
     end
   end
 
@@ -1195,8 +1192,8 @@ function CharacterPart:on_mouse_enter()
   self.spring:pull(0.2, 200, 10)
   self.info_text = InfoText{group = main.current.ui, force_update = self.force_update}
   self.info_text:activate({
-    {text = '[' .. character_color_strings[self.character] .. ']' .. self.character:capitalize() .. '[fg] - [yellow]Lv.' .. self.level .. '[fg] - sells for [yellow]' .. self:get_sale_price(),
-    font = pixul_font, alignment = 'center', height_multiplier = 1.25},
+    {text = '[' .. character_color_strings[self.character] .. ']' .. self.character:capitalize() .. '[fg] - [yellow]Lv.' .. self.level .. '[fg], tier [yellow]' .. character_tiers[self.character] .. '[fg] - sells for [yellow]' ..
+      self:get_sale_price(), font = pixul_font, alignment = 'center', height_multiplier = 1.25},
     {text = '[fg]Classes: ' .. character_class_strings[self.character], font = pixul_font, alignment = 'center', height_multiplier = 1.25},
     {text = character_descriptions[self.character](self.level), font = pixul_font, alignment = 'center', height_multiplier = 2},
     {text = '[' .. (self.level == 3 and 'yellow' or 'light_bg') .. ']Lv.3 [' .. (self.level == 3 and 'fg' or 'light_bg') .. ']Effect - ' .. 
@@ -1408,6 +1405,15 @@ function ItemCard:die()
 end
 
 
+function BuyScreen:refresh_cards()
+  for i = 1, 3 do
+    if self.cards[i] then
+      self.cards[i]:refresh()
+    end
+  end
+end
+
+
 
 ShopCard = Object:extend()
 ShopCard:implement(GameObject)
@@ -1425,6 +1431,24 @@ function ShopCard:init(args)
   end
   self.cost = character_tiers[self.unit]
   self.spring:pull(0.2, 200, 10)
+  self:refresh()
+end
+
+
+function ShopCard:refresh()
+  self.owned = table.any(self.parent.units, function(v) return v.character == self.unit end)
+  if self.owned then
+    self.owned_n = 0
+    for _, unit in ipairs(self.parent.units) do
+      if unit.character == self.unit then
+        self.owned_n = self.owned_n + ((unit.level == 1 and 1) or (unit.level == 2 and 3) or (unit.level == 3 and 9))
+        if unit.reserve then
+          self.owned_n = self.owned_n + (unit.reserve[2] or 0)*3
+          self.owned_n = self.owned_n + (unit.reserve[1] or 0)
+        end
+      end
+    end
+  end
 end
 
 
@@ -1437,6 +1461,7 @@ function ShopCard:update(dt)
       _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       self:die()
       self.parent.cards[self.i] = nil
+      self.parent:refresh_cards()
       system.save_run(self.parent.level == 1 and 0 or self.parent.level, gold, self.parent.units, passives, self.parent.shop_level, self.parent.shop_xp, run_passive_pool_by_tiers, locked_state)
     else
       error1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -1474,6 +1499,36 @@ function ShopCard:draw()
   graphics.push(self.x, self.y, 0, self.sx*self.spring.x, self.sy*self.spring.x)
     if self.selected then
       graphics.rectangle(self.x, self.y, self.w, self.h, 6, 6, bg[-1])
+    end
+    if self.owned then
+      local x, y = self.x + self.w/5, self.y - self.h/2 + 12
+      if self.owned_n == 1 then
+        graphics.rectangle(x, y, 2, 2, nil, nil, character_colors[self.unit])
+      elseif self.owned_n == 2 then
+        graphics.rectangle(x, y, 2, 2, nil, nil, character_colors[self.unit])
+        graphics.rectangle(x + 4, y, 2, 2, nil, nil, character_colors[self.unit])
+      elseif self.owned_n == 3 then
+        graphics.rectangle(x, y, 4, 4, nil, nil, character_colors[self.unit])
+      elseif self.owned_n == 4 then
+        graphics.rectangle(x, y, 4, 4, nil, nil, character_colors[self.unit])
+        graphics.rectangle(x + 5, y, 2, 2, nil, nil, character_colors[self.unit])
+      elseif self.owned_n == 5 then
+        graphics.rectangle(x, y, 4, 4, nil, nil, character_colors[self.unit])
+        graphics.rectangle(x + 5, y, 2, 2, nil, nil, character_colors[self.unit])
+        graphics.rectangle(x + 9, y, 2, 2, nil, nil, character_colors[self.unit])
+      elseif self.owned_n == 6 then
+        graphics.rectangle(x, y, 4, 4, nil, nil, character_colors[self.unit])
+        graphics.rectangle(x + 6, y, 4, 4, nil, nil, character_colors[self.unit])
+      elseif self.owned_n == 7 then
+        graphics.rectangle(x, y, 4, 4, nil, nil, character_colors[self.unit])
+        graphics.rectangle(x + 6, y, 4, 4, nil, nil, character_colors[self.unit])
+        graphics.rectangle(x + 11, y, 2, 2, nil, nil, character_colors[self.unit])
+      elseif self.owned_n == 8 then
+        graphics.rectangle(x, y, 4, 4, nil, nil, character_colors[self.unit])
+        graphics.rectangle(x + 6, y, 4, 4, nil, nil, character_colors[self.unit])
+        graphics.rectangle(x + 11, y, 2, 2, nil, nil, character_colors[self.unit])
+        graphics.rectangle(x + 15, y, 2, 2, nil, nil, character_colors[self.unit])
+      end
     end
   graphics.pop()
 end

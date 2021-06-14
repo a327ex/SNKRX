@@ -554,7 +554,7 @@ function init()
     ['corruptor'] = function(lvl) return '[fg]spawn [yellow]3[fg] small critters if the corruptor kills an enemy' end,
     ['beastmaster'] = function(lvl) return '[fg]spawn [yellow]2[fg] small critters if the beastmaster crits' end,
     ['launcher'] = function(lvl) return '[fg]all nearby enemies are pushed after [yellow]4[fg] seconds, taking [yellow]' .. 2*get_character_stat('launcher', lvl, 'dmg') .. '[fg] damage on wall hit' end,
-    ['jester'] = function(lvl) return "[fg]curses [yellow]6[fg] nearby enemies for [yellow]6[fg] seconds, they will explode into [yellow]3[fg] knives on death" end,
+    ['jester'] = function(lvl) return "[fg]curses [yellow]6[fg] nearby enemies for [yellow]6[fg] seconds, they will explode into [yellow]4[fg] knives on death" end,
     ['assassin'] = function(lvl) return '[fg]throws a piercing knife that deals [yellow]' .. get_character_stat('assassin', lvl, 'dmg') .. '[fg] damage + [yellow]' ..
       get_character_stat('assassin', lvl, 'dmg')/2 .. '[fg] damage per second' end,
     ['host'] = function(lvl) return '[fg]periodically spawn [yellow]1[fg] small critter' end,
@@ -1465,14 +1465,18 @@ function init()
   
   --[[
   main:add(Arena'arena')
-  main:go_to('arena', 21, {
-    {character = 'plague_doctor', level = 2},
+  main:go_to('arena', 25, {
     {character = 'swordsman', level = 3},
-    {character = 'barbarian', level = 2},
-    {character = 'outlaw', level = 2},
-    {character = 'warden', level = 2},
-    {character = 'juggernaut', level = 2},
-    {character = 'blade', level = 2},
+    {character = 'plague_doctor', level = 3},
+    {character = 'pyromancer', level = 3},
+    {character = 'witch', level = 3},
+    {character = 'arcanist', level = 3},
+    {character = 'usurer', level = 3},
+    {character = 'warden', level = 3},
+    {character = 'silencer', level = 3},
+    {character = 'vulcanist', level = 3},
+    {character = 'bane', level = 3},
+    {character = 'illusionist', level = 3},
   }, passives)
   ]]--
 
@@ -1565,7 +1569,7 @@ function update(dt)
   end
 
   --[[
-  if input.f12.pressed then
+  if input.f11.pressed then
     steam.userStats.resetAllStats(true)
     steam.userStats.storeStats()
   end

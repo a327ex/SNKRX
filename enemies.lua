@@ -517,6 +517,7 @@ function Seeker:hit(damage, projectile)
 
     if self.jester_cursed then
       trigger:after(0.01, function()
+        if tostring(self.x) == tostring(0/0) or tostring(self.y) == tostring(0/0) then return end
         _G[random:table{'scout1', 'scout2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.35}
         HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6}
         local r = random:float(0, 2*math.pi)

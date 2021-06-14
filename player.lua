@@ -1125,12 +1125,13 @@ function Player:update(dt)
     if input.move_right.pressed and not self.move_left_pressed then self.move_right_pressed = love.timer.getTime() end
     if input.move_left.released then self.move_left_pressed = nil end
     if input.move_right.released then self.move_right_pressed = nil end
-    if input.move_left.down then self.r = self.r - 1.66*math.pi*dt end
-    if input.move_right.down then self.r = self.r + 1.66*math.pi*dt end
 
     if state.mouse_control then
       local v = Vector(math.cos(self.r), math.sin(self.r)):perpendicular():dot(Vector(math.cos(self:angle_to_mouse()), math.sin(self:angle_to_mouse())))
       self.r = self.r + math.sign(v)*1.66*math.pi*dt
+    else
+      if input.move_left.down then self.r = self.r - 1.66*math.pi*dt end
+      if input.move_right.down then self.r = self.r + 1.66*math.pi*dt end
     end
 
     local total_v = 0
@@ -2521,6 +2522,7 @@ Volcano:implement(Physics)
 function Volcano:init(args)
   self:init_game_object(args)
   if not self.group.world then self.dead = true; return end
+  if tostring(self.x) == tostring(0/0) or tostring(self.y) == tostring(0/0) then self.dead = true; return end
   self:set_as_rectangle(9, 9, 'static', 'player')
   self:set_restitution(0.5)
   self.hfx:add('hit', 1)
@@ -2562,6 +2564,7 @@ end
 
 function Volcano:draw()
   if self.hidden then return end
+  if not self.hfx.hit then return end
 
   graphics.push(self.x, self.y, math.pi/4, self.spring.x, self.spring.x)
     graphics.rectangle(self.x, self.y, 1.5*self.shape.w, 4, 2, 2, self.hfx.hit.f and fg[0] or self.color)
@@ -2670,6 +2673,7 @@ end
 
 
 function Pet:draw()
+  if not self.hfx.hit then return end
   graphics.push(self.x, self.y, self.r, self.hfx.hit.x, self.hfx.hit.x)
     graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 3, 3, self.hfx.hit.f and fg[0] or self.color)
   graphics.pop()
@@ -2876,6 +2880,7 @@ Gold:implement(GameObject)
 Gold:implement(Physics)
 function Gold:init(args)
   self:init_game_object(args)
+  if tostring(self.x) == tostring(0/0) or tostring(self.y) == tostring(0/0) then self.dead = true; return end
   self:set_as_rectangle(3, 3, 'dynamic', 'ghost')
   self:set_restitution(0.5)
   local r = random:float(0, 2*math.pi)
@@ -2897,6 +2902,7 @@ end
 
 
 function Gold:draw()
+  if not self.hfx.hit then return end
   graphics.push(self.x, self.y, self.r, self.hfx.hit.x, self.hfx.hit.x)
     graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 1, 1, self.hfx.hit.f and fg[0] or self.color)
   graphics.pop()
@@ -2920,6 +2926,7 @@ function Gold:on_trigger_enter(other, contact)
     if th then
       if th.level == 3 then
         trigger:after(0.01, function()
+          if not main.current.main.world then return end
           _G[random:table{'scout1', 'scout2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.35}
           HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6}
           local r = random:float(0, 2*math.pi)
@@ -2931,6 +2938,7 @@ function Gold:on_trigger_enter(other, contact)
         end)
       else
         trigger:after(0.01, function()
+          if not main.current.main.world then return end
           _G[random:table{'scout1', 'scout2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.35}
           HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6}
           local r = random:float(0, 2*math.pi)
@@ -3004,6 +3012,7 @@ end
 
 
 function Critter:draw()
+  if not self.hfx.hit then return end
   graphics.push(self.x, self.y, self.r, self.hfx.hit.x, self.hfx.hit.x)
     graphics.rectangle(self.x, self.y, self.shape.w, self.shape.h, 2, 2, self.hfx.hit.f and fg[0] or self.color)
   graphics.pop()

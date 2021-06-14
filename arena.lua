@@ -7,7 +7,7 @@ function Arena:init(name)
 end
 
 
-function Arena:on_enter(from, level, units, passives, shop_level, shop_xp)
+function Arena:on_enter(from, level, units, passives, shop_level, shop_xp, lock)
   self.hfx:add('condition1', 1)
   self.hfx:add('condition2', 1)
   self.level = level or 1
@@ -15,6 +15,9 @@ function Arena:on_enter(from, level, units, passives, shop_level, shop_xp)
   self.passives = passives
   self.shop_level = shop_level or 1
   self.shop_xp = shop_xp or 0
+  self.lock = lock
+
+  self.starting_units = table.copy(units)
 
   if not state.mouse_control then
     input:set_mouse_visible(false)
@@ -448,11 +451,13 @@ function Arena:update(dt)
         end}
 
         self.video_button_1 = Button{group = self.ui, x = gw/2 - 86, y = gh - 125, force_update = true, button_text = 'window size-', fg_color = 'bg10', bg_color = 'bg', action = function()
-          ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-          sx, sy = sx - 1, sy - 1
-          love.window.setMode(480*sx, 270*sy)
-          state.sx, state.sy = sx, sy
-          state.fullscreen = false
+          if sx > 1 and sy > 1 then
+            ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+            sx, sy = sx - 1, sy - 1
+            love.window.setMode(480*sx, 270*sy)
+            state.sx, state.sy = sx, sy
+            state.fullscreen = false
+          end
         end}
 
         self.video_button_2 = Button{group = self.ui, x = gw/2, y = gh - 125, force_update = true, button_text = 'window size+', fg_color = 'bg10', bg_color = 'bg', action = function()
@@ -617,18 +622,38 @@ function Arena:quit()
       input:set_mouse_visible(true)
       self.won = true
       locked_state = nil
+
+      if current_new_game_plus == new_game_plus then
+        new_game_plus = new_game_plus + 1
+        state.new_game_plus = new_game_plus
+      end
+      current_new_game_plus = current_new_game_plus + 1
+      state.current_new_game_plus = current_new_game_plus
+      max_units = 7 + current_new_game_plus
+
       system.save_run()
       trigger:tween(1, _G, {slow_amount = 0}, math.linear, function() slow_amount = 0 end, 'slow_amount')
       trigger:tween(4, camera, {x = gw/2, y = gh/2, r = 0}, math.linear, function() camera.x, camera.y, camera.r = gw/2, gh/2, 0 end)
-      self.win_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 66, force_update = true, lines = {{text = '[wavy_mid, cbyc2]congratulations!', font = fat_font, alignment = 'center'}}}
+      self.win_text = Text2{group = self.ui, x = gw/2 + 40, y = gh/2 - 66, force_update = true, lines = {{text = '[wavy_mid, cbyc2]congratulations!', font = fat_font, alignment = 'center'}}}
       trigger:after(2.5, function()
         self.build_text = Text2{group = self.ui, x = 40, y = 20, force_update = true, lines = {{text = "[wavy_mid, fg]your build", font = pixul_font, alignment = 'center'}}}
         for i, unit in ipairs(self.units) do
-          CharacterPart{group = self.ui, x = 40, y = 40 + (i-1)*19, character = unit.character, level = unit.level, force_update = true, cant_click = true, parent = self}
+          CharacterPart{group = self.ui, x = 20, y = 40 + (i-1)*19, character = unit.character, level = unit.level, force_update = true, cant_click = true, parent = self}
+          Text2{group = self.ui, x = 20 + 14 + pixul_font:get_text_width(unit.character)/2, y = 40 + (i-1)*19, force_update = true, lines = {
+            {text = '[' .. character_color_strings[unit.character] .. ']' .. unit.character, font = pixul_font, alignment = 'left'}
+          }}
         end
 
-        if current_new_game_plus == 5 then
-          self.win_text2 = Text2{group = self.ui, x = gw/2, y = gh/2 + 30, force_update = true, lines = {
+        if current_new_game_plus == 6 then
+          if current_new_game_plus == new_game_plus then
+            new_game_plus = 5
+            state.new_game_plus = new_game_plus
+          end
+          current_new_game_plus = 5
+          state.current_new_game_plus = current_new_game_plus
+          max_units = 12
+
+          self.win_text2 = Text2{group = self.ui, x = gw/2 + 40, y = gh/2 + 30, force_update = true, lines = {
             {text = "[fg]now you've really beaten the game!", font = pixul_font, alignment = 'center', height_multiplier = 1.24},
             {text = "[fg]thanks a lot for playing it and completing it entirely!", font = pixul_font, alignment = 'center', height_multiplier = 1.24},
             {text = "[fg]this game was inspired by:", font = pixul_font, alignment = 'center', height_multiplier = 4},
@@ -636,7 +661,7 @@ function Arena:quit()
             {text = "[fg]and to get more games like this in the future:", font = pixul_font, alignment = 'center', height_multiplier = 4},
             {text = "[wavy_mid, yellow]thanks for playing!", font = pixul_font, alignment = 'center'},
           }}
-          SteamFollowButton{group = self.ui, x = gw/2, y = gh/2 + 78, force_update = true}
+          SteamFollowButton{group = self.ui, x = gw/2 + 40, y = gh/2 + 78, force_update = true}
           Button{group = self.ui, x = gw - 40, y = gh - 44, force_update = true, button_text = 'credits', fg_color = 'bg10', bg_color = 'bg', action = function() self:create_credits() end}
           Button{group = self.ui, x = gw - 32, y = gh - 20, force_update = true, button_text = 'quit', fg_color = 'bg10', bg_color = 'bg', action = function() love.event.quit() end}
           local open_url = function(b, url)
@@ -646,10 +671,10 @@ function Arena:quit()
             ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
             system.open_url(url)
           end
-          Button{group = self.ui, x = gw/2 - 50, y = gh/2 + 12, force_update = true, button_text = 'nimble quest', fg_color = 'bluem5', bg_color = 'blue', action = function(b) open_url(b, 'https://store.steampowered.com/app/259780/Nimble_Quest/') end}
-          Button{group = self.ui, x = gw/2 + 50, y = gh/2 + 12, force_update = true, button_text = 'dota underlords', fg_color = 'bluem5', bg_color = 'blue', action = function(b) open_url(b, 'https://store.steampowered.com/app/1046930/Dota_Underlords/') end}
+          Button{group = self.ui, x = gw/2 - 50 + 40, y = gh/2 + 12, force_update = true, button_text = 'nimble quest', fg_color = 'bluem5', bg_color = 'blue', action = function(b) open_url(b, 'https://store.steampowered.com/app/259780/Nimble_Quest/') end}
+          Button{group = self.ui, x = gw/2 + 50 + 40, y = gh/2 + 12, force_update = true, button_text = 'dota underlords', fg_color = 'bluem5', bg_color = 'blue', action = function(b) open_url(b, 'https://store.steampowered.com/app/1046930/Dota_Underlords/') end}
         else
-          self.win_text2 = Text2{group = self.ui, x = gw/2, y = gh/2 + 20, force_update = true, lines = {
+          self.win_text2 = Text2{group = self.ui, x = gw/2 + 40, y = gh/2 + 20, force_update = true, lines = {
             {text = "[fg]you've beaten the game!", font = pixul_font, alignment = 'center', height_multiplier = 1.24},
             {text = "[fg]i made this game in 3 months as a dev challenge", font = pixul_font, alignment = 'center', height_multiplier = 1.24},
             {text = "[fg]and i'm happy with how it turned out!", font = pixul_font, alignment = 'center', height_multiplier = 1.24},
@@ -657,7 +682,7 @@ function Arena:quit()
             {text = "[fg]i will release more games this year, so stay tuned!", font = pixul_font, alignment = 'center', height_multiplier = 1.4},
             {text = "[wavy_mid, yellow]thanks for playing!", font = pixul_font, alignment = 'center'},
           }}
-          SteamFollowButton{group = self.ui, x = gw/2, y = gh/2 + 34, force_update = true}
+          SteamFollowButton{group = self.ui, x = gw/2 + 40, y = gh/2 + 34, force_update = true}
           RestartButton{group = self.ui, x = gw - 40, y = gh - 20, force_update = true}
           trigger:after(8, function()
             self.try_ng_text = Text2{group = self.ui, x = gw - 210, y = gh - 20, force_update = true, lines = {
@@ -789,9 +814,8 @@ function Arena:quit()
         steam.userStats.storeStats()
       end
 
-      local units = self.player:get_all_units()
       local all_units_level_2 = true
-      for _, unit in ipairs(units) do
+      for _, unit in ipairs(self.starting_units) do
         if unit.level ~= 2 then
           all_units_level_2 = false
           break
@@ -806,7 +830,7 @@ function Arena:quit()
 
       local units = self.player:get_all_units()
       local all_units_level_3 = true
-      for _, unit in ipairs(units) do
+      for _, unit in ipairs(self.starting_units) do
         if unit.level ~= 3 then
           all_units_level_3 = false
           break
@@ -843,9 +867,9 @@ end
 function Arena:set_passives(from_reroll)
   if from_reroll then
     self:restore_passives_to_pool(0)
-    self.cards[1].dead = true
-    self.cards[2].dead = true
-    self.cards[3].dead = true
+    if self.cards[1] then self.cards[1].dead = true end
+    if self.cards[2] then self.cards[2].dead = true end
+    if self.cards[3] then self.cards[3].dead = true end
     self.cards = {}
   end
 
@@ -947,6 +971,7 @@ end
 
 function Arena:die()
   if not self.died_text and not self.won and not self.arena_clear_text then
+    input:set_mouse_visible(false)
     self.t:cancel('divine_punishment')
     self.died = true
     locked_state = nil
@@ -1057,6 +1082,7 @@ end
 
 function Arena:transition()
   self.transitioning = true
+  if not self.lock then locked_state = nil end
   ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
   TransitionEffect{group = main.transitions, x = self.player.x, y = self.player.y, color = self.color, transition_action = function(t)
     if self.level % 2 == 0 and self.shop_level < 5 then
