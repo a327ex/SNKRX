@@ -984,6 +984,7 @@ function Player:update(dt)
   if self.character == 'vagrant' and self.level == 3 then
     local class_levels = get_class_levels(self:get_all_units())
     local number_of_active_sets = 0
+    if class_levels.nuker >= 1 then number_of_active_sets = number_of_active_sets + 1 end
     if class_levels.ranger >= 1 then number_of_active_sets = number_of_active_sets + 1 end
     if class_levels.warrior >= 1 then number_of_active_sets = number_of_active_sets + 1 end
     if class_levels.mage >= 1 then number_of_active_sets = number_of_active_sets + 1 end
