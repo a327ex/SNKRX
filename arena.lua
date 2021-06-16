@@ -369,6 +369,7 @@ function Arena:update(dt)
             if self.resume_button then self.resume_button.dead = true; self.resume_button = nil end
             if self.restart_button then self.restart_button.dead = true; self.restart_button = nil end
             if self.mouse_button then self.mouse_button.dead = true; self.mouse_button = nil end
+            if self.dark_transition_button then self.dark_transition_button.dead = true; self.dark_transition_button = nil end
             if self.sfx_button then self.sfx_button.dead = true; self.sfx_button = nil end
             if self.music_button then self.music_button.dead = true; self.music_button = nil end
             if self.video_button_1 then self.video_button_1.dead = true; self.video_button_1 = nil end
@@ -390,32 +391,39 @@ function Arena:update(dt)
           ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
           ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
           ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-          TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = fg[0], transition_action = function()
+          TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = state.dark_transitions and bg[-2] or fg[0], transition_action = function()
             slow_amount = 1
             gold = 3
             passives = {}
             main_song_instance:stop()
-            run_passive_pool_by_tiers = {
-              [1] = { 'wall_echo', 'wall_rider', 'centipede', 'temporal_chains', 'amplify', 'amplify_x', 'ballista', 'ballista_x', 'blunt_arrow', 'berserking', 'unwavering_stance', 'assassination', 'unleash', 'blessing',
-                'hex_master', 'force_push', 'spawning_pool'}, 
-              [2] = {'ouroboros_technique_r', 'ouroboros_technique_l', 'intimidation', 'vulnerability', 'resonance', 'point_blank', 'longshot', 'explosive_arrow', 'chronomancy', 'awakening', 'ultimatum', 'echo_barrage', 
-                'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
-              [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
+            run_passive_pool = {
+              'centipede', 'ouroboros_technique_r', 'ouroboros_technique_l', 'amplify', 'resonance', 'ballista', 'call_of_the_void', 'crucio', 'speed_3', 'damage_4', 'level_5', 'death_6', 'lasting_7',
+              'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'pandemic', 'whispers_of_doom',
+              'tremor', 'heavy_impact', 'fracture', 'meat_shield', 'hive', 'baneling_burst', 'blunt_arrow', 'explosive_arrow', 'divine_machine_arrow', 'chronomancy', 'awakening', 'divine_punishment',
+              'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
+              'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance'
             }
             max_units = 7 + current_new_game_plus
             main:add(BuyScreen'buy_screen')
             locked_state = nil
             system.save_run()
             main:go_to('buy_screen', 0, {}, passives, 1, 0)
-          end, text = Text({{text = '[wavy, bg]restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
+          end, text = Text({{text = '[wavy, ' .. tostring(state.dark_transitions and 'fg' or 'bg') .. ']restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
         end}
 
-        self.mouse_button = Button{group = self.ui, x = gw/2, y = gh - 150, force_update = true, button_text = 'mouse control: ' .. tostring(state.mouse_control and 'yes' or 'no'), fg_color = 'bg10', bg_color = 'bg',
+        self.mouse_button = Button{group = self.ui, x = gw/2 - 57, y = gh - 150, force_update = true, button_text = 'mouse control: ' .. tostring(state.mouse_control and 'yes' or 'no'), fg_color = 'bg10', bg_color = 'bg',
         action = function(b)
           ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
           state.mouse_control = not state.mouse_control
           b:set_text('mouse control: ' .. tostring(state.mouse_control and 'yes' or 'no'))
           input:set_mouse_visible(state.mouse_control)
+        end}
+
+        self.dark_transition_button = Button{group = self.ui, x = gw/2 + 64, y = gh - 150, force_update = true, button_text = 'dark transitions: ' .. tostring(state.dark_transitions and 'yes' or 'no'),
+        fg_color = 'bg10', bg_color = 'bg', action = function(b)
+          ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+          state.dark_transitions = not state.dark_transitions
+          b:set_text('dark transitions: ' .. tostring(state.dark_transitions and 'yes' or 'no'))
         end}
 
         self.sfx_button = Button{group = self.ui, x = gw/2 - 46, y = gh - 175, force_update = true, button_text = 'sounds (n): ' .. tostring(state.volume_muted and 'no' or 'yes'), fg_color = 'bg10', bg_color = 'bg',
@@ -547,6 +555,7 @@ function Arena:update(dt)
         if self.resume_button then self.resume_button.dead = true; self.resume_button = nil end
         if self.restart_button then self.restart_button.dead = true; self.restart_button = nil end
         if self.mouse_button then self.mouse_button.dead = true; self.mouse_button = nil end
+        if self.dark_transition_button then self.dark_transition_button.dead = true; self.dark_transition_button = nil end
         if self.sfx_button then self.sfx_button.dead = true; self.sfx_button = nil end
         if self.music_button then self.music_button.dead = true; self.music_button = nil end
         if self.video_button_1 then self.video_button_1.dead = true; self.video_button_1 = nil end
@@ -570,24 +579,24 @@ function Arena:update(dt)
       ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-      TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = fg[0], transition_action = function()
+      TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = state.dark_transitions and bg[-2] or fg[0], transition_action = function()
         slow_amount = 1
         gold = 3
         passives = {}
         main_song_instance:stop()
-        run_passive_pool_by_tiers = {
-          [1] = { 'wall_echo', 'wall_rider', 'centipede', 'temporal_chains', 'amplify', 'amplify_x', 'ballista', 'ballista_x', 'blunt_arrow', 'berserking', 'unwavering_stance', 'assassination', 'unleash', 'blessing',
-            'hex_master', 'force_push', 'spawning_pool'}, 
-          [2] = {'ouroboros_technique_r', 'ouroboros_technique_l', 'intimidation', 'vulnerability', 'resonance', 'point_blank', 'longshot', 'explosive_arrow', 'chronomancy', 'awakening', 'ultimatum', 'echo_barrage', 
-            'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
-          [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
+        run_passive_pool = {
+          'centipede', 'ouroboros_technique_r', 'ouroboros_technique_l', 'amplify', 'resonance', 'ballista', 'call_of_the_void', 'crucio', 'speed_3', 'damage_4', 'level_5', 'death_6', 'lasting_7',
+          'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'pandemic', 'whispers_of_doom',
+          'tremor', 'heavy_impact', 'fracture', 'meat_shield', 'hive', 'baneling_burst', 'blunt_arrow', 'explosive_arrow', 'divine_machine_arrow', 'chronomancy', 'awakening', 'divine_punishment',
+          'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
+          'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance'
         }
         max_units = 7 + current_new_game_plus
         main:add(BuyScreen'buy_screen')
         locked_state = nil
         system.save_run()
         main:go_to('buy_screen', 0, {}, passives, 1, 0)
-      end, text = Text({{text = '[wavy, bg]restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
+      end, text = Text({{text = '[wavy, ' .. tostring(state.dark_transitions and 'fg' or 'bg') .. ']restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
     end
 
     if input.escape.pressed then
@@ -695,14 +704,14 @@ function Arena:quit()
         end
       end)
 
-      if current_new_game_plus == 1 then
+      if current_new_game_plus == 2 then
         state.achievement_new_game_1 = true
         system.save_state()
         steam.userStats.setAchievement('NEW_GAME_1')
         steam.userStats.storeStats()
       end
 
-      if current_new_game_plus == 5 then
+      if current_new_game_plus == 6 then
         state.achievement_new_game_5 = true
         system.save_state()
         steam.userStats.setAchievement('GAME_COMPLETE')
@@ -877,23 +886,17 @@ function Arena:set_passives(from_reroll)
   local w = 3*card_w + 2*20
   self.choosing_passives = true
   self.cards = {}
-  local tier_1 = random:weighted_pick(unpack(level_to_passive_tier_weights[level or self.level]))
-  local tier_2 = random:weighted_pick(unpack(level_to_passive_tier_weights[level or self.level]))
-  local tier_3 = random:weighted_pick(unpack(level_to_passive_tier_weights[level or self.level]))
-  local passive_1 = random:table_remove(run_passive_pool_by_tiers[tier_1])
-  local passive_2 = random:table_remove(run_passive_pool_by_tiers[tier_2])
-  local passive_3 = random:table_remove(run_passive_pool_by_tiers[tier_3])
+  local passive_1 = random:table_remove(run_passive_pool)
+  local passive_2 = random:table_remove(run_passive_pool)
+  local passive_3 = random:table_remove(run_passive_pool)
   if passive_1 then
-    table.insert(self.cards,
-      PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 0*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, card_i = 1, tier = tier_1, arena = self, passive = passive_1, force_update = true})
+    table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 0*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, card_i = 1, arena = self, passive = passive_1, force_update = true})
   end
   if passive_2 then
-    table.insert(self.cards,
-      PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 1*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, card_i = 2, tier = tier_2, arena = self, passive = passive_2, force_update = true})
+    table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 1*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, card_i = 2, arena = self, passive = passive_2, force_update = true})
   end
   if passive_3 then
-    table.insert(self.cards,
-      PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 2*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, card_i = 3, tier = tier_3, arena = self, passive = passive_3, force_update = true})
+    table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 2*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, card_i = 3, arena = self, passive = passive_3, force_update = true})
   end
   self.passive_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 65, lines = {{text = '[fg, wavy]choose one', font = fat_font, alignment = 'center'}}}
   if not passive_1 and not passive_2 and not passive_3 then
@@ -905,8 +908,8 @@ end
 function Arena:restore_passives_to_pool(j)
   for i = 1, 3 do
     if i ~= j then
-      if self.cards[i] and run_passive_pool_by_tiers[self.cards[i].tier] then
-        table.insert(run_passive_pool_by_tiers[self.cards[i].tier], self.cards[i].passive)
+      if self.cards[i] then
+        table.insert(run_passive_pool, self.cards[i].passive)
       end
     end
   end
@@ -971,7 +974,7 @@ end
 
 function Arena:die()
   if not self.died_text and not self.won and not self.arena_clear_text then
-    input:set_mouse_visible(false)
+    input:set_mouse_visible(true)
     self.t:cancel('divine_punishment')
     self.died = true
     locked_state = nil
@@ -989,23 +992,23 @@ function Arena:die()
         ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
         ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
         ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-        TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = fg[0], transition_action = function()
+        TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = state.dark_transitions and bg[-2] or fg[0], transition_action = function()
           slow_amount = 1
           gold = 3
           passives = {}
           main_song_instance:stop()
-          run_passive_pool_by_tiers = {
-            [1] = { 'wall_echo', 'wall_rider', 'centipede', 'temporal_chains', 'amplify', 'amplify_x', 'ballista', 'ballista_x', 'blunt_arrow', 'berserking', 'unwavering_stance', 'assassination', 'unleash', 'blessing',
-              'hex_master', 'force_push', 'spawning_pool'}, 
-            [2] = {'ouroboros_technique_r', 'ouroboros_technique_l', 'intimidation', 'vulnerability', 'resonance', 'point_blank', 'longshot', 'explosive_arrow', 'chronomancy', 'awakening', 'ultimatum', 'echo_barrage', 
-              'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
-            [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
+          run_passive_pool = {
+            'centipede', 'ouroboros_technique_r', 'ouroboros_technique_l', 'amplify', 'resonance', 'ballista', 'call_of_the_void', 'crucio', 'speed_3', 'damage_4', 'level_5', 'death_6', 'lasting_7',
+            'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'pandemic', 'whispers_of_doom',
+            'tremor', 'heavy_impact', 'fracture', 'meat_shield', 'hive', 'baneling_burst', 'blunt_arrow', 'explosive_arrow', 'divine_machine_arrow', 'chronomancy', 'awakening', 'divine_punishment',
+            'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
+            'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance'
           }
           max_units = 7 + current_new_game_plus
           main:add(BuyScreen'buy_screen')
           system.save_run()
           main:go_to('buy_screen', 0, {}, passives, 1, 0)
-        end, text = Text({{text = '[wavy, bg]restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
+        end, text = Text({{text = '[wavy, ' .. tostring(state.dark_transitions and 'fg' or 'bg') .. ']restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
       end}
     end)
     return true
@@ -1084,7 +1087,7 @@ function Arena:transition()
   self.transitioning = true
   if not self.lock then locked_state = nil end
   ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-  TransitionEffect{group = main.transitions, x = self.player.x, y = self.player.y, color = self.color, transition_action = function(t)
+  TransitionEffect{group = main.transitions, x = self.player.x, y = self.player.y, color = state.dark_transitions and bg[-2] or self.color, transition_action = function(t)
     if self.level % 2 == 0 and self.shop_level < 5 then
       self.shop_xp = self.shop_xp + 1
       local max_xp = 0
@@ -1100,36 +1103,39 @@ function Arena:transition()
     end
     slow_amount = 1
     main:add(BuyScreen'buy_screen')
-    system.save_run(self.level, gold, self.units, self.passives, self.shop_level, self.shop_xp, run_passive_pool_by_tiers, locked_state)
+    system.save_run(self.level, gold, self.units, self.passives, self.shop_level, self.shop_xp, run_passive_pool, locked_state)
     main:go_to('buy_screen', self.level, self.units, self.passives, self.shop_level, self.shop_xp)
     t.t:after(0.1, function()
       t.text:set_text({
-        {text = '[nudge_down, bg]gold gained: ' .. tostring(self.gold_gained or 0) .. ' + ' .. tostring(self.gold_picked_up or 0), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-        {text = '[wavy_lower, bg]interest: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-        {text = '[wavy_lower, bg]total: 0', font = pixul_font, alignment = 'center'}
+        {text = '[nudge_down, ' .. tostring(state.dark_transitions and 'fg' or 'bg') .. ']gold gained: ' .. tostring(self.gold_gained or 0) .. ' + ' .. tostring(self.gold_picked_up or 0), font = pixul_font, 
+          alignment = 'center', height_multiplier = 1.5},
+        {text = '[wavy_lower, ' .. tostring(state.dark_transitions and 'fg' or 'bg') .. ']interest: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+        {text = '[wavy_lower, ' .. tostring(state.dark_transitions and 'fg' or 'bg') .. ']total: 0', font = pixul_font, alignment = 'center'}
       })
       _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       t.t:after(0.2, function()
         t.text:set_text({
-          {text = '[wavy_lower, bg]gold gained: ' .. tostring(self.gold_gained or 0) .. ' + ' .. tostring(self.gold_picked_up or 0), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-          {text = '[nudge_down, bg]interest: ' .. tostring(self.interest or 0), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-          {text = '[wavy_lower, bg]total: 0', font = pixul_font, alignment = 'center'}
+          {text = '[wavy_lower, ' .. tostring(state.dark_transitions and 'fg' or 'bg') .. ']gold gained: ' .. tostring(self.gold_gained or 0) .. ' + ' .. tostring(self.gold_picked_up or 0), font = pixul_font,
+            alignment = 'center', height_multiplier = 1.5},
+          {text = '[nudge_down, ' .. tostring(state.dark_transitions and 'fg' or 'bg') .. ']interest: ' .. tostring(self.interest or 0), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+          {text = '[wavy_lower, ' .. tostring(state.dark_transitions and 'fg' or 'bg') .. ']total: 0', font = pixul_font, alignment = 'center'}
         })
         _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
         t.t:after(0.2, function()
           t.text:set_text({
-            {text = '[wavy_lower, bg]gold gained: ' .. tostring(self.gold_gained or 0) .. ' + ' .. tostring(self.gold_picked_up or 0), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-            {text = '[wavy_lower, bg]interest: ' .. tostring(self.interest or 0), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-            {text = '[nudge_down, bg]total: ' .. tostring((self.gold_gained or 0) + (self.interest or 0) + (self.gold_picked_up or 0)), font = pixul_font, alignment = 'center'}
+            {text = '[wavy_lower, ' .. tostring(state.dark_transitions and 'fg' or 'bg') .. ']gold gained: ' .. tostring(self.gold_gained or 0) .. ' + ' .. tostring(self.gold_picked_up or 0), font = pixul_font,
+              alignment = 'center', height_multiplier = 1.5},
+            {text = '[wavy_lower, ' .. tostring(state.dark_transitions and 'fg' or 'bg') .. ']interest: ' .. tostring(self.interest or 0), font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+            {text = '[nudge_down, ' .. tostring(state.dark_transitions and 'fg' or 'bg') .. ']total: ' .. tostring((self.gold_gained or 0) + (self.interest or 0) + (self.gold_picked_up or 0)), font = pixul_font, alignment = 'center'}
           })
           _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
         end)
       end)
     end)
   end, text = Text({
-    {text = '[wavy_lower, bg]gold gained: 0 + 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-    {text = '[wavy_lower, bg]interest: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
-    {text = '[wavy_lower, bg]total: 0', font = pixul_font, alignment = 'center'}
+    {text = '[wavy_lower, ' .. tostring(state.dark_transitions and 'fg' or 'bg') .. ']gold gained: 0 + 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+    {text = '[wavy_lower, ' .. tostring(state.dark_transitions and 'fg' or 'bg') .. ']interest: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+    {text = '[wavy_lower, ' .. tostring(state.dark_transitions and 'fg' or 'bg') .. ']total: 0', font = pixul_font, alignment = 'center'}
   }, global_text_tags)}
 end
 

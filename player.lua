@@ -6,7 +6,7 @@ function Player:init(args)
   self:init_game_object(args)
   self:init_unit()
 
-  if self.passives then for k, v in pairs(self.passives) do self[v] = true end end
+  if self.passives then for k, v in pairs(self.passives) do self[v.passive] = v.level end end
 
   self.color = character_colors[self.character]
   self:set_as_rectangle(9, 9, 'dynamic', 'player')
@@ -992,6 +992,7 @@ function Player:update(dt)
     if class_levels.conjurer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
     if class_levels.enchanter >= 1 then number_of_active_sets = number_of_active_sets + 1 end
     if class_levels.psyker >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.nuker >= 1 then number_of_active_sets = number_of_active_sets + 1 end
     if class_levels.curser >= 1 then number_of_active_sets = number_of_active_sets + 1 end
     if class_levels.forcer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
     if class_levels.swarmer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
@@ -1058,6 +1059,7 @@ function Player:update(dt)
     if class_levels.conjurer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
     if class_levels.enchanter >= 1 then number_of_active_sets = number_of_active_sets + 1 end
     if class_levels.psyker >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.nuker >= 1 then number_of_active_sets = number_of_active_sets + 1 end
     if class_levels.curser >= 1 then number_of_active_sets = number_of_active_sets + 1 end
     if class_levels.forcer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
     if class_levels.swarmer >= 1 then number_of_active_sets = number_of_active_sets + 1 end

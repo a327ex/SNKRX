@@ -137,15 +137,15 @@ function system.load_state()
 end
 
 
-function system.save_run(level, gold, units, passives, shop_level, shop_xp, run_passive_pool_by_tiers, locked_state)
-  local run = {level = level, gold = gold, units = units, passives = passives, shop_level = shop_level, shop_xp = shop_xp, run_passive_pool_by_tiers = run_passive_pool_by_tiers, locked_state = locked_state}
+function system.save_run(level, gold, units, passives, shop_level, shop_xp, run_passive_pool, locked_state)
+  local run = {level = level, gold = gold, units = units, passives = passives, shop_level = shop_level, shop_xp = shop_xp, run_passive_pool= run_passive_pool, locked_state = locked_state}
   local str = "return " .. table.tostring(run)
-  love.filesystem.write("run_v2.txt", str)
+  love.filesystem.write("run_v3.txt", str)
 end
 
 
 function system.load_run()
-  local chunk = love.filesystem.load("run_v2.txt")
+  local chunk = love.filesystem.load("run_v3.txt")
   if chunk then return chunk()
   else return {} end
 end

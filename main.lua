@@ -141,50 +141,62 @@ function init()
   voider = Image('voider')
   sorcerer = Image('sorcerer')
   mercenary = Image('mercenary')
+  star = Image('star')
+  arrow = Image('arrow')
+  centipede = Image('centipede')
   ouroboros_technique_r = Image('ouroboros_technique_r')
   ouroboros_technique_l = Image('ouroboros_technique_l')
-  wall_echo = Image('wall_echo')
-  wall_rider = Image('wall_rider')
-  centipede = Image('centipede')
-  intimidation = Image('intimidation')
-  vulnerability = Image('vulnerability')
-  temporal_chains = Image('temporal_chains')
   amplify = Image('amplify')
-  amplify_x = Image('amplify_x')
   resonance = Image('resonance')
   ballista = Image('ballista')
-  ballista_x = Image('ballista_x')
-  point_blank = Image('point_blank')
-  longshot = Image('longshot')
+  call_of_the_void = Image('call_of_the_void')
+  crucio = Image('crucio')
+  speed_3 = Image('speed_3')
+  damage_4 = Image('damage_4')
+  level_5 = Image('level_5')
+  death_6 = Image('death_6')
+  lasting_7 = Image('lasting_7')
+  defensive_stance = Image('defensive_stance')
+  offensive_stance = Image('offensive_stance')
+  kinetic_bomb = Image('kinetic_bomb')
+  porcupine_technique = Image('porcupine_technique')
+  last_stand = Image('last_stand')
+  seeping = Image('seeping')
+  deceleration = Image('deceleration')
+  annihilation = Image('annihilation')
+  malediction = Image('malediction')
+  pandemic = Image('pandemic')
+  whispers_of_doom = Image('whispers_of_doom')
+  tremor = Image('tremor')
+  heavy_impact = Image('heavy_impact')
+  fracture = Image('fracture')
+  meat_shield = Image('meat_shield')
+  hive = Image('hive')
+  baneling_burst = Image('baneling_burst')
   blunt_arrow = Image('blunt_arrow')
   explosive_arrow = Image('explosive_arrow')
   divine_machine_arrow = Image('divine_machine_arrow')
   chronomancy = Image('chronomancy')
   awakening = Image('awakening')
   divine_punishment = Image('divine_punishment')
-  berserking = Image('berserking')
-  unwavering_stance = Image('unwavering_stance')
-  ultimatum = Image('ultimatum')
-  flying_daggers = Image('flying_daggers')
   assassination = Image('assassination')
+  flying_daggers = Image('flying_daggers')
+  ultimatum = Image('ultimatum')
   magnify = Image('magnify')
   echo_barrage = Image('echo_barrage')
   unleash = Image('unleash')
   reinforce = Image('reinforce')
   payback = Image('payback')
-  blessing = Image('blessing')
-  hex_master = Image('hex_master')
-  whispers_of_doom = Image('whispers_of_doom')
-  force_push = Image('force_push')
-  heavy_impact = Image('heavy_impact')
-  crucio = Image('crucio')
-  immolation = Image('immolation')
-  call_of_the_void = Image('call_of_the_void')
-  spawning_pool = Image('spawning_pool')
-  hive = Image('hive')
-  void_rift = Image('void_rift')
-  star = Image('star')
-  arrow = Image('arrow')
+  enchanted = Image('enchanted')
+  freezing_field = Image('freezing_field')
+  burning_field = Image('burning_field')
+  gravity_field = Image('gravity_field')
+  magnetism = Image('magnetism')
+  insurance = Image('insurance')
+  dividends = Image('dividends')
+  berserking = Image('berserking')
+  unwavering_stance = Image('unwavering_stance')
+  unrelenting_stance = Image('unrelenting_stance')
 
   class_colors = {
     ['warrior'] = yellow[0],
@@ -904,23 +916,24 @@ function init()
     else return 'light_bg' end
   end
   class_descriptions = {
-    ['ranger'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[' .. ylb2(lvl) .. ']/6 [fg]- [' .. ylb1(lvl) .. ']8%[' .. ylb2(lvl) .. ']/16% [fg]chance to release a barrage on attack to allied rangers' end,
-    ['warrior'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[' .. ylb2(lvl) .. ']/6 [fg]- [' .. ylb1(lvl) .. ']+25[' .. ylb2(lvl) .. ']/+50 [fg]defense to allied warriors' end,
-    ['mage'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[' .. ylb2(lvl) .. ']/6 [fg]- [' .. ylb1(lvl) .. ']-15[' .. ylb2(lvl) .. ']/-30 [fg]enemy defense' end,
-    ['rogue'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[' .. ylb2(lvl) .. ']/6 [fg]- [' .. ylb1(lvl) .. ']15%[' .. ylb2(lvl) .. ']/30% [fg]chance to crit to allied rogues, dealing [yellow]4x[] damage' end,
-    ['healer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+15%[' .. ylb2(lvl) .. ']/+30% [fg]healing effectiveness' end,
-    ['enchanter'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+15%[' .. ylb2(lvl) .. ']/+25% [fg]damage to all allies' end,
-    ['nuker'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[' .. ylb2(lvl) .. ']/6 [fg]- [' .. ylb1(lvl) .. ']+15%[' .. ylb2(lvl) .. ']/+25% [fg]area damage and size to allied nukers' end,
-    ['conjurer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+25%[' .. ylb2(lvl) .. ']/+50% [fg]summon damage and duration' end,
-    ['psyker'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+10%[' .. ylb2(lvl) .. ']/+20% [fg]damage and attack speed per active set to allied psykers' end,
-    ['curser'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+25%[' .. ylb2(lvl) .. ']/+50% [fg]curse duration' end,
-    ['forcer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+25%[' .. ylb2(lvl) .. ']/+50% [fg]knockback force to all allies' end,
-    ['swarmer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+1[' .. ylb2(lvl) .. ']/+3 [fg]hits to critters' end,
-    ['voider'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+15%[' .. ylb2(lvl) .. ']/+25% [fg]damage over time to allied voiders' end,
+    ['ranger'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[light_bg]/[' .. ylb2(lvl) .. ']6 [fg]- [' .. ylb1(lvl) .. ']8%[light_bg]/[' .. ylb2(lvl) .. ']16% [fg]chance to release a barrage on attack to allied rangers' end,
+    ['warrior'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[light_bg]/[' .. ylb2(lvl) .. ']6 [fg]- [' .. ylb1(lvl) .. ']+25[light_bg]/[' .. ylb2(lvl) .. ']+50 [fg]defense to allied warriors' end,
+    ['mage'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[light_bg]/[' .. ylb2(lvl) .. ']6 [fg]- [' .. ylb1(lvl) .. ']-15[light_bg]/[' .. ylb2(lvl) .. ']-30 [fg]enemy defense' end,
+    ['rogue'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[light_bg]/[' .. ylb2(lvl) .. ']6 [fg]- [' .. ylb1(lvl) .. ']15%[light_bg]/[' .. ylb2(lvl) .. ']30% [fg]chance to crit to allied rogues, dealing [yellow]4x[] damage' end,
+    ['healer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+15%[light_bg]/[' .. ylb2(lvl) .. ']+30% [fg]healing effectiveness' end,
+    ['enchanter'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+15%[light_bg]/[' .. ylb2(lvl) .. ']+25% [fg]damage to all allies' end,
+    ['nuker'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[light_bg]/[' .. ylb2(lvl) .. ']6 [fg]- [' .. ylb1(lvl) .. ']+15%[light_bg]/[' .. ylb2(lvl) .. ']+25% [fg]area damage and size to allied nukers' end,
+    ['conjurer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+25%[light_bg]/[' .. ylb2(lvl) .. ']+50% [fg]summon damage and duration' end,
+    ['psyker'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+10%[light_bg]/[' .. ylb2(lvl) .. ']+20% [fg]damage and attack speed per active set to allied psykers' end,
+    ['curser'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+25%[light_bg]/[' .. ylb2(lvl) .. ']+50% [fg]curse duration' end,
+    ['forcer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+25%[light_bg]/[' .. ylb2(lvl) .. ']+50% [fg]knockback force to all allies' end,
+    ['swarmer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+1[light_bg]/[' .. ylb2(lvl) .. ']+3 [fg]hits to critters' end,
+    ['voider'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+15%[light_bg]/[' .. ylb2(lvl) .. ']+25% [fg]damage over time to allied voiders' end,
     ['sorcerer'] = function(lvl) 
-      return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4[' .. ylb3(lvl) .. ']/6 [fg]- sorcerers repeat their attacks once every [' .. ylb1(lvl) .. ']4/[' .. ylb2(lvl) .. ']3/[' .. ylb3(lvl) .. ']2[fg] attacks'
+      return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4[light_bg]/[' .. ylb3(lvl) .. ']6 [fg]- sorcerers repeat their attacks once every [' .. 
+        ylb1(lvl) .. ']4[light_bg]/[' .. ylb2(lvl) .. ']3[light_bg]/[' .. ylb3(lvl) .. ']2[fg] attacks'
     end,
-    ['mercenary'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[' .. ylb2(lvl) .. ']/4 [fg]- [' .. ylb1(lvl) .. ']+10%[' .. ylb2(lvl) .. ']/+20% [fg]chance for enemies to drop gold on death' end,
+    ['mercenary'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+10%[light_bg]/[' .. ylb2(lvl) .. ']+20% [fg]chance for enemies to drop gold on death' end,
   }
 
   tier_to_characters = {
@@ -1093,146 +1106,175 @@ function init()
   }
 
   passive_names = {
+    ['centipede'] = 'Centipede',
     ['ouroboros_technique_r'] = 'Ouroboros Technique R',
     ['ouroboros_technique_l'] = 'Ouroboros Technique L',
-    ['wall_echo'] = 'Wall Echo',
-    ['wall_rider'] = 'Wall Rider',
-    ['centipede'] = 'Centipede',
-    ['intimidation'] = 'Intimidation',
-    ['vulnerability'] = 'Vulnerability',
-    ['temporal_chains'] = 'Temporal Chains',
     ['amplify'] = 'Amplify',
-    ['amplify_x'] = 'Amplify X',
     ['resonance'] = 'Resonance',
     ['ballista'] = 'Ballista',
-    ['ballista_x'] = 'Ballista X',
-    ['point_blank'] = 'Point Blank',
-    ['longshot'] = 'Longshot',
+    ['call_of_the_void'] = 'Call of the Void',
+    ['crucio'] = 'Crucio',
+    ['speed_3'] = 'Speed 3',
+    ['damage_4'] = 'Damage 4',
+    ['level_5'] = 'Level 5',
+    ['death_6'] = 'Death 6',
+    ['lasting_7'] = 'Lasting 7',
+    ['defensive_stance'] = 'Defensive Stance',
+    ['offensive_stance'] = 'Offensive Stance',
+    ['kinetic_bomb'] = 'Kinetic Bomb',
+    ['porcupine_technique'] = 'Porcupine Technique',
+    ['last_stand'] = 'Last Stand',
+    ['seeping'] = 'Seeping',
+    ['deceleration'] = 'Deceleration',
+    ['annihilation'] = 'Annihilation',
+    ['malediction'] = 'Malediction',
+    ['pandemic'] = 'Pandemic',
+    ['whispers_of_doom'] = 'Whispers of Doom',
+    ['tremor'] = 'Tremor',
+    ['heavy_impact'] = 'Heavy Impact',
+    ['fracture'] = 'Fracture',
+    ['meat_shield'] = 'Meat Shield',
+    ['hive'] = 'Hive',
+    ['baneling_burst'] = 'Baneling Burst',
     ['blunt_arrow'] = 'Blunt Arrow',
     ['explosive_arrow'] = 'Explosive Arrow',
     ['divine_machine_arrow'] = 'Divine Machine Arrow',
     ['chronomancy'] = 'Chronomancy',
     ['awakening'] = 'Awakening',
     ['divine_punishment'] = 'Divine Punishment',
-    ['berserking'] = 'Berserking',
-    ['unwavering_stance'] = 'Unwavering Stance',
-    ['ultimatum'] = 'Ultimatum',
-    ['flying_daggers'] = 'Flying Daggers',
     ['assassination'] = 'Assassination',
+    ['flying_daggers'] = 'Flying Daggers',
+    ['ultimatum'] = 'Ultimatum',
     ['magnify'] = 'Magnify',
     ['echo_barrage'] = 'Echo Barrage',
     ['unleash'] = 'Unleash',
     ['reinforce'] = 'Reinforce',
     ['payback'] = 'Payback',
-    ['blessing'] = 'Blessing',
-    ['hex_master'] = 'Hex Master',
-    ['whispers_of_doom'] = 'Whispers of Doom',
-    ['force_push'] = 'Force Push',
-    ['heavy_impact'] = 'Heavy Impact',
-    ['crucio'] = 'Crucio',
-    ['immolation'] = 'Immolation',
-    ['call_of_the_void'] = 'Call of the Void',
-    ['spawning_pool'] = 'Spawning Pool',
-    ['hive'] = 'Hive',
-    ['void_rift'] = 'Void Rift',
+    ['enchanted'] = 'Enchanted',
+    ['freezing_field'] = 'Freezing Field',
+    ['burning_field'] = 'Burning Field',
+    ['gravity_field'] = 'Gravity Field',
+    ['magnetism'] = 'Magnetism',
+    ['insurance'] = 'Insurance',
+    ['dividends'] = 'Dividends',
+    ['berserking'] = 'Berserking',
+    ['unwavering_stance'] = 'Unwavering Stance',
+    ['unrelenting_stance'] = 'Unrelenting Stance',
   }
 
   passive_descriptions = {
-    ['ouroboros_technique_r'] = '[fg]rotating around yourself to the right makes units release projectiles',
-    ['ouroboros_technique_l'] = '[fg]rotating around yourself to the left grants [yellow]+25%[fg] defense to all units',
-    ['wall_echo'] = '[fg]hitting walls has a [yellow]34%[fg] chance of releasing [yellow]2[fg] projectiles',
-    ['wall_rider'] = '[fg]hitting walls grants a [yellow]25%[fg] movement speed buff to your snake for [yellow]1[fg] second',
-    ['centipede'] = '[yellow]+20%[fg] movement speed',
-    ['intimidation'] = '[fg]enemies spawn with [yellow]-20%[fg] max HP',
-    ['vulnerability'] = '[fg]all enemies take [yellow]+20%[fg] damage',
-    ['temporal_chains'] = '[fg]all enemies move [yellow]20%[fg] slower',
-    ['amplify'] = '[yellow]+25%[fg] AoE damage',
-    ['amplify_x'] = '[yellow]+50%[fg] AoE damage',
-    ['resonance'] = '[fg]all AoE attacks deal [yellow]+5%[fg] damage per unit hit',
-    ['ballista'] = '[yellow]+25%[fg] damage to rangers and rogues ',
-    ['ballista_x'] = '[yellow]+50%[fg] damage to rangers and rogues',
-    ['point_blank'] = '[fg]projectiles deal up to [yellow]+100%[fg] damage up close and down to [yellow]-50%[fg] damage far away',
-    ['longshot'] = '[fg]projectiles deal up to [yellow]+100%[fg] damage far away and down to [yellow]-50%[fg] up close',
-    ['blunt_arrow'] = '[fg]all arrows fired by rangers have a [yellow]20%[fg] chance to knockback',
-    ['explosive_arrow'] = '[fg]arrows fired by rangers have a [yellow]30%[fg] chance to explode, dealing [yellow]20%[fg] AoE damage',
-    ['divine_machine_arrow'] = '[fg]arrows fired by rangers have a [yellow]40%[fg] chance to seek enemies and pierce [yellow]4[fg] times',
-    ['chronomancy'] = '[fg]all mages and sorcerers cast their spells [yellow]25%[fg] faster',
-    ['awakening'] = '[yellow]+100%[fg] aspd and damage to [yellow]1[fg] mage or sorcerer every round for that round',
-    ['divine_punishment'] = '[fg]repeatedly deal damage to all enemies based on how many mages or sorcerers you have',
-    ['berserking'] = '[fg]all warriors have up to [yellow]+50%[fg] attack speed based on missing HP',
-    ['unwavering_stance'] = '[fg]all warriors gain [yellow]+5%[fg] defense every [yellow]5[fg] seconds',
-    ['ultimatum'] = '[fg]projectiles that chain gain [yellow]+25%[fg] damage with each chain',
-    ['flying_daggers'] = '[fg]all knives thrown by rogues chain [yellow]+2[fg] times',
-    ['assassination'] = '[fg]crits from rogues deal [yellow]8x[fg] damage but normal attacks deal [yellow]half[fg] damage',
-    ['magnify'] = '[yellow]+25%[fg] area size',
-    ['echo_barrage'] = '[yellow]20%[fg] chance to create [yellow]3[fg] secondary AoEs on AoE hit',
-    ['unleash'] = '[yellow]+1%[fg] area size and damage per second',
-    ['reinforce'] = '[yellow]+10%[fg] damage, defense and attack speed to all allies with at least one enchanter',
-    ['payback'] = '[yellow]+5%[fg] damage to all allies whenever an enchanter is hit',
-    ['blessing'] = '[yellow]+20%[fg] healing effectiveness',
-    ['hex_master'] = '[yellow]+25%[fg] curse duration',
-    ['whispers_of_doom'] = '[fg]curses apply doom, when [yellow]4[fg] doom instances are reached they deal [yellow]200[fg] damage',
-    ['force_push'] = '[yellow]+25%[fg] knockback force',
-    ['heavy_impact'] = '[fg]when enemies hit walls they take damage according to the knockback force',
-    ['crucio'] = '[fg]taking damage also shares that across all enemies at [yellow]25%[fg] its value',
-    ['immolation'] = '[yellow]3[fg] units will periodically take damage, all your allies gain [yellow]+8%[fg] damage per tick',
-    ['call_of_the_void'] = '[yellow]+25%[fg] damage over time',
-    ['spawning_pool'] = '[yellow]+1[fg] critter health',
-    ['hive'] = '[yellow]+2[fg] critter health',
-    ['void_rift'] = '[fg]attacks by mages, nukers or voiders have a [yellow]20%[fg] chance to create a void rift on hit',
+    ['centipede'] = '[yellow]+10/20/30%[fg] movement speed',
+    ['ouroboros_technique_r'] = '[fg]rotating around yourself to the right releases [yellow]2/3/4[fg] projectiles per second',
+    ['ouroboros_technique_l'] = '[fg]rotating around yourself to the left grants [yellow]+15/25/35%[fg] defense to all units',
+    ['amplify'] = '[yellow]+20/35/50%[fg] AoE damage',
+    ['resonance'] = '[fg]all AoE attacks deal [yellow]+3/5/7%[fg] damage per unit hit',
+    ['ballista'] = '[yellow]+20/35/50%[fg] projectile damage',
+    ['call_of_the_void'] = '[yellow]+30/60/90%[fg] DoT damage',
+    ['crucio'] = '[fg]taking damage also shares that across all enemies at [yellow]20/30/40%[fg] its value',
+    ['speed_3'] = '[fg]position [yellow]3[fg] has [yellow]+50%[fg] attack speed',
+    ['damage_4'] = '[fg]position [yellow]4[fg] has [yellow]+30%[fg] damage',
+    ['level_5'] = '[fg]position [yellow]5[fg] is [yellow]1[fg] level higher',
+    ['death_6'] = '[fg]position [yellow]6[fg] takes [yellow]10%[fg] of its health as damage every [yellow]3[fg] seconds',
+    ['lasting_7'] = '[fg]position [yellow]7[fg] will stay alive for [yellow]10[fg] seconds after dying',
+    ['defensive_stance'] = '[fg]first and last positions have [yellow]+10/20/30%[fg] defense',
+    ['offensive_stance'] = '[fg]first and last positions have [yellow]+10/20/30%[fg] damage',
+    ['kinetic_bomb'] = '[fg]when a unit dies it explodes, launching enemies away',
+    ['porcupine_technique'] = '[fg]when a unit dies it explodes, releasing piercing projectiles',
+    ['last_stand'] = '[fg]the last unit alive is fully healed and receives a [yellow]+20%[fg] bonus to all stats',
+    ['seeping'] = '[fg]enemies taking DoT damage take [yellow]+15/20/25%[fg] damage for [yellow]6[fg] seconds',
+    ['deceleration'] = '[fg]enemies damaged by voiders have their movement speed reduced by [yellow]15/20/25%',
+    ['annihilation'] = '[fg]when a voider dies deal its DoT damage to all enemies for [yellow]3[fg] seconds',
+    ['malediction'] = '[fg]cursed enemies take [yellow]+15/25/35%[fg] damage and deal [yellow]-15/25/35%[fg] damage',
+    ['pandemic'] = '[fg]when a cursed enemy dies its curse spreads',
+    ['whispers_of_doom'] = '[fg]curses apply doom, deal [yellow]100/150/200[fg] damage every [yellow]4/3/2[fg] doom instances',
+    ['tremor'] = '[fg]when enemies die from hitting walls they create an area based on the knockback force',
+    ['heavy_impact'] = '[fg]when enemies hit walls they take damage based on the knockback force',
+    ['fracture'] = '[fg]when enemies die from hitting walls they explode into projectiles',
+    ['meat_shield'] = '[fg]critters [yellow]block[fg] enemy projectiles',
+    ['hive'] = '[fg]critters have [yellow]+1/2/3[fg] HP',
+    ['baneling_burst'] = '[fg]critters die immediately on contact but also deal [yellow]50/100/150[fg] AoE damage',
+    ['blunt_arrow'] = '[fg]ranger arrows have [yellow]+10/20/30%[fg] chance to knockback',
+    ['explosive_arrow'] = '[fg]ranger arrows have [yellow]+10/20/30%[fg] chance to deal [yellow]10/20/30%[fg] AoE damage',
+    ['divine_machine_arrow'] = '[fg]ranger arrows have a [yellow]10/20/30%[fg] chance to seek and pierce [yellow]1/2/3[fg] times',
+    ['chronomancy'] = '[fg]mages cast their spells [yellow]15/25/35%[fg] faster',
+    ['awakening'] = '[yellow]+50/75/100%[fg] attack speed and damage to [yellow]1[fg] mage every round for that round',
+    ['divine_punishment'] = '[fg]deal damage to all enemies based on how many mages you have',
+    ['assassination'] = '[fg]crits from rogues deal [yellow]8/10/12x[fg] damage but normal attacks deal [yellow]half[fg] damage',
+    ['flying_daggers'] = '[fg]all projectiles thrown by rogues chain [yellow]+2/3/4[fg] times',
+    ['ultimatum'] = '[fg]projectiles that chain gain [yellow]+10/20/30%[fg] damage with each chain',
+    ['magnify'] = '[yellow]+20/35/50%[fg] area size',
+    ['echo_barrage'] = '[yellow]10/20/30%[fg] chance to create [yellow]1/2/3[fg] secondary AoEs on AoE hit',
+    ['unleash'] = '[fg]all nukers gain [yellow]+1%[fg] area size and damage every second',
+    ['reinforce'] = '[yellow]+10/20/30%[fg] damage, defense and aspd to all allies with at least one enchanter',
+    ['payback'] = '[yellow]+2/5/8%[fg] damage to all allies whenever an enchanter is hit',
+    ['enchanted'] = '[yellow]+10/20/30%[fg] attack speed to a random unit with at least two enchanters',
+    ['freezing_field'] = '[fg]creates an area that slows enemies by [yellow]50%[fg] for [yellow]2[fg] seconds on sorcerer spell repeat',
+    ['burning_field'] = '[fg]creates an area that deals [yellow]30[fg] dps for [yellow]2[fg] seconds on sorcerer spell repeat',
+    ['gravity_field'] = '[fg]creates an area that pulls enemies in for [yellow]2[fg] seconds on sorcerer spell repeat',
+    ['magnetism'] = '[fg]gold coins are attracted to the snake',
+    ['insurance'] = "[fg]heroes have [yellow]4[fg] times the chance of mercenary's bonus to drop [yellow]2[fg] gold on death",
+    ['dividends'] = '[fg]mercenaries deal [yellow]+X%[fg] damage, where X is how much gold you have',
+    ['berserking'] = '[fg]all warriors have up to [yellow]+50/75/100%[fg] attack speed based on missing HP',
+    ['unwavering_stance'] = '[fg]all warriors gain [yellow]+4/8/12%[fg] defense every [yellow]5[fg] seconds',
+    ['unrelenting_stance'] = '[yellow]+2/5/8%[fg] defense to all allies whenever a warrior is hit',
   }
 
-  passive_tiers = {
-    ['ouroboros_technique_r'] = 2,
-    ['ouroboros_technique_l'] = 2,
-    ['wall_echo'] = 1,
-    ['wall_rider'] = 1,
-    ['centipede'] = 1,
-    ['intimidation'] = 2,
-    ['vulnerability'] = 2,
-    ['temporal_chains'] = 1,
-    ['amplify'] = 1,
-    ['amplify_x'] = 2,
-    ['resonance'] = 3,
-    ['ballista'] = 1,
-    ['ballista_x'] = 2,
-    ['point_blank'] = 2,
-    ['longshot'] = 2,
-    ['blunt_arrow'] = 1,
-    ['explosive_arrow'] = 2,
-    ['divine_machine_arrow'] = 3,
-    ['chronomancy'] = 2,
-    ['awakening'] = 2,
-    ['divine_punishment'] = 3,
-    ['berserking'] = 1,
-    ['unwavering_stance'] = 1,
-    ['ultimatum'] = 2,
-    ['flying_daggers'] = 3,
-    ['assassination'] = 1,
-    ['magnify'] = 1,
-    ['echo_barrage'] = 2,
-    ['unleash'] = 1,
-    ['reinforce'] = 2,
-    ['payback'] = 2,
-    ['blessing'] = 1,
-    ['hex_master'] = 1,
-    ['whispers_of_doom'] = 2,
-    ['force_push'] = 1,
-    ['heavy_impact'] = 2,
-    ['crucio'] = 3,
-    ['immolation'] = 2,
-    ['call_of_the_void'] = 2,
-    ['spawning_pool'] = 1,
-    ['hive'] = 3,
-    ['void_rift'] = 3,
-  }
-
-  tier_to_passives = {
-    [1] = {'wall_echo', 'wall_rider', 'centipede', 'temporal_chains', 'amplify', 'amplify_x', 'ballista', 'ballista_x', 'blunt_arrow', 'berserking', 'unwavering_stance', 'assassination', 'unleash', 'blessing',
-      'hex_master', 'force_push', 'spawning_pool'},
-    [2] = {'ouroboros_technique_r', 'ouroboros_technique_l', 'intimidation', 'vulnerability', 'resonance', 'point_blank', 'longshot', 'explosive_arrow', 'chronomancy', 'awakening', 'ultimatum', 'echo_barrage',
-      'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
-    [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
+  local ts = function(lvl, a, b, c) return '[' .. ylb1(lvl) .. ']' .. tostring(a) .. '[light_bg]/[' .. ylb2(lvl) .. ']' .. tostring(b) .. '[light_bg]/[' .. ylb3(lvl) .. ']' .. tostring(c) .. '[fg]' end
+  passive_descriptions_level = {
+    ['centipede'] = function(lvl) return ts(lvl, '+10%', '20%', '30%') .. ' movement speed' end,
+    ['ouroboros_technique_r'] = function(lvl) return '[fg]rotating around yourself to the right releases ' .. ts(lvl, '2', '3', '4') .. ' projectiles per second' end,
+    ['ouroboros_technique_l'] = function(lvl) return '[fg]rotating around yourself to the left grants ' .. ts(lvl, '+15%', '25%', '35%') .. ' defense to all units' end,
+    ['amplify'] = function(lvl) return ts(lvl, '+20%', '35%', '50%') .. ' AoE damage' end,
+    ['resonance'] = function(lvl) return '[fg]all AoE attacks deal ' .. ts(lvl, '+3%', '5%', '7%') .. ' damage per unit hit' end,
+    ['ballista'] = function(lvl) return ts(lvl, '+20%', '35%', '50%') .. ' projectile damage' end,
+    ['call_of_the_void'] = function(lvl) return ts(lvl, '+30%', '60%', '90%') .. ' DoT damage' end,
+    ['crucio'] = function(lvl) return '[fg]taking damage also shares that across all enemies at ' .. ts(lvl, '20%', '30%', '40%') .. ' its value' end,
+    ['speed_3'] = function(lvl) return '[fg]position [yellow]3[fg] has [yellow]+50%[fg] attack speed' end,
+    ['damage_4'] = function(lvl) return '[fg]position [yellow]4[fg] has [yellow]+30%[fg] damage' end,
+    ['level_5'] = function(lvl) return '[fg]position [yellow]5[fg] is [yellow]1[fg] level higher' end,
+    ['death_6'] = function(lvl) return '[fg]position [yellow]6[fg] takes [yellow]10%[fg] of its health as damage every [yellow]3[fg] seconds' end,
+    ['lasting_7'] = function(lvl) return '[fg]position [yellow]7[fg] will stay alive for [yellow]10[fg] seconds after dying' end,
+    ['defensive_stance'] = function(lvl) return '[fg]first and last positions have ' .. ts(lvl, '+10%', '20%', '30%') .. ' defense' end,
+    ['offensive_stance'] = function(lvl) return '[fg]first and last positions have ' .. ts(lvl, '+10%', '20%', '30%') .. ' damage' end,
+    ['kinetic_bomb'] = function(lvl) return '[fg]when a unit dies it explodes, launching enemies away' end,
+    ['porcupine_technique'] = function(lvl) return '[fg]when a unit dies it explodes, releasing piercing projectiles' end,
+    ['last_stand'] = function(lvl) return '[fg]the last unit alive is fully healed and receives a [yellow]+20%[fg] bonus to all stats' end,
+    ['seeping'] = function(lvl) return '[fg]enemies taking DoT damage take ' .. ts(lvl, '+15%', '20%', '25%') .. ' damage for [yellow]6[fg] seconds' end,
+    ['deceleration'] = function(lvl) return '[fg]enemies damaged by voiders have their movement speed reduced by ' .. ts(lvl, '15%', '20%', '25%') end,
+    ['annihilation'] = function(lvl) return '[fg]when a voider dies deal its DoT damage to all enemies for [yellow]3[fg] seconds' end,
+    ['malediction'] = function(lvl) return '[fg]cursed enemies take ' .. ts(lvl, '+15%', '25%', '35%') .. ' damage and deal ' .. ts(lvl, '-15%', '25%', '35%') .. ' damage' end,
+    ['pandemic'] = function(lvl) return '[fg]when a cursed enemy dies its curse spreads' end,
+    ['whispers_of_doom'] = function(lvl) return '[fg]curses apply doom, deal ' .. ts(lvl, '100', '150', '200') .. ' every ' .. ts(lvl, '4', '3', '2') .. ' doom instances' end,
+    ['tremor'] = function(lvl) return '[fg]when enemies die from hitting walls they create an area based to the knockback force' end,
+    ['heavy_impact'] = function(lvl) return '[fg]when enemies hit walls they take damage based on the knockback force' end,
+    ['fracture'] = function(lvl) return '[fg]when enemies die from hitting walls they explode into projectiles' end,
+    ['meat_shield'] = function(lvl) return '[fg]critters [yellow]block[fg] enemy projectiles' end,
+    ['hive'] = function(lvl) return '[fg]critters have ' .. ts(lvl, '+1', '2', '3') .. ' HP' end,
+    ['baneling_burst'] = function(lvl) return '[fg]critters die immediately on contact but also deal ' .. ts(lvl, '50', '100', '150') .. ' AoE damage' end,
+    ['blunt_arrow'] = function(lvl) return '[fg]ranger arrows have ' .. ts(lvl, '+10%', '20%', '30%') .. ' chance to knockback' end,
+    ['explosive_arrow'] = function(lvl) return '[fg]ranger arrows have ' .. ts(lvl, '+10%', '20%', '30%') .. ' chance to deal ' .. ts(lvl, '10%', '20%', '30%') .. ' AoE damage' end,
+    ['divine_machine_arrow'] = function(lvl) return '[fg]ranger arrows have a ' .. ts(lvl, '10%', '20%', '30%') .. ' chance to seek and pierce ' .. ts(lvl, '1', '2', '3') .. ' times' end,
+    ['chronomancy'] = function(lvl) return '[fg]mages cast their spells ' .. ts(lvl, '15%', '25%', '35%') .. ' faster' end,
+    ['awakening'] = function(lvl) return ts(lvl, '+50%', '75%', '100%') .. ' attack speed and damage to [yellow]1[fg] mage every round for that round' end,
+    ['divine_punishment'] = function(lvl) return '[fg]deal damage to all enemies based on how many mages you have' end,
+    ['assassination'] = function(lvl) return '[fg]crits from rogues deal ' .. ts(lvl, '8x', '10x', '12x') .. ' damage but normal attacks deal [yellow]half[fg] damage' end,
+    ['flying_daggers'] = function(lvl) return '[fg]all projectiles thrown by rogues chain ' .. ts(lvl, '+2', '3', '4') .. ' times' end,
+    ['ultimatum'] = function(lvl) return '[fg]projectiles that chain gain ' .. ts(lvl, '+10%', '20%', '30%') .. ' damage with each chain' end,
+    ['magnify'] = function(lvl) return ts(lvl, '+20%', '35%', '50%') .. ' area size' end,
+    ['echo_barrage'] = function(lvl) return ts(lvl, '10%', '20%', '30%') .. ' chance to create ' .. ts(lvl, '1', '2', '3') .. ' secondary AoEs on AoE hit' end,
+    ['unleash'] = function(lvl) return '[fg]all nukers gain [yellow]+1%[fg] area size and damage every second' end,
+    ['reinforce'] = function(lvl) return ts(lvl, '+10%', '20%', '30%') .. ' damage, defense and aspd to all allies with at least one enchanter' end,
+    ['payback'] = function(lvl) return ts(lvl, '+2%', '5%', '8%') .. ' damage to all allies whenever an enchanter is hit' end,
+    ['enchanted'] = function(lvl) return ts(lvl, '+10%', '20%', '30%') .. ' attack speed to a random unit with at least two enchanters' end,
+    ['freezing_field'] = function(lvl) return '[fg]creates an area that slows enemies by [yellow]50%[fg] for [yellow]2[fg] seconds on sorcerer spell repeat' end,
+    ['burning_field'] = function(lvl) return '[fg]creates an area that deals [yellow]30[fg] dps for [yellow]2[fg] seconds on sorcerer spell repeat' end,
+    ['gravity_field'] = function(lvl) return '[fg]creates an area that pulls enemies in for [yellow]2[fg] seconds on sorcerer spell repeat' end,
+    ['magnetism'] = function(lvl) return '[fg]gold coins are attracted to the snake' end,
+    ['insurance'] = function(lvl) return "[fg]heroes have [yellow]4[fg] times the chance of mercenary's bonus to drop [yellow]2[fg] gold on death" end,
+    ['dividends'] = function(lvl) return '[fg]mercenaries deal [yellow]+X%[fg] damage, where X is how much gold you have' end,
+    ['berserking'] = function(lvl) return '[fg]all warriors have up to ' .. ts(lvl, '+50%', '75%', '100%') .. ' attack speed based on missing HP' end,
+    ['unwavering_stance'] = function(lvl) return '[fg]all warriors gain ' .. ts(lvl, '+4%', '8%', '12%') .. ' defense every [yellow]5[fg] seconds' end,
+    ['unrelenting_stance'] = function(lvl) return ts(lvl, '+2%', '5%', '8%') .. ' defense to all allies whenever a warrior is hit' end,
   }
 
   level_to_tier_weights = {
@@ -1289,17 +1331,6 @@ function init()
     [23] = {36, 36},
     [24] = {48, 48},
     [25] = {100, 100},
-  }
-
-  level_to_passive_tier_weights = {
-    [3] = {70, 20, 10},
-    [6] = {60, 25, 15},
-    [9] = {50, 30, 20},
-    [12] = {40, 40, 20},
-    [15] = {30, 45, 25},
-    [18] = {20, 50, 30},
-    [21] = {20, 40, 40},
-    [24] = {20, 30, 50},
   }
 
   level_to_elite_spawn_weights = {
@@ -1366,19 +1397,13 @@ function init()
     [25] = {'speed_booster', 'exploder', 'headbutter', 'tank', 'shooter', 'spawner'},
   }
 
-  get_shop_odds_by_level = function(lvl)
-    if lvl == 1 then
-      return {70, 20, 10, 0}
-    elseif lvl == 2 then
-      return {50, 30, 15, 5}
-    elseif lvl == 3 then
-      return {25, 45, 20, 10}
-    elseif lvl == 4 then
-      return {10, 25, 45, 20}
-    elseif lvl == 5 then
-      return {5, 15, 30, 50}
-    end
-  end
+  level_to_shop_odds = {
+    [1] = {70, 20, 10, 0},
+    [2] = {50, 30, 15, 5},
+    [3] = {25, 45, 20, 10},
+    [4] = {10, 25, 45, 20},
+    [5] = {5, 15, 30, 50},
+  }
 
   get_shop_odds = function(lvl, tier)
     if lvl == 1 then
@@ -1435,12 +1460,12 @@ function init()
   end
 
   local run = system.load_run()
-  run_passive_pool_by_tiers = run.run_passive_pool_by_tiers or {
-    [1] = { 'wall_echo', 'wall_rider', 'centipede', 'temporal_chains', 'amplify', 'amplify_x', 'ballista', 'ballista_x', 'blunt_arrow', 'berserking', 'unwavering_stance', 'assassination', 'unleash', 'blessing',
-      'hex_master', 'force_push', 'spawning_pool'}, 
-    [2] = {'ouroboros_technique_r', 'ouroboros_technique_l', 'intimidation', 'vulnerability', 'resonance', 'point_blank', 'longshot', 'explosive_arrow', 'chronomancy', 'awakening', 'ultimatum', 'echo_barrage', 
-      'reinforce', 'payback', 'whispers_of_doom', 'heavy_impact', 'immolation', 'call_of_the_void'},
-    [3] = {'divine_machine_arrow', 'divine_punishment', 'flying_daggers', 'crucio', 'hive', 'void_rift'},
+  run_passive_pool = run.run_passive_pool or {
+    'centipede', 'ouroboros_technique_r', 'ouroboros_technique_l', 'amplify', 'resonance', 'ballista', 'call_of_the_void', 'crucio', 'speed_3', 'damage_4', 'level_5', 'death_6', 'lasting_7',
+    'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'pandemic', 'whispers_of_doom',
+    'tremor', 'heavy_impact', 'fracture', 'meat_shield', 'hive', 'baneling_burst', 'blunt_arrow', 'explosive_arrow', 'divine_machine_arrow', 'chronomancy', 'awakening', 'divine_punishment',
+    'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
+    'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance'
   }
   gold = run.gold or 3
   passives = run.passives or {}
@@ -1467,16 +1492,16 @@ function init()
   main:add(Arena'arena')
   main:go_to('arena', 25, {
     {character = 'swordsman', level = 3},
-    {character = 'plague_doctor', level = 3},
-    {character = 'pyromancer', level = 3},
-    {character = 'witch', level = 3},
-    {character = 'arcanist', level = 3},
-    {character = 'usurer', level = 3},
-    {character = 'warden', level = 3},
-    {character = 'silencer', level = 3},
-    {character = 'vulcanist', level = 3},
-    {character = 'bane', level = 3},
-    {character = 'illusionist', level = 3},
+    {character = 'scout', level = 3},
+    {character = 'thief', level = 3},
+    {character = 'blade', level = 3},
+    {character = 'dual_gunner', level = 3},
+    {character = 'saboteur', level = 3},
+    {character = 'spellblade', level = 3},
+    {character = 'jester', level = 3},
+    {character = 'assassin', level = 3},
+    {character = 'barrager', level = 3},
+    {character = 'cannoneer', level = 3},
   }, passives)
   ]]--
 

@@ -1,23 +1,88 @@
 Item Update
   New mechanics
-    Sacrifice units to level items up
+    Spend gold to level items up
   Items
-  New items
-    Position X has +Y% attack speed
-    Position X has +Y% damage
-    Position X is 1 tier higher
-    Position X is also class Y
-    When a unit dies it explodes, launching enemies away
-    When a unit dies it explodes, releasing piercing projectiles
-  Reworked items
-    Items shouldn't just be more powerful versions of other items
-    Items should have drawbacks
-    Items that apply to a position on the snake (a good middle step between applying them to individual units like in Underlords)
-  Item discussions
-    https://steamcommunity.com/app/915310/discussions/0/3106901028662504698/
-    https://steamcommunity.com/app/915310/discussions/0/3106901665846294204/
-    https://steamcommunity.com/app/915310/discussions/0/4658391921151238820/
-    https://i.imgur.com/cfIyMBL.png
+    General:
+      vt Centipede - +10/20/30% movement speed
+      vt Ouroboros Technique R - rotating around yourself to the right releases 2/3/4 projectiles per second
+      vt Ouroboros Technique L - rotating around yourself to the left grants +15/25/35% defense to all units
+      vt Amplify - +20/35/50% AoE damage
+      vt Resonance - all AoE attacks deal +3/5/7% damage per unit hit
+      vt Ballista - +20/35/50% projectile damage
+      vt Call of the Void - +30/60/90% DoT damage
+      vt Crucio - taking damage also shares that damage across all enemies at 20/30/40% its value
+    Position:
+      vt Speed 3 - position 3 has +20/35/50% attack speed
+      vt Damage 4 - position 4 has +20/30/40% damage
+      vt Level 5 - position 5 is 1 level higher
+      vt Death 6 - position 6 takes 15% of its health as damage every 3 seconds
+      vt Lasting 7 - position 7 will stay alive for 10 seconds after dying
+      vt Defense Stance - first and last positions have +10/20/30% defense
+      vt Offensive Stance - first and last positions have +10/20/30% damage
+    Death:
+      vt Kinetic Bomb - when a unit dies it explodes, launching enemies away
+      vt Porcupine Technique - when a unit dies it explodes, releasing piercing projectiles
+      vt Last Stand - the last unit alive is fully healed and receives a +20/30/40% bonus to all stats
+    Voider:
+      vt Seeping - enemies taking DoT damage take +15/20/25% damage from all sources for 6 seconds
+      vt Deceleration - enemies damaged by voiders have their movement speed reduced by 15/20/25%
+      vt Annihilation - when a voider dies deal its DoT damage to all enemies for 3 seconds
+    Curser:
+      vt Malediction - cursed enemies take 15/25/35% more damage and deal 15/25/35% less damage
+      vt Pandemic - when a cursed enemy dies its curse spreads
+      vt Whispers of Doom - curses apply doom, when 4/3/2 doom instances are reached they deal 100/150/200
+    Forcer:
+      vt Tremor - when enemies die from hitting walls they create a damaging area with size according to the knockback force
+      vt Heavy Impact - when enemies hit walls they take damage according to the knockback force
+      vt Fracture - when enemies die from hitting walls explode into projectiles
+    Swarmer:
+      vt Meat Shield - critters block enemy projectiles
+      vt Hive - critters have +1/2/3 HP
+      vt Baneling Burst - critters die immediately on contact but also deal AoE damage
+    Ranger:
+      vt Blunt Arrow - arrows fired by rangers have a 10/20/30% chance to knockback
+      vt Explosive Arrow - arrows fired by rangers have a 10/20/30% chance to explode, dealing 10/20/30% AoE damage
+      vt Divine Machine Arrow - arrows fired by rangers have a 10/20/30% chance to seek enemies and pierce 1/2/3 times
+    Mage:
+      vt Chronomancy - mages cast their spells 15/25/35% faster
+      vt Awakening - +50/75/100% attack speed and damage to 1 mage every round for that round
+      vt Divine Punishment - repeatedly deal damage to all enemies based on how many mages you have
+    Rogue:
+      vt Assassination - crits from rogues deal 8/10/12x damage but normal attacks deal half damage
+      vt Flying Daggers - all projectiles thrown by rogues chain +2/3/4 times
+      vt Ultimatum - projectiles that chain gain +10/20/30% damage with each chain
+    Nuker:
+      vt Magnify - +20/35/50% area size
+      vt Echo Barrage - 10/20/30% chance to create 1/2/3 secondary AoEs on AoE hit
+      vt Unleash - all nukers gain +1% area size and damage every second
+    Enchanter:
+      vt Reinforce - +10/20/30% damage, defense and attack speed to all allies with at leats one enchanter 
+      vt Payback - +2/5/8% damage to all allies whenever an enchanter is hit
+      vt Enchanted - when enemies die they have a 10/20/30% release X homing projectiles, where X is how many enchanters you have
+    Sorcerer:
+      vt Freezing Field - Create an area that slows enemies by 50% for 2 seconds whenever a sorcerer repeats a spell
+      vt Burning Field - Create an area that deals 30 damage per second for 2 seconds whenever a sorcerer repeats a spell
+      vt Gravity Field - Create an area that sucks enemies in for 2 seconds whenever a sorcerer repeats a spell
+    Mercenary:
+      vt Magnetism - Gold coins are attracted to the snake
+      vt Insurance - Dying heroes have 4 times the chance of mercenary's bonus to drop 2 gold on death
+      vt Dividends - Mercenaries deal +X% extra damage, where X is how much gold you have
+    Warrior:
+      vt Berserking - all warriors have up to +50/75/100% attack speed based on missing HP
+      vt Unwavering Stance - all warriors gain +4/8/12% defense every 5 seconds
+      vt Unrelenting Stance - +2/5/8% defense to all allies whenever a warrior is hit
+  Removed items
+    * Wall Echo
+    * Wall Rider
+    * Point Blank
+    * Longshot
+    * Hex Master
+    * Force Push
+    * Call of the Void
+    * Spawning Pool
+    * Void Rift
+    * Blessing
+    * Immolation
   Balance
     * Decreased shop reroll cost to 10
     Decrease mercenary gold drop chance to 8/16% (from 10/20%)
@@ -31,10 +96,10 @@ Item Update
     Add option for mouse cursor to always be visible
     Add main menu
       Soundtrack button
-      Discord button
       Arena run button
       Options button
       Quit button
+    * Added an option to force all screen transitions to be dark
     * Added tier text to characters on the shop screen
     * Added shop unit highlights/markers to make it easier to tell when you already own something
     * Added unit names to the "your build" section of the end game screen
@@ -42,6 +107,13 @@ Item Update
   Bug fixes
     Fix fullscreen with different resolutions that don't scale properly - https://steamcommunity.com/app/915310/discussions/0/3106901665841020282/
     Fix enemies still spawning after arena clear (this happens with the extra enemy spawns that were blocked earlier)
+    Kill enemies that go outside play area - https://i.imgur.com/QPgZbve.png
+    https://i.imgur.com/lCdPFZx.png
+    https://i.imgur.com/1CwmFYX.png
+    Ouroboros doesn't work with mouse controls
+    * Fixed mouse not showing up on death
+    * Fixed NG+5 achievement not triggering (this happened only between last Sunday night and Monday morning due to a small update I pushed breaking it)
+    * Fixed a bug where the nuker class was not counting towards Vagrant's and Psyker's active set bonus
     * Fixed a bug where passives would sometimes disappear from a run?
     * Fixed a bug where clicking "window size-" too many times could bug out the game
     * Fixed a bug where the shop would be rerolled after quitting in the arena
@@ -58,8 +130,13 @@ Item Update
     * Fixed a crash involving broken state for Pets, Critters or Volcanos
     * Fixed a crash that happened after rerolling items too many times
 
-
 Endless Update
+  Healer rework:
+    Enemies have an X/Y% chance to create healing cells on death
+    Cleric: creates a healing cell at a random position
+    Priest: creates multiple healing cells at a random position
+  Psyker rework:
+    Create orbitting damaging balls equal to the number of psykers (similar to those balls in Nova Drift)
   Endless mode
     Units die permanently when they die
     Slower scaling with less individually threatening units
@@ -88,6 +165,8 @@ Bench? - https://i.imgur.com/B1gNVKk.png
 Balance option for when there are more sets - https://i.imgur.com/JMynwbL.png
 Negative effect: colliding with yourself kills one of your units
 https://i.imgur.com/bxfvA7g.png
+https://steamcommunity.com/app/915310/discussions/0/4658391921156086711/ - general feedback
+https://steamcommunity.com/app/915310/discussions/0/4658391921156325745/ - math on gold, rerolls and units
 
 
 Roguelite update:
