@@ -18,6 +18,8 @@ function init()
   input:bind('enter', {'space', 'return', 'fleft', 'fdown', 'fright'})
 
   local s = {tags = {sfx}}
+  level_up1 = Sound('Buff 4.ogg', s)
+  unlock1 = Sound('Unlock 3.ogg', s)
   gambler1 = Sound('Collect 5.ogg', s)
   usurer1 = Sound('Shadow Punch 2.ogg', s)
   gold1 = Sound('Collect 5.ogg', s)
@@ -153,7 +155,7 @@ function init()
   crucio = Image('crucio')
   speed_3 = Image('speed_3')
   damage_4 = Image('damage_4')
-  level_5 = Image('level_5')
+  shoot_5 = Image('shoot_5')
   death_6 = Image('death_6')
   lasting_7 = Image('lasting_7')
   defensive_stance = Image('defensive_stance')
@@ -588,7 +590,7 @@ function init()
     ['psychic'] = function(lvl) return '[fg]creates a small area that deals [yellow]' .. get_character_stat('psychic', lvl, 'dmg') .. ' AoE[fg] damage' end,
     ['miner'] = function(lvl) return '[fg]picking up gold releases [yellow]4[fg] homing projectiles that each deal [yellow]' .. get_character_stat('miner', lvl, 'dmg') .. ' [fg]damage' end,
     ['merchant'] = function(lvl) return '[fg]gain [yellow]+1[fg] interest for every [yellow]10[fg] gold' end,
-    ['usurer'] = function(lvl) return '[fg]curses [yellow]3[fg] nearby enemies indefinitely with [yellow]debt[fg], dealing [yellow]' .. get_character_stat('usurer', lvl, 'dmg') .. '[fg] damage per second' end,
+    ['usurer'] = function(lvl) return '[fg]curses [yellow]3[fg] nearby enemies indefinitely with debt, dealing [yellow]' .. get_character_stat('usurer', lvl, 'dmg') .. '[fg] damage per second' end,
     ['gambler'] = function(lvl) return '[fg]deal [yellow]2X[fg] damage to a single random enemy where X is how much gold you have' end,
     ['thief'] = function(lvl) return '[fg]throws a knife that deals [yellow]' .. 2*get_character_stat('thief', lvl, 'dmg') .. '[fg] damage and chains [yellow]5[fg] times' end,
   }
@@ -725,7 +727,7 @@ function init()
     ['cannoneer'] = function() return '[fg]showers the hit area in [yellow]7[fg] additional cannon shots that deal [yellow]' .. get_character_stat('cannoneer', 3, 'dmg')/2 .. '[fg] AoE damage' end,
     ['dual_gunner'] = function() return '[fg]every 5th attack shoot in rapid succession for [yellow]2[fg] seconds' end,
     ['hunter'] = function() return '[fg]summons [yellow]3[fg] pets and the pets ricochet off walls once' end,
-    ['chronomancer'] = function() return '[fg]enemies take damave over time [yellow]50%[fg] faster' end,
+    ['chronomancer'] = function() return '[fg]enemies take damage over time [yellow]50%[fg] faster' end,
     ['spellblade'] = function() return '[fg]faster projectile speed and tighter turns' end,
     ['psykeeper'] = function() return '[fg]also redistributes damage taken as damage to all enemies at [yellow]double[fg] value' end,
     ['engineer'] = function() return '[fg]drops [yellow]2[fg] additional turrets and grants all turrets [yellow]+50%[fg] damage and attack speed' end,
@@ -782,7 +784,7 @@ function init()
     ['cannoneer'] = function() return '[light_bg]showers the hit area in 7 additional cannon shots that deal ' .. get_character_stat('cannoneer', 3, 'dmg')/2 .. ' AoE damage' end,
     ['dual_gunner'] = function() return '[light_bg]every 5th attack shoot in rapid succession for 2 seconds' end,
     ['hunter'] = function() return '[light_bg]summons 3 pets and the pets ricochet off walls once' end,
-    ['chronomancer'] = function() return '[light_bg]enemies take damave over time 50% faster' end,
+    ['chronomancer'] = function() return '[light_bg]enemies take damage over time 50% faster' end,
     ['spellblade'] = function() return '[light_bg]faster projectile speed and tighter turns' end,
     ['psykeeper'] = function() return '[light_bg]also redistributes damage taken as damage to all enemies at double value' end,
     ['engineer'] = function() return '[light_bg]drops 2 additional turrets and grants all turrets +50% damage and attack speed' end,
@@ -901,13 +903,13 @@ function init()
   }
 
   local ylb1 = function(lvl)
-    if lvl == 3 then return 'fg'
-    elseif lvl == 2 then return 'fg'
+    if lvl == 3 then return 'light_bg'
+    elseif lvl == 2 then return 'light_bg'
     elseif lvl == 1 then return 'yellow'
     else return 'light_bg' end
   end
   local ylb2 = function(lvl)
-    if lvl == 3 then return 'fg'
+    if lvl == 3 then return 'light_bg'
     elseif lvl == 2 then return 'yellow'
     else return 'light_bg' end
   end
@@ -928,7 +930,7 @@ function init()
     ['curser'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+25%[light_bg]/[' .. ylb2(lvl) .. ']+50% [fg]curse duration' end,
     ['forcer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+25%[light_bg]/[' .. ylb2(lvl) .. ']+50% [fg]knockback force to all allies' end,
     ['swarmer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+1[light_bg]/[' .. ylb2(lvl) .. ']+3 [fg]hits to critters' end,
-    ['voider'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+15%[light_bg]/[' .. ylb2(lvl) .. ']+25% [fg]damage over time to allied voiders' end,
+    ['voider'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+20%[light_bg]/[' .. ylb2(lvl) .. ']+40% [fg]damage over time to allied voiders' end,
     ['sorcerer'] = function(lvl) 
       return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4[light_bg]/[' .. ylb3(lvl) .. ']6 [fg]- sorcerers repeat their attacks once every [' .. 
         ylb1(lvl) .. ']4[light_bg]/[' .. ylb2(lvl) .. ']3[light_bg]/[' .. ylb3(lvl) .. ']2[fg] attacks'
@@ -1002,6 +1004,12 @@ function init()
     ['gambler'] = 3,
     ['thief'] = 4,
   }
+
+  launches_projectiles = function(character)
+    local classes = {'vagrant', 'archer', 'scout', 'outlaw', 'blade', 'wizard', 'cannoneer', 'dual_gunner', 'hunter', 'spellblade', 'engineer', 'corruptor', 'beastmaster', 'jester', 'assassin', 'barrager', 
+      'arcanist', 'illusionist', 'miner', 'thief'}
+    return table.any(classes, function(v) return v == character end)
+  end
 
   get_number_of_units_per_class = function(units)
     local rangers = 0
@@ -1116,7 +1124,7 @@ function init()
     ['crucio'] = 'Crucio',
     ['speed_3'] = 'Speed 3',
     ['damage_4'] = 'Damage 4',
-    ['level_5'] = 'Level 5',
+    ['shoot_5'] = 'Shoot 5',
     ['death_6'] = 'Death 6',
     ['lasting_7'] = 'Lasting 7',
     ['defensive_stance'] = 'Defensive Stance',
@@ -1173,13 +1181,13 @@ function init()
     ['crucio'] = '[fg]taking damage also shares that across all enemies at [yellow]20/30/40%[fg] its value',
     ['speed_3'] = '[fg]position [yellow]3[fg] has [yellow]+50%[fg] attack speed',
     ['damage_4'] = '[fg]position [yellow]4[fg] has [yellow]+30%[fg] damage',
-    ['level_5'] = '[fg]position [yellow]5[fg] is [yellow]1[fg] level higher',
+    ['shoot_5'] = '[fg]position [yellow]5[fg] shoots [yellow]3[fg] projectiles per second',
     ['death_6'] = '[fg]position [yellow]6[fg] takes [yellow]10%[fg] of its health as damage every [yellow]3[fg] seconds',
     ['lasting_7'] = '[fg]position [yellow]7[fg] will stay alive for [yellow]10[fg] seconds after dying',
     ['defensive_stance'] = '[fg]first and last positions have [yellow]+10/20/30%[fg] defense',
     ['offensive_stance'] = '[fg]first and last positions have [yellow]+10/20/30%[fg] damage',
-    ['kinetic_bomb'] = '[fg]when a unit dies it explodes, launching enemies away',
-    ['porcupine_technique'] = '[fg]when a unit dies it explodes, releasing piercing projectiles',
+    ['kinetic_bomb'] = '[fg]when an ally dies it explodes, launching enemies away',
+    ['porcupine_technique'] = '[fg]when an ally dies it explodes, releasing piercing and ricocheting projectiles',
     ['last_stand'] = '[fg]the last unit alive is fully healed and receives a [yellow]+20%[fg] bonus to all stats',
     ['seeping'] = '[fg]enemies taking DoT damage take [yellow]+15/20/25%[fg] damage for [yellow]6[fg] seconds',
     ['deceleration'] = '[fg]enemies damaged by voiders have their movement speed reduced by [yellow]15/20/25%',
@@ -1231,13 +1239,13 @@ function init()
     ['crucio'] = function(lvl) return '[fg]taking damage also shares that across all enemies at ' .. ts(lvl, '20%', '30%', '40%') .. ' its value' end,
     ['speed_3'] = function(lvl) return '[fg]position [yellow]3[fg] has [yellow]+50%[fg] attack speed' end,
     ['damage_4'] = function(lvl) return '[fg]position [yellow]4[fg] has [yellow]+30%[fg] damage' end,
-    ['level_5'] = function(lvl) return '[fg]position [yellow]5[fg] is [yellow]1[fg] level higher' end,
+    ['shoot_5'] = function(lvl) return '[fg]position [yellow]5[fg] shoots [yellow]3[fg] projectiles per second' end,
     ['death_6'] = function(lvl) return '[fg]position [yellow]6[fg] takes [yellow]10%[fg] of its health as damage every [yellow]3[fg] seconds' end,
     ['lasting_7'] = function(lvl) return '[fg]position [yellow]7[fg] will stay alive for [yellow]10[fg] seconds after dying' end,
     ['defensive_stance'] = function(lvl) return '[fg]first and last positions have ' .. ts(lvl, '+10%', '20%', '30%') .. ' defense' end,
     ['offensive_stance'] = function(lvl) return '[fg]first and last positions have ' .. ts(lvl, '+10%', '20%', '30%') .. ' damage' end,
-    ['kinetic_bomb'] = function(lvl) return '[fg]when a unit dies it explodes, launching enemies away' end,
-    ['porcupine_technique'] = function(lvl) return '[fg]when a unit dies it explodes, releasing piercing projectiles' end,
+    ['kinetic_bomb'] = function(lvl) return '[fg]when an ally dies it explodes, launching enemies away' end,
+    ['porcupine_technique'] = function(lvl) return '[fg]when an ally dies it explodes, releasing piercing projectiles' end,
     ['last_stand'] = function(lvl) return '[fg]the last unit alive is fully healed and receives a [yellow]+20%[fg] bonus to all stats' end,
     ['seeping'] = function(lvl) return '[fg]enemies taking DoT damage take ' .. ts(lvl, '+15%', '20%', '25%') .. ' damage for [yellow]6[fg] seconds' end,
     ['deceleration'] = function(lvl) return '[fg]enemies damaged by voiders have their movement speed reduced by ' .. ts(lvl, '15%', '20%', '25%') end,
@@ -1461,7 +1469,7 @@ function init()
 
   local run = system.load_run()
   run_passive_pool = run.run_passive_pool or {
-    'centipede', 'ouroboros_technique_r', 'ouroboros_technique_l', 'amplify', 'resonance', 'ballista', 'call_of_the_void', 'crucio', 'speed_3', 'damage_4', 'level_5', 'death_6', 'lasting_7',
+    'centipede', 'ouroboros_technique_r', 'ouroboros_technique_l', 'amplify', 'resonance', 'ballista', 'call_of_the_void', 'crucio', 'speed_3', 'damage_4', 'shoot_5', 'death_6', 'lasting_7',
     'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'pandemic', 'whispers_of_doom',
     'tremor', 'heavy_impact', 'fracture', 'meat_shield', 'hive', 'baneling_burst', 'blunt_arrow', 'explosive_arrow', 'divine_machine_arrow', 'chronomancy', 'awakening', 'divine_punishment',
     'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
@@ -1490,19 +1498,15 @@ function init()
   
   --[[
   main:add(Arena'arena')
-  main:go_to('arena', 25, {
-    {character = 'swordsman', level = 3},
-    {character = 'scout', level = 3},
-    {character = 'thief', level = 3},
-    {character = 'blade', level = 3},
-    {character = 'dual_gunner', level = 3},
-    {character = 'saboteur', level = 3},
-    {character = 'spellblade', level = 3},
-    {character = 'jester', level = 3},
-    {character = 'assassin', level = 3},
-    {character = 'barrager', level = 3},
-    {character = 'cannoneer', level = 3},
-  }, passives)
+  main:go_to('arena', 13, {
+    {character = 'witch', level = 1},
+    {character = 'stormweaver', level = 1},
+    {character = 'chronomancer', level = 1},
+    {character = 'miner', level = 1},
+    {character = 'merchant', level = 1},
+    {character = 'sage', level = 1},
+    {character = 'magician', level = 1},
+  }, {{passive = 'last_stand', level = 1}})
   ]]--
 
   --[[

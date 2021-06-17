@@ -143,7 +143,7 @@ function BuyScreen:on_enter(from, level, units, passives, shop_level, shop_xp)
       passives = {}
       main_song_instance:stop()
       run_passive_pool = {
-        'centipede', 'ouroboros_technique_r', 'ouroboros_technique_l', 'amplify', 'resonance', 'ballista', 'call_of_the_void', 'crucio', 'speed_3', 'damage_4', 'level_5', 'death_6', 'lasting_7',
+        'centipede', 'ouroboros_technique_r', 'ouroboros_technique_l', 'amplify', 'resonance', 'ballista', 'call_of_the_void', 'crucio', 'speed_3', 'damage_4', 'shoot_5', 'death_6', 'lasting_7',
         'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'pandemic', 'whispers_of_doom',
         'tremor', 'heavy_impact', 'fracture', 'meat_shield', 'hive', 'baneling_burst', 'blunt_arrow', 'explosive_arrow', 'divine_machine_arrow', 'chronomancy', 'awakening', 'divine_punishment',
         'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
@@ -384,7 +384,7 @@ function BuyScreen:set_items()
   local y = 182
   for k, passive in ipairs(self.passives) do
     local i, j = math.index_to_coordinates(k, 4)
-    table.insert(self.items, ItemCard{group = self.main, x = 45 + (i-1)*60, y = y + (j-1)*50, w = 40, h = 50, passive = passive.passive , level = passive.level, xp = passive.xp})
+    table.insert(self.items, ItemCard{group = self.main, x = 45 + (i-1)*60, y = y + (j-1)*50, w = 40, h = 50, passive = passive.passive , level = passive.level, xp = passive.xp, parent = self})
   end
 end
 
@@ -530,7 +530,7 @@ function RestartButton:update(dt)
       passives = {}
       main_song_instance:stop()
       run_passive_pool = {
-        'centipede', 'ouroboros_technique_r', 'ouroboros_technique_l', 'amplify', 'resonance', 'ballista', 'call_of_the_void', 'crucio', 'speed_3', 'damage_4', 'level_5', 'death_6', 'lasting_7',
+        'centipede', 'ouroboros_technique_r', 'ouroboros_technique_l', 'amplify', 'resonance', 'ballista', 'call_of_the_void', 'crucio', 'speed_3', 'damage_4', 'shoot_5', 'death_6', 'lasting_7',
         'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'pandemic', 'whispers_of_doom',
         'tremor', 'heavy_impact', 'fracture', 'meat_shield', 'hive', 'baneling_burst', 'blunt_arrow', 'explosive_arrow', 'divine_machine_arrow', 'chronomancy', 'awakening', 'divine_punishment',
         'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
@@ -853,7 +853,7 @@ function LevelButton:create_info_text()
     local t41, t42 = get_shop_odds(self.parent.shop_level, 4), get_shop_odds(self.parent.shop_level+1, 4)
     self.info_text = InfoText{group = main.current.ui}
     self.info_text:activate({
-      {text = '[yellow]Lv.' .. self.parent.shop_level .. '[fg] shop, XP: [yellow]' .. self.shop_xp .. '/' .. self.max_xp, font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+      {text = '[yellow]Lv.' .. self.parent.shop_level .. '[fg] shop, XP: [yellow]' .. self.shop_xp .. '/' .. self.max_xp .. '[fg], +1 XP cost: [yellow]5', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
       {text = '[bg10]chances of units appearing on the shop', font = pixul_font, alignment = 'center', height_multiplier = 1.25},
       {text = '[yellow]current shop level                  [fgm10]next shop level', font = pixul_font, alignment = 'left', height_multiplier = 1.25},
       {text = '[fg]tier 1: ' .. t11 .. '%' .. tostring(t11 < 10 and '  ' or '') .. '                                 [fgm8]tier 1: ' .. t12 .. '%', font = pixul_font, alignment = 'left', height_multiplier = 1.25},
@@ -869,7 +869,7 @@ function LevelButton:create_info_text()
     local t41 = get_shop_odds(self.parent.shop_level, 4)
     self.info_text = InfoText{group = main.current.ui}
     self.info_text:activate({
-      {text = '[yellow]Lv.' .. self.parent.shop_level .. '[fg] shop, XP: [yellow]' .. self.shop_xp .. '/' .. self.max_xp, font = pixul_font, alignment = 'center', height_multiplier = 1.5},
+      {text = '[yellow]Lv.' .. self.parent.shop_level .. '[fg] shop', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
       {text = '[bg10]chances of units appearing on the shop', font = pixul_font, alignment = 'center', height_multiplier = 1.25},
       {text = '[yellow]current shop level', font = pixul_font, alignment = 'left', height_multiplier = 1.25},
       {text = '[fg]tier 1: ' .. t11 .. '%', font = pixul_font, alignment = 'left', height_multiplier = 1.25},
@@ -1360,11 +1360,55 @@ function ItemCard:init(args)
   self:init_game_object(args)
   self.shape = Rectangle(self.x, self.y, self.w, self.h)
   self.interact_with_mouse = true
+  self.max_xp = (self.level == 0 and 0) or (self.level == 1 and 2) or (self.level == 2 and 3) or (self.level == 3 and 0)
 end
 
 
 function ItemCard:update(dt)
   self:update_game_object(dt)
+
+  if self.selected and input.m1.pressed then
+    if self.level >= 3 then return end
+    if gold < 5 then
+      self.spring:pull(0.2, 200, 10)
+      self.selected = true
+      error1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      if not self.info_text_2 then
+        self.info_text_2 = InfoText{group = main.current.ui}
+        self.info_text_2:activate({
+          {text = '[fg]not enough gold', font = pixul_font, alignment = 'center'},
+        }, nil, nil, nil, nil, 16, 4, nil, 2)
+        self.info_text_2.x, self.info_text_2.y = gw/2, gh/2 + 30
+      end
+      self.t:after(2, function() self.info_text_2:deactivate(); self.info_text_2.dead = true; self.info_text_2 = nil end, 'info_text_2')
+    else
+      ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      self.xp = self.xp + 1
+      if self.xp >= self.max_xp then
+        self.xp = 0
+        self.level = self.level + 1
+        self.max_xp = (self.level == 0 and 0) or (self.level == 1 and 2) or (self.level == 2 and 3) or (self.level == 3 and 0)
+        if self.level == 2 then spawn_mark1:play{pitch = 1, volume = 0.6} end
+        if self.level == 3 then
+          spawn_mark1:play{pitch = 1.2, volume = 0.6}
+          level_up1:play{pitch = 1, volume = 0.5}
+        end
+      end
+      self:create_info_text()
+      self.selected = true
+      self.spring:pull(0.2, 200, 10)
+      gold = gold - 5
+      for _, passive in ipairs(passives) do
+        if passive.passive == self.passive then
+          passive.level = self.level
+          passive.xp = self.xp
+        end
+      end
+      self.parent.shop_text:set_text{{text = '[wavy_mid, fg]shop [fg]- [fg, nudge_down]gold: [yellow, nudge_down]' .. gold, font = pixul_font, alignment = 'center'}}
+      self.text = Text({{text = '[bg10]' .. tostring(self.parent.shop_level), font = pixul_font, alignment = 'center'}}, global_text_tags)
+      system.save_run(self.parent.level, gold, self.parent.units, passives, self.parent.shop_level, self.parent.shop_xp, run_passive_pool, locked_state)
+    end
+  end
 end
 
 
@@ -1374,7 +1418,42 @@ function ItemCard:draw()
       graphics.rectangle(self.x, self.y, self.w, self.h, 6, 6, bg[-1])
     end
     _G[self.passive]:draw(self.x, self.y, 0, 0.8, 0.7, 0, 0, fg[0])
+    local x, y = self.x + self.w/2.5, self.y - self.h/2.5
+    if self.level == 1 then
+      graphics.rectangle(x - 2, y, 2, 2, nil, nil, self.xp >= 1 and fg[0] or bg[5])
+      graphics.rectangle(x + 2, y, 2, 2, nil, nil, bg[5])
+    elseif self.level == 2 then
+      graphics.rectangle(x - 4, y, 2, 2, nil, nil, self.xp >= 1 and fg[0] or bg[5])
+      graphics.rectangle(x, y, 2, 2, nil, nil, self.xp >= 2 and fg[0] or bg[5])
+      graphics.rectangle(x + 4, y, 2, 2, nil, nil, bg[5])
+    end
   graphics.pop()
+end
+
+
+function ItemCard:create_info_text()
+  if self.info_text then
+    self.info_text:deactivate()
+    self.info_text.dead = true
+  end
+  self.info_text = nil
+  if self.level == 3 then
+    self.info_text = InfoText{group = main.current.ui, force_update = true}
+    self.info_text:activate({
+      {text = '[fg]' .. passive_names[self.passive] .. ', [yellow]Lv.' .. self.level, font = pixul_font, alignment = 'center',
+        height_multiplier = 1.25},
+      {text = passive_descriptions_level[self.passive](self.level), font = pixul_font, alignment = 'center', height_multiplier = 1.25},
+    }, nil, nil, nil, nil, 16, 4, nil, 2)
+    self.info_text.x, self.info_text.y = gw/2, gh/2 + 10
+  else
+    self.info_text = InfoText{group = main.current.ui, force_update = true}
+    self.info_text:activate({
+      {text = '[fg]' .. passive_names[self.passive] .. ', [yellow]Lv.' .. self.level .. '[fg], XP: [yellow]' .. self.xp .. '/' .. self.max_xp .. '[fg], +1 XP cost: [yellow]5', font = pixul_font, alignment = 'center',
+        height_multiplier = 1.25},
+      {text = passive_descriptions_level[self.passive](self.level), font = pixul_font, alignment = 'center', height_multiplier = 1.25},
+    }, nil, nil, nil, nil, 16, 4, nil, 2)
+    self.info_text.x, self.info_text.y = gw/2, gh/2 + 10
+  end
 end
 
 
@@ -1382,12 +1461,7 @@ function ItemCard:on_mouse_enter()
   self.selected = true
   ui_hover1:play{pitch = random:float(1.3, 1.5), volume = 0.5}
   self.spring:pull(0.2, 200, 10)
-  self.info_text = InfoText{group = main.current.ui, force_update = true}
-  self.info_text:activate({
-    {text = '[fg]' .. passive_names[self.passive], font = pixul_font, alignment = 'center', height_multiplier = 1.25},
-    {text = passive_descriptions_level[self.passive](self.level), font = pixul_font, alignment = 'center', height_multiplier = 1.25},
-  }, nil, nil, nil, nil, 16, 4, nil, 2)
-  self.info_text.x, self.info_text.y = gw/2, gh/2 + 10
+  self:create_info_text()
 end
 
 
