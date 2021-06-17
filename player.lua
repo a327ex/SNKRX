@@ -485,8 +485,8 @@ function Player:init(args)
           local resonance_dmg = 0
           if self.resonance then resonance_dmg = (self.level == 3 and 6*self.dmg*0.05*#enemies or 2*self.dmg*0.05*#enemies) end
           enemy:curse('launcher', 4*(self.hex_duration_m or 1), (self.level == 3 and 6*self.dmg or 2*self.dmg) + resonance_dmg, self)
-          HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = yellow[0], duration = 0.1}
-          LightningLine{group = main.current.effects, src = self, dst = enemy, color = yellow[0]}
+          HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = brown[0], duration = 0.1}
+          LightningLine{group = main.current.effects, src = self, dst = enemy, color = brown[0]}
         end
       end
     end, nil, nil, 'attack')
@@ -500,8 +500,8 @@ function Player:init(args)
       for _, enemy in ipairs(enemies) do
         if self:distance_to_object(enemy) < 128 then
           enemy:curse('jester', 6*(self.hex_duration_m or 1), self.level == 3, self)
-          HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = red[0], duration = 0.1}
-          LightningLine{group = main.current.effects, src = self, dst = enemy, color = red[0]}
+          HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = red2[0], duration = 0.1}
+          LightningLine{group = main.current.effects, src = self, dst = enemy, color = red2[0]}
         end
       end
     end, nil, nil, 'attack')
@@ -515,8 +515,8 @@ function Player:init(args)
       for _, enemy in ipairs(enemies) do
         enemy:curse('usurer', 10000, self.level == 3, self)
         enemy:apply_dot(self.dmg*(self.dot_dmg_m or 1)*(main.current.chronomancer_dot or 1), 10000)
-        HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = purple[0], duration = 0.1}
-        LightningLine{group = main.current.effects, src = self, dst = enemy, color = purple[0]}
+        HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = purple2[0], duration = 0.1}
+        LightningLine{group = main.current.effects, src = self, dst = enemy, color = purple2[0]}
       end
     end, nil, nil, 'attack')
 
@@ -567,13 +567,13 @@ function Player:init(args)
       self.t:every(1, function()
         critter1:play{pitch = random:float(0.95, 1.05), volume = 0.35}
         for i = 1, 2 do
-          Critter{group = main.current.main, x = self.x, y = self.y, color = orange[0], r = random:float(0, 2*math.pi), v = 10, dmg = self.dmg, parent = self}
+          Critter{group = main.current.main, x = self.x, y = self.y, color = brown2[0], r = random:float(0, 2*math.pi), v = 10, dmg = self.dmg, parent = self}
         end
       end, nil, nil, 'spawn')
     else
       self.t:every(2, function()
         critter1:play{pitch = random:float(0.95, 1.05), volume = 0.35}
-        Critter{group = main.current.main, x = self.x, y = self.y, color = orange[0], r = random:float(0, 2*math.pi), v = 10, dmg = self.dmg, parent = self}
+        Critter{group = main.current.main, x = self.x, y = self.y, color = brown2[0], r = random:float(0, 2*math.pi), v = 10, dmg = self.dmg, parent = self}
       end, nil, nil, 'spawn')
     end
 
@@ -590,8 +590,8 @@ function Player:init(args)
       local enemies = table.first(table.shuffle(self:get_objects_in_shape(self.wide_attack_sensor, main.current.enemies)), 6)
       for _, enemy in ipairs(enemies) do
         enemy:curse('bane', 6*(self.hex_duration_m or 1), self.level == 3, self)
-        HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = purple[0], duration = 0.1}
-        LightningLine{group = main.current.effects, src = self, dst = enemy, color = purple[0]}
+        HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = purple2[0], duration = 0.1}
+        LightningLine{group = main.current.effects, src = self, dst = enemy, color = purple2[0]}
       end
     end, nil, nil, 'attack')
 
@@ -753,8 +753,8 @@ function Player:init(args)
       local enemies = table.first(table.shuffle(self:get_objects_in_shape(self.wide_attack_sensor, main.current.enemies)), 8)
       for _, enemy in ipairs(enemies) do
         enemy:curse('infestor', 6*(self.hex_duration_m or 1), (self.level == 3 and 6 or 2), self.dmg, self)
-        HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = orange[0], duration = 0.1}
-        LightningLine{group = main.current.effects, src = self, dst = enemy, color = orange[0]}
+        HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = brown2[0], duration = 0.1}
+        LightningLine{group = main.current.effects, src = self, dst = enemy, color = brown2[0]}
       end
     end, nil, nil, 'attack')
 
@@ -1357,7 +1357,7 @@ function Player:hit(damage, from_undead)
     critter1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     trigger:after(0.01, function()
       for i = 1, 2 do
-        Critter{group = main.current.main, x = self.x, y = self.y, color = orange[0], r = random:float(0, 2*math.pi), v = 20, dmg = self.dmg, parent = self}
+        Critter{group = main.current.main, x = self.x, y = self.y, color = brown2[0], r = random:float(0, 2*math.pi), v = 20, dmg = self.dmg, parent = self}
       end
     end)
   end
@@ -1561,7 +1561,7 @@ function Player:shoot(r, mods)
     critter1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     trigger:after(0.01, function()
       for i = 1, mods.spawn_critters_on_crit do
-        Critter{group = main.current.main, x = self.x, y = self.y, color = orange[0], r = random:float(0, 2*math.pi), v = 10, dmg = self.dmg, parent = self}
+        Critter{group = main.current.main, x = self.x, y = self.y, color = brown2[0], r = random:float(0, 2*math.pi), v = 10, dmg = self.dmg, parent = self}
       end
     end)
   end
@@ -2056,7 +2056,7 @@ function Projectile:on_trigger_enter(other, contact)
       trigger:after(0.01, function()
         if self.level == 3 then
           local r = self.parent:angle_to_object(other)
-          SpawnEffect{group = main.current.effects, x = self.parent.x, y = self.parent.y, color = green[0], action = function(x, y)
+          SpawnEffect{group = main.current.effects, x = self.parent.x, y = self.parent.y, color = green2[0], action = function(x, y)
             Pet{group = main.current.main, x = x, y = y, r = r, v = 150, parent = self.parent, conjurer_buff_m = self.conjurer_buff_m or 1}
             Pet{group = main.current.main, x = x + 12*math.cos(r + math.pi/2), y = y + 12*math.sin(r + math.pi/2), r = r, v = 150, parent = self.parent, conjurer_buff_m = self.conjurer_buff_m or 1}
             Pet{group = main.current.main, x = x + 12*math.cos(r - math.pi/2), y = y + 12*math.sin(r - math.pi/2), r = r, v = 150, parent = self.parent, conjurer_buff_m = self.conjurer_buff_m or 1}
@@ -2572,11 +2572,11 @@ function ForceField:init(args)
   self.hfx:add('hit', 1)
   
   self.color = fg[0]
-  self.color_transparent = Color(yellow[0].r, yellow[0].g, yellow[0].b, 0.08)
+  self.color_transparent = Color(brown[0].r, brown[0].g, brown[0].b, 0.08)
   self.rs = 0
   self.hidden = false
   self.t:tween(0.05, self, {rs = args.rs}, math.cubic_in_out, function() self.spring:pull(0.15) end)
-  self.t:after(0.2, function() self.color = yellow[0] end)
+  self.t:after(0.2, function() self.color = brown[0] end)
 
   self.t:after(6, function()
     self.t:every_immediate(0.05, function() self.hidden = not self.hidden end, 7, function() self.dead = true end)
