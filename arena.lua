@@ -53,6 +53,8 @@ function Arena:on_enter(from, level, units, passives, shop_level, shop_xp, lock)
   self.main:enable_trigger_between('projectile', 'enemy')
   self.main:enable_trigger_between('enemy_projectile', 'player')
   self.main:enable_trigger_between('player', 'enemy_projectile')
+  self.main:enable_trigger_between('enemy_projectile', 'enemy')
+  self.main:enable_trigger_between('enemy', 'enemy_projectile')
   self.main:enable_trigger_between('player', 'ghost')
   self.main:enable_trigger_between('ghost', 'player')
 
@@ -398,7 +400,7 @@ function Arena:update(dt)
             main_song_instance:stop()
             run_passive_pool = {
               'centipede', 'ouroboros_technique_r', 'ouroboros_technique_l', 'amplify', 'resonance', 'ballista', 'call_of_the_void', 'crucio', 'speed_3', 'damage_4', 'shoot_5', 'death_6', 'lasting_7',
-              'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'pandemic', 'whispers_of_doom',
+              'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'hextouch', 'whispers_of_doom',
               'tremor', 'heavy_impact', 'fracture', 'meat_shield', 'hive', 'baneling_burst', 'blunt_arrow', 'explosive_arrow', 'divine_machine_arrow', 'chronomancy', 'awakening', 'divine_punishment',
               'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
               'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance'
@@ -407,7 +409,7 @@ function Arena:update(dt)
             main:add(BuyScreen'buy_screen')
             locked_state = nil
             system.save_run()
-            main:go_to('buy_screen', 0, {}, passives, 1, 0)
+            main:go_to('buy_screen', 1, {}, passives, 1, 0)
           end, text = Text({{text = '[wavy, ' .. tostring(state.dark_transitions and 'fg' or 'bg') .. ']restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
         end}
 
@@ -586,7 +588,7 @@ function Arena:update(dt)
         main_song_instance:stop()
         run_passive_pool = {
           'centipede', 'ouroboros_technique_r', 'ouroboros_technique_l', 'amplify', 'resonance', 'ballista', 'call_of_the_void', 'crucio', 'speed_3', 'damage_4', 'shoot_5', 'death_6', 'lasting_7',
-          'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'pandemic', 'whispers_of_doom',
+          'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'hextouch', 'whispers_of_doom',
           'tremor', 'heavy_impact', 'fracture', 'meat_shield', 'hive', 'baneling_burst', 'blunt_arrow', 'explosive_arrow', 'divine_machine_arrow', 'chronomancy', 'awakening', 'divine_punishment',
           'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
           'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance'
@@ -595,7 +597,7 @@ function Arena:update(dt)
         main:add(BuyScreen'buy_screen')
         locked_state = nil
         system.save_run()
-        main:go_to('buy_screen', 0, {}, passives, 1, 0)
+        main:go_to('buy_screen', 1, {}, passives, 1, 0)
       end, text = Text({{text = '[wavy, ' .. tostring(state.dark_transitions and 'fg' or 'bg') .. ']restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
     end
 
@@ -863,8 +865,16 @@ function Arena:quit()
         trigger:tween(1, _G, {slow_amount = 0}, math.linear, function() slow_amount = 0 end, 'slow_amount')
         trigger:tween(4, camera, {x = gw/2, y = gh/2, r = 0}, math.linear, function() camera.x, camera.y, camera.r = gw/2, gh/2, 0 end)
         self:set_passives()
-        RerollButton{group = main.current.ui, x = 40, y = 40, parent = self, force_update = true}
+        RerollButton{group = main.current.ui, x = gw - 40, y = 40, parent = self, force_update = true}
         self.shop_text = Text({{text = '[wavy_mid, fg]gold: [yellow]' .. gold, font = pixul_font, alignment = 'center'}}, global_text_tags)
+
+        self.build_text = Text2{group = self.ui, x = 40, y = 20, force_update = true, lines = {{text = "[wavy_mid, fg]your build", font = pixul_font, alignment = 'center'}}}
+        for i, unit in ipairs(self.units) do
+          CharacterPart{group = self.ui, x = 20, y = 40 + (i-1)*19, character = unit.character, level = unit.level, force_update = true, cant_click = true, parent = self}
+          Text2{group = self.ui, x = 20 + 14 + pixul_font:get_text_width(unit.character)/2, y = 40 + (i-1)*19, force_update = true, lines = {
+            {text = '[' .. character_color_strings[unit.character] .. ']' .. unit.character, font = pixul_font, alignment = 'left'}
+          }}
+        end
       else
         self:transition()
       end
@@ -890,15 +900,15 @@ function Arena:set_passives(from_reroll)
   local passive_2 = random:table_remove(run_passive_pool)
   local passive_3 = random:table_remove(run_passive_pool)
   if passive_1 then
-    table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 0*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, card_i = 1, arena = self, passive = passive_1, force_update = true})
+    table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 0*(card_w + 20) + card_w/2 + 45, y = gh/2 - 6 + 10, w = card_w, h = card_h, card_i = 1, arena = self, passive = passive_1, force_update = true})
   end
   if passive_2 then
-    table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 1*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, card_i = 2, arena = self, passive = passive_2, force_update = true})
+    table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 1*(card_w + 20) + card_w/2 + 45, y = gh/2 - 6 + 10, w = card_w, h = card_h, card_i = 2, arena = self, passive = passive_2, force_update = true})
   end
   if passive_3 then
-    table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 2*(card_w + 20) + card_w/2, y = gh/2 - 6, w = card_w, h = card_h, card_i = 3, arena = self, passive = passive_3, force_update = true})
+    table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 2*(card_w + 20) + card_w/2 + 45, y = gh/2 - 6 + 10, w = card_w, h = card_h, card_i = 3, arena = self, passive = passive_3, force_update = true})
   end
-  self.passive_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 65, lines = {{text = '[fg, wavy]choose one', font = fat_font, alignment = 'center'}}}
+  self.passive_text = Text2{group = self.ui, x = gw/2 + 45, y = gh/2 - 65 + 10, lines = {{text = '[fg, wavy]choose one', font = fat_font, alignment = 'center'}}}
   if not passive_1 and not passive_2 and not passive_3 then
     self:transition()
   end
@@ -965,7 +975,7 @@ function Arena:draw()
   if self.choosing_passives or self.won or self.paused or self.died then graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent) end
   self.ui:draw()
 
-  if self.shop_text then self.shop_text:draw(40, 20) end
+  if self.shop_text then self.shop_text:draw(gw - 40, 20) end
 
   if self.in_credits then graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent_2) end
   self.credits:draw()
@@ -999,7 +1009,7 @@ function Arena:die()
           main_song_instance:stop()
           run_passive_pool = {
             'centipede', 'ouroboros_technique_r', 'ouroboros_technique_l', 'amplify', 'resonance', 'ballista', 'call_of_the_void', 'crucio', 'speed_3', 'damage_4', 'shoot_5', 'death_6', 'lasting_7',
-            'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'pandemic', 'whispers_of_doom',
+            'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'hextouch', 'whispers_of_doom',
             'tremor', 'heavy_impact', 'fracture', 'meat_shield', 'hive', 'baneling_burst', 'blunt_arrow', 'explosive_arrow', 'divine_machine_arrow', 'chronomancy', 'awakening', 'divine_punishment',
             'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
             'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance'
@@ -1007,7 +1017,7 @@ function Arena:die()
           max_units = 7 + current_new_game_plus
           main:add(BuyScreen'buy_screen')
           system.save_run()
-          main:go_to('buy_screen', 0, {}, passives, 1, 0)
+          main:go_to('buy_screen', 1, {}, passives, 1, 0)
         end, text = Text({{text = '[wavy, ' .. tostring(state.dark_transitions and 'fg' or 'bg') .. ']restarting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
       end}
     end)
@@ -1078,7 +1088,7 @@ end
 function Arena:gain_gold()
   local merchant = self.player:get_unit'merchant'
   self.gold_gained = random:int(level_to_gold_gained[self.level][1], level_to_gold_gained[self.level][2])
-  self.interest = math.min(math.floor(gold/5), 5) + (merchant and math.floor(gold/10) or 0)
+  self.interest = math.min(math.floor(gold/5), 5) + math.min((merchant and math.floor(gold/10) or 0), 10)
   gold = gold + self.gold_gained + self.gold_picked_up + self.interest
 end
 
@@ -1103,8 +1113,8 @@ function Arena:transition()
     end
     slow_amount = 1
     main:add(BuyScreen'buy_screen')
-    system.save_run(self.level, gold, self.units, self.passives, self.shop_level, self.shop_xp, run_passive_pool, locked_state)
-    main:go_to('buy_screen', self.level, self.units, self.passives, self.shop_level, self.shop_xp)
+    system.save_run(self.level+1, gold, self.units, self.passives, self.shop_level, self.shop_xp, run_passive_pool, locked_state)
+    main:go_to('buy_screen', self.level+1, self.units, self.passives, self.shop_level, self.shop_xp)
     t.t:after(0.1, function()
       t.text:set_text({
         {text = '[nudge_down, ' .. tostring(state.dark_transitions and 'fg' or 'bg') .. ']gold gained: ' .. tostring(self.gold_gained or 0) .. ' + ' .. tostring(self.gold_picked_up or 0), font = pixul_font, 

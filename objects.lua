@@ -250,7 +250,7 @@ function Unit:calculate_stats(first_run)
     else
       if self.boss then
         local x = self.level
-        local y = {0, 0, 3, 0, 0, 6, 0, 0, 9, 0, 0, 12, 0, 0, 18, 0, 0, 40, 0, 0, 32, 0, 0, 64, 84}
+        local y = {0, 0, 3, 0, 0, 6, 0, 0, 9, 0, 0, 12, 0, 0, 18, 0, 0, 40, 0, 0, 32, 0, 0, 64, 90}
         self.base_hp = 100 + (current_new_game_plus*5) + (90 + current_new_game_plus*10)*y[x]
         self.base_dmg = (12 + current_new_game_plus*2) + (2 + current_new_game_plus)*y[x]
         self.base_mvspd = 35 + 1.5*y[x]

@@ -18,6 +18,7 @@ function init()
   input:bind('enter', {'space', 'return', 'fleft', 'fdown', 'fright'})
 
   local s = {tags = {sfx}}
+  mine1 = Sound('Weapon Swap 2.ogg', s)
   level_up1 = Sound('Buff 4.ogg', s)
   unlock1 = Sound('Unlock 3.ogg', s)
   gambler1 = Sound('Collect 5.ogg', s)
@@ -167,7 +168,7 @@ function init()
   deceleration = Image('deceleration')
   annihilation = Image('annihilation')
   malediction = Image('malediction')
-  pandemic = Image('pandemic')
+  hextouch = Image('hextouch')
   whispers_of_doom = Image('whispers_of_doom')
   tremor = Image('tremor')
   heavy_impact = Image('heavy_impact')
@@ -566,8 +567,8 @@ function init()
     ['lich'] = function(lvl) return '[fg]launches a slow projectile that jumps [yellow]7[fg] times, dealing [yellow]' ..  2*get_character_stat('lich', lvl, 'dmg') .. '[fg] damage per hit' end,
     ['cryomancer'] = function(lvl) return '[fg]nearby enemies take [yellow]' .. get_character_stat('cryomancer', lvl, 'dmg') .. '[fg] damage per second' end,
     ['pyromancer'] = function(lvl) return '[fg]nearby enemies take [yellow]' .. get_character_stat('pyromancer', lvl, 'dmg') .. '[fg] damage per second' end,
-    ['corruptor'] = function(lvl) return '[fg]spawn [yellow]3[fg] small critters if the corruptor kills an enemy' end,
-    ['beastmaster'] = function(lvl) return '[fg]spawn [yellow]2[fg] small critters if the beastmaster crits' end,
+    ['corruptor'] = function(lvl) return '[fg]shoots an arrow that deals [yellow]' .. get_character_stat('corruptor', lvl, 'dmg') .. '[fg] damage, spawn [yellow]3[fg] critters if it kills' end,
+    ['beastmaster'] = function(lvl) return '[fg]throws a knife that deals [yellow]' .. get_character_stat('beastmaster', lvl, 'dmg') .. '[fg] damage, spawn [yellow]2[fg] critters if it crits' end,
     ['launcher'] = function(lvl) return '[fg]all nearby enemies are pushed after [yellow]4[fg] seconds, taking [yellow]' .. 2*get_character_stat('launcher', lvl, 'dmg') .. '[fg] damage on wall hit' end,
     ['jester'] = function(lvl) return "[fg]curses [yellow]6[fg] nearby enemies for [yellow]6[fg] seconds, they will explode into [yellow]4[fg] knives on death" end,
     ['assassin'] = function(lvl) return '[fg]throws a piercing knife that deals [yellow]' .. get_character_stat('assassin', lvl, 'dmg') .. '[fg] damage + [yellow]' ..
@@ -590,7 +591,7 @@ function init()
     ['warden'] = function(lvl) return '[fg]creates a force field around a random unit that prevents enemies from entering' end,
     ['psychic'] = function(lvl) return '[fg]creates a small area that deals [yellow]' .. get_character_stat('psychic', lvl, 'dmg') .. ' AoE[fg] damage' end,
     ['miner'] = function(lvl) return '[fg]picking up gold releases [yellow]4[fg] homing projectiles that each deal [yellow]' .. get_character_stat('miner', lvl, 'dmg') .. ' [fg]damage' end,
-    ['merchant'] = function(lvl) return '[fg]gain [yellow]+1[fg] interest for every [yellow]10[fg] gold' end,
+    ['merchant'] = function(lvl) return '[fg]gain [yellow]+1[fg] interest for every [yellow]10[fg] gold, up to a max of [yellow]+10[fg] from the merchant' end,
     ['usurer'] = function(lvl) return '[fg]curses [yellow]3[fg] nearby enemies indefinitely with debt, dealing [yellow]' .. get_character_stat('usurer', lvl, 'dmg') .. '[fg] damage per second' end,
     ['gambler'] = function(lvl) return '[fg]deal [yellow]2X[fg] damage to a single random enemy where X is how much gold you have' end,
     ['thief'] = function(lvl) return '[fg]throws a knife that deals [yellow]' .. 2*get_character_stat('thief', lvl, 'dmg') .. '[fg] damage and chains [yellow]5[fg] times' end,
@@ -738,8 +739,8 @@ function init()
     ['lich'] = function() return '[fg]chain frost slows enemies hit by [yellow]80%[fg] for [yellow]2[fg] seconds and chains [yellow]+7[fg] times' end,
     ['cryomancer'] = function() return '[fg]enemies are also slowed by [yellow]60%[fg] while in the area' end,
     ['pyromancer'] = function() return '[fg]enemies killed by the pyromancer explode, dealing [yellow]' .. get_character_stat('pyromancer', 3, 'dmg') .. '[fg] AoE damage' end,
-    ['corruptor'] = function() return '[fg]spawn [yellow]3[fg] small critters if the corruptor hits an enemy' end,
-    ['beastmaster'] = function() return '[fg]spawn [yellow]2[fg] small critters if the beastmaster gets hit' end,
+    ['corruptor'] = function() return '[fg]spawn [yellow]2[fg] small critters if the corruptor hits an enemy' end,
+    ['beastmaster'] = function() return '[fg]spawn [yellow]4[fg] small critters if the beastmaster gets hit' end,
     ['launcher'] = function() return '[fg]enemies launched take [yellow]300%[fg] more damage when they hit walls' end,
     ['jester'] = function() return '[fg]all knives seek enemies and pierce [yellow]2[fg] times' end,
     ['assassin'] = function() return '[fg]poison inflicted from crits deals [yellow]8x[fg] damage' end,
@@ -795,8 +796,8 @@ function init()
     ['lich'] = function() return '[light_bg]chain frost slows enemies hit by 80% for 2 seconds and chains +7 times' end,
     ['cryomancer'] = function() return '[light_bg]enemies are also slowed by 60% while in the area' end,
     ['pyromancer'] = function() return '[light_bg]enemies killed by the pyromancer explode, dealing ' .. get_character_stat('pyromancer', 3, 'dmg') .. ' AoE damage' end,
-    ['corruptor'] = function() return '[light_bg]spawn 3 small critters if the corruptor hits an enemy' end,
-    ['beastmaster'] = function() return '[light_bg]spawn 2 small critters if the beastmaster gets hit' end,
+    ['corruptor'] = function() return '[light_bg]spawn 2 small critters if the corruptor hits an enemy' end,
+    ['beastmaster'] = function() return '[light_bg]spawn 4 small critters if the beastmaster gets hit' end,
     ['launcher'] = function() return '[light_bg]enemies launched take 300% more damage when they hit walls' end,
     ['jester'] = function() return '[light_bg]curses 6 enemies and all knives seek enemies and pierce 2 times' end,
     ['assassin'] = function() return '[light_bg]poison inflicted from crits deals 8x damage' end,
@@ -936,12 +937,12 @@ function init()
       return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4[light_bg]/[' .. ylb3(lvl) .. ']6 [fg]- sorcerers repeat their attacks once every [' .. 
         ylb1(lvl) .. ']4[light_bg]/[' .. ylb2(lvl) .. ']3[light_bg]/[' .. ylb3(lvl) .. ']2[fg] attacks'
     end,
-    ['mercenary'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+10%[light_bg]/[' .. ylb2(lvl) .. ']+20% [fg]chance for enemies to drop gold on death' end,
+    ['mercenary'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+8%[light_bg]/[' .. ylb2(lvl) .. ']+16% [fg]chance for enemies to drop gold on death' end,
   }
 
   tier_to_characters = {
-    [1] = {'vagrant', 'swordsman', 'magician', 'archer', 'scout', 'cleric', 'arcanist', 'miner'},
-    [2] = {'wizard', 'saboteur', 'sage', 'squire', 'dual_gunner', 'hunter', 'chronomancer', 'barbarian', 'cryomancer', 'beastmaster', 'jester', 'carver', 'psychic', 'witch', 'silencer', 'outlaw', 'merchant'},
+    [1] = {'vagrant', 'swordsman', 'magician', 'archer', 'scout', 'cleric', 'arcanist', 'merchant'},
+    [2] = {'wizard', 'saboteur', 'sage', 'squire', 'dual_gunner', 'hunter', 'chronomancer', 'barbarian', 'cryomancer', 'beastmaster', 'jester', 'carver', 'psychic', 'witch', 'silencer', 'outlaw', 'miner'},
     [3] = {'elementor', 'stormweaver', 'spellblade', 'psykeeper', 'engineer', 'juggernaut', 'pyromancer', 'host', 'assassin', 'bane', 'barrager', 'infestor', 'flagellant', 'illusionist', 'usurer', 'gambler'},
     [4] = {'priest', 'highlander', 'psykino', 'fairy', 'blade', 'plague_doctor', 'cannoneer', 'vulcanist', 'warden', 'corruptor', 'thief'},
   }
@@ -999,8 +1000,8 @@ function init()
     ['vulcanist'] = 4,
     ['warden'] = 4,
     ['psychic'] = 2,
-    ['miner'] = 1,
-    ['merchant'] = 2,
+    ['miner'] = 2,
+    ['merchant'] = 1,
     ['usurer'] = 3,
     ['gambler'] = 3,
     ['thief'] = 4,
@@ -1137,7 +1138,7 @@ function init()
     ['deceleration'] = 'Deceleration',
     ['annihilation'] = 'Annihilation',
     ['malediction'] = 'Malediction',
-    ['pandemic'] = 'Pandemic',
+    ['hextouch'] = 'Hextouch',
     ['whispers_of_doom'] = 'Whispers of Doom',
     ['tremor'] = 'Tremor',
     ['heavy_impact'] = 'Heavy Impact',
@@ -1190,15 +1191,15 @@ function init()
     ['kinetic_bomb'] = '[fg]when an ally dies it explodes, launching enemies away',
     ['porcupine_technique'] = '[fg]when an ally dies it explodes, releasing piercing and ricocheting projectiles',
     ['last_stand'] = '[fg]the last unit alive is fully healed and receives a [yellow]+20%[fg] bonus to all stats',
-    ['seeping'] = '[fg]enemies taking DoT damage take [yellow]+15/20/25%[fg] damage for [yellow]6[fg] seconds',
-    ['deceleration'] = '[fg]enemies damaged by voiders have their movement speed reduced by [yellow]15/20/25%',
+    ['seeping'] = '[fg]enemies taking DoT damage have [yellow]-15/25/35%[fg] defense',
+    ['deceleration'] = '[fg]enemies taking DoT damage have [yellow]-15/25/35%[fg] movement speed',
     ['annihilation'] = '[fg]when a voider dies deal its DoT damage to all enemies for [yellow]3[fg] seconds',
-    ['malediction'] = '[fg]cursed enemies take [yellow]+15/25/35%[fg] damage and deal [yellow]-15/25/35%[fg] damage',
-    ['pandemic'] = '[fg]when a cursed enemy dies its curse spreads',
+    ['malediction'] = '[yellow]+1/3/5[fg] max curse targets to all allied cursers',
+    ['hextouch'] = '[fg]enemies take [yellow]10/15/20[fg] damage per second for [yellow]3[fg] seconds when cursed',
     ['whispers_of_doom'] = '[fg]curses apply doom, deal [yellow]100/150/200[fg] damage every [yellow]4/3/2[fg] doom instances',
-    ['tremor'] = '[fg]when enemies die from hitting walls they create an area based on the knockback force',
+    ['tremor'] = '[fg]when enemies hit walls they create an area based on the knockback force',
     ['heavy_impact'] = '[fg]when enemies hit walls they take damage based on the knockback force',
-    ['fracture'] = '[fg]when enemies die from hitting walls they explode into projectiles',
+    ['fracture'] = '[fg]when enemies hit walls they explode into projectiles',
     ['meat_shield'] = '[fg]critters [yellow]block[fg] enemy projectiles',
     ['hive'] = '[fg]critters have [yellow]+1/2/3[fg] HP',
     ['baneling_burst'] = '[fg]critters die immediately on contact but also deal [yellow]50/100/150[fg] AoE damage',
@@ -1219,7 +1220,7 @@ function init()
     ['enchanted'] = '[yellow]+10/20/30%[fg] attack speed to a random unit with at least two enchanters',
     ['freezing_field'] = '[fg]creates an area that slows enemies by [yellow]50%[fg] for [yellow]2[fg] seconds on sorcerer spell repeat',
     ['burning_field'] = '[fg]creates an area that deals [yellow]30[fg] dps for [yellow]2[fg] seconds on sorcerer spell repeat',
-    ['gravity_field'] = '[fg]creates an area that pulls enemies in for [yellow]2[fg] seconds on sorcerer spell repeat',
+    ['gravity_field'] = '[fg]creates an area that pulls enemies in for [yellow]1[fg] seconds on sorcerer spell repeat',
     ['magnetism'] = '[fg]gold coins are attracted to the snake',
     ['insurance'] = "[fg]heroes have [yellow]4[fg] times the chance of mercenary's bonus to drop [yellow]2[fg] gold on death",
     ['dividends'] = '[fg]mercenaries deal [yellow]+X%[fg] damage, where X is how much gold you have',
@@ -1248,15 +1249,15 @@ function init()
     ['kinetic_bomb'] = function(lvl) return '[fg]when an ally dies it explodes, launching enemies away' end,
     ['porcupine_technique'] = function(lvl) return '[fg]when an ally dies it explodes, releasing piercing projectiles' end,
     ['last_stand'] = function(lvl) return '[fg]the last unit alive is fully healed and receives a [yellow]+20%[fg] bonus to all stats' end,
-    ['seeping'] = function(lvl) return '[fg]enemies taking DoT damage take ' .. ts(lvl, '+15%', '20%', '25%') .. ' damage for [yellow]6[fg] seconds' end,
-    ['deceleration'] = function(lvl) return '[fg]enemies damaged by voiders have their movement speed reduced by ' .. ts(lvl, '15%', '20%', '25%') end,
+    ['seeping'] = function(lvl) return '[fg]enemies taking DoT damage have ' .. ts(lvl, '-15%', '25%', '35%') .. ' defense' end,
+    ['deceleration'] = function(lvl) return '[fg]enemies taking DoT damage have ' .. ts(lvl, '-15%', '25%', '35%') .. ' movement speed' end,
     ['annihilation'] = function(lvl) return '[fg]when a voider dies deal its DoT damage to all enemies for [yellow]3[fg] seconds' end,
-    ['malediction'] = function(lvl) return '[fg]cursed enemies take ' .. ts(lvl, '+15%', '25%', '35%') .. ' damage and deal ' .. ts(lvl, '-15%', '25%', '35%') .. ' damage' end,
-    ['pandemic'] = function(lvl) return '[fg]when a cursed enemy dies its curse spreads' end,
+    ['malediction'] = function(lvl) return ts(lvl, '+1', '3', '5') .. ' max curse targets to all allied cursers' end,
+    ['hextouch'] = function(lvl) return '[fg]enemies take ' .. ts(lvl, '10', '15', '20') .. 'damage per second for [yellow]3[fg] seconds when cursed' end,
     ['whispers_of_doom'] = function(lvl) return '[fg]curses apply doom, deal ' .. ts(lvl, '100', '150', '200') .. ' every ' .. ts(lvl, '4', '3', '2') .. ' doom instances' end,
-    ['tremor'] = function(lvl) return '[fg]when enemies die from hitting walls they create an area based to the knockback force' end,
+    ['tremor'] = function(lvl) return '[fg]when enemies hit walls they create an area based to the knockback force' end,
     ['heavy_impact'] = function(lvl) return '[fg]when enemies hit walls they take damage based on the knockback force' end,
-    ['fracture'] = function(lvl) return '[fg]when enemies die from hitting walls they explode into projectiles' end,
+    ['fracture'] = function(lvl) return '[fg]when enemies hit walls they explode into projectiles' end,
     ['meat_shield'] = function(lvl) return '[fg]critters [yellow]block[fg] enemy projectiles' end,
     ['hive'] = function(lvl) return '[fg]critters have ' .. ts(lvl, '+1', '2', '3') .. ' HP' end,
     ['baneling_burst'] = function(lvl) return '[fg]critters die immediately on contact but also deal ' .. ts(lvl, '50', '100', '150') .. ' AoE damage' end,
@@ -1277,7 +1278,7 @@ function init()
     ['enchanted'] = function(lvl) return ts(lvl, '+10%', '20%', '30%') .. ' attack speed to a random unit with at least two enchanters' end,
     ['freezing_field'] = function(lvl) return '[fg]creates an area that slows enemies by [yellow]50%[fg] for [yellow]2[fg] seconds on sorcerer spell repeat' end,
     ['burning_field'] = function(lvl) return '[fg]creates an area that deals [yellow]30[fg] dps for [yellow]2[fg] seconds on sorcerer spell repeat' end,
-    ['gravity_field'] = function(lvl) return '[fg]creates an area that pulls enemies in for [yellow]2[fg] seconds on sorcerer spell repeat' end,
+    ['gravity_field'] = function(lvl) return '[fg]creates an area that pulls enemies in for [yellow]1[fg] seconds on sorcerer spell repeat' end,
     ['magnetism'] = function(lvl) return '[fg]gold coins are attracted to the snake' end,
     ['insurance'] = function(lvl) return "[fg]heroes have [yellow]4[fg] times the chance of mercenary's bonus to drop [yellow]2[fg] gold on death" end,
     ['dividends'] = function(lvl) return '[fg]mercenaries deal [yellow]+X%[fg] damage, where X is how much gold you have' end,
@@ -1468,10 +1469,16 @@ function init()
     end
   end
 
+  unlevellable_items = {
+    'speed_3', 'damage_4', 'shoot_5', 'death_6', 'lasting_7', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'annihilation', 
+    'tremor', 'heavy_impact', 'fracture', 'meat_shield', 'divine_punishment', 'unleash', 'freezing_field', 'burning_field', 'gravity_field',
+    'magnetism', 'insurance', 'dividends'
+  }
+
   local run = system.load_run()
   run_passive_pool = run.run_passive_pool or {
     'centipede', 'ouroboros_technique_r', 'ouroboros_technique_l', 'amplify', 'resonance', 'ballista', 'call_of_the_void', 'crucio', 'speed_3', 'damage_4', 'shoot_5', 'death_6', 'lasting_7',
-    'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'pandemic', 'whispers_of_doom',
+    'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'hextouch', 'whispers_of_doom',
     'tremor', 'heavy_impact', 'fracture', 'meat_shield', 'hive', 'baneling_burst', 'blunt_arrow', 'explosive_arrow', 'divine_machine_arrow', 'chronomancy', 'awakening', 'divine_punishment',
     'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
     'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance'
@@ -1488,26 +1495,28 @@ function init()
 
   main = Main()
 
-  if run.level and run.level > 0 then
-    main_song_instance = _G[random:table{'song1', 'song2', 'song3', 'song4', 'song5'}]:play{volume = 0.5}
-  end
-  -- main_song_instance = _G[random:table{'song1', 'song2', 'song3', 'song4', 'song5'}]:play{volume = 0.5}
+  main_song_instance = _G[random:table{'song1', 'song2', 'song3', 'song4', 'song5'}]:play{volume = 0.5}
 
   main:add(BuyScreen'buy_screen')
-  main:go_to('buy_screen', run.level or 0, run.units or {}, passives, run.shop_level or 1, run.shop_xp or 0)
+  main:go_to('buy_screen', run.level or 1, run.units or {}, passives, run.shop_level or 1, run.shop_xp or 0)
   -- main:go_to('buy_screen', 7, run.units or {}, {'unleash'})
   
   --[[
   main:add(Arena'arena')
-  main:go_to('arena', 13, {
-    {character = 'witch', level = 1},
-    {character = 'stormweaver', level = 1},
-    {character = 'chronomancer', level = 1},
-    {character = 'miner', level = 1},
-    {character = 'merchant', level = 1},
-    {character = 'sage', level = 1},
-    {character = 'magician', level = 1},
-  }, {{passive = 'last_stand', level = 1}})
+  main:go_to('arena', 3, {
+    {character = 'vulcanist', level = 3},
+    {character = 'vulcanist', level = 3},
+    {character = 'vulcanist', level = 3},
+    {character = 'vulcanist', level = 3},
+    {character = 'vulcanist', level = 3},
+    {character = 'vulcanist', level = 3},
+    {character = 'vulcanist', level = 3},
+    {character = 'vulcanist', level = 3},
+    {character = 'vulcanist', level = 3},
+    {character = 'vulcanist', level = 3},
+    {character = 'vulcanist', level = 3},
+    {character = 'vulcanist', level = 3},
+  }, passives)
   ]]--
 
   --[[
