@@ -18,6 +18,7 @@ function init()
   input:bind('enter', {'space', 'return', 'fleft', 'fdown', 'fright'})
 
   local s = {tags = {sfx}}
+  mine1 = Sound('Weapon Swap 2.ogg', s)
   level_up1 = Sound('Buff 4.ogg', s)
   unlock1 = Sound('Unlock 3.ogg', s)
   gambler1 = Sound('Collect 5.ogg', s)
@@ -565,8 +566,8 @@ function init()
     ['lich'] = function(lvl) return '[fg]launches a slow projectile that jumps [yellow]7[fg] times, dealing [yellow]' ..  2*get_character_stat('lich', lvl, 'dmg') .. '[fg] damage per hit' end,
     ['cryomancer'] = function(lvl) return '[fg]nearby enemies take [yellow]' .. get_character_stat('cryomancer', lvl, 'dmg') .. '[fg] damage per second' end,
     ['pyromancer'] = function(lvl) return '[fg]nearby enemies take [yellow]' .. get_character_stat('pyromancer', lvl, 'dmg') .. '[fg] damage per second' end,
-    ['corruptor'] = function(lvl) return '[fg]spawn [yellow]3[fg] small critters if the corruptor kills an enemy' end,
-    ['beastmaster'] = function(lvl) return '[fg]spawn [yellow]2[fg] small critters if the beastmaster crits' end,
+    ['corruptor'] = function(lvl) return '[fg]shoots an arrow that deals [yellow]' .. get_character_stat('corruptor', lvl, 'dmg') .. '[fg] damage, spawn [yellow]3[fg] critters if it kills' end,
+    ['beastmaster'] = function(lvl) return '[fg]throws a knife that deals [yellow]' .. get_character_stat('beastmaster', lvl, 'dmg') .. '[fg] damage, spawn [yellow]2[fg] critters if it crits' end,
     ['launcher'] = function(lvl) return '[fg]all nearby enemies are pushed after [yellow]4[fg] seconds, taking [yellow]' .. 2*get_character_stat('launcher', lvl, 'dmg') .. '[fg] damage on wall hit' end,
     ['jester'] = function(lvl) return "[fg]curses [yellow]6[fg] nearby enemies for [yellow]6[fg] seconds, they will explode into [yellow]4[fg] knives on death" end,
     ['assassin'] = function(lvl) return '[fg]throws a piercing knife that deals [yellow]' .. get_character_stat('assassin', lvl, 'dmg') .. '[fg] damage + [yellow]' ..
@@ -589,7 +590,7 @@ function init()
     ['warden'] = function(lvl) return '[fg]creates a force field around a random unit that prevents enemies from entering' end,
     ['psychic'] = function(lvl) return '[fg]creates a small area that deals [yellow]' .. get_character_stat('psychic', lvl, 'dmg') .. ' AoE[fg] damage' end,
     ['miner'] = function(lvl) return '[fg]picking up gold releases [yellow]4[fg] homing projectiles that each deal [yellow]' .. get_character_stat('miner', lvl, 'dmg') .. ' [fg]damage' end,
-    ['merchant'] = function(lvl) return '[fg]gain [yellow]+1[fg] interest for every [yellow]10[fg] gold' end,
+    ['merchant'] = function(lvl) return '[fg]gain [yellow]+1[fg] interest for every [yellow]10[fg] gold, up to a max of [yellow]+10[fg] from the merchant' end,
     ['usurer'] = function(lvl) return '[fg]curses [yellow]3[fg] nearby enemies indefinitely with debt, dealing [yellow]' .. get_character_stat('usurer', lvl, 'dmg') .. '[fg] damage per second' end,
     ['gambler'] = function(lvl) return '[fg]deal [yellow]2X[fg] damage to a single random enemy where X is how much gold you have' end,
     ['thief'] = function(lvl) return '[fg]throws a knife that deals [yellow]' .. 2*get_character_stat('thief', lvl, 'dmg') .. '[fg] damage and chains [yellow]5[fg] times' end,
@@ -737,8 +738,8 @@ function init()
     ['lich'] = function() return '[fg]chain frost slows enemies hit by [yellow]80%[fg] for [yellow]2[fg] seconds and chains [yellow]+7[fg] times' end,
     ['cryomancer'] = function() return '[fg]enemies are also slowed by [yellow]60%[fg] while in the area' end,
     ['pyromancer'] = function() return '[fg]enemies killed by the pyromancer explode, dealing [yellow]' .. get_character_stat('pyromancer', 3, 'dmg') .. '[fg] AoE damage' end,
-    ['corruptor'] = function() return '[fg]spawn [yellow]3[fg] small critters if the corruptor hits an enemy' end,
-    ['beastmaster'] = function() return '[fg]spawn [yellow]2[fg] small critters if the beastmaster gets hit' end,
+    ['corruptor'] = function() return '[fg]spawn [yellow]2[fg] small critters if the corruptor hits an enemy' end,
+    ['beastmaster'] = function() return '[fg]spawn [yellow]4[fg] small critters if the beastmaster gets hit' end,
     ['launcher'] = function() return '[fg]enemies launched take [yellow]300%[fg] more damage when they hit walls' end,
     ['jester'] = function() return '[fg]all knives seek enemies and pierce [yellow]2[fg] times' end,
     ['assassin'] = function() return '[fg]poison inflicted from crits deals [yellow]8x[fg] damage' end,
@@ -794,8 +795,8 @@ function init()
     ['lich'] = function() return '[light_bg]chain frost slows enemies hit by 80% for 2 seconds and chains +7 times' end,
     ['cryomancer'] = function() return '[light_bg]enemies are also slowed by 60% while in the area' end,
     ['pyromancer'] = function() return '[light_bg]enemies killed by the pyromancer explode, dealing ' .. get_character_stat('pyromancer', 3, 'dmg') .. ' AoE damage' end,
-    ['corruptor'] = function() return '[light_bg]spawn 3 small critters if the corruptor hits an enemy' end,
-    ['beastmaster'] = function() return '[light_bg]spawn 2 small critters if the beastmaster gets hit' end,
+    ['corruptor'] = function() return '[light_bg]spawn 2 small critters if the corruptor hits an enemy' end,
+    ['beastmaster'] = function() return '[light_bg]spawn 4 small critters if the beastmaster gets hit' end,
     ['launcher'] = function() return '[light_bg]enemies launched take 300% more damage when they hit walls' end,
     ['jester'] = function() return '[light_bg]curses 6 enemies and all knives seek enemies and pierce 2 times' end,
     ['assassin'] = function() return '[light_bg]poison inflicted from crits deals 8x damage' end,
@@ -935,12 +936,12 @@ function init()
       return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4[light_bg]/[' .. ylb3(lvl) .. ']6 [fg]- sorcerers repeat their attacks once every [' .. 
         ylb1(lvl) .. ']4[light_bg]/[' .. ylb2(lvl) .. ']3[light_bg]/[' .. ylb3(lvl) .. ']2[fg] attacks'
     end,
-    ['mercenary'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+10%[light_bg]/[' .. ylb2(lvl) .. ']+20% [fg]chance for enemies to drop gold on death' end,
+    ['mercenary'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+8%[light_bg]/[' .. ylb2(lvl) .. ']+16% [fg]chance for enemies to drop gold on death' end,
   }
 
   tier_to_characters = {
-    [1] = {'vagrant', 'swordsman', 'magician', 'archer', 'scout', 'cleric', 'arcanist', 'miner'},
-    [2] = {'wizard', 'saboteur', 'sage', 'squire', 'dual_gunner', 'hunter', 'chronomancer', 'barbarian', 'cryomancer', 'beastmaster', 'jester', 'carver', 'psychic', 'witch', 'silencer', 'outlaw', 'merchant'},
+    [1] = {'vagrant', 'swordsman', 'magician', 'archer', 'scout', 'cleric', 'arcanist', 'merchant'},
+    [2] = {'wizard', 'saboteur', 'sage', 'squire', 'dual_gunner', 'hunter', 'chronomancer', 'barbarian', 'cryomancer', 'beastmaster', 'jester', 'carver', 'psychic', 'witch', 'silencer', 'outlaw', 'miner'},
     [3] = {'elementor', 'stormweaver', 'spellblade', 'psykeeper', 'engineer', 'juggernaut', 'pyromancer', 'host', 'assassin', 'bane', 'barrager', 'infestor', 'flagellant', 'illusionist', 'usurer', 'gambler'},
     [4] = {'priest', 'highlander', 'psykino', 'fairy', 'blade', 'plague_doctor', 'cannoneer', 'vulcanist', 'warden', 'corruptor', 'thief'},
   }
@@ -998,8 +999,8 @@ function init()
     ['vulcanist'] = 4,
     ['warden'] = 4,
     ['psychic'] = 2,
-    ['miner'] = 1,
-    ['merchant'] = 2,
+    ['miner'] = 2,
+    ['merchant'] = 1,
     ['usurer'] = 3,
     ['gambler'] = 3,
     ['thief'] = 4,
@@ -1493,22 +1494,27 @@ function init()
 
   main = Main()
 
-  if run.level and run.level > 0 then
-    main_song_instance = _G[random:table{'song1', 'song2', 'song3', 'song4', 'song5'}]:play{volume = 0.5}
-  end
-  -- main_song_instance = _G[random:table{'song1', 'song2', 'song3', 'song4', 'song5'}]:play{volume = 0.5}
+  main_song_instance = _G[random:table{'song1', 'song2', 'song3', 'song4', 'song5'}]:play{volume = 0.5}
 
   main:add(BuyScreen'buy_screen')
-  main:go_to('buy_screen', run.level or 0, run.units or {}, passives, run.shop_level or 1, run.shop_xp or 0)
+  main:go_to('buy_screen', run.level or 1, run.units or {}, passives, run.shop_level or 1, run.shop_xp or 0)
   -- main:go_to('buy_screen', 7, run.units or {}, {'unleash'})
   
   --[[
   main:add(Arena'arena')
   main:go_to('arena', 3, {
-    {character = 'merchant', level = 1},
-    {character = 'miner', level = 1},
-    {character = 'thief', level = 1},
-    {character = 'gambler', level = 1},
+    {character = 'vulcanist', level = 3},
+    {character = 'vulcanist', level = 3},
+    {character = 'vulcanist', level = 3},
+    {character = 'vulcanist', level = 3},
+    {character = 'vulcanist', level = 3},
+    {character = 'vulcanist', level = 3},
+    {character = 'vulcanist', level = 3},
+    {character = 'vulcanist', level = 3},
+    {character = 'vulcanist', level = 3},
+    {character = 'vulcanist', level = 3},
+    {character = 'vulcanist', level = 3},
+    {character = 'vulcanist', level = 3},
   }, passives)
   ]]--
 

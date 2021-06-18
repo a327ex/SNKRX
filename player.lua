@@ -158,14 +158,14 @@ function Player:init(args)
     self.t:cooldown(4, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
       if closest_enemy then
-        self:shoot(self:angle_to_object(closest_enemy), {pierce = 1000, v = 40})
+        self:shoot(self:angle_to_object(closest_enemy), {pierce = 10000, v = 40})
         if main.current.sorcerer_level > 0 then
           self.sorcerer_count = self.sorcerer_count + 1
           if self.sorcerer_count >= ((main.current.sorcerer_level == 3 and 2) or (main.current.sorcerer_level == 2 and 3) or (main.current.sorcerer_level == 1 and 4)) then
             self:sorcerer_repeat()
             self.sorcerer_count = 0
             self.t:after(0.25, function()
-              self:shoot(self:angle_to_object(closest_enemy), {pierce = 1000, v = 40})
+              self:shoot(self:angle_to_object(closest_enemy), {pierce = 10000, v = 40})
             end)
           end
         end
@@ -469,7 +469,7 @@ function Player:init(args)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
       if closest_enemy then
-        self:shoot(self:angle_to_object(closest_enemy), {spawn_critters_on_kill = 3, spawn_critters_on_hit = (self.level == 3 and 3 or nil)})
+        self:shoot(self:angle_to_object(closest_enemy), {spawn_critters_on_kill = 3, spawn_critters_on_hit = (self.level == 3 and 2 or nil)})
       end
     end, nil, nil, 'shoot')
 
@@ -1404,7 +1404,7 @@ function Player:hit(damage, from_undead)
   if self.character == 'beastmaster' and self.level == 3 then
     critter1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     trigger:after(0.01, function()
-      for i = 1, 2 do
+      for i = 1, 4 do
         Critter{group = main.current.main, x = self.x, y = self.y, color = orange[0], r = random:float(0, 2*math.pi), v = 20, dmg = self.dmg, parent = self}
       end
     end)
@@ -1508,7 +1508,7 @@ function Player:hit(damage, from_undead)
       end
 
       if self.insurance then
-        if random:bool(4*((main.current.mercenary_level == 2 and 20) or (main.current.mercenary_level == 1 and 10) or 0)) then
+        if random:bool(4*((main.current.mercenary_level == 2 and 16) or (main.current.mercenary_level == 1 and 8) or 0)) then
           main.current.t:after(0.01, function()
             Gold{group = main.current.main, x = self.x, y = self.y}
             Gold{group = main.current.main, x = self.x, y = self.y}
@@ -1879,7 +1879,7 @@ function Projectile:init(args)
         arcane2:play{pitch = random:float(0.7, 1.3), volume = 0.15}
         self.hfx:use('hit', 0.5)
         local r = self:angle_to_object(enemy)
-        local t = {group = main.current.main, x = self.x + 8*math.cos(r), y = self.y + 8*math.sin(r), v = 250, r = r, color = self.parent.color, dmg = self.parent.dmg, pierce = 1000, character = 'arcanist_projectile',
+        local t = {group = main.current.main, x = self.x + 8*math.cos(r), y = self.y + 8*math.sin(r), v = 250, r = r, color = self.parent.color, dmg = self.parent.dmg, pierce = 2, character = 'arcanist_projectile',
         parent = self.parent, level = self.parent.level}
         local check_circle = Circle(t.x, t.y, 2)
         local objects = main.current.main:get_objects_in_shape(check_circle, {Player, Seeker, EnemyCritter, Critter, Illusion, Volcano, Saboteur, Pet, Turret})
@@ -2778,9 +2778,8 @@ function Volcano:draw()
   if self.hidden then return end
   if not self.hfx.hit then return end
 
-  graphics.push(self.x, self.y, math.pi/4, self.spring.x, self.spring.x)
-    graphics.rectangle(self.x, self.y, 1.5*self.shape.w, 4, 2, 2, self.hfx.hit.f and fg[0] or self.color)
-    graphics.rectangle(self.x, self.y, 4, 1.5*self.shape.h, 2, 2, self.hfx.hit.f and fg[0] or self.color)
+  graphics.push(self.x, self.y, -math.pi/2, self.spring.x, self.spring.x)
+    graphics.triangle_equilateral(self.x, self.y, 1.5*self.shape.w, self.hfx.hit.f and fg[0] or self.color, 3)
   graphics.pop()
 
   graphics.push(self.x, self.y, self.r + self.vr, self.spring.x, self.spring.x)

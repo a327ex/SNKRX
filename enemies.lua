@@ -225,7 +225,7 @@ function Seeker:init(args)
     local n = math.remap(current_new_game_plus, 0, 5, 1, 0.5)
     self.t:after({2*n, 4*n}, function()
       self.shooting = true
-      self.t:every({3, 5}, function()
+      self.t:every({4, 6}, function()
         if self.silenced then return end
         for i = 1, 3 do
           self.t:after((1 - self.level*0.01)*0.15*(i-1), function()
@@ -233,8 +233,8 @@ function Seeker:init(args)
             self.hfx:use('hit', 0.25, 200, 10, 0.1)
             local r = self.r
             HitCircle{group = main.current.effects, x = self.x + 0.8*self.shape.w*math.cos(r), y = self.y + 0.8*self.shape.w*math.sin(r), rs = 6}
-            EnemyProjectile{group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), color = fg[0], r = r, v = 140 + 5*self.level + 4*current_new_game_plus,
-              dmg = (current_new_game_plus*0.1 + 1)*self.dmg}
+            EnemyProjectile{group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), color = fg[0], r = r, v = 140 + 3.5*self.level + 2*current_new_game_plus,
+              dmg = (current_new_game_plus*0.1 + 1)*self.dmg, source = 'shooter'}
           end)
         end
       end, nil, nil, 'shooter')
@@ -473,7 +473,7 @@ function Seeker:hit(damage, projectile, dot)
     _G[random:table{'enemy_die1', 'enemy_die2'}]:play{pitch = random:float(0.9, 1.1), volume = 0.5}
 
     if main.current.mercenary_level > 0 then
-      if random:bool((main.current.mercenary_level == 2 and 20) or (main.current.mercenary_level == 1 and 10) or 0) then
+      if random:bool((main.current.mercenary_level == 2 and 16) or (main.current.mercenary_level == 1 and 8) or 0) then
         trigger:after(0.01, function()
           Gold{group = main.current.main, x = self.x, y = self.y}
         end)
@@ -500,12 +500,9 @@ function Seeker:hit(damage, projectile, dot)
 
     if self.exploder then
       if self.silenced then return end
-      shoot1:play{pitch = random:float(0.95, 1.05), volume = 0.4}
+      mine1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       trigger:after(0.01, function()
-        local n = math.floor(8 + current_new_game_plus*1.5)
-        for i = 1, n do
-          EnemyProjectile{group = main.current.main, x = self.x, y = self.y, color = blue[0], r = (i-1)*math.pi/(n/2), v = 120 + 5*self.level, dmg = 1.5*self.dmg}
-        end
+        ExploderMine{group = main.current.main, x = self.x, y = self.y, color = blue[0], parent = self}
       end)
     end
 
@@ -573,8 +570,9 @@ end
 
 function Seeker:push(f, r, push_invulnerable)
   local n = 1
-  if self.tank then n = 0.4 - 0.01*self.level end
-  if self.boss then n = 0.1 end
+  if self.tank then n = 0.7 end
+  if self.boss then n = 0.2 end
+  if self.level == 25 and self.boss then n = 0.7 end
   self.push_invulnerable = push_invulnerable
   self.push_force = n*f
   self.being_pushed = true
@@ -669,6 +667,50 @@ function Seeker:apply_dot(dmg, duration)
     for i = 1, 1 do HitParticle{group = main.current.effects, x = self.x, y = self.y, color = self.color} end
     for i = 1, 1 do HitParticle{group = main.current.effects, x = self.x, y = self.y, color = purple[0]} end
   end, math.floor(duration/0.2))
+end
+
+
+ExploderMine = Object:extend()
+ExploderMine:implement(GameObject)
+function ExploderMine:init(args)
+  self:init_game_object(args)
+  self.hfx:add('hit', 1)
+  self.vr = 0
+  self.dvr = random:float(-math.pi/4, math.pi/4)
+  self.rs = 0
+  self.t:tween(0.05, self, {rs = args.rs}, math.cubic_in_out, function()
+    self.spring:pull(0.15)
+    self.t:every(0.8 - current_new_game_plus*0.1, function()
+      mine1:play{pitch = 1 + self.t:get_every_iteration'mine_count'*0.1, volume = 0.5}
+      self.spring:pull(0.5, 200, 10)
+      self.hfx:use('hit', 0.5, 200, 10, 0.2)
+    end, 3, function()
+      shoot1:play{pitch = random:float(0.95, 1.05), volume = 0.4}
+      cannoneer1:play{pitch = random:float(0.95, 1.05), volume = 0.4}
+      for i = 1, 4 do HitParticle{group = main.current.effects, x = self.x, y = self.y, r = random:float(0, 2*math.pi), color = self.color} end
+      HitCircle{group = main.current.effects, x = self.x, y = self.y}
+      local n = math.floor(8 + current_new_game_plus*1.5)
+      for i = 1, n do
+        EnemyProjectile{group = main.current.main, x = self.x, y = self.y, color = blue[0], r = (i-1)*math.pi/(n/2), v = 120 + 5*self.parent.level, dmg = 1.5*self.parent.dmg}
+      end
+      self.dead = true
+    end, 'mine_count')
+  end)
+  --[[
+  ]]--
+end
+
+
+function ExploderMine:update(dt)
+  self:update_game_object(dt)
+  self.vr = self.vr + self.dvr*dt
+end
+
+
+function ExploderMine:draw()
+  graphics.push(self.x, self.y, 0, self.spring.x, self.spring.x)
+    graphics.circle(self.x, self.y, 2.5, self.hfx.hit.f and fg[0] or self.color)
+  graphics.pop()
 end
 
 
@@ -929,6 +971,12 @@ function EnemyProjectile:on_trigger_enter(other, contact)
     if main.current.player.meat_shield then
       self:die(self.x, self.y, nil, random:int(2, 3))
       other:hit(1000)
+    end
+
+  elseif other:is(Seeker) or other:is(EnemyCritter) then
+    if self.source == 'shooter' then
+      self:die(self.x, self.y, nil, random:int(2, 3))
+      other:hit(0.5*self.dmg)
     end
   end
 end

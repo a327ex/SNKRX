@@ -1,7 +1,7 @@
 Item Update
   New mechanics
     * Spend gold to level items up
-    Block levelling for unlevellable items
+    * Block levelling for unlevellable items
   Items
     General:
       * Centipede - +10/20/30% movement speed
@@ -84,37 +84,29 @@ Item Update
     * Blessing
     * Immolation
   Balance
-    * Changed voider DoT damage bonus to 20/40% (from 15/25%)
+    * Increased voider DoT damage bonus to 20/40% (from 15/25%)
     * Decreased shop reroll cost to 10
-    Decrease mercenary gold drop chance to 8/16% (from 10/20%)
+    * Decreased mercenary gold drop chance to 8/16% (from 10/20%)
+    * Changed Merchant to tier 1
+    * Changed Merchant interest to cap at 10 (having more than 100 gold won't generate more interest from the merchant)
+    * Changed Miner to tier 2
+    * Changed Arcanist projectiles to pierce once (from infinite)
+    * Changed Exploder to create a mine on death, it will explode into projectiles after a delay (this delay is smaller on higher NG+ difficulties)
+    * Decreased Shooter projectile fire rate, speed, and now the projectiles can also be blocked by enemies
+    * Decreased Tank knockback resistance
+    * Decreased level 25 elite knockback resistance
+    * Changed Beastmaster's Lv.3 effect to spawn 4 small critters when it gets hit (from 2)
+    * Changed Corruptor's Lv.3 effect to spawn 2 small critters on hit (from 3)
   QoL
-    Current snake/items visible on item selection screen
-    Volume slider
-    Add visuals for defensive ouroboros, divine intervention, fairy buff
-    Options menu from buy screen
-    https://i.imgur.com/JJUddT3.png
-    https://i.imgur.com/R3YgUqk.png
-    Improve volcano to not look like spawn marker - https://i.imgur.com/HuS15HG.png
-    Add option for mouse cursor to always be visible
-    Add main menu
-      Soundtrack button
-      Arena run button
-      Options button
-      Quit button
+    * Added snake to the passive selection screen
+    * Changed Volcano's icon to be a triangle instead of X so it isn't confused with a spawn marker
+    * Improved Beastmaster and Corruptor description with text describing their attack and how much damage it deals
+    * Added visual effect for when defensive ouroboros is active
     * Added an option to force all screen transitions to be dark
     * Added tier text to characters on the shop screen
     * Added shop unit highlights/markers to make it easier to tell when you already own something
     * Added unit names to the "your build" section of the end game screen
-  
   Bug fixes
-    Fix fullscreen with different resolutions that don't scale properly - https://steamcommunity.com/app/915310/discussions/0/3106901665841020282/
-    Fix enemies still spawning after arena clear (this happens with the extra enemy spawns that were blocked earlier)
-    Kill enemies that go outside play area - https://i.imgur.com/QPgZbve.png
-    https://i.imgur.com/lCdPFZx.png
-    https://i.imgur.com/1CwmFYX.png
-    https://i.imgur.com/qrExpq5.png
-    https://i.imgur.com/DNHUST1.png
-    Fixed multiple bugs related to locking the shop and quitting
     * Fixed ouroboros technique passives not working with mouse controls
     * Fixed mouse not showing up on death
     * Fixed NG+5 achievement not triggering (this happened only between last Sunday night and Monday morning due to a small update I pushed breaking it)
@@ -124,6 +116,7 @@ Item Update
     * Fixed a bug where the shop would be rerolled after quitting in the arena
     * Fixed a bug where units could be duplicated in the shop by locking and quitting the game at certain steps
     * Fixed a bug where quitting on level 2 would go back to level 1 shop (again)
+    * Fixed multiple bugs related to locking the shop and quitting
     * Fixed a bug where mouse cursor wasn't visible on death
     * Fixed a bug where NG+ level wasn't increased when the game is beaten but only when the NG+ button was clicked
     * Fixed a bug where level 2 and level 3 achievements (win with only level 2/3 units) were not triggering correctly sometimes
@@ -145,6 +138,23 @@ Endless Update
     Units die permanently when they die
     Slower scaling with less individually threatening units
     Max snake size goes up every 10 levels
+  QoL
+    Volume slider
+    Add visuals divine intervention, fairy buff
+    Options menu from buy screen
+    https://i.imgur.com/JJUddT3.png
+    Add option for mouse cursor to always be visible
+    Add main menu
+      Soundtrack button
+      Arena run button
+      Options button
+      Quit button
+  Bug fixes
+    Fix fullscreen with different resolutions that don't scale properly - https://steamcommunity.com/app/915310/discussions/0/3106901665841020282/
+    Fix enemies still spawning after arena clear (this happens with the extra enemy spawns that were blocked earlier)
+    Kill enemies that go outside play area - https://i.imgur.com/QPgZbve.png
+    https://i.imgur.com/lCdPFZx.png
+    https://i.imgur.com/qrExpq5.png
 
 ---
 
@@ -152,6 +162,8 @@ Future updates:
 Chaos related classes
   Invoker - shoots a projectile with random properties, Lv.3 effect - ???
 Trappers:
+  Traps - map modifier
+    turrets attached to walls shoot single, slow moving projectiles in a predictable pattern that deal lots of damage
   Triangler - drops a trap and the 3rd trap will trigger the area, dealing X AoE damage 2-3 times
 Brawlers: units focused on crashing on enemies
   https://i.imgur.com/5YubukS.png - unit idea
