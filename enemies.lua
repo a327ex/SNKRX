@@ -259,6 +259,7 @@ function Seeker:init(args)
   end
 
   self.usurer_count = 0
+  self.curses = {}
 end
 
 
@@ -283,7 +284,8 @@ function Seeker:update(dt)
   if self.slowed then self.slow_mvspd_m = self.slowed
   else self.slow_mvspd_m = 1 end
 
-  self.buff_mvspd_m = (self.speed_boosting_mvspd_m or 1)*(self.slow_mvspd_m or 1)*(self.temporal_chains_mvspd_m or 1)*(self.tank and 0.35 or 1)
+  self.buff_mvspd_m = (self.speed_boosting_mvspd_m or 1)*(self.slow_mvspd_m or 1)*(self.temporal_chains_mvspd_m or 1)*(self.tank and 0.35 or 1)*(self.deceleration_mvspd_m or 1)
+  self.buff_def_m = (self.seeping_def_m or 1)
 
   self:calculate_stats()
 
@@ -382,6 +384,23 @@ function Seeker:on_collision_enter(other, contact)
       end
     end
 
+    if main.current.player.tremor then
+      if self.being_pushed then
+        camera:shake(2, 0.5)
+        earth1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+        Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = 0.75*self.push_force*(main.current.player.area_size_m or 1), color = yellow[0], dmg = self.push_force/2, parent = main.current.player}
+      end
+    end
+
+    if main.current.player.fracture then
+      trigger:after(0.01, function()
+        earth2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+        for i = 1, 6 do
+          Projectile{group = main.current.main, x = self.x, y = self.y, color = red[0], r = (i-1)*math.pi/3, v = 200, dmg = 30, parent = main.current.player, pierce = 1}
+        end
+      end)
+    end
+
     if self.headbutter and self.headbutting then
       self.headbutting = false
     end
@@ -412,7 +431,7 @@ function Seeker:on_collision_enter(other, contact)
 end
 
 
-function Seeker:hit(damage, projectile)
+function Seeker:hit(damage, projectile, dot)
   local pyrod = self.pyrod
   self.pyrod = false
   if self.dead then return end
@@ -425,6 +444,18 @@ function Seeker:hit(damage, projectile)
   self.hp = self.hp - actual_damage
   if self.hp > self.max_hp then self.hp = self.max_hp end
   main.current.damage_dealt = main.current.damage_dealt + actual_damage
+
+  if dot then
+    self.seeping_def_m = (main.current.player.seeping == 1 and 0.85) or (main.current.player.seeping == 2 and 0.75) or (main.current.player.seeping == 3 and 0.65) or 1
+    self.t:after(1, function()
+      self.seeping_def_m = 1
+    end, 'seeping')
+
+    self.deceleration_mvspd_m = (main.current.player.deceleration == 1 and 0.85) or (main.current.player.deceleration == 2 and 0.75) or (main.current.player.deceleration == 3 and 0.65) or 1
+    self.t:after(1, function()
+      self.deceleration_mvspd_m = 1
+    end, 'deceleration')
+  end
 
   if projectile and projectile.spawn_critters_on_hit then
     critter1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -576,12 +607,18 @@ function Seeker:curse(curse, duration, arg1, arg2, arg3)
   if main.current.player.whispers_of_doom then
     if not self.doom then self.doom = 0 end
     self.doom = self.doom + 1
-    if self.doom == 4 then
+    if self.doom == ((main.current.player.whispers_of_doom == 1 and 4) or (main.current.player.whispers_of_doom == 2 and 3) or (main.current.player.whispers_of_doom == 3 and 2)) then
       self.doom = 0
-      self:hit(200)
+      self:hit((main.current.player.whispers_of_doom == 1 and 100) or (main.current.player.whispers_of_doom == 2 and 150) or (main.current.player.whispers_of_doom == 3 and 200))
       buff1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     end
+  end
+
+  if main.current.player.hextouch then
+    local p = main.current.player
+    local dmg = (p.hextouch == 1 and 10) or (p.hextouch == 2 and 15) or (p.hextouch == 3 and 20)
+    self:apply_dot(dmg*(p.dot_dmg_m or 1)*(main.current.chronomancer_dot or 1), 3)
   end
 
   buff1:play{pitch = random:float(0.65, 0.75), volume = 0.25}
@@ -627,7 +664,7 @@ end
 function Seeker:apply_dot(dmg, duration)
   self.t:every(0.25, function()
     hit2:play{pitch = random:float(0.8, 1.2), volume = 0.2}
-    self:hit(dmg/4)
+    self:hit(dmg/4, nil, true)
     HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = fg[0], duration = 0.1}
     for i = 1, 1 do HitParticle{group = main.current.effects, x = self.x, y = self.y, color = self.color} end
     for i = 1, 1 do HitParticle{group = main.current.effects, x = self.x, y = self.y, color = purple[0]} end
@@ -887,5 +924,11 @@ function EnemyProjectile:on_trigger_enter(other, contact)
   if other:is(Player) then
     self:die(self.x, self.y, nil, random:int(2, 3))
     other:hit(self.dmg)
+
+  elseif other:is(Critter) then
+    if main.current.player.meat_shield then
+      self:die(self.x, self.y, nil, random:int(2, 3))
+      other:hit(1000)
+    end
   end
 end

@@ -144,7 +144,7 @@ function BuyScreen:on_enter(from, level, units, passives, shop_level, shop_xp)
       main_song_instance:stop()
       run_passive_pool = {
         'centipede', 'ouroboros_technique_r', 'ouroboros_technique_l', 'amplify', 'resonance', 'ballista', 'call_of_the_void', 'crucio', 'speed_3', 'damage_4', 'shoot_5', 'death_6', 'lasting_7',
-        'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'pandemic', 'whispers_of_doom',
+        'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'hextouch', 'whispers_of_doom',
         'tremor', 'heavy_impact', 'fracture', 'meat_shield', 'hive', 'baneling_burst', 'blunt_arrow', 'explosive_arrow', 'divine_machine_arrow', 'chronomancy', 'awakening', 'divine_punishment',
         'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
         'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance'
@@ -531,7 +531,7 @@ function RestartButton:update(dt)
       main_song_instance:stop()
       run_passive_pool = {
         'centipede', 'ouroboros_technique_r', 'ouroboros_technique_l', 'amplify', 'resonance', 'ballista', 'call_of_the_void', 'crucio', 'speed_3', 'damage_4', 'shoot_5', 'death_6', 'lasting_7',
-        'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'pandemic', 'whispers_of_doom',
+        'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'hextouch', 'whispers_of_doom',
         'tremor', 'heavy_impact', 'fracture', 'meat_shield', 'hive', 'baneling_burst', 'blunt_arrow', 'explosive_arrow', 'divine_machine_arrow', 'chronomancy', 'awakening', 'divine_punishment',
         'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
         'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance'
@@ -1361,13 +1361,14 @@ function ItemCard:init(args)
   self.shape = Rectangle(self.x, self.y, self.w, self.h)
   self.interact_with_mouse = true
   self.max_xp = (self.level == 0 and 0) or (self.level == 1 and 2) or (self.level == 2 and 3) or (self.level == 3 and 0)
+  self.unlevellable = table.any(unlevellable_items, function(v) return v == self.passive end)
 end
 
 
 function ItemCard:update(dt)
   self:update_game_object(dt)
 
-  if self.selected and input.m1.pressed then
+  if self.selected and input.m1.pressed and not self.unlevellable then
     if self.level >= 3 then return end
     if gold < 5 then
       self.spring:pull(0.2, 200, 10)
@@ -1418,14 +1419,16 @@ function ItemCard:draw()
       graphics.rectangle(self.x, self.y, self.w, self.h, 6, 6, bg[-1])
     end
     _G[self.passive]:draw(self.x, self.y, 0, 0.8, 0.7, 0, 0, fg[0])
-    local x, y = self.x + self.w/2.5, self.y - self.h/2.5
-    if self.level == 1 then
-      graphics.rectangle(x - 2, y, 2, 2, nil, nil, self.xp >= 1 and fg[0] or bg[5])
-      graphics.rectangle(x + 2, y, 2, 2, nil, nil, bg[5])
-    elseif self.level == 2 then
-      graphics.rectangle(x - 4, y, 2, 2, nil, nil, self.xp >= 1 and fg[0] or bg[5])
-      graphics.rectangle(x, y, 2, 2, nil, nil, self.xp >= 2 and fg[0] or bg[5])
-      graphics.rectangle(x + 4, y, 2, 2, nil, nil, bg[5])
+    if not self.unlevellable then
+      local x, y = self.x + self.w/2.5, self.y - self.h/2.5
+      if self.level == 1 then
+        graphics.rectangle(x - 2, y, 2, 2, nil, nil, self.xp >= 1 and fg[0] or bg[5])
+        graphics.rectangle(x + 2, y, 2, 2, nil, nil, bg[5])
+      elseif self.level == 2 then
+        graphics.rectangle(x - 4, y, 2, 2, nil, nil, self.xp >= 1 and fg[0] or bg[5])
+        graphics.rectangle(x, y, 2, 2, nil, nil, self.xp >= 2 and fg[0] or bg[5])
+        graphics.rectangle(x + 4, y, 2, 2, nil, nil, bg[5])
+      end
     end
   graphics.pop()
 end
@@ -1437,7 +1440,7 @@ function ItemCard:create_info_text()
     self.info_text.dead = true
   end
   self.info_text = nil
-  if self.level == 3 then
+  if self.level == 3 or self.unlevellable then
     self.info_text = InfoText{group = main.current.ui, force_update = true}
     self.info_text:activate({
       {text = '[fg]' .. passive_names[self.passive] .. ', [yellow]Lv.' .. self.level, font = pixul_font, alignment = 'center',

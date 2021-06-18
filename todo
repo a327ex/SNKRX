@@ -25,54 +25,53 @@ Item Update
       * Porcupine Technique - when a unit dies it explodes, releasing piercing projectiles
       * Last Stand - the last unit alive is fully healed and receives a +20% bonus to all stats
     Voider:
-      vt Seeping - enemies taking DoT damage take +15/20/25% damage from all sources for 6 seconds
-      vt Deceleration - enemies damaged by voiders have their movement speed reduced by 15/20/25%
-      vt Annihilation - when a voider dies deal its DoT damage to all enemies for 3 seconds
+      * Seeping - enemies taking DoT damage take +15/20/25% damage from all sources for 6 seconds
+      * Deceleration - enemies damaged by voiders have their movement speed reduced by 15/20/25%
+      * Annihilation - when a voider dies deal its DoT damage to all enemies for 3 seconds
     Curser:
-      change one of these for +1/3/5 curse targets
-      vt Malediction - cursed enemies take 15/25/35% more damage and deal 15/25/35% less damage
-      vt Pandemic - when a cursed enemy dies its curse spreads
-      vt Whispers of Doom - curses apply doom, when 4/3/2 doom instances are reached they deal 100/150/200
+      * Malediction - +1/3/5 max curse targets to all allied cursers
+      * Hextouch - enemies take 10/15/20 damage per second for 3 seconds when cursed
+      * Whispers of Doom - curses apply doom, when 4/3/2 doom instances are reached they deal 100/150/200
     Forcer:
-      vt Tremor - when enemies die from hitting walls they create a damaging area with size according to the knockback force
-      vt Heavy Impact - when enemies hit walls they take damage according to the knockback force
-      vt Fracture - when enemies die from hitting walls explode into projectiles
+      * Tremor - when enemies die from hitting walls they create a damaging area with size according to the knockback force
+      * Heavy Impact - when enemies hit walls they take damage according to the knockback force
+      * Fracture - when enemies die from hitting walls explode into projectiles
     Swarmer:
-      vt Meat Shield - critters block enemy projectiles
-      vt Hive - critters have +1/2/3 HP
-      vt Baneling Burst - critters die immediately on contact but also deal AoE damage
+      * Meat Shield - critters block enemy projectiles
+      * Hive - critters have +1/2/3 HP
+      * Baneling Burst - critters die immediately on contact but also deal AoE damage
     Ranger:
-      vt Blunt Arrow - arrows fired by rangers have a 10/20/30% chance to knockback
-      vt Explosive Arrow - arrows fired by rangers have a 10/20/30% chance to explode, dealing 10/20/30% AoE damage
-      vt Divine Machine Arrow - arrows fired by rangers have a 10/20/30% chance to seek enemies and pierce 1/2/3 times
+      * Blunt Arrow - arrows fired by rangers have a 10/20/30% chance to knockback
+      * Explosive Arrow - arrows fired by rangers have a 10/20/30% chance to explode, dealing 10/20/30% AoE damage
+      * Divine Machine Arrow - arrows fired by rangers have a 10/20/30% chance to seek enemies and pierce 1/2/3 times
     Mage:
-      vt Chronomancy - mages cast their spells 15/25/35% faster
-      vt Awakening - +50/75/100% attack speed and damage to 1 mage every round for that round
-      vt Divine Punishment - repeatedly deal damage to all enemies based on how many mages you have
+      * Chronomancy - mages cast their spells 15/25/35% faster
+      * Awakening - +50/75/100% attack speed and damage to 1 mage every round for that round
+      * Divine Punishment - repeatedly deal damage to all enemies based on how many mages you have
     Rogue:
-      vt Assassination - crits from rogues deal 8/10/12x damage but normal attacks deal half damage
-      vt Flying Daggers - all projectiles thrown by rogues chain +2/3/4 times
-      vt Ultimatum - projectiles that chain gain +10/20/30% damage with each chain
+      * Assassination - crits from rogues deal 8/10/12x damage but normal attacks deal half damage
+      * Flying Daggers - all projectiles thrown by rogues chain +2/3/4 times
+      * Ultimatum - projectiles that chain gain +10/20/30% damage with each chain
     Nuker:
-      vt Magnify - +20/35/50% area size
-      vt Echo Barrage - 10/20/30% chance to create 1/2/3 secondary AoEs on AoE hit
-      vt Unleash - all nukers gain +1% area size and damage every second
+      * Magnify - +20/35/50% area size
+      * Echo Barrage - 10/20/30% chance to create 1/2/3 secondary AoEs on AoE hit
+      * Unleash - all nukers gain +1% area size and damage every second
     Enchanter:
-      vt Reinforce - +10/20/30% damage, defense and attack speed to all allies with at leats one enchanter 
-      vt Payback - +2/5/8% damage to all allies whenever an enchanter is hit
-      vt Enchanted - when enemies die they have a 10/20/30% release X homing projectiles, where X is how many enchanters you have
+      * Reinforce - +10/20/30% damage, defense and attack speed to all allies with at leats one enchanter 
+      * Payback - +2/5/8% damage to all allies whenever an enchanter is hit
+      * Enchanted - when enemies die they have a 10/20/30% release X homing projectiles, where X is how many enchanters you have
     Sorcerer:
-      vt Freezing Field - Create an area that slows enemies by 50% for 2 seconds whenever a sorcerer repeats a spell
-      vt Burning Field - Create an area that deals 30 damage per second for 2 seconds whenever a sorcerer repeats a spell
-      vt Gravity Field - Create an area that sucks enemies in for 2 seconds whenever a sorcerer repeats a spell
+      * Freezing Field - Create an area that slows enemies by 50% for 2 seconds whenever a sorcerer repeats a spell
+      * Burning Field - Create an area that deals 30 damage per second for 2 seconds whenever a sorcerer repeats a spell
+      * Gravity Field - Create an area that sucks enemies in for 2 seconds whenever a sorcerer repeats a spell
     Mercenary:
-      vt Magnetism - Gold coins are attracted to the snake
-      vt Insurance - Dying heroes have 4 times the chance of mercenary's bonus to drop 2 gold on death
-      vt Dividends - Mercenaries deal +X% extra damage, where X is how much gold you have
+      * Magnetism - Gold coins are attracted to the snake
+      * Insurance - Dying heroes have 4 times the chance of mercenary's bonus to drop 2 gold on death
+      * Dividends - Mercenaries deal +X% extra damage, where X is how much gold you have
     Warrior:
-      vt Berserking - all warriors have up to +50/75/100% attack speed based on missing HP
-      vt Unwavering Stance - all warriors gain +4/8/12% defense every 5 seconds
-      vt Unrelenting Stance - +2/5/8% defense to all allies whenever a warrior is hit
+      * Berserking - all warriors have up to +50/75/100% attack speed based on missing HP
+      * Unwavering Stance - all warriors gain +4/8/12% defense every 5 seconds
+      * Unrelenting Stance - +2/5/8% defense to all allies whenever a warrior is hit
   Removed items
     * Wall Echo
     * Wall Rider
@@ -115,13 +114,13 @@ Item Update
     https://i.imgur.com/1CwmFYX.png
     https://i.imgur.com/qrExpq5.png
     https://i.imgur.com/DNHUST1.png
+    Fixed multiple bugs related to locking the shop and quitting
     * Fixed ouroboros technique passives not working with mouse controls
     * Fixed mouse not showing up on death
     * Fixed NG+5 achievement not triggering (this happened only between last Sunday night and Monday morning due to a small update I pushed breaking it)
     * Fixed a bug where the nuker class was not counting towards Vagrant's and Psyker's active set bonus
     * Fixed a bug where passives would sometimes disappear from a run?
     * Fixed a bug where clicking "window size-" too many times could bug out the game
-    * Fixed multiple bugs related to locking the shop and quitting
     * Fixed a bug where the shop would be rerolled after quitting in the arena
     * Fixed a bug where units could be duplicated in the shop by locking and quitting the game at certain steps
     * Fixed a bug where quitting on level 2 would go back to level 1 shop (again)
