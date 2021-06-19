@@ -2313,7 +2313,7 @@ function Area:init(args)
         self.parent.t:every(0.3, function()
           _G[random:table{'cannoneer1', 'cannoneer2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
           Area{group = main.current.effects, x = self.x + random:float(-32, 32), y = self.y + random:float(-32, 32), r = self.r + random:float(0, 2*math.pi), w = self.parent.area_size_m*48, color = self.parent.color, 
-            dmg = 0.5*self.parent.area_dmg_m*self.dmg, character = self.character, level = self.parent.level, parent = self.parent, echo_barrage_area = true}
+            dmg = 0.5*self.parent.area_dmg_m*(self.dmg or self.parent.dmg), character = self.character, level = self.parent.level, parent = self.parent, echo_barrage_area = true}
         end, self.parent.echo_barrage)
       end
     end
@@ -3127,7 +3127,7 @@ function Gold:update(dt)
       self:apply_force(20*math.cos(r), 20*math.sin(r))
     end
   end
-  self.magnet_sensor:move_to(self.x, self.y)
+  if self.magnet_sensor then self.magnet_sensor:move_to(self.x, self.y) end
 end
 
 

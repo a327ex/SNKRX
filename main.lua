@@ -1502,20 +1502,12 @@ function init()
   
   --[[
   main:add(Arena'arena')
-  main:go_to('arena', 3, {
-    {character = 'vulcanist', level = 3},
-    {character = 'vulcanist', level = 3},
-    {character = 'vulcanist', level = 3},
-    {character = 'vulcanist', level = 3},
-    {character = 'vulcanist', level = 3},
-    {character = 'vulcanist', level = 3},
-    {character = 'vulcanist', level = 3},
-    {character = 'vulcanist', level = 3},
-    {character = 'vulcanist', level = 3},
-    {character = 'vulcanist', level = 3},
-    {character = 'vulcanist', level = 3},
-    {character = 'vulcanist', level = 3},
-  }, passives)
+  main:go_to('arena', 4, {
+    {character = 'arcanist', level = 1},
+    {character = 'witch', level = 1},
+    {character = 'gambler', level = 1},
+    {character = 'illusionist', level = 1},
+  }, {{passive = 'freezing_field', level = 1}})
   ]]--
 
   --[[
