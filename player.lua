@@ -3200,7 +3200,7 @@ function Critter:init(args)
   self:set_restitution(0.5)
 
   self.classes = {'enemy_critter'}
-  self.color = orange[0]
+  self.color = brown2[0]
   self:calculate_stats(true)
   self:set_as_steerable(self.v, 400, math.pi, 1)
   self:push(args.v, args.r)
