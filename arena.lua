@@ -25,9 +25,6 @@ function Arena:on_enter(from, level, units, passives, shop_level, shop_xp, lock)
 
   trigger:tween(2, main_song_instance, {volume = 0.5, pitch = 1}, math.linear)
 
-  steam.friends.setRichPresence('steam_display', '#StatusFull')
-  steam.friends.setRichPresence('text', 'Arena - Level ' .. self.level)
-
   self.floor = Group()
   self.main = Group():set_as_physics_world(32, 0, 0, {'player', 'enemy', 'projectile', 'enemy_projectile', 'force_field', 'ghost'})
   self.post_main = Group()
@@ -151,28 +148,18 @@ function Arena:on_enter(from, level, units, passives, shop_level, shop_xp, lock)
         if self.level == 6 then
           state.achievement_speed_booster = true
           system.save_state()
-          steam.userStats.setAchievement('SPEED_BOOSTER')
-          steam.userStats.storeStats()
         elseif self.level == 12 then
           state.achievement_exploder = true
           system.save_state()
-          steam.userStats.setAchievement('EXPLODER')
-          steam.userStats.storeStats()
         elseif self.level == 18 then
           state.achievement_swarmer = true
           system.save_state()
-          steam.userStats.setAchievement('SWARMER')
-          steam.userStats.storeStats()
         elseif self.level == 24 then
           state.achievement_forcer = true
           system.save_state()
-          steam.userStats.setAchievement('FORCER')
-          steam.userStats.storeStats()
         elseif self.level == 25 then
           state.achievement_cluster = true
           system.save_state()
-          steam.userStats.setAchievement('CLUSTER')
-          steam.userStats.storeStats()
         end
       end)
     end)
@@ -540,7 +527,6 @@ function Arena:update(dt)
 
         self.quit_button = Button{group = self.ui, x = gw/2, y = gh - 25, force_update = true, button_text = 'quit', fg_color = 'bg10', bg_color = 'bg', action = function()
           system.save_state()
-          steam.shutdown()
           love.event.quit()
         end}
       end, 'pause')
@@ -709,120 +695,86 @@ function Arena:quit()
       if current_new_game_plus == 2 then
         state.achievement_new_game_1 = true
         system.save_state()
-        steam.userStats.setAchievement('NEW_GAME_1')
-        steam.userStats.storeStats()
       end
 
       if current_new_game_plus == 6 then
         state.achievement_new_game_5 = true
         system.save_state()
-        steam.userStats.setAchievement('GAME_COMPLETE')
-        steam.userStats.storeStats()
       end
 
       if self.ranger_level >= 2 then
         state.achievement_rangers_win = true
         system.save_state()
-        steam.userStats.setAchievement('RANGERS_WIN')
-        steam.userStats.storeStats()
       end
 
       if self.warrior_level >= 2 then
         state.achievement_warriors_win = true
         system.save_state()
-        steam.userStats.setAchievement('WARRIORS_WIN')
-        steam.userStats.storeStats()
       end
 
       if self.mage_level >= 2 then
         state.achievement_mages_win = true
         system.save_state()
-        steam.userStats.setAchievement('MAGES_WIN')
-        steam.userStats.storeStats()
       end
 
       if self.rogue_level >= 2 then
         state.achievement_rogues_win = true
         system.save_state()
-        steam.userStats.setAchievement('ROGUES_WIN')
-        steam.userStats.storeStats()
       end
 
       if self.healer_level >= 2 then
         state.achievement_healers_win = true
         system.save_state()
-        steam.userStats.setAchievement('HEALERS_WIN')
-        steam.userStats.storeStats()
       end
 
       if self.enchanter_level >= 2 then
         state.achievement_enchanters_win = true
         system.save_state()
-        steam.userStats.setAchievement('ENCHANTERS_WIN')
-        steam.userStats.storeStats()
       end
 
       if self.nuker_level >= 2 then
         state.achievement_nukers_win = true
         system.save_state()
-        steam.userStats.setAchievement('NUKERS_WIN')
-        steam.userStats.storeStats()
       end
 
       if self.conjurer_level >= 2 then
         state.achievement_conjurers_win = true
         system.save_state()
-        steam.userStats.setAchievement('CONJURERS_WIN')
-        steam.userStats.storeStats()
       end
 
       if self.psyker_level >= 2 then
         state.achievement_psykers_win = true
         system.save_state()
-        steam.userStats.setAchievement('PSYKERS_WIN')
-        steam.userStats.storeStats()
       end
 
       if self.curser_level >= 2 then
         state.achievement_cursers_win = true
         system.save_state()
-        steam.userStats.setAchievement('CURSERS_WIN')
-        steam.userStats.storeStats()
       end
 
       if self.forcer_level >= 2 then
         state.achievement_forcers_win = true
         system.save_state()
-        steam.userStats.setAchievement('FORCERS_WIN')
-        steam.userStats.storeStats()
       end
 
       if self.swarmer_level >= 2 then
         state.achievement_swarmers_win = true
         system.save_state()
-        steam.userStats.setAchievement('SWARMERS_WIN')
-        steam.userStats.storeStats()
       end
 
       if self.voider_level >= 2 then
         state.achievement_voiders_win = true
         system.save_state()
-        steam.userStats.setAchievement('VOIDERS_WIN')
-        steam.userStats.storeStats()
       end
 
       if self.sorcerer_level >= 3 then
         state.achievement_sorcerers_win = true
         system.save_state()
-        steam.userStats.setAchievement('SORCERERS_WIN')
-        steam.userStats.storeStats()
       end
 
       if self.mercenary_level >= 2 then
         state.achievement_mercenaries_win = true
         system.save_state()
-        steam.userStats.setAchievement('MERCENARIES_WIN')
-        steam.userStats.storeStats()
       end
 
       local all_units_level_2 = true
@@ -835,8 +787,6 @@ function Arena:quit()
       if all_units_level_2 then
         state.achievement_level_2_win = true
         system.save_state()
-        steam.userStats.setAchievement('LEVEL_2_WIN')
-        steam.userStats.storeStats()
       end
 
       local units = self.player:get_all_units()
@@ -850,8 +800,6 @@ function Arena:quit()
       if all_units_level_3 then
         state.achievement_level_3_win = true
         system.save_state()
-        steam.userStats.setAchievement('LEVEL_3_WIN')
-        steam.userStats.storeStats()
       end
     end
 

@@ -46,13 +46,26 @@ end
 function engine_run(config)
   if not web then
     love.filesystem.setIdentity(config.game_name)
-    steam.init()
     system.load_state()
+
+    local scale = 1
+    local osString = love.system.getOS()
+    if osString == 'Android' or osString == 'iOS' then
+      state.fullscreen = true
+      state.mouse_control = true
+      scale = 2.6
+    end
+    if state.fullscreen == nil then
+      state.fullscreen = true
+    end
 
     local _, _, flags = love.window.getMode()
     local window_width, window_height = love.window.getDesktopDimensions(flags.display)
-    if config.window_width ~= 'max' then window_width = config.window_width end
-    if config.window_height ~= 'max' then window_height = config.window_height end
+    window_width = window_width/scale
+    window_height = window_height/scale
+
+    if state.fullscreen ~= true and config.window_width ~= 'max' then window_width = config.window_width end
+    if state.fullscreen ~= true and config.window_height ~= 'max' then window_height = config.window_height end
 
     local limits = love.graphics.getSystemLimits()
     local anisotropy = limits.anisotropy
@@ -61,10 +74,12 @@ function engine_run(config)
     if config.anisotropy ~= 'max' then anisotropy = config.anisotropy end
 
     gw, gh = config.game_width or 480, config.game_height or 270
-    sx, sy = window_width/(config.game_width or 480), window_height/(config.game_height or 270)
+    sx, sy = window_width/gw, window_height/gh
     ww, wh = window_width, window_height
 
-    if state.sx and state.sy then
+    if state.fullscreen == true then
+      love.window.setMode(window_width, window_height, {fullscreen = state.fullscreen, vsync = config.vsync, msaa = msaa or 0, display = config.display})
+    elseif state.sx and state.sy then
       sx, sy = state.sx, state.sy
       love.window.setMode(state.sx*gw, state.sy*gh, {fullscreen = state.fullscreen, vsync = config.vsync, msaa = msaa or 0, display = config.display})
     else
@@ -122,7 +137,6 @@ function engine_run(config)
         if name == "quit" then
           if not love.quit or not love.quit() then
             system.save_state()
-            steam.shutdown()
             return a or 0
           end
         elseif name == "keypressed" then input.keyboard_state[a] = true; input.last_key_pressed = a
@@ -139,7 +153,6 @@ function engine_run(config)
 
     if love.timer then dt = love.timer.step() end
 
-    steam.runCallbacks()
     accumulator = accumulator + dt
     while accumulator >= fixed_dt do
       frame = frame + 1

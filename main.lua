@@ -1485,7 +1485,6 @@ function init()
   gold = run.gold or 3
   passives = run.passives or {}
   locked_state = run.locked_state
-  steam.userStats.requestCurrentStats()
   new_game_plus = state.new_game_plus or 0
   if not state.new_game_plus then state.new_game_plus = new_game_plus end
   current_new_game_plus = state.current_new_game_plus or new_game_plus

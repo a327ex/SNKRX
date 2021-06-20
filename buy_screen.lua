@@ -51,9 +51,6 @@ function BuyScreen:on_enter(from, level, units, passives, shop_level, shop_xp)
   if self.level == 1 then
   end
 
-  steam.friends.setRichPresence('steam_display', '#StatusFull')
-  steam.friends.setRichPresence('text', 'Shop - Level ' .. self.level)
-
   self.main = Group()
   self.effects = Group()
   self.ui = Group()
