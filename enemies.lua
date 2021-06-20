@@ -393,12 +393,14 @@ function Seeker:on_collision_enter(other, contact)
     end
 
     if main.current.player.fracture then
-      trigger:after(0.01, function()
-        earth2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-        for i = 1, 6 do
-          Projectile{group = main.current.main, x = self.x, y = self.y, color = red[0], r = (i-1)*math.pi/3, v = 200, dmg = 30, parent = main.current.player, pierce = 1}
-        end
-      end)
+      if self.being_pushed then
+        trigger:after(0.01, function()
+          earth2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+          for i = 1, 6 do
+            Projectile{group = main.current.main, x = self.x, y = self.y, color = red[0], r = (i-1)*math.pi/3, v = 200, dmg = 30, parent = main.current.player, pierce = 1}
+          end
+        end)
+      end
     end
 
     if self.headbutter and self.headbutting then
