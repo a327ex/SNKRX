@@ -920,7 +920,7 @@ function RerollButton:init(args)
       self.free_reroll = true
       self.text = Text({{text = '[bg10]reroll: [yellow]0', font = pixul_font, alignment = 'center'}}, global_text_tags)
     else
-      self.text = Text({{text = '[bg10]reroll: [yellow]10', font = pixul_font, alignment = 'center'}}, global_text_tags)
+      self.text = Text({{text = '[bg10]reroll: [yellow]8', font = pixul_font, alignment = 'center'}}, global_text_tags)
     end
   end
 end
@@ -953,7 +953,7 @@ function RerollButton:update(dt)
         system.save_run(self.parent.level, gold, self.parent.units, self.parent.passives, self.parent.shop_level, self.parent.shop_xp, run_passive_pool, locked_state)
       end
     elseif self.parent:is(Arena) then
-      if gold < 10 and not self.free_reroll then
+      if gold < 8 and not self.free_reroll then
         self.spring:pull(0.2, 200, 10)
         self.selected = true
         error1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -970,10 +970,10 @@ function RerollButton:update(dt)
         self.parent:set_passives(true)
         self.selected = true
         self.spring:pull(0.2, 200, 10)
-        if not self.free_reroll then gold = gold - 10 end
+        if not self.free_reroll then gold = gold - 8 end
         self.parent.shop_text:set_text{{text = '[fg, nudge_down]gold: [yellow, nudge_down]' .. gold, font = pixul_font, alignment = 'center'}}
         self.free_reroll = false
-        self.text = Text({{text = '[bg10]reroll: [yellow]10', font = pixul_font, alignment = 'center'}}, global_text_tags)
+        self.text = Text({{text = '[bg10]reroll: [yellow]8', font = pixul_font, alignment = 'center'}}, global_text_tags)
       end
     end
   end
@@ -1002,7 +1002,7 @@ function RerollButton:on_mouse_enter()
     if self.free_reroll then
       self.text:set_text{{text = '[fgm5]reroll: 0', font = pixul_font, alignment = 'center'}}
     else
-      self.text:set_text{{text = '[fgm5]reroll: 10', font = pixul_font, alignment = 'center'}}
+      self.text:set_text{{text = '[fgm5]reroll: 8', font = pixul_font, alignment = 'center'}}
     end
   end
   self.spring:pull(0.2, 200, 10)
@@ -1016,7 +1016,7 @@ function RerollButton:on_mouse_exit()
     if self.free_reroll then
       self.text:set_text{{text = '[fgm5]reroll: [yellow]0', font = pixul_font, alignment = 'center'}}
     else
-      self.text:set_text{{text = '[fgm5]reroll: [yellow]10', font = pixul_font, alignment = 'center'}}
+      self.text:set_text{{text = '[fgm5]reroll: [yellow]8', font = pixul_font, alignment = 'center'}}
     end
   end
   self.selected = false

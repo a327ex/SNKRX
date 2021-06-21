@@ -294,7 +294,7 @@ function Player:init(args)
 
   elseif self.character == 'sage' then
     self.attack_sensor = Circle(self.x, self.y, 96)
-    self.t:cooldown(12, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
+    self.t:cooldown(9, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
       if closest_enemy then
         self:shoot(self:angle_to_object(closest_enemy))

@@ -1,19 +1,61 @@
-Endless Update
+Looping Update
+  New items:
+    General:
+      Intimidation - enemies spawn with -10/20/30% max HP
+      Vulnerability - enemies take +10/20/30% damage
+      Ceremonial Dagger - killing an enemy fires a homing dagger
+      Homing Barrage - X/Y/Z% chance to release a homing barrage on enemy kill
+      Critical Strike - X/Y/Z% chance for attacks to critically strike, dealing 2x damage
+      Noxious Strike - X/Y/Z% chance for attacks to poison enemies, dealing 20% damage per second for 3 seconds
+      Infesting Strike - X/Y/Z% chance for attacks to spawn 2 critters on kill
+      Kinetic Strike - X/Y/Z% chance for attacks to push enemies away with high force
+      Burning Strike - X% chance for attacks to ignite, dealing 20% dps for 3 seconds, ignited enemies ignite nearby enemies on death
+      Lucky Strike - X% chance for attacks to cause enemies to drop gold
+      Healing Strike - X% chance for attacks to spawn a healing orb on kill
+      Stunning Strike - X/Y/Z% chance for attacks to stun for 2 seconds
+      Silencing Strike - X/Y/Z% chance for attacks to silence on hit
+      Warping Shots - X/Y/Z% chance for projectiles to ignore wall collisions and warp around the screen 1/2/3 times
+      Culling Strike - instantly kill elites below 10/20/30% max HP
+      Lightning Strike - X/Y/Z% chance for attacks to create chain lightning, dealing 60/80/100% damage and hitting 2/3/4 enemies
+    Healer:
+      Blessing - +10/20/30% healing effectiveness
+      Divine Favor - healing over maximum HP provides a shield that prevents damage once
+      Divine Barrage - 10/20/30% chance to release a homing barrage when picking up a healing orb
+    Psyker:
+      Orbitism - 33/66/99% faster orb speed
+      Psychic Leak - orbs deal extra damage based on the amount of damage all psykers have taken recently
+      Psychokinesis - 
+    Conjurer:
+      Rearm - summons repeat their attacks once
+      Taunt - 10/20/30% chance for summons to taunt nearby enemies on attack
+      Summon Instability - summons explode when disappearing, dealing 100/150/200% damage
+    Changes:
+      Magnetism - also attracts healing orbs
   Healer rework:
-    Enemies have an X/Y% chance to create healing cells on death
-    Cleric: creates a healing cell at a random position
-    Priest: creates multiple healing cells at a random position
+    Enemies have a 8/16% chance to spawn healing orbs on death, orbs prioritize healing low health allies
+      Cleric: creates 1 healing orb, Lv.3: creates 4 healing orbs and grants +20% healing effectiveness
+      Priest: creates 6 healing orbs
+      Fairy: grants a random unit 100% attack speed for 6 seconds and creates 1 healing orb
   Psyker rework:
-    Create orbitting damaging balls equal to the number of psykers (similar to those balls in Nova Drift)
-  Endless mode
-    Units die permanently when they die
-    Slower scaling with less individually threatening units
-    Max snake size goes up every 10 levels
+    Create orbitting, damaging balls at the head of the snake equal to the number of psykers
+      Flagellant - Lv.3: deals no damage to self and grants +10% damage to all allies per cast
+      Psychic - Lv.3: gains up to 300% damage the less HP the psychic has
+      Psykino - Lv.3: gains up to 100% attack speed the less HP the psykino has
+      Psykeeper - creates a healing orb every time the psykeeper takes 30% of its max HP in damage, Lv.3: deal double the damage taken by the psykeeper to all enemies
+  Looping
+    Change end screen
+    Loop button on end screen
+    Looping lets you continue with the current snake until you die
+    Difficulty is increased according to the formula for levels 25+
+    Snake size goes up by 1 every loop, up to 12
+  Balance
+    * Decreased reroll cost to 8
+    * Increased sage's attack speed
   QoL
+    Your party + items on end, death and passive screens - https://i.imgur.com/JJUddT3.png
     Volume slider
     Add visuals divine intervention, fairy buff
     Options menu from buy screen
-    https://i.imgur.com/JJUddT3.png
     Add option for mouse cursor to always be visible
     Add main menu
       Soundtrack button
@@ -21,28 +63,39 @@ Endless Update
       Options button
       Quit button
     https://i.imgur.com/4hOt5uX.png "party 7/9"
+    https://i.imgur.com/dlGbx0k.png lvl 3 effect on shop card
   Bug fixes
     Fix fullscreen with different resolutions that don't scale properly - https://steamcommunity.com/app/915310/discussions/0/3106901665841020282/
     Fix enemies still spawning after arena clear (this happens with the extra enemy spawns that were blocked earlier)
     Kill enemies that go outside play area - https://i.imgur.com/QPgZbve.png
-    https://i.imgur.com/lCdPFZx.png
-    https://i.imgur.com/qrExpq5.png
+    https://i.imgur.com/lCdPFZx.png - dvr crash, already fixed i think
     https://i.imgur.com/Rk6qbDD.png - merchant doesnt give reroll if dies
     https://i.imgur.com/8he1WDm.png - infinite money
-    https://i.imgur.com/0wZ5wma.png - max unit bugged when changing ng mid run
+    https://i.imgur.com/0wZ5wma.png - max unit bugged when changing ng mid run, https://i.imgur.com/qrExpq5.png
     https://i.imgur.com/1soUUdk.png - 5th position stops shooting when 1-4 die
+    https://i.imgur.com/cJMFDfc.png - lasting 7 doesnt work?
+    "your build" only shows alive units, this is the same problem as merchant not giving interest if dead?
+    https://i.imgur.com/Ta3lBui.png - Pet bug due to enemies spawning after arena is clear
+
 
 ---
 
-Future updates:
+
+Future ideas:
 Chaos related classes
   Invoker - shoots a projectile with random properties, Lv.3 effect - ???
 Trappers:
+Emitters: +projectile damage, projectile mods
+  warping
+  homing/barrage
+  wavy, 90, 45 degree
+  splitting tears
   Traps - map modifier
     turrets attached to walls shoot single, slow moving projectiles in a predictable pattern that deal lots of damage
   Triangler - drops a trap and the 3rd trap will trigger the area, dealing X AoE damage 2-3 times
 Brawlers: units focused on crashing on enemies
   https://i.imgur.com/5YubukS.png - unit idea
+Bodyguard - https://i.imgur.com/Y2pP20v.png
 Conjurer unit that creates an unit that actively protects you from enemy projectiles
 Guardians - https://i.imgur.com/Ynu5Cdw.png
 Cultists - https://i.imgur.com/GsfoZBd.png
@@ -60,6 +113,15 @@ Negative effect: colliding with yourself kills one of your units
 https://i.imgur.com/bxfvA7g.png
 https://steamcommunity.com/app/915310/discussions/0/4658391921156086711/ - general feedback
 https://steamcommunity.com/app/915310/discussions/0/4658391921156325745/ - math on gold, rerolls and units
+https://steamcommunity.com/app/915310/discussions/0/3069747783686815659/ - general feedback
+https://steamcommunity.com/app/915310/discussions/0/3069747783688708231/ - general feedback
+Challenge mode
+  Units die permanently when they die
+  Slower scaling with less individually threatening units
+  Max snake size goes up every 10 levels
+
+
+--
 
 
 Roguelite update:
@@ -76,6 +138,8 @@ Roguelite update:
     Map (map of bigger size than arena with fixed spawns)
     Unit shop
     Item shop
+      Once there are enough items there can be item tiers
+      The item shop should work similarly to the normal shop, where it can be upgraded and then have a higher chance for higher tier items
     Text + reward
     Training grounds (upgrade unit)
     Tavern (heal units)
@@ -88,7 +152,7 @@ Roguelite update:
     This unit's projectiles pierce/chain/fork/seek/split/stun/etc
     This unit is a [class]
   New stat system:
-    All stats are values from 1 to 10 (can be lower than 1 or higher than 10 due to debuffs/buffs) that represent consistent internal values between all units
+    Most stats are values from 1 to 10 (can be lower than 1 or higher than 10 due to debuffs/buffs) that represent consistent internal values between all units
     i.e. 3 attack speed means the same internal attack rate value (like say 6 seconds) for the entire game
     In general it's better if units don't have hidden internal multipliers on these stats, although sometimes that may be inevitable
     Damage:
@@ -100,4 +164,8 @@ Roguelite update:
         Projectile - damage dealt by projectiles
         AoE - damage dealt in an area
         DoT - damage dealt over time
-
+    Attack speed:
+    Defense:
+      Armor - decreases damage taken from attacks
+      Magic Resistance - decreases damage taken from spells
+    Movement speed:
