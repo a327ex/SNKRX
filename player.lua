@@ -1012,6 +1012,11 @@ function Player:init(args)
   end
 
   self.mouse_control_v_buffer = {}
+
+  if main.current:is(MainMenu) then
+    self.r = random:table{-math.pi/4, math.pi/4, 3*math.pi/4, -3*math.pi/4}
+    self:set_angle(self.r)
+  end
 end
 
 
@@ -1216,19 +1221,21 @@ function Player:update(dt)
   self.t:set_every_multiplier('attack', self.aspd_m)
 
   if self.leader then
-    if input.move_left.pressed and not self.move_right_pressed then self.move_left_pressed = love.timer.getTime() end
-    if input.move_right.pressed and not self.move_left_pressed then self.move_right_pressed = love.timer.getTime() end
-    if input.move_left.released then self.move_left_pressed = nil end
-    if input.move_right.released then self.move_right_pressed = nil end
+    if not main.current:is(MainMenu) then
+      if input.move_left.pressed and not self.move_right_pressed then self.move_left_pressed = love.timer.getTime() end
+      if input.move_right.pressed and not self.move_left_pressed then self.move_right_pressed = love.timer.getTime() end
+      if input.move_left.released then self.move_left_pressed = nil end
+      if input.move_right.released then self.move_right_pressed = nil end
 
-    if state.mouse_control then
-      self.mouse_control_v = Vector(math.cos(self.r), math.sin(self.r)):perpendicular():dot(Vector(math.cos(self:angle_to_mouse()), math.sin(self:angle_to_mouse())))
-      self.r = self.r + math.sign(self.mouse_control_v)*1.66*math.pi*dt
-      table.insert(self.mouse_control_v_buffer, 1, self.mouse_control_v)
-      if #self.mouse_control_v_buffer > 64 then self.mouse_control_v_buffer[65] = nil end
-    else
-      if input.move_left.down then self.r = self.r - 1.66*math.pi*dt end
-      if input.move_right.down then self.r = self.r + 1.66*math.pi*dt end
+      if state.mouse_control then
+        self.mouse_control_v = Vector(math.cos(self.r), math.sin(self.r)):perpendicular():dot(Vector(math.cos(self:angle_to_mouse()), math.sin(self:angle_to_mouse())))
+        self.r = self.r + math.sign(self.mouse_control_v)*1.66*math.pi*dt
+        table.insert(self.mouse_control_v_buffer, 1, self.mouse_control_v)
+        if #self.mouse_control_v_buffer > 64 then self.mouse_control_v_buffer[65] = nil end
+      else
+        if input.move_left.down then self.r = self.r - 1.66*math.pi*dt end
+        if input.move_right.down then self.r = self.r + 1.66*math.pi*dt end
+      end
     end
 
     local total_v = 0
@@ -2770,7 +2777,7 @@ end
 
 function Volcano:update(dt)
   self:update_game_object(dt)
-  self.vr = self.vr + self.dvr*dt
+  if self.dvr then self.vr = self.vr + self.dvr*dt end
 end
 
 
@@ -2782,7 +2789,7 @@ function Volcano:draw()
     graphics.triangle_equilateral(self.x, self.y, 1.5*self.shape.w, self.hfx.hit.f and fg[0] or self.color, 3)
   graphics.pop()
 
-  graphics.push(self.x, self.y, self.r + self.vr, self.spring.x, self.spring.x)
+  graphics.push(self.x, self.y, self.r + (self.vr or 0), self.spring.x, self.spring.x)
     -- graphics.circle(self.x, self.y, self.shape.rs + random:float(-1, 1), self.color, 2)
     graphics.circle(self.x, self.y, 24, self.color_transparent)
     local lw = 2

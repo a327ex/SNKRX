@@ -31,6 +31,7 @@ Looping Update
       Summon Instability - summons explode when disappearing, dealing 100/150/200% damage
     Changes:
       Magnetism - also attracts healing orbs
+      Enchanted - 30/60/90%
   Healer rework:
     Enemies have a 8/16% chance to spawn healing orbs on death, orbs prioritize healing low health allies
       Cleric: creates 1 healing orb, Lv.3: creates 4 healing orbs and grants +20% healing effectiveness
@@ -38,7 +39,7 @@ Looping Update
       Fairy: grants a random unit 100% attack speed for 6 seconds and creates 1 healing orb
   Psyker rework:
     Create orbitting, damaging balls at the head of the snake equal to the number of psykers
-      Flagellant - Lv.3: deals no damage to self and grants +10% damage to all allies per cast
+      Flagellant - Lv.3: 2X flagellant max HP and grants +10% damage to all allies per cast
       Psychic - Lv.3: gains up to 300% damage the less HP the psychic has
       Psykino - Lv.3: gains up to 100% attack speed the less HP the psykino has
       Psykeeper - creates a healing orb every time the psykeeper takes 30% of its max HP in damage, Lv.3: deal double the damage taken by the psykeeper to all enemies
@@ -52,30 +53,30 @@ Looping Update
     * Decreased reroll cost to 8
     * Increased sage's attack speed
   QoL
-    Your party + items on end, death and passive screens - https://i.imgur.com/JJUddT3.png
-    Volume slider
-    Add visuals divine intervention, fairy buff
-    Options menu from buy screen
-    Add option for mouse cursor to always be visible
-    Add main menu
-      Soundtrack button
-      Arena run button
-      Options button
-      Quit button
+    Show cooldown on elite attack
+    * Options menu from buy screen
+    * Add main menu
+      * Title
+      * Snake DVD
+      * Arena run button
+      * Options button
+      * Quit button
+      * Soundtrack button
     https://i.imgur.com/4hOt5uX.png "party 7/9"
     https://i.imgur.com/dlGbx0k.png lvl 3 effect on shop card
+    * Volume slider
+    Your party + items on end, death and passive screens - https://i.imgur.com/JJUddT3.png
+    Add option for mouse cursor to always be visible
+    Add visuals divine intervention, fairy buff
+    Change text for enchanted to "if you have >= 2 enchanters" and change text for reinforce to "if you have >= 1 enchanter"
   Bug fixes
-    Fix fullscreen with different resolutions that don't scale properly - https://steamcommunity.com/app/915310/discussions/0/3106901665841020282/
-    Fix enemies still spawning after arena clear (this happens with the extra enemy spawns that were blocked earlier)
-    Kill enemies that go outside play area - https://i.imgur.com/QPgZbve.png
-    https://i.imgur.com/lCdPFZx.png - dvr crash, already fixed i think
+    * Fixed fullscreen button and general resolution issues
+    Fixed a series of crashes that happened rarely right before changing from the arena back to the shop
     https://i.imgur.com/Rk6qbDD.png - merchant doesnt give reroll if dies
+    https://i.imgur.com/1soUUdk.png - 5th position stops shooting when 1-4 die
+    https://i.imgur.com/G9DosVw.png - lasting 7 bug
     https://i.imgur.com/8he1WDm.png - infinite money
     https://i.imgur.com/0wZ5wma.png - max unit bugged when changing ng mid run, https://i.imgur.com/qrExpq5.png
-    https://i.imgur.com/1soUUdk.png - 5th position stops shooting when 1-4 die
-    https://i.imgur.com/cJMFDfc.png - lasting 7 doesnt work?
-    "your build" only shows alive units, this is the same problem as merchant not giving interest if dead?
-    https://i.imgur.com/Ta3lBui.png - Pet bug due to enemies spawning after arena is clear
 
 
 ---
@@ -119,6 +120,10 @@ Challenge mode
   Units die permanently when they die
   Slower scaling with less individually threatening units
   Max snake size goes up every 10 levels
+Draft mode
+Enemy ideas - https://steamcommunity.com/app/915310/discussions/0/3069747783691890511/
+Unit ideas - https://i.imgur.com/VNMS2YV.png
+Unit ideas - https://steamcommunity.com/app/915310/discussions/0/3069747783693969554/
 
 
 --
