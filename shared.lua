@@ -88,9 +88,10 @@ function shared_draw(draw_action)
     shadow_shader:unset()
   end)
 
-  background_canvas:draw(0, 0, 0, sx, sy)
-  shadow_canvas:draw(1.5*sx, 1.5*sy, 0, sx, sy)
-  main_canvas:draw(0, 0, 0, sx, sy)
+  local x, y = 0, 0
+  background_canvas:draw(x, y, 0, sx, sy)
+  shadow_canvas:draw(x + 1.5*sx, y + 1.5*sy, 0, sx, sy)
+  main_canvas:draw(x, y, 0, sx, sy)
 end
 
 

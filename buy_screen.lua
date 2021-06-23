@@ -165,6 +165,7 @@ function BuyScreen:on_enter(from, level, units, passives, shop_level, shop_xp)
 
   trigger:tween(1, main_song_instance, {volume = 0.2}, math.linear)
 
+  --[[
   if self.level == 1 then
     self.screen_text = Text2{group = self.ui, x = gw/2, y = gh/2, lines = {
       {text = '[bg3]press K if screen is too large', font = pixul_font, alignment = 'center'},
@@ -174,6 +175,7 @@ function BuyScreen:on_enter(from, level, units, passives, shop_level, shop_xp)
       self.t:tween(0.2, self.screen_text, {sy = 0}, math.linear, function() self.screen_text.sy = 0 end)
     end)
   end
+  ]]--
 
   locked_state = {locked = self.locked, cards = {self.cards[1] and self.cards[1].unit, self.cards[2] and self.cards[2].unit, self.cards[3] and self.cards[3].unit}} 
   system.save_run(self.level, gold, self.units, self.passives, self.shop_level, self.shop_xp, run_passive_pool, locked_state)
@@ -187,7 +189,7 @@ function BuyScreen:update(dt)
 
   self:update_game_object(dt*slow_amount)
 
-  if not self.in_tutorial then
+  if not self.in_tutorial and not self.paused then
     self.main:update(dt*slow_amount)
     self.effects:update(dt*slow_amount)
     self.ui:update(dt*slow_amount)
@@ -198,11 +200,20 @@ function BuyScreen:update(dt)
     if self.ng_text then self.ng_text:update(dt) end
     if self.level_text then self.level_text:update(dt) end
   else
+    self.ui:update(dt*slow_amount)
     self.tutorial:update(dt*slow_amount)
   end
 
   if self.in_tutorial and input.escape.pressed then
     self:quit_tutorial()
+  end
+
+  if input.escape.pressed and not self.transitioning and not self.in_tutorial then
+    if not self.paused then
+      open_options(self)
+    else
+      close_options(self)
+    end
   end
 
   for _, part in ipairs(self.characters) do
@@ -230,6 +241,7 @@ function BuyScreen:draw()
   self.effects:draw()
   if self.items_text then self.items_text:draw(32, 145) end
   if self.level_text then self.level_text:draw(265, gh - 20) end
+  if self.paused then graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent) end
   self.ui:draw()
 
   if self.unit_grabbed then
@@ -255,6 +267,7 @@ function BuyScreen:draw()
     arrow:draw(gw/2 + 93, gh/2 - 10, 0, 0.4, 0.35)
   end
   self.tutorial:draw()
+
 end
 
 
