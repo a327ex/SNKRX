@@ -1,4 +1,4 @@
-Looping Update
+Healer & Psyker Update
   New items:
     General:
       Intimidation - enemies spawn with -10/20/30% max HP
@@ -10,7 +10,7 @@ Looping Update
       Infesting Strike - X/Y/Z% chance for attacks to spawn 2 critters on kill
       Kinetic Strike - X/Y/Z% chance for attacks to push enemies away with high force
       Burning Strike - X% chance for attacks to ignite, dealing 20% dps for 3 seconds, ignited enemies ignite nearby enemies on death
-      Lucky Strike - X% chance for attacks to cause enemies to drop gold
+      Lucky Strike - X% chance for attacks to cause enemies to drop gold on death
       Healing Strike - X% chance for attacks to spawn a healing orb on kill
       Stunning Strike - X/Y/Z% chance for attacks to stun for 2 seconds
       Silencing Strike - X/Y/Z% chance for attacks to silence on hit
@@ -23,26 +23,25 @@ Looping Update
       Divine Barrage - 10/20/30% chance to release a homing barrage when picking up a healing orb
     Psyker:
       Orbitism - 33/66/99% faster orb speed
-      Psychic Leak - orbs deal extra damage based on the amount of damage all psykers have taken recently
-      Psychokinesis - 
+      Psychosink - orbs move faster based on the amount of damage all psykers have taken recently
+      Psychosense - 20/40/60% increased orb range
     Conjurer:
       Rearm - summons repeat their attacks once
       Taunt - 10/20/30% chance for summons to taunt nearby enemies on attack
       Summon Instability - summons explode when disappearing, dealing 100/150/200% damage
+      https://i.imgur.com/yzCVMah.png
     Changes:
-      Magnetism - also attracts healing orbs
-      Enchanted - 30/60/90%
+      * Magnetism - also attracts healing orbs
+      Enchanted - 33/66/99%
   Healer rework:
-    Enemies have a 8/16% chance to spawn healing orbs on death, orbs prioritize healing low health allies
-      Cleric: creates 1 healing orb, Lv.3: creates 4 healing orbs and grants +20% healing effectiveness
-      Priest: creates 6 healing orbs
-      Fairy: grants a random unit 100% attack speed for 6 seconds and creates 1 healing orb
+    * Enemies have a 8/16% chance to spawn healing orbs on death, orbs prioritize healing low health allies
+      * Cleric: creates 1 healing orb, Lv.3: creates 4 healing orbs
+      * Priest: creates 5 healing orbs
+      * Fairy: grants a random unit 100% attack speed for 6 seconds and creates 1 healing orb
   Psyker rework:
-    Create orbitting, damaging balls at the head of the snake equal to the number of psykers
-      Flagellant - Lv.3: 2X flagellant max HP and grants +10% damage to all allies per cast
-      Psychic - Lv.3: gains up to 300% damage the less HP the psychic has
-      Psykino - Lv.3: gains up to 100% attack speed the less HP the psykino has
-      Psykeeper - creates a healing orb every time the psykeeper takes 30% of its max HP in damage, Lv.3: deal double the damage taken by the psykeeper to all enemies
+    * Create a piercing, damaging orb around each psyker, it inherits damage from its target
+      * Flagellant - Lv.3: 4X flagellant max HP and +12% damage to all allies per cast
+      * Psykeeper - creates a healing orb every time the psykeeper takes 20% of its max HP in damage, Lv.3: deal double the damage taken by the psykeeper to all enemies
   Looping
     Change end screen
     Loop button on end screen
@@ -50,9 +49,16 @@ Looping Update
     Difficulty is increased according to the formula for levels 25+
     Snake size goes up by 1 every loop, up to 12
   Balance
-    * Decreased reroll cost to 8
+    Change cursers to add more curse targets as set bonuses
+    Decrease reroll cost to 5
     * Increased sage's attack speed
+    Increase spawn marker time
+    Decrease range and thrown speed for forcers
+    Decrease damage for blue and white on higher NG
+    Increase gold rewards at higher NG
   QoL
+    Lowered sound effect for gambler
+    Selling items
     Show cooldown on elite attack
     * Options menu from buy screen
     * Add main menu
@@ -70,6 +76,7 @@ Looping Update
     Add visuals divine intervention, fairy buff
     Change text for enchanted to "if you have >= 2 enchanters" and change text for reinforce to "if you have >= 1 enchanter"
   Bug fixes
+    Fix barbarian stun just slowing and not stunning
     * Fixed fullscreen button and general resolution issues
     Fixed a series of crashes that happened rarely right before changing from the arena back to the shop
     https://i.imgur.com/Rk6qbDD.png - merchant doesnt give reroll if dies
@@ -81,6 +88,7 @@ Looping Update
 
 ---
 
+30 refresh rate makes enemies faster?!?!
 
 Future ideas:
 Chaos related classes

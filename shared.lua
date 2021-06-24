@@ -31,9 +31,9 @@ function shared_init()
   slow_amount = 1
 
   sfx = SoundTag()
-  sfx.volume = 0.5
+  sfx.volume = state.sfx_volume or 0.5
   music = SoundTag()
-  music.volume = 0.5
+  music.volume = state.music_volume or 0.5
 
   if state.volume_muted then sfx.volume = 0 end
   if state.music_muted then music.volume = 0 end

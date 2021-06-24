@@ -24,6 +24,7 @@ function init()
   unlock1 = Sound('Unlock 3.ogg', s)
   gambler1 = Sound('Collect 5.ogg', s)
   usurer1 = Sound('Shadow Punch 2.ogg', s)
+  orb1 = Sound('Collect 2.ogg', s)
   gold1 = Sound('Collect 5.ogg', s)
   gold2 = Sound('Coins - Gears - Slot.ogg', s)
   psychic1 = Sound('Magical Impact 13.ogg', s)
@@ -546,7 +547,7 @@ function init()
     ['magician'] = function(lvl) return '[fg]creates a small area that deals [yellow]' .. get_character_stat('magician', lvl, 'dmg') .. ' AoE[fg] damage' end,
     ['archer'] = function(lvl) return '[fg]shoots an arrow that deals [yellow]' .. get_character_stat('archer', lvl, 'dmg') .. '[fg] damage and pierces' end,
     ['scout'] = function(lvl) return '[fg]throws a knife that deals [yellow]' .. get_character_stat('scout', lvl, 'dmg') .. '[fg] damage and chains [yellow]3[fg] times' end,
-    ['cleric'] = function(lvl) return '[fg]heals a unit for [yellow]20%[fg] of its max hp when it drops below [yellow]50%[fg] max hp' end,
+    ['cleric'] = function(lvl) return '[fg]creates [yellow]1[fg] healing orb' end,
     ['outlaw'] = function(lvl) return '[fg]throws a fan of [yellow]5[fg] knives, each dealing [yellow]' .. get_character_stat('outlaw', lvl, 'dmg') .. '[fg] damage' end,
     ['blade'] = function(lvl) return '[fg]throws multiple blades that deal [yellow]' .. get_character_stat('blade', lvl, 'dmg') .. ' AoE[fg] damage' end,
     ['elementor'] = function(lvl) return '[fg]deals [yellow]' .. get_character_stat('elementor', lvl, 'dmg') .. ' AoE[fg] damage in a large area centered on a random target' end,
@@ -579,8 +580,8 @@ function init()
     ['psykino'] = function(lvl) return '[fg]pulls enemies together for [yellow]2[fg] seconds' end,
     ['barrager'] = function(lvl) return '[fg]shoots a barrage of [yellow]3[fg] arrows, each dealing [yellow]' .. get_character_stat('barrager', lvl, 'dmg') .. '[fg] damage and pushing enemies' end,
     ['highlander'] = function(lvl) return '[fg]deals [yellow]' .. 5*get_character_stat('highlander', lvl, 'dmg') .. '[fg] AoE damage' end,
-    ['fairy'] = function(lvl) return '[fg]periodically heals [yellow]1[fg] unit at random and grants it [yellow]+100%[fg] attack speed for [yellow]6[fg] seconds' end,
-    ['priest'] = function(lvl) return '[fg]heals all allies for [yellow]20%[fg] their max HP' end,
+    ['fairy'] = function(lvl) return '[fg]creates [yellow]1[fg] healing orb and grants [yellow]1[fg] unit [yellow]+100%[fg] attack speed for [yellow]6[fg] seconds' end,
+    ['priest'] = function(lvl) return '[fg]creates [yellow]5[fg] healing orbs' end,
     ['infestor'] = function(lvl) return '[fg]curses [yellow]8[fg] nearby enemies for [yellow]6[fg] seconds, they will release [yellow]2[fg] critters on death' end,
     ['flagellant'] = function(lvl) return '[fg]deals [yellow]' .. 2*get_character_stat('flagellant', lvl, 'dmg') .. '[fg] damage to self and grants [yellow]+4%[fg] damage to all allies per cast' end,
     ['arcanist'] = function(lvl) return '[fg]launches a slow moving orb that launches projectiles, each dealing [yellow]' .. get_character_stat('arcanist', lvl, 'dmg') .. '[fg] damage' end,
@@ -718,7 +719,7 @@ function init()
     ['magician'] = function() return '[fg]the magician becomes invulnerable for [yellow]6[fg] seconds but also cannot attack' end,
     ['archer'] = function() return '[fg]the arrow ricochets off walls [yellow]3[fg] times' end,
     ['scout'] = function() return '[yellow]+25%[fg] damage per chain and [yellow]+3[fg] chains' end,
-    ['cleric'] = function() return '[fg]heals all units' end,
+    ['cleric'] = function() return '[fg]creates [yellow]4[fg] healing orbs' end,
     ['outlaw'] = function() return "[yellow]+50%[fg] outlaw attack speed and his knives seek enemies" end,
     ['blade'] = function() return '[fg]deal additional [yellow]' .. math.round(get_character_stat('blade', 3, 'dmg')/3, 2) .. '[fg] damage per enemy hit' end,
     ['elementor'] = function() return '[fg]slows enemies by [yellow]60%[fg] for [yellow]6[fg] seconds on hit' end,
@@ -750,10 +751,10 @@ function init()
     ['psykino'] = function() return '[fg]enemies take [yellow]' .. 4*get_character_stat('psykino', 3, 'dmg') .. '[fg] damage and are pushed away when the area expires' end,
     ['barrager'] = function() return '[fg]every 3rd attack the barrage shoots [yellow]15[fg] projectiles and they push harder' end,
     ['highlander'] = function() return '[fg]quickly repeats the attack [yellow]3[fg] times' end,
-    ['fairy'] = function() return '[fg]heals [yellow]2[fg] units instead and grants them an additional [yellow]100%[fg] attack speed' end,
+    ['fairy'] = function() return '[fg]creates [yellow]2[fg] healing orbs and grants [yellow]2[fg] units [yellow]+100%[fg] attack speed' end,
     ['priest'] = function() return '[fg]picks [yellow]3[fg] units at random and grants them a buff that prevents death once' end,
     ['infestor'] = function() return '[fg][yellow]triples[fg] the number of critters released' end,
-    ['flagellant'] = function() return '[fg]deals [yellow]' .. 2*get_character_stat('flagellant', 3, 'dmg') .. '[fg] damage to all allies and grants [yellow]+12%[fg] damage to all allies per cast' end,
+    ['flagellant'] = function() return '[yellow]2X[fg] flagellant max HP and grants [yellow]+12%[fg] damage to all allies per cast instead' end,
     ['arcanist'] = function() return '[yellow]+50%[fg] attack speed for the orb and [yellow]2[fg] projectiles are released per cast' end,
     ['illusionist'] = function() return '[yellow]doubles[fg] the number of copies created and they release [yellow]12[fg] projectiles on death' end,
     ['witch'] = function() return '[fg]the area releases projectiles, each dealing [yellow]' .. get_character_stat('witch', 3, 'dmg') .. '[fg] damage and chaining once' end,
@@ -775,7 +776,7 @@ function init()
     ['magician'] = function() return '[light_bg]the magician becomes invulnerable for 6 seconds but also cannot attack' end,
     ['archer'] = function() return '[light_bg]the arrow ricochets off walls 3 times' end,
     ['scout'] = function() return '[light_bg]+25% damage per chain and +3 chains' end,
-    ['cleric'] = function() return '[light_bg]heals all units' end,
+    ['cleric'] = function() return '[light_bg]creates 4 healing orbs' end,
     ['outlaw'] = function() return "[light_bg]+50% outlaw attack speed and his knives seek enemies" end,
     ['blade'] = function() return '[light_bg]deal additional ' .. math.round(get_character_stat('blade', 3, 'dmg')/2, 2) .. ' damage per enemy hit' end,
     ['elementor'] = function() return '[light_bg]slows enemies by 60% for 6 seconds on hit' end,
@@ -807,10 +808,10 @@ function init()
     ['psykino'] = function() return '[light_bg]enemies take ' .. 4*get_character_stat('psykino', 3, 'dmg') .. ' damage and are pushed away when the area expires' end,
     ['barrager'] = function() return '[light_bg]every 3rd attack the barrage shoots 15 projectiles and they push harder' end,
     ['highlander'] = function() return '[light_bg]quickly repeats the attack 3 times' end,
-    ['fairy'] = function() return '[light_bg]heals 2 units instead and grants them an additional 100% attack speed' end,
+    ['fairy'] = function() return '[light_bg]creates 2 healing orbs and grants 2 units +100% attack speed' end,
     ['priest'] = function() return '[light_bg]picks 3 units at random and grants them a buff that prevents death once' end,
     ['infestor'] = function() return '[light_bg]triples the number of critters released' end,
-    ['flagellant'] = function() return '[light_bg]deals ' .. 2*get_character_stat('flagellant', 3, 'dmg') .. ' damage to all allies and grants +12% damage to all allies per cast' end,
+    ['flagellant'] = function() return '[light_bg]2X flagellant max HP and grants +12% damage to all allies per cast instead' end,
     ['arcanist'] = function() return '[light_bg]+50% attack speed for the orb and 2 projectiles are released per cast' end,
     ['illusionist'] = function() return '[light_bg]doubles the number of copies created and they release 12 projectiles on death' end,
     ['witch'] = function() return '[light_bg]the area periodically releases projectiles, each dealing ' .. get_character_stat('witch', 3, 'dmg') .. ' damage and chaining once' end,
@@ -928,7 +929,7 @@ function init()
     ['enchanter'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+15%[light_bg]/[' .. ylb2(lvl) .. ']+25% [fg]damage to all allies' end,
     ['nuker'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[light_bg]/[' .. ylb2(lvl) .. ']6 [fg]- [' .. ylb1(lvl) .. ']+15%[light_bg]/[' .. ylb2(lvl) .. ']+25% [fg]area damage and size to allied nukers' end,
     ['conjurer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+25%[light_bg]/[' .. ylb2(lvl) .. ']+50% [fg]summon damage and duration' end,
-    ['psyker'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+10%[light_bg]/[' .. ylb2(lvl) .. ']+20% [fg]damage and attack speed per active set to allied psykers' end,
+    ['psyker'] = function(lvl) return '[fg]create a piercing, damaging orb around each psyker, it inherits damage from its target' end,
     ['curser'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+25%[light_bg]/[' .. ylb2(lvl) .. ']+50% [fg]curse duration' end,
     ['forcer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+25%[light_bg]/[' .. ylb2(lvl) .. ']+50% [fg]knockback force to all allies' end,
     ['swarmer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+1[light_bg]/[' .. ylb2(lvl) .. ']+3 [fg]hits to critters' end,
@@ -1484,8 +1485,11 @@ function init()
 
   main_song_instance = _G[random:table{'song1', 'song2', 'song3', 'song4', 'song5'}]:play{volume = 0.5}
   main = Main()
+
+  --[[
   main:add(MainMenu'mainmenu')
   main:go_to('mainmenu')
+  ]]--
 
   --[[
   main:add(BuyScreen'buy_screen')
@@ -1493,15 +1497,18 @@ function init()
   ]]--
   -- main:go_to('buy_screen', 7, run.units or {}, {'unleash'})
   
-  --[[
   main:add(Arena'arena')
   main:go_to('arena', 4, {
-    {character = 'arcanist', level = 1},
-    {character = 'witch', level = 1},
-    {character = 'gambler', level = 1},
-    {character = 'illusionist', level = 1},
-  }, {{passive = 'freezing_field', level = 1}})
-  ]]--
+    {character = 'psykeeper', level = 3},
+    {character = 'vagrant', level = 1},
+    {character = 'psychic', level = 1},
+    {character = 'flagellant', level = 1},
+    --[[
+    {character = 'priest', level = 1},
+    {character = 'cleric', level = 1},
+    {character = 'fairy', level = 1},
+    ]]--
+  }, {})
 
   --[[
   main:add(Media'media')
@@ -1624,7 +1631,7 @@ function open_options(self)
       self.ng_t = Text2{group = self.ui, x = gw/2 + 63, y = gh - 50, lines = {{text = '[bg10]current: ' .. current_new_game_plus, font = pixul_font, alignment = 'center'}}}
     end
 
-    self.resume_button = Button{group = self.ui, x = gw/2, y = gh - 225, force_update = true, button_text = 'resume game (esc)', fg_color = 'bg10', bg_color = 'bg', action = function(b)
+    self.resume_button = Button{group = self.ui, x = gw/2, y = gh - 225, force_update = true, button_text = self:is(MainMenu) and 'main menu (esc)' or 'resume game (esc)', fg_color = 'bg10', bg_color = 'bg', action = function(b)
       trigger:tween(0.25, _G, {slow_amount = 1}, math.linear, function()
         slow_amount = 1
         self.paused = false
@@ -1648,7 +1655,10 @@ function open_options(self)
         if self.arrow_snake_button then self.arrow_snake_button.dead = true; self.arrow_snake_button = nil end
         if self.ng_plus_plus_button then self.ng_plus_plus_button.dead = true; self.ng_plus_plus_button = nil end
         if self.ng_plus_minus_button then self.ng_plus_minus_button.dead = true; self.ng_plus_minus_button = nil end
+        if self.main_menu_button then self.main_menu_button.dead = true; self.main_menu_button = nil end
         system.save_state()
+        if self:is(MainMenu) or self:is(BuyScreen) then input:set_mouse_visible(true)
+        elseif self:is(Arena) then input:set_mouse_visible(state.mouse_control or false) end
       end, 'pause')
     end}
 
@@ -1815,7 +1825,6 @@ function open_options(self)
         ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
         ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
         TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = state.dark_transitions and bg[-2] or fg[0], transition_action = function()
-          system.save_run()
           main:add(MainMenu'main_menu')
           main:go_to('main_menu')
         end, text = Text({{text = '[wavy, ' .. tostring(state.dark_transitions and 'fg' or 'bg') .. ']..', font = pixul_font, alignment = 'center'}}, global_text_tags)}
@@ -1832,12 +1841,6 @@ end
 
 
 function close_options(self)
-  if not state.mouse_control then
-    input:set_mouse_visible(false)
-  end
-  if self:is(Arena) then
-    input:set_mouse_visible(state.mouse_control or false)
-  end
   trigger:tween(0.25, _G, {slow_amount = 1}, math.linear, function()
     slow_amount = 1
     self.paused = false
@@ -1863,6 +1866,8 @@ function close_options(self)
     if self.ng_plus_minus_button then self.ng_plus_minus_button.dead = true; self.ng_plus_minus_button = nil end
     if self.main_menu_button then self.main_menu_button.dead = true; self.main_menu_button = nil end
     system.save_state()
+    if self:is(MainMenu) or self:is(BuyScreen) then input:set_mouse_visible(true)
+    elseif self:is(Arena) then input:set_mouse_visible(state.mouse_control or false) end
   end, 'pause')
 end
 

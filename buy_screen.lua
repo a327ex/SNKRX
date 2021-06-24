@@ -241,8 +241,6 @@ function BuyScreen:draw()
   self.effects:draw()
   if self.items_text then self.items_text:draw(32, 145) end
   if self.level_text then self.level_text:draw(265, gh - 20) end
-  if self.paused then graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent) end
-  self.ui:draw()
 
   if self.unit_grabbed then
     local x, y = camera:get_mouse_position()
@@ -261,13 +259,15 @@ function BuyScreen:draw()
   if self.party_text then self.party_text:draw(440, 20) end
   if current_new_game_plus > 0 then self.ng_text:draw(265, gh - 40) end
 
+  if self.paused then graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent) end
+  self.ui:draw()
+
   if self.in_tutorial then
     graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent_2)
     arrow:draw(gw/2 + 93, gh/2 - 30, 0, 0.4, 0.35)
     arrow:draw(gw/2 + 93, gh/2 - 10, 0, 0.4, 0.35)
   end
   self.tutorial:draw()
-
 end
 
 
@@ -1345,7 +1345,7 @@ function PassiveCard:on_mouse_enter()
   self.info_text:activate({
     {text = self.passive_description, font = pixul_font, alignment = 'center', height_multiplier = 1.25},
   }, nil, nil, nil, nil, 16, 4, nil, 2)
-  self.info_text.x, self.info_text.y = gw/2, gh/2 + gh/4 + 22
+  self.info_text.x, self.info_text.y = gw/2, gh/2 + gh/4 - 6
 end
 
 

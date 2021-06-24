@@ -482,6 +482,14 @@ function Seeker:hit(damage, projectile, dot)
       end
     end
 
+    if main.current.healer_level > 0 then
+      if random:bool((main.current.healer_level == 2 and 16) or (main.current.healer_level == 1 and 8) or 0) then
+        trigger:after(0.01, function()
+          HealingOrb{group = main.current.main, x = self.x, y = self.y}
+        end)
+      end
+    end
+
     if self.boss then
       slow(0.25, 1)
       magic_die1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
