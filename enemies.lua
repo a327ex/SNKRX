@@ -307,11 +307,13 @@ function Seeker:update(dt)
       self:set_angular_damping(0)
     end
   else
+    local target = main.current.player
+    if self.taunted then target = self.taunted end
+    if self.taunted and self.taunted.dead then target = main.current.player; self.taunted = nil end
     if self.headbutt_charging or self.shooting then
       self:set_damping(10)
-      self:rotate_towards_object(main.current.player, 0.5)
+      self:rotate_towards_object(target, 0.5)
     elseif not self.headbutting then
-      local player = main.current.player
       if self.boss then
         local enemies = main.current.main:get_objects_by_classes(main.current.enemies)
         local x, y = 0, 0
@@ -323,12 +325,12 @@ function Seeker:update(dt)
           x = x/#enemies
           y = y/#enemies
         else
-          x, y = player.x, player.y
+          x, y = target.x, target.y
         end
         self:seek_point(x, y)
         self:wander(10, 250, 3)
       else
-        self:seek_point(player.x, player.y)
+        self:seek_point(target.x, target.y)
         self:wander(50, 100, 20)
       end
       self:steering_separate(16, main.current.enemies)

@@ -146,6 +146,7 @@ function init()
   voider = Image('voider')
   sorcerer = Image('sorcerer')
   mercenary = Image('mercenary')
+  explorer = Image('explorer')
   star = Image('star')
   arrow = Image('arrow')
   centipede = Image('centipede')
@@ -202,6 +203,15 @@ function init()
   berserking = Image('berserking')
   unwavering_stance = Image('unwavering_stance')
   unrelenting_stance = Image('unrelenting_stance')
+  blessing = Image('blessing')
+  haste = Image('haste')
+  divine_barrage = Image('divine_barrage')
+  orbitism = Image('orbitism')
+  psyker_orbs = Image('psyker_orbs')
+  psychosense = Image('psychosense')
+  rearm = Image('rearm')
+  taunt = Image('taunt')
+  summon_instability = Image('summon_instability')
 
   class_colors = {
     ['warrior'] = yellow[0],
@@ -219,6 +229,7 @@ function init()
     ['voider'] = purple[0],
     ['sorcerer'] = blue2[0],
     ['mercenary'] = yellow2[0],
+    ['explorer'] = fg[0],
   }
 
   class_color_strings = {
@@ -237,6 +248,7 @@ function init()
     ['voider'] = 'purple',
     ['sorcerer'] = 'blue2',
     ['mercenary'] = 'yellow2',
+    ['explorer'] = 'fg',
   }
 
   character_names = {
@@ -411,7 +423,7 @@ function init()
   }
 
   character_classes = {
-    ['vagrant'] = {'psyker', 'ranger', 'warrior'},
+    ['vagrant'] = {'explorer', 'psyker'},
     ['swordsman'] = {'warrior'},
     ['wizard'] = {'mage', 'nuker'},
     ['magician'] = {'mage'},
@@ -468,7 +480,7 @@ function init()
   }
 
   character_class_strings = {
-    ['vagrant'] = '[fg]Psyker, [green]Ranger, [yellow]Warrior',
+    ['vagrant'] = '[fg]Explorer, Psyker',
     ['swordsman'] = '[yellow]Warrior',
     ['wizard'] = '[blue]Mage, [red]Nuker',
     ['magician'] = '[blue]Mage',
@@ -560,7 +572,7 @@ function init()
     ['hunter'] = function(lvl) return '[fg]shoots an arrow that deals [yellow]' .. get_character_stat('hunter', lvl, 'dmg') .. '[fg] damage and has a [yellow]20%[fg] chance to summon a pet' end,
     ['chronomancer'] = function(lvl) return '[yellow]+20%[fg] attack speed to all allies' end,
     ['spellblade'] = function(lvl) return '[fg]throws knives that deal [yellow]' .. get_character_stat('spellblade', lvl, 'dmg') .. '[fg] damage, pierce and spiral outwards' end,
-    ['psykeeper'] = function(lvl) return '[fg]all damage taken is stored up to [yellow]50%[fg] max HP and distributed as healing to all allies' end,
+    ['psykeeper'] = function(lvl) return '[fg]creates [yellow]1[fg] healing orb every time the psykeeper takes [yellow]20%[fg] of its max HP in damage' end,
     ['engineer'] = function(lvl) return '[fg]drops sentries that shoot bursts of projectiles, each dealing [yellow]' .. get_character_stat('engineer', lvl, 'dmg') .. '[fg] damage' end,
     ['plague_doctor'] = function(lvl) return '[fg]creates an area that deals [yellow]' .. get_character_stat('plague_doctor', lvl, 'dmg') .. '[fg] damage per second' end,
     ['barbarian'] = function(lvl) return '[fg]deals [yellow]' .. get_character_stat('barbarian', lvl, 'dmg') .. '[fg] AoE damage and stuns enemies hit for [yellow]4[fg] seconds' end,
@@ -599,7 +611,7 @@ function init()
   }
 
   character_effect_names = {
-    ['vagrant'] = '[fg]Champion',
+    ['vagrant'] = '[fg]Experience',
     ['swordsman'] = '[yellow]Cleave',
     ['wizard'] = '[blue]Magic Missile',
     ['magician'] = '[blue]Ethereal Form',
@@ -656,7 +668,7 @@ function init()
   }
 
   character_effect_names_gray = {
-    ['vagrant'] = '[light_bg]Champion',
+    ['vagrant'] = '[light_bg]Experience',
     ['swordsman'] = '[light_bg]Cleave',
     ['wizard'] = '[light_bg]Magic Missile',
     ['magician'] = '[light_bg]Ethereal Form',
@@ -732,7 +744,7 @@ function init()
     ['hunter'] = function() return '[fg]summons [yellow]3[fg] pets and the pets ricochet off walls once' end,
     ['chronomancer'] = function() return '[fg]enemies take damage over time [yellow]50%[fg] faster' end,
     ['spellblade'] = function() return '[fg]faster projectile speed and tighter turns' end,
-    ['psykeeper'] = function() return '[fg]also redistributes damage taken as damage to all enemies at [yellow]double[fg] value' end,
+    ['psykeeper'] = function() return '[fg]deal [yellow]double[fg] the damage taken by the psykeeper to all enemies' end,
     ['engineer'] = function() return '[fg]drops [yellow]2[fg] additional turrets and grants all turrets [yellow]+50%[fg] damage and attack speed' end,
     ['plague_doctor'] = function() return '[fg]nearby enemies take an additional [yellow]' .. get_character_stat('plague_doctor', 3, 'dmg') .. '[fg] damage per second' end,
     ['barbarian'] = function() return '[fg]stunned enemies also take [yellow]100%[fg] increased damage' end,
@@ -789,7 +801,7 @@ function init()
     ['hunter'] = function() return '[light_bg]summons 3 pets and the pets ricochet off walls once' end,
     ['chronomancer'] = function() return '[light_bg]enemies take damage over time 50% faster' end,
     ['spellblade'] = function() return '[light_bg]faster projectile speed and tighter turns' end,
-    ['psykeeper'] = function() return '[light_bg]also redistributes damage taken as damage to all enemies at double value' end,
+    ['psykeeper'] = function() return '[light_bg]deal double the damage taken by the psykeeper to all enemies' end,
     ['engineer'] = function() return '[light_bg]drops 2 additional turrets and grants all turrets +50% damage and attack speed' end,
     ['plague_doctor'] = function() return '[light_bg]nearby enemies take an additional ' .. get_character_stat('plague_doctor', 3, 'dmg') .. ' damage per second' end,
     ['barbarian'] = function() return '[light_bg]stunned enemies also take 100% increased damage' end,
@@ -899,6 +911,7 @@ function init()
     ['voider'] = {hp = 0.75, dmg = 1.3, aspd = 1, area_dmg = 0.8, area_size = 0.75, def = 0.6, mvspd = 0.8},
     ['sorcerer'] = {hp = 0.8, dmg = 1.3, aspd = 1, area_dmg = 1.2, area_size = 1, def = 0.8, mvspd = 1},
     ['mercenary'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 1},
+    ['explorer'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 1.25},
     ['seeker'] = {hp = 0.5, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 0.3},
     ['mini_boss'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 0.3},
     ['enemy_critter'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 0.5},
@@ -929,7 +942,7 @@ function init()
     ['enchanter'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+15%[light_bg]/[' .. ylb2(lvl) .. ']+25% [fg]damage to all allies' end,
     ['nuker'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[light_bg]/[' .. ylb2(lvl) .. ']6 [fg]- [' .. ylb1(lvl) .. ']+15%[light_bg]/[' .. ylb2(lvl) .. ']+25% [fg]area damage and size to allied nukers' end,
     ['conjurer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+25%[light_bg]/[' .. ylb2(lvl) .. ']+50% [fg]summon damage and duration' end,
-    ['psyker'] = function(lvl) return '[fg]create a piercing, damaging orb around each psyker, it inherits damage from its target' end,
+    ['psyker'] = function(lvl) return '[fg]create a piercing, damaging orb around each psyker' end,
     ['curser'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+25%[light_bg]/[' .. ylb2(lvl) .. ']+50% [fg]curse duration' end,
     ['forcer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+25%[light_bg]/[' .. ylb2(lvl) .. ']+50% [fg]knockback force to all allies' end,
     ['swarmer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+1[light_bg]/[' .. ylb2(lvl) .. ']+3 [fg]hits to critters' end,
@@ -939,6 +952,7 @@ function init()
         ylb1(lvl) .. ']4[light_bg]/[' .. ylb2(lvl) .. ']3[light_bg]/[' .. ylb3(lvl) .. ']2[fg] attacks'
     end,
     ['mercenary'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+8%[light_bg]/[' .. ylb2(lvl) .. ']+16% [fg]chance for enemies to drop gold on death' end,
+    ['explorer'] = function(lvl) return '[yellow]+15%[fg] attack speed and damage per active set to allied explorers' end,
   }
 
   tier_to_characters = {
@@ -1030,6 +1044,7 @@ function init()
     local voiders = 0
     local sorcerers = 0
     local mercenaries = 0
+    local explorers = 0
     for _, unit in ipairs(units) do
       for _, unit_class in ipairs(character_classes[unit.character]) do
         if unit_class == 'ranger' then rangers = rangers + 1 end
@@ -1047,10 +1062,11 @@ function init()
         if unit_class == 'voider' then voiders = voiders + 1 end
         if unit_class == 'sorcerer' then sorcerers = sorcerers + 1 end
         if unit_class == 'mercenary' then mercenaries = mercenaries + 1 end
+        if unit_class == 'explorer' then explorers = explorers + 1 end
       end
     end
     return {ranger = rangers, warrior = warriors, healer = healers, mage = mages, nuker = nukers, conjurer = conjurers, rogue = rogues,
-      enchanter = enchanters, psyker = psykers, curser = cursers, forcer = forcers, swarmer = swarmers, voider = voiders, sorcerer = sorcerers, mercenary = mercenaries}
+      enchanter = enchanters, psyker = psykers, curser = cursers, forcer = forcers, swarmer = swarmers, voider = voiders, sorcerer = sorcerers, mercenary = mercenaries, explorer = explorers}
   end
 
   get_class_levels = function(units)
@@ -1060,7 +1076,7 @@ function init()
         if number_of_units >= 6 then return 2
         elseif number_of_units >= 3 then return 1
         else return 0 end
-      elseif class == 'healer' or class == 'conjurer' or class == 'enchanter' or class == 'psyker' or class == 'curser' or class == 'forcer' or class == 'swarmer' or class == 'voider' or class == 'mercenary' then
+      elseif class == 'healer' or class == 'conjurer' or class == 'enchanter' or class == 'curser' or class == 'forcer' or class == 'swarmer' or class == 'voider' or class == 'mercenary' then
         if number_of_units >= 4 then return 2
         elseif number_of_units >= 2 then return 1
         else return 0 end
@@ -1068,6 +1084,9 @@ function init()
         if number_of_units >= 6 then return 3
         elseif number_of_units >= 4 then return 2
         elseif number_of_units >= 2 then return 1
+        else return 0 end
+      elseif class == 'explorer' or class == 'psyker' then
+        if number_of_units >= 1 then return 1
         else return 0 end
       end
     end
@@ -1087,6 +1106,7 @@ function init()
       voider = units_to_class_level(units_per_class.voider, 'voider'),
       sorcerer = units_to_class_level(units_per_class.sorcerer, 'sorcerer'),
       mercenary = units_to_class_level(units_per_class.mercenary, 'mercenary'),
+      explorer = units_to_class_level(units_per_class.explorer, 'explorer'),
     }
   end
 
@@ -1107,13 +1127,14 @@ function init()
     ['healer'] = function(units) return 2, 4, nil, get_number_of_units_per_class(units).healer end,
     ['conjurer'] = function(units) return 2, 4, nil, get_number_of_units_per_class(units).conjurer end,
     ['enchanter'] = function(units) return 2, 4, nil, get_number_of_units_per_class(units).enchanter end,
-    ['psyker'] = function(units) return 2, 4, nil, get_number_of_units_per_class(units).psyker end,
+    ['psyker'] = function(units) return 1, 1, nil, get_number_of_units_per_class(units).psyker end,
     ['curser'] = function(units) return 2, 4, nil, get_number_of_units_per_class(units).curser end,
     ['forcer'] = function(units) return 2, 4, nil, get_number_of_units_per_class(units).forcer end,
     ['swarmer'] = function(units) return 2, 4, nil, get_number_of_units_per_class(units).swarmer end,
     ['voider'] = function(units) return 2, 4, nil, get_number_of_units_per_class(units).voider end,
     ['sorcerer'] = function(units) return 2, 4, 6, get_number_of_units_per_class(units).sorcerer end,
     ['mercenary'] = function(units) return 2, 4, nil, get_number_of_units_per_class(units).mercenary end,
+    ['explorer'] = function(units) return 1, 1, nil, get_number_of_units_per_class(units).explorer end,
   }
 
   passive_names = {
@@ -1171,6 +1192,15 @@ function init()
     ['berserking'] = 'Berserking',
     ['unwavering_stance'] = 'Unwavering Stance',
     ['unrelenting_stance'] = 'Unrelenting Stance',
+    ['blessing'] = 'Blessing',
+    ['haste'] = 'Haste',
+    ['divine_barrage'] = 'Divine Barrage',
+    ['orbitism'] = 'Orbitism',
+    ['psyker_orbs'] = 'Psyker Orbs',
+    ['psychosense'] = 'Psychosense',
+    ['rearm'] = 'Rearm',
+    ['taunt'] = 'Taunt',
+    ['summon_instability'] = 'Summon Instability',
   }
 
   passive_descriptions = {
@@ -1216,9 +1246,9 @@ function init()
     ['magnify'] = '[yellow]+20/35/50%[fg] area size',
     ['echo_barrage'] = '[yellow]10/20/30%[fg] chance to create [yellow]1/2/3[fg] secondary AoEs on AoE hit',
     ['unleash'] = '[fg]all nukers gain [yellow]+1%[fg] area size and damage every second',
-    ['reinforce'] = '[yellow]+10/20/30%[fg] damage, defense and aspd to all allies with at least one enchanter',
+    ['reinforce'] = '[yellow]+10/20/30%[fg] damage, defense and aspd to all allies if you have >=1 enchanter',
     ['payback'] = '[yellow]+2/5/8%[fg] damage to all allies whenever an enchanter is hit',
-    ['enchanted'] = '[yellow]+10/20/30%[fg] attack speed to a random unit with at least two enchanters',
+    ['enchanted'] = '[yellow]+33/66/99%[fg] attack speed to a random unit if you have >=2 enchanters',
     ['freezing_field'] = '[fg]creates an area that slows enemies by [yellow]50%[fg] for [yellow]2[fg] seconds on sorcerer spell repeat',
     ['burning_field'] = '[fg]creates an area that deals [yellow]30[fg] dps for [yellow]2[fg] seconds on sorcerer spell repeat',
     ['gravity_field'] = '[fg]creates an area that pulls enemies in for [yellow]1[fg] seconds on sorcerer spell repeat',
@@ -1228,6 +1258,15 @@ function init()
     ['berserking'] = '[fg]all warriors have up to [yellow]+50/75/100%[fg] attack speed based on missing HP',
     ['unwavering_stance'] = '[fg]all warriors gain [yellow]+4/8/12%[fg] defense every [yellow]5[fg] seconds',
     ['unrelenting_stance'] = '[yellow]+2/5/8%[fg] defense to all allies whenever a warrior is hit',
+    ['blessing'] = '[yellow]+10/20/30%[fg] healing effectiveness',
+    ['haste'] = '[yellow]+50%[fg] movement speed that decays over [yellow]4[fg] seconds on healing orb pick up',
+    ['divine_barrage'] = '[yellow]20/40/60%[fg] chance to release a ricocheting barrage on healing orb pick up',
+    ['orbitism'] = '[yellow]+33/66/99%[fg] orb movement speed',
+    ['psyker_orbs'] = '[yellow]+1/2/3[fg] psyker orbs',
+    ['psychosense'] = '[yellow]+33/66/99%[fg] orb range',
+    ['rearm'] = '[fg]summons repeat their attacks once',
+    ['taunt'] = '[yellow]10/20/30% chance for summons to taunt nearby enemies on attack',
+    ['summon_instability'] = '[fg]summons explode when disappearing, dealing [yellow]100/150/200%[fg] damage',
   }
 
   local ts = function(lvl, a, b, c) return '[' .. ylb1(lvl) .. ']' .. tostring(a) .. '[light_bg]/[' .. ylb2(lvl) .. ']' .. tostring(b) .. '[light_bg]/[' .. ylb3(lvl) .. ']' .. tostring(c) .. '[fg]' end
@@ -1274,9 +1313,9 @@ function init()
     ['magnify'] = function(lvl) return ts(lvl, '+20%', '35%', '50%') .. ' area size' end,
     ['echo_barrage'] = function(lvl) return ts(lvl, '10%', '20%', '30%') .. ' chance to create ' .. ts(lvl, '1', '2', '3') .. ' secondary AoEs on AoE hit' end,
     ['unleash'] = function(lvl) return '[fg]all nukers gain [yellow]+1%[fg] area size and damage every second' end,
-    ['reinforce'] = function(lvl) return ts(lvl, '+10%', '20%', '30%') .. ' damage, defense and aspd to all allies with at least one enchanter' end,
+    ['reinforce'] = function(lvl) return ts(lvl, '+10%', '20%', '30%') .. ' damage, defense and aspd to all allies if you have >=1 enchanter' end,
     ['payback'] = function(lvl) return ts(lvl, '+2%', '5%', '8%') .. ' damage to all allies whenever an enchanter is hit' end,
-    ['enchanted'] = function(lvl) return ts(lvl, '+10%', '20%', '30%') .. ' attack speed to a random unit with at least two enchanters' end,
+    ['enchanted'] = function(lvl) return ts(lvl, '+33%', '66%', '99%') .. ' attack speed to a random unit if you have >=2 enchanters' end,
     ['freezing_field'] = function(lvl) return '[fg]creates an area that slows enemies by [yellow]50%[fg] for [yellow]2[fg] seconds on sorcerer spell repeat' end,
     ['burning_field'] = function(lvl) return '[fg]creates an area that deals [yellow]30[fg] dps for [yellow]2[fg] seconds on sorcerer spell repeat' end,
     ['gravity_field'] = function(lvl) return '[fg]creates an area that pulls enemies in for [yellow]1[fg] seconds on sorcerer spell repeat' end,
@@ -1286,6 +1325,15 @@ function init()
     ['berserking'] = function(lvl) return '[fg]all warriors have up to ' .. ts(lvl, '+50%', '75%', '100%') .. ' attack speed based on missing HP' end,
     ['unwavering_stance'] = function(lvl) return '[fg]all warriors gain ' .. ts(lvl, '+4%', '8%', '12%') .. ' defense every [yellow]5[fg] seconds' end,
     ['unrelenting_stance'] = function(lvl) return ts(lvl, '+2%', '5%', '8%') .. ' defense to all allies whenever a warrior is hit' end,
+    ['blessing'] = function(lvl) return ts(lvl, '+10%', '20%', '30%') .. ' healing effectiveness' end,
+    ['haste'] = function(lvl) return '[yellow]+50%[fg] movement speed that decays over [yellow]4[fg] seconds on healing orb pick up' end,
+    ['divine_barrage'] = function(lvl) return ts(lvl, '20%', '40%', '60%') .. ' chance to release a ricocheting barrage on healing orb pick up' end,
+    ['orbitism'] = function(lvl) return ts(lvl, '+33%', '66%', '99%') .. ' orb movement speed' end,
+    ['psyker_orbs'] = function(lvl) return ts(lvl, '+1', '2', '3') .. ' psyker orbs' end,
+    ['psychosense'] = function(lvl) return ts(lvl, '+33%', '66%', '99%') .. ' orb range' end,
+    ['rearm'] = function(lvl) return '[fg]summons repeat their attacks once' end,
+    ['taunt'] = function(lvl) return ts(lvl, '10%', '20%', '30%') .. ' chance for summons to taunt nearby enemies on attack' end,
+    ['summon_instability'] = function(lvl) return '[fg]summons explode when disappearing, dealing [yellow]100/150/200%[fg] damage' end,
   }
 
   level_to_tier_weights = {
@@ -1473,7 +1521,7 @@ function init()
   unlevellable_items = {
     'speed_3', 'damage_4', 'shoot_5', 'death_6', 'lasting_7', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'annihilation', 
     'tremor', 'heavy_impact', 'fracture', 'meat_shield', 'divine_punishment', 'unleash', 'freezing_field', 'burning_field', 'gravity_field',
-    'magnetism', 'insurance', 'dividends'
+    'magnetism', 'insurance', 'dividends', 'haste', 'rearm', 
   }
 
   steam.userStats.requestCurrentStats()
@@ -1486,10 +1534,8 @@ function init()
   main_song_instance = _G[random:table{'song1', 'song2', 'song3', 'song4', 'song5'}]:play{volume = 0.5}
   main = Main()
 
-  --[[
   main:add(MainMenu'mainmenu')
   main:go_to('mainmenu')
-  ]]--
 
   --[[
   main:add(BuyScreen'buy_screen')
@@ -1497,18 +1543,16 @@ function init()
   ]]--
   -- main:go_to('buy_screen', 7, run.units or {}, {'unleash'})
   
+  --[[
   main:add(Arena'arena')
-  main:go_to('arena', 4, {
-    {character = 'psykeeper', level = 3},
-    {character = 'vagrant', level = 1},
-    {character = 'psychic', level = 1},
-    {character = 'flagellant', level = 1},
-    --[[
-    {character = 'priest', level = 1},
-    {character = 'cleric', level = 1},
-    {character = 'fairy', level = 1},
-    ]]--
-  }, {})
+  main:go_to('arena', 10, {
+    {character = 'illusionist', level = 2},
+    -- {character = 'carver', level = 2},
+    {character = 'engineer', level = 2},
+    -- {character = 'saboteur', level = 2},
+    -- {character = 'hunter', level = 2},
+  }, {{passive = 'summon_instability', level = 3}})
+  ]]--
 
   --[[
   main:add(Media'media')
@@ -1678,7 +1722,7 @@ function open_options(self)
             'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'hextouch', 'whispers_of_doom',
             'tremor', 'heavy_impact', 'fracture', 'meat_shield', 'hive', 'baneling_burst', 'blunt_arrow', 'explosive_arrow', 'divine_machine_arrow', 'chronomancy', 'awakening', 'divine_punishment',
             'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
-            'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance'
+            'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance', 'blessing', 'haste', 'divine_barrage', 'orbitism', 'psyker_orbs', 'psychosense', 'rearm', 'taunt', 'summon_instability',
           }
           max_units = 7 + current_new_game_plus
           main:add(BuyScreen'buy_screen')
