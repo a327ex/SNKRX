@@ -1,4 +1,64 @@
-Looping Update
+Orb Update
+  New items:
+    Healer:
+      * Blessing - +10/20/30% healing effectiveness
+      * Haste - +50% movement speed that decays over 4 seconds on healing orb pick up
+      * Divine Barrage - 10/20/30% chance to release a ricocheting barrage when picking up a healing orb
+    Psyker:
+      * Orbitism - 33/66/99% faster orb speed
+      * Psyker Orbs - +1/2/3 psyker orbs
+      * Psychosense - 33/66/99% increased orb range
+    Conjurer:
+      * Rearm - summons repeat their attacks once
+      * Taunt - 10/20/30% chance for summons to taunt nearby enemies on attack
+      * Summon Instability - summons explode when disappearing, dealing 100/150/200% damage
+  Changes:
+    * Magnetism - also attracts healing orbs
+    * Enchanted - 33/66/99%
+  Explorer:
+    * +15% attack speed and damage per active set to allied explorers
+  Healer rework:
+    * Enemies have a 8/16% chance to spawn healing orbs on death, orbs prioritize healing low health allies
+      * Cleric: creates 1 healing orb, Lv.3: creates 4 healing orbs
+      * Priest: creates 5 healing orbs
+      * Fairy: grants a random unit 100% attack speed for 6 seconds and creates 1 healing orb
+  Psyker rework:
+    * Create a piercing, damaging orb around each psyker, it inherits damage from its target
+      * Flagellant - Lv.3: 2X flagellant max HP and +12% damage to all allies per cast
+      * Psykeeper - creates a healing orb every time the psykeeper takes 20% of its max HP in damage, Lv.3: deal double the damage taken by the psykeeper to all enemies
+  Balance
+    * Changed cursers to add more curse targets as set bonuses
+    * Decreased item reroll cost to 5
+    * Increased sage's attack speed
+    * Increased spawn marker time by 50%
+    * Decreased range and throw speed for tanks
+    * Decreased damage for blue and white enemies
+    * Increased gold rewards at levels 1-9
+    * Prevent orange from killing multiple units at once
+    * Slightly decrease probability of special spawn at levels above 20
+    * Exploder elite spawns mines instead of exploding enemies directly
+    * Decreased overall enemy damage at higher difficulties
+  QoL
+    * Lowered sound effect for gambler
+    * Options menu from buy screen
+    * Add main menu
+      * Title
+      * Snake DVD
+      * Arena run button
+      * Options button
+      * Quit button
+      * Soundtrack button
+    * Volume slider
+    * Party x/y
+    * Lv.3 effect on shop card
+    * Changed text saying "with at least n enchanters" to "if you have >=n enchanters" for 2 enchanter items
+  Bug fixes
+    * Fixed fullscreen button and general resolution issues
+    * Fixed barbarian stun just slowing and not stunning
+    * Fixed a bug with Call of the Void that caused its DoT damage bonus to become infinite
+
+
+Loop Update
   New items:
     General:
       Intimidation - enemies spawn with -10/20/30% max HP
@@ -10,67 +70,27 @@ Looping Update
       Infesting Strike - X/Y/Z% chance for attacks to spawn 2 critters on kill
       Kinetic Strike - X/Y/Z% chance for attacks to push enemies away with high force
       Burning Strike - X% chance for attacks to ignite, dealing 20% dps for 3 seconds, ignited enemies ignite nearby enemies on death
-      Lucky Strike - X% chance for attacks to cause enemies to drop gold
+      Lucky Strike - X% chance for attacks to cause enemies to drop gold on death
       Healing Strike - X% chance for attacks to spawn a healing orb on kill
       Stunning Strike - X/Y/Z% chance for attacks to stun for 2 seconds
       Silencing Strike - X/Y/Z% chance for attacks to silence on hit
       Warping Shots - X/Y/Z% chance for projectiles to ignore wall collisions and warp around the screen 1/2/3 times
       Culling Strike - instantly kill elites below 10/20/30% max HP
       Lightning Strike - X/Y/Z% chance for attacks to create chain lightning, dealing 60/80/100% damage and hitting 2/3/4 enemies
-    Healer:
-      Blessing - +10/20/30% healing effectiveness
-      Divine Favor - healing over maximum HP provides a shield that prevents damage once
-      Divine Barrage - 10/20/30% chance to release a homing barrage when picking up a healing orb
-    Psyker:
-      Orbitism - 33/66/99% faster orb speed
-      Psychic Leak - orbs deal extra damage based on the amount of damage all psykers have taken recently
-      Psychokinesis - 
-    Conjurer:
-      Rearm - summons repeat their attacks once
-      Taunt - 10/20/30% chance for summons to taunt nearby enemies on attack
-      Summon Instability - summons explode when disappearing, dealing 100/150/200% damage
-    Changes:
-      Magnetism - also attracts healing orbs
-      Enchanted - 30/60/90%
-  Healer rework:
-    Enemies have a 8/16% chance to spawn healing orbs on death, orbs prioritize healing low health allies
-      Cleric: creates 1 healing orb, Lv.3: creates 4 healing orbs and grants +20% healing effectiveness
-      Priest: creates 6 healing orbs
-      Fairy: grants a random unit 100% attack speed for 6 seconds and creates 1 healing orb
-  Psyker rework:
-    Create orbitting, damaging balls at the head of the snake equal to the number of psykers
-      Flagellant - Lv.3: 2X flagellant max HP and grants +10% damage to all allies per cast
-      Psychic - Lv.3: gains up to 300% damage the less HP the psychic has
-      Psykino - Lv.3: gains up to 100% attack speed the less HP the psykino has
-      Psykeeper - creates a healing orb every time the psykeeper takes 30% of its max HP in damage, Lv.3: deal double the damage taken by the psykeeper to all enemies
   Looping
     Change end screen
     Loop button on end screen
     Looping lets you continue with the current snake until you die
     Difficulty is increased according to the formula for levels 25+
     Snake size goes up by 1 every loop, up to 12
-  Balance
-    * Decreased reroll cost to 8
-    * Increased sage's attack speed
+  Conjurer rework:
   QoL
-    Show cooldown on elite attack
-    * Options menu from buy screen
-    * Add main menu
-      * Title
-      * Snake DVD
-      * Arena run button
-      * Options button
-      * Quit button
-      * Soundtrack button
-    https://i.imgur.com/4hOt5uX.png "party 7/9"
-    https://i.imgur.com/dlGbx0k.png lvl 3 effect on shop card
-    * Volume slider
+    Selling items
     Your party + items on end, death and passive screens - https://i.imgur.com/JJUddT3.png
     Add option for mouse cursor to always be visible
+    Show cooldown on elite attack
     Add visuals divine intervention, fairy buff
-    Change text for enchanted to "if you have >= 2 enchanters" and change text for reinforce to "if you have >= 1 enchanter"
   Bug fixes
-    * Fixed fullscreen button and general resolution issues
     Fixed a series of crashes that happened rarely right before changing from the arena back to the shop
     https://i.imgur.com/Rk6qbDD.png - merchant doesnt give reroll if dies
     https://i.imgur.com/1soUUdk.png - 5th position stops shooting when 1-4 die
@@ -78,9 +98,9 @@ Looping Update
     https://i.imgur.com/8he1WDm.png - infinite money
     https://i.imgur.com/0wZ5wma.png - max unit bugged when changing ng mid run, https://i.imgur.com/qrExpq5.png
 
-
 ---
 
+30 refresh rate makes enemies faster?!?!
 
 Future ideas:
 Chaos related classes
@@ -124,6 +144,7 @@ Draft mode
 Enemy ideas - https://steamcommunity.com/app/915310/discussions/0/3069747783691890511/
 Unit ideas - https://i.imgur.com/VNMS2YV.png
 Unit ideas - https://steamcommunity.com/app/915310/discussions/0/3069747783693969554/
+Unit ideas - https://steamcommunity.com/app/915310/discussions/0/3046104336668792953/
 
 
 --
