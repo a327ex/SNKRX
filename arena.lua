@@ -121,7 +121,7 @@ function Arena:on_enter(from, level, units, passives, shop_level, shop_xp, lock)
         SpawnEffect{group = self.effects, x = gw/2, y = gh/2, action = function(x, y)
           spawn1:play{pitch = random:float(0.8, 1.2), volume = 0.15}
           SpawnMarker{group = self.effects, x = x, y = y}
-          self.t:after(0.75, function()
+          self.t:after(1.125, function()
             self.boss = Seeker{group = self.main, x = x, y = y, character = 'seeker', level = self.level, boss = level_to_boss[self.level]}
           end)
         end}
@@ -141,7 +141,7 @@ function Arena:on_enter(from, level, units, passives, shop_level, shop_xp, lock)
             local spawn_points = {left = {x = self.x1 + 32, y = gh/2}, middle = {x = gw/2, y = gh/2}, right = {x = self.x2 - 32, y = gh/2}}
             local p = spawn_points[spawn_type]
             SpawnMarker{group = self.effects, x = p.x, y = p.y}
-            self.t:after(0.75, function() self:spawn_n_enemies(p, nil, 8 + math.floor(self.level/2)) end)
+            self.t:after(1.125, function() self:spawn_n_enemies(p, nil, 8 + math.floor(self.level/2)) end)
           end)
         end)
       end)
@@ -182,8 +182,8 @@ function Arena:on_enter(from, level, units, passives, shop_level, shop_xp, lock)
       2, 3, 4,
       3, 4, 4, 5,
       5, 5, 5, 5, 7,
-      6, 6, 7, 7, 7, 10,
-      6, 8, 10, 12, 14, 16, 25,
+      6, 6, 7, 7, 8, 10,
+      8, 8, 10, 12, 14, 16, 25,
     }
     self.level_to_distributed_enemies_chance = {
       0, 5, 10,
@@ -224,7 +224,7 @@ function Arena:on_enter(from, level, units, passives, shop_level, shop_xp, lock)
               local spawn_points = {left = {x = self.x1 + 32, y = gh/2}, middle = {x = gw/2, y = gh/2}, right = {x = self.x2 - 32, y = gh/2}}
               local p = spawn_points[spawn_type]
               SpawnMarker{group = self.effects, x = p.x, y = p.y}
-              self.t:after(0.75, function() self:spawn_n_enemies(p, nil, 8 + (self.wave-1)*2) end)
+              self.t:after(1.125, function() self:spawn_n_enemies(p, nil, 8 + (self.wave-1)*2) end)
             end
           end)
         end, self.max_waves+1)
@@ -299,24 +299,24 @@ function Arena:on_enter(from, level, units, passives, shop_level, shop_xp, lock)
     self.t:after({0, 0.2}, function()
       local p = random:table_remove(spawn_points)
       SpawnMarker{group = self.effects, x = p.x, y = p.y}
-      self.t:after(0.75, function() self:spawn_n_enemies(p, 1, math.floor(n/4), true) end)
+      self.t:after(1.125, function() self:spawn_n_enemies(p, 1, math.floor(n/4), true) end)
     end)
     self.t:after({0, 0.2}, function()
       local p = random:table_remove(spawn_points)
       SpawnMarker{group = self.effects, x = p.x, y = p.y}
-      self.t:after(0.75, function() self:spawn_n_enemies(p, 2, math.floor(n/4), true) end)
+      self.t:after(1.125, function() self:spawn_n_enemies(p, 2, math.floor(n/4), true) end)
     end)
     self.t:after({0, 0.2}, function()
       local p = random:table_remove(spawn_points)
       SpawnMarker{group = self.effects, x = p.x, y = p.y}
-      self.t:after(0.75, function() self:spawn_n_enemies(p, 3, math.floor(n/4), true) end)
+      self.t:after(1.125, function() self:spawn_n_enemies(p, 3, math.floor(n/4), true) end)
     end)
     self.t:after({0, 0.2}, function()
       local p = random:table_remove(spawn_points)
       SpawnMarker{group = self.effects, x = p.x, y = p.y}
-      self.t:after(0.75, function() self:spawn_n_enemies(p, 4, math.floor(n/4), true) end)
+      self.t:after(1.125, function() self:spawn_n_enemies(p, 4, math.floor(n/4), true) end)
     end)
-    self.t:after(0.75 + math.floor(n/4)*0.25, function() self.spawning_enemies = false end, 'spawning_enemies')
+    self.t:after(1.125 + math.floor(n/4)*0.25, function() self.spawning_enemies = false end, 'spawning_enemies')
     self.enemy_spawns_prevented = 0
   end)
 end
@@ -945,22 +945,22 @@ function Arena:spawn_distributed_enemies()
   if spawn_type == '4' then
     local p = random:table_remove(spawn_points)
     SpawnMarker{group = self.effects, x = p.x, y = p.y}
-    self.t:after(0.75, function()
+    self.t:after(1.125, function()
       self:spawn_n_enemies(p)
     end)
-    self.t:after(1.5, function() self.spawning_enemies = false end, 'spawning_enemies')
+    self.t:after(2.25, function() self.spawning_enemies = false end, 'spawning_enemies')
   elseif spawn_type == '4+4' then
     local p = random:table_remove(spawn_points)
     SpawnMarker{group = self.effects, x = p.x, y = p.y}
-    self.t:after(0.75, function()
+    self.t:after(1.125, function()
       self:spawn_n_enemies(p)
       self.t:after(2, function() self:spawn_n_enemies(p) end)
     end)
-    self.t:after(3.5, function() self.spawning_enemies = false end, 'spawning_enemies')
+    self.t:after(4.25, function() self.spawning_enemies = false end, 'spawning_enemies')
   elseif spawn_type == '4+4+4' then
     local p = random:table_remove(spawn_points)
     SpawnMarker{group = self.effects, x = p.x, y = p.y}
-    self.t:after(0.75, function()
+    self.t:after(1.125, function()
       self:spawn_n_enemies(p)
       self.t:after(1, function()
         self:spawn_n_enemies(p)
@@ -969,58 +969,58 @@ function Arena:spawn_distributed_enemies()
         end)
       end)
     end)
-    self.t:after(3.5, function() self.spawning_enemies = false end, 'spawning_enemies')
+    self.t:after(4.25, function() self.spawning_enemies = false end, 'spawning_enemies')
   elseif spawn_type == '2x4' then
     self.t:after({0, 0.2}, function()
       local p = random:table_remove(spawn_points)
       SpawnMarker{group = self.effects, x = p.x, y = p.y}
-      self.t:after(0.75, function() self:spawn_n_enemies(p, 1) end)
+      self.t:after(1.125, function() self:spawn_n_enemies(p, 1) end)
     end)
     self.t:after({0, 0.2}, function()
       local p = random:table_remove(spawn_points)
       SpawnMarker{group = self.effects, x = p.x, y = p.y}
-      self.t:after(0.75, function() self:spawn_n_enemies(p, 2) end)
+      self.t:after(1.125, function() self:spawn_n_enemies(p, 2) end)
     end)
-    self.t:after(1.5, function() self.spawning_enemies = false end, 'spawning_enemies')
+    self.t:after(2.25, function() self.spawning_enemies = false end, 'spawning_enemies')
   elseif spawn_type == '3x4' then
     self.t:after({0, 0.2}, function()
       local p = random:table_remove(spawn_points)
       SpawnMarker{group = self.effects, x = p.x, y = p.y}
-      self.t:after(0.75, function() self:spawn_n_enemies(p, 1) end)
+      self.t:after(1.125, function() self:spawn_n_enemies(p, 1) end)
     end)
     self.t:after({0, 0.2}, function()
       local p = random:table_remove(spawn_points)
       SpawnMarker{group = self.effects, x = p.x, y = p.y}
-      self.t:after(0.75, function() self:spawn_n_enemies(p, 2) end)
+      self.t:after(1.125, function() self:spawn_n_enemies(p, 2) end)
     end)
     self.t:after({0, 0.2}, function()
       local p = random:table_remove(spawn_points)
       SpawnMarker{group = self.effects, x = p.x, y = p.y}
-      self.t:after(0.75, function() self:spawn_n_enemies(p, 3) end)
+      self.t:after(1.125, function() self:spawn_n_enemies(p, 3) end)
     end)
-    self.t:after(1.5, function() self.spawning_enemies = false end, 'spawning_enemies')
+    self.t:after(2.25, function() self.spawning_enemies = false end, 'spawning_enemies')
   elseif spawn_type == '4x2' then
     self.t:after({0, 0.2}, function()
       local p = random:table_remove(spawn_points)
       SpawnMarker{group = self.effects, x = p.x, y = p.y}
-      self.t:after(0.75, function() self:spawn_n_enemies(p, 1, 2) end)
+      self.t:after(1.125, function() self:spawn_n_enemies(p, 1, 2) end)
     end)
     self.t:after({0, 0.2}, function()
       local p = random:table_remove(spawn_points)
       SpawnMarker{group = self.effects, x = p.x, y = p.y}
-      self.t:after(0.75, function() self:spawn_n_enemies(p, 2, 2) end)
+      self.t:after(1.125, function() self:spawn_n_enemies(p, 2, 2) end)
     end)
     self.t:after({0, 0.2}, function()
       local p = random:table_remove(spawn_points)
       SpawnMarker{group = self.effects, x = p.x, y = p.y}
-      self.t:after(0.75, function() self:spawn_n_enemies(p, 3, 2) end)
+      self.t:after(1.125, function() self:spawn_n_enemies(p, 3, 2) end)
     end)
     self.t:after({0, 0.2}, function()
       local p = random:table_remove(spawn_points)
       SpawnMarker{group = self.effects, x = p.x, y = p.y}
-      self.t:after(0.75, function() self:spawn_n_enemies(p, 4, 2) end)
+      self.t:after(1.125, function() self:spawn_n_enemies(p, 4, 2) end)
     end)
-    self.t:after(1.5, function() self.spawning_enemies = false end, 'spawning_enemies')
+    self.t:after(2.25, function() self.spawning_enemies = false end, 'spawning_enemies')
   end
 end
 

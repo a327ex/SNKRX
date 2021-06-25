@@ -27,18 +27,19 @@ Orb Update
       * Flagellant - Lv.3: 2X flagellant max HP and +12% damage to all allies per cast
       * Psykeeper - creates a healing orb every time the psykeeper takes 20% of its max HP in damage, Lv.3: deal double the damage taken by the psykeeper to all enemies
   Balance
-    Change cursers to add more curse targets as set bonuses
-    Decrease reroll cost to 5
+    * Changed cursers to add more curse targets as set bonuses
+    * Decreased item reroll cost to 5
     * Increased sage's attack speed
-    Increase spawn marker time
-    Decrease range and thrown speed for forcers
-    Decrease damage for blue and white on higher NG
-    Increase gold rewards at higher NG
-    Prevent orange from killing multiple units at once
-    Slightly decrease probability of special spawn at levels above 20
+    * Increased spawn marker time by 50%
+    * Decreased range and throw speed for tanks
+    * Decreased damage for blue and white enemies
+    * Increased gold rewards at levels 1-9
+    * Prevent orange from killing multiple units at once
+    * Slightly decrease probability of special spawn at levels above 20
+    * Exploder elite spawns mines instead of exploding enemies directly
+    * Decreased overall enemy damage at higher difficulties
   QoL
-    Lowered sound effect for gambler
-    Show cooldown on elite attack
+    * Lowered sound effect for gambler
     * Options menu from buy screen
     * Add main menu
       * Title
@@ -48,10 +49,14 @@ Orb Update
       * Quit button
       * Soundtrack button
     * Volume slider
-    https://i.imgur.com/4hOt5uX.png "party 7/9"
-    https://i.imgur.com/dlGbx0k.png lvl 3 effect on shop card
-    Add visuals divine intervention, fairy buff
-    Change text for enchanted to "if you have >= 2 enchanters" and change text for reinforce to "if you have >= 1 enchanter"
+    * Party x/y
+    * Lv.3 effect on shop card
+    * Changed text saying "with at least n enchanters" to "if you have >=n enchanters" for 2 enchanter items
+  Bug fixes
+    * Fixed fullscreen button and general resolution issues
+    * Fixed barbarian stun just slowing and not stunning
+    * Fixed a bug with Call of the Void that caused its DoT damage bonus to become infinite
+
 
 Loop Update
   New items:
@@ -83,9 +88,9 @@ Loop Update
     Selling items
     Your party + items on end, death and passive screens - https://i.imgur.com/JJUddT3.png
     Add option for mouse cursor to always be visible
+    Show cooldown on elite attack
+    Add visuals divine intervention, fairy buff
   Bug fixes
-    * Fixed fullscreen button and general resolution issues
-    Fix barbarian stun just slowing and not stunning
     Fixed a series of crashes that happened rarely right before changing from the arena back to the shop
     https://i.imgur.com/Rk6qbDD.png - merchant doesnt give reroll if dies
     https://i.imgur.com/1soUUdk.png - 5th position stops shooting when 1-4 die
