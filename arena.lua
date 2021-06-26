@@ -562,7 +562,7 @@ function Arena:quit()
         steam.userStats.storeStats()
       end
 
-      if self.psyker_level >= 2 then
+      if self.psyker_level >= 1 then
         state.achievement_psykers_win = true
         system.save_state()
         steam.userStats.setAchievement('PSYKERS_WIN')

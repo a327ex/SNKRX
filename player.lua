@@ -2288,7 +2288,7 @@ function Projectile:on_trigger_enter(other, contact)
       other:apply_dot((self.crit and 4*self.dmg or self.dmg/2)*(self.dot_dmg_m or 1)*(main.current.chronomancer_dot or 1), 3)
     end
 
-    if self.parent.chain_infused then
+    if self.parent and self.parent.chain_infused then
       local units = self.parent:get_all_units()
       local stormweaver_level = 0
       for _, unit in ipairs(units) do
@@ -2323,7 +2323,7 @@ function Projectile:on_trigger_enter(other, contact)
       other:push(self.knockback*(self.knockback_m or 1), self.r)
     end
 
-    if self.parent.explosive_arrow and table.any(self.parent.classes, function(v) return v == 'ranger' end) then
+    if self.parent and self.parent.explosive_arrow and table.any(self.parent.classes, function(v) return v == 'ranger' end) then
       if random:bool((self.parent.explosive_arrow == 1 and 10) or (self.parent.explosive_arrow == 2 and 20) or (self.parent.explosive_arrow == 3 and 30)) then
         _G[random:table{'cannoneer1', 'cannoneer2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
         Area{group = main.current.effects, x = self.x, y = self.y, r = self.r + random:float(0, 2*math.pi), w = self.parent.area_size_m*32, color = self.color, 
@@ -2332,7 +2332,7 @@ function Projectile:on_trigger_enter(other, contact)
       end
     end
 
-    if self.parent.void_rift and table.any(self.parent.classes, function(v) return v == 'mage' or v == 'nuker' or v == 'voider' end) then
+    if self.parent and self.parent.void_rift and table.any(self.parent.classes, function(v) return v == 'mage' or v == 'nuker' or v == 'voider' end) then
       if random:bool(20) then
         DotArea{group = main.current.effects, x = self.x, y = self.y, rs = self.parent.area_size_m*24, color = self.color, dmg = self.parent.area_dmg_m*self.dmg*(self.parent.dot_dmg_m or 1), void_rift = true, duration = 1}
       end

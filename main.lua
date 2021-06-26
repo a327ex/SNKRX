@@ -725,7 +725,7 @@ function init()
   }
 
   character_effect_descriptions = {
-    ['vagrant'] = function() return '[yellow]+10%[fg] damage and [yellow]+10%[fg] attack speed per active set' end,
+    ['vagrant'] = function() return '[yellow]+15%[fg] attack speed and damage per active set' end,
     ['swordsman'] = function() return "[fg]the swordsman's damage is [yellow]doubled" end,
     ['wizard'] = function() return '[fg]the projectile chains [yellow]2[fg] times' end,
     ['magician'] = function() return '[fg]the magician becomes invulnerable for [yellow]6[fg] seconds but also cannot attack' end,
@@ -782,7 +782,7 @@ function init()
   }
 
   character_effect_descriptions_gray = {
-    ['vagrant'] = function() return '[light_bg]+10% damage and +10% attack speed per active set' end,
+    ['vagrant'] = function() return '[light_bg]+15% attack speed and damage per active set' end,
     ['swordsman'] = function() return "[light_bg]the swordsman's damage is doubled" end,
     ['wizard'] = function() return '[light_bg]the projectile chains 3 times' end,
     ['magician'] = function() return '[light_bg]the magician becomes invulnerable for 6 seconds but also cannot attack' end,
@@ -938,7 +938,7 @@ function init()
     ['warrior'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[light_bg]/[' .. ylb2(lvl) .. ']6 [fg]- [' .. ylb1(lvl) .. ']+25[light_bg]/[' .. ylb2(lvl) .. ']+50 [fg]defense to allied warriors' end,
     ['mage'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[light_bg]/[' .. ylb2(lvl) .. ']6 [fg]- [' .. ylb1(lvl) .. ']-15[light_bg]/[' .. ylb2(lvl) .. ']-30 [fg]enemy defense' end,
     ['rogue'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[light_bg]/[' .. ylb2(lvl) .. ']6 [fg]- [' .. ylb1(lvl) .. ']15%[light_bg]/[' .. ylb2(lvl) .. ']30% [fg]chance to crit to allied rogues, dealing [yellow]4x[] damage' end,
-    ['healer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+15%[light_bg]/[' .. ylb2(lvl) .. ']+30% [fg]healing effectiveness' end,
+    ['healer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+8%[light_bg]/[' .. ylb2(lvl) .. ']+16% [fg] chance for enemies to drop healing orbs on death' end,
     ['enchanter'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+15%[light_bg]/[' .. ylb2(lvl) .. ']+25% [fg]damage to all allies' end,
     ['nuker'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[light_bg]/[' .. ylb2(lvl) .. ']6 [fg]- [' .. ylb1(lvl) .. ']+15%[light_bg]/[' .. ylb2(lvl) .. ']+25% [fg]area damage and size to allied nukers' end,
     ['conjurer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+25%[light_bg]/[' .. ylb2(lvl) .. ']+50% [fg]summon damage and duration' end,
