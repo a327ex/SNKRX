@@ -1917,6 +1917,7 @@ end
 
 
 function love.run()
+  love.mouse.setGrabbed(true)
   return engine_run({
     game_name = 'SNKRX',
     window_width = 'max',
