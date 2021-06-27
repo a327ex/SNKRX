@@ -1917,6 +1917,7 @@ end
 
 
 function love.run()
+  love.mouse.setCursor(love.mouse.newCursor('assets/images/cursor.png', 16, 16))
   return engine_run({
     game_name = 'SNKRX',
     window_width = 'max',
