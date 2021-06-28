@@ -821,52 +821,64 @@ function Arena:create_credits()
     system.open_url(url)
   end
 
+  self.close_button = Button{group = self.credits, x = gw - 20, y = 20, button_text = 'x', bg_color = 'bg', fg_color = 'bg10', credits_button = true, action = function()
+    trigger:after(0.01, function()
+      self.in_credits = false
+      if self.credits_button then self.credits_button:on_mouse_exit() end
+      for _, object in ipairs(self.credits.objects) do
+        object.dead = true
+      end
+      self.credits:update(0)
+    end)
+  end}
+
   self.in_credits = true
   Text2{group = self.credits, x = 60, y = 20, lines = {{text = '[bg10]main dev: ', font = pixul_font}}}
   Button{group = self.credits, x = 117, y = 20, button_text = 'a327ex', fg_color = 'bg10', bg_color = 'bg', credits_button = true, action = function(b) open_url(b, 'https://store.steampowered.com/dev/a327ex/') end}
-  Text2{group = self.credits, x = 60, y = 50, lines = {{text = '[blue]code: ', font = pixul_font}}}
-  Button{group = self.credits, x = 102, y = 50, button_text = 'love2d', fg_color = 'bluem5', bg_color = 'blue', credits_button = true, action = function(b) open_url(b, 'https://love2d.org') end}
-  Button{group = self.credits, x = 159, y = 50, button_text = 'bakpakin', fg_color = 'bluem5', bg_color = 'blue', credits_button = true, action = function(b) open_url(b, 'https://github.com/bakpakin/binser') end}
-  Button{group = self.credits, x = 226, y = 50, button_text = 'davisdude', fg_color = 'bluem5', bg_color = 'blue', credits_button = true, action = function(b) open_url(b, 'https://github.com/davisdude/mlib') end}
-  Button{group = self.credits, x = 295, y = 50, button_text = 'tesselode', fg_color = 'bluem5', bg_color = 'blue', credits_button = true, action = function(b) open_url(b, 'https://github.com/tesselode/ripple') end}
-  Button{group = self.credits, x = 365, y = 50, button_text = 'Davidobot', fg_color = 'bluem5', bg_color = 'blue', credits_button = true, action = function(b) open_url(b, 'https://github.com/Davidobot') end}
-  Text2{group = self.credits, x = 60, y = 80, lines = {{text = '[green]music: ', font = pixul_font}}}
-  Button{group = self.credits, x = 100, y = 80, button_text = 'kubbi', fg_color = 'greenm5', bg_color = 'green', credits_button = true, action = function(b) open_url(b, 'https://kubbimusic.com/album/ember') end}
-  Text2{group = self.credits, x = 60, y = 110, lines = {{text = '[yellow]sounds: ', font = pixul_font}}}
-  Button{group = self.credits, x = 135, y = 110, button_text = 'sidearm studios', fg_color = 'yellowm5', bg_color = 'yellow', credits_button = true, action = function(b)
+  Text2{group = self.credits, x = 60, y = 50, lines = {{text = '[bg10]mobile: ', font = pixul_font}}}
+  Button{group = self.credits, x = 144, y = 50, button_text = 'David Khachaturov', fg_color = 'bg10', bg_color = 'bg', credits_button = true, action = function(b) open_url(b, 'https://davidobot.net/') end}
+  Text2{group = self.credits, x = 60, y = 80, lines = {{text = '[blue]libraries: ', font = pixul_font}}}
+  Button{group = self.credits, x = 113, y = 80, button_text = 'love2d', fg_color = 'bluem5', bg_color = 'blue', credits_button = true, action = function(b) open_url(b, 'https://love2d.org') end}
+  Button{group = self.credits, x = 170, y = 80, button_text = 'bakpakin', fg_color = 'bluem5', bg_color = 'blue', credits_button = true, action = function(b) open_url(b, 'https://github.com/bakpakin/binser') end}
+  Button{group = self.credits, x = 237, y = 80, button_text = 'davisdude', fg_color = 'bluem5', bg_color = 'blue', credits_button = true, action = function(b) open_url(b, 'https://github.com/davisdude/mlib') end}
+  Button{group = self.credits, x = 306, y = 80, button_text = 'tesselode', fg_color = 'bluem5', bg_color = 'blue', credits_button = true, action = function(b) open_url(b, 'https://github.com/tesselode/ripple') end}
+  Text2{group = self.credits, x = 60, y = 110, lines = {{text = '[green]music: ', font = pixul_font}}}
+  Button{group = self.credits, x = 100, y = 110, button_text = 'kubbi', fg_color = 'greenm5', bg_color = 'green', credits_button = true, action = function(b) open_url(b, 'https://kubbimusic.com/album/ember') end}
+  Text2{group = self.credits, x = 60, y = 140, lines = {{text = '[yellow]sounds: ', font = pixul_font}}}
+  Button{group = self.credits, x = 135, y = 140, button_text = 'sidearm studios', fg_color = 'yellowm5', bg_color = 'yellow', credits_button = true, action = function(b)
     open_url(b, 'https://sidearm-studios.itch.io/ultimate-sound-fx-bundle') end}
-  Button{group = self.credits, x = 217, y = 110, button_text = 'justinbw', fg_color = 'yellowm5', bg_color = 'yellow', credits_button = true, action = function(b)
+  Button{group = self.credits, x = 217, y = 140, button_text = 'justinbw', fg_color = 'yellowm5', bg_color = 'yellow', credits_button = true, action = function(b)
     open_url(b, 'https://freesound.org/people/JustinBW/sounds/80921/') end}
-  Button{group = self.credits, x = 279, y = 110, button_text = 'jcallison', fg_color = 'yellowm5', bg_color = 'yellow', credits_button = true, action = function(b)
+  Button{group = self.credits, x = 279, y = 140, button_text = 'jcallison', fg_color = 'yellowm5', bg_color = 'yellow', credits_button = true, action = function(b)
     open_url(b, 'https://freesound.org/people/jcallison/sounds/258269/') end}
-  Button{group = self.credits, x = 342, y = 110, button_text = 'hybrid_v', fg_color = 'yellowm5', bg_color = 'yellow', credits_button = true, action = function(b)
+  Button{group = self.credits, x = 342, y = 140, button_text = 'hybrid_v', fg_color = 'yellowm5', bg_color = 'yellow', credits_button = true, action = function(b)
     open_url(b, 'https://freesound.org/people/Hybrid_V/sounds/321215/') end}
-  Button{group = self.credits, x = 427, y = 110, button_text = 'womb_affliction', fg_color = 'yellowm5', bg_color = 'yellow', credits_button = true, action = function(b)
+  Button{group = self.credits, x = 427, y = 140, button_text = 'womb_affliction', fg_color = 'yellowm5', bg_color = 'yellow', credits_button = true, action = function(b)
     open_url(b, 'https://freesound.org/people/womb_affliction/sounds/376532/') end}
-  Button{group = self.credits, x = 106, y = 130, button_text = 'bajko', fg_color = 'yellowm5', bg_color = 'yellow', credits_button = true, action = function(b)
+  Button{group = self.credits, x = 106, y = 160, button_text = 'bajko', fg_color = 'yellowm5', bg_color = 'yellow', credits_button = true, action = function(b)
     open_url(b, 'https://freesound.org/people/bajko/sounds/399656/') end}
-  Button{group = self.credits, x = 157, y = 130, button_text = 'benzix2', fg_color = 'yellowm5', bg_color = 'yellow', credits_button = true, action = function(b)
+  Button{group = self.credits, x = 157, y = 160, button_text = 'benzix2', fg_color = 'yellowm5', bg_color = 'yellow', credits_button = true, action = function(b)
     open_url(b, 'https://freesound.org/people/benzix2/sounds/467951/') end}
-  Button{group = self.credits, x = 204, y = 130, button_text = 'lord', fg_color = 'yellowm5', bg_color = 'yellow', credits_button = true, action = function(b)
+  Button{group = self.credits, x = 204, y = 160, button_text = 'lord', fg_color = 'yellowm5', bg_color = 'yellow', credits_button = true, action = function(b)
     open_url(b, 'https://store.steampowered.com/developer/T_TGames') end}
-  Text2{group = self.credits, x = 70, y = 160, lines = {{text = '[red]playtesters: ', font = pixul_font}}}
-  Button{group = self.credits, x = 130, y = 160, button_text = 'Jofer', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
+  Text2{group = self.credits, x = 70, y = 190, lines = {{text = '[red]playtesters: ', font = pixul_font}}}
+  Button{group = self.credits, x = 130, y = 190, button_text = 'Jofer', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
     open_url(b, 'https://twitter.com/JofersGames') end}
-  Button{group = self.credits, x = 172, y = 160, button_text = 'ekun', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
+  Button{group = self.credits, x = 172, y = 190, button_text = 'ekun', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
     open_url(b, 'https://twitter.com/ekunenuke') end}
-  Button{group = self.credits, x = 224, y = 160, button_text = 'cvisy_GN', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
+  Button{group = self.credits, x = 224, y = 190, button_text = 'cvisy_GN', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
     open_url(b, 'https://twitter.com/cvisy_GN') end}
-  Button{group = self.credits, x = 292, y = 160, button_text = 'Blue Fairy', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
+  Button{group = self.credits, x = 292, y = 190, button_text = 'Blue Fairy', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
     open_url(b, 'https://twitter.com/blue9fairy') end}
-  Button{group = self.credits, x = 362, y = 160, button_text = 'Phil Blank', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
+  Button{group = self.credits, x = 362, y = 190, button_text = 'Phil Blank', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
     open_url(b, 'https://twitter.com/PhilBlankGames') end}
-  Button{group = self.credits, x = 440, y = 160, button_text = 'DefineDoddy', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
+  Button{group = self.credits, x = 440, y = 190, button_text = 'DefineDoddy', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
     open_url(b, 'https://twitter.com/DefineDoddy') end}
-  Button{group = self.credits, x = 140, y = 180, button_text = 'Ge0force', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
+  Button{group = self.credits, x = 140, y = 210, button_text = 'Ge0force', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
     open_url(b, 'https://twitter.com/Ge0forceBE') end}
-  Button{group = self.credits, x = 193, y = 180, button_text = 'Vlad', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
+  Button{group = self.credits, x = 193, y = 210, button_text = 'Vlad', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
     open_url(b, 'https://twitter.com/thecryru') end}
-  Button{group = self.credits, x = 223, y = 180, button_text = 'F', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
+  Button{group = self.credits, x = 223, y = 210, button_text = 'F', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
     open_url(b, 'https://twitter.com/notyps') end}
 end
 

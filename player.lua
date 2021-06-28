@@ -1341,8 +1341,10 @@ function Player:update(dt)
         camera.y = camera.y + math.remap(vy, -100, 100, -8*vd, 8*vd)*dt
         if input.move_right.down then camera.r = math.lerp_angle_dt(0.01, dt, camera.r, math.pi/256)
         elseif input.move_left.down then camera.r = math.lerp_angle_dt(0.01, dt, camera.r, -math.pi/256)
+          --[[
         elseif input.move_down.down then camera.r = math.lerp_angle_dt(0.01, dt, camera.r, math.pi/256)
         elseif input.move_up.down then camera.r = math.lerp_angle_dt(0.01, dt, camera.r, -math.pi/256)
+        ]]--
         else camera.r = math.lerp_angle_dt(0.005, dt, camera.r, 0) end
       end
     end

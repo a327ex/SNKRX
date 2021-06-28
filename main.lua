@@ -13,9 +13,11 @@ function init()
   shared_init()
 
   input:bind('move_left', {'a', 'left', 'dpleft', 'm1'})
-  input:bind('move_right', {'d', 'right', 'dpright', 'm2'})
+  input:bind('move_right', {'d', 'e', 's', 'right', 'dpright', 'm2'})
+  --[[
   input:bind('move_up', {'w', 'up', 'dpup'})
   input:bind('move_down', {'s', 'down', 'dpdown'})
+  ]]--
   input:bind('enter', {'space', 'return', 'fleft', 'fdown', 'fright'})
 
   local s = {tags = {sfx}}
