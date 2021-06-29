@@ -1546,14 +1546,31 @@ function init()
   -- main:go_to('buy_screen', 7, run.units or {}, {'unleash'})
   
   --[[
+  gold = 10
+  run_passive_pool = {
+    'centipede', 'ouroboros_technique_r', 'ouroboros_technique_l', 'amplify', 'resonance', 'ballista', 'call_of_the_void', 'crucio', 'speed_3', 'damage_4', 'shoot_5', 'death_6', 'lasting_7',
+    'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'hextouch', 'whispers_of_doom',
+    'tremor', 'heavy_impact', 'fracture', 'meat_shield', 'hive', 'baneling_burst', 'blunt_arrow', 'explosive_arrow', 'divine_machine_arrow', 'chronomancy', 'awakening', 'divine_punishment',
+    'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
+    'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance', 'blessing', 'haste', 'divine_barrage', 'orbitism', 'psyker_orbs', 'psychosense', 'rearm', 'taunt', 'summon_instability',
+  }
   main:add(Arena'arena')
-  main:go_to('arena', 10, {
+  main:go_to('arena', 3, {
     {character = 'illusionist', level = 2},
     -- {character = 'carver', level = 2},
     {character = 'engineer', level = 2},
     -- {character = 'saboteur', level = 2},
     -- {character = 'hunter', level = 2},
-  }, {{passive = 'summon_instability', level = 3}})
+  }, {
+    {passive = 'summon_instability', level = 3},
+    {passive = 'summon_instability', level = 3},
+    {passive = 'summon_instability', level = 3},
+    {passive = 'summon_instability', level = 3},
+    {passive = 'summon_instability', level = 3},
+    {passive = 'summon_instability', level = 3},
+    {passive = 'summon_instability', level = 3},
+    {passive = 'summon_instability', level = 3},
+  })
   ]]--
 
   --[[
@@ -1852,6 +1869,7 @@ function open_options(self)
         current_new_game_plus = math.clamp(current_new_game_plus - 1, 0, 5)
         state.current_new_game_plus = current_new_game_plus
         self.ng_t.text:set_text({{text = '[bg10]current: ' .. current_new_game_plus, font = pixul_font, alignment = 'center'}})
+        max_units = 7 + current_new_game_plus
       end}
 
       self.ng_plus_plus_button = Button{group = self.ui, x = gw/2 + 5, y = gh - 50, force_update = true, button_text = 'NG+ up', fg_color = 'bg10', bg_color = 'bg', action = function(b)
@@ -1861,6 +1879,7 @@ function open_options(self)
         current_new_game_plus = math.clamp(current_new_game_plus + 1, 0, new_game_plus)
         state.current_new_game_plus = current_new_game_plus
         self.ng_t.text:set_text({{text = '[bg10]current: ' .. current_new_game_plus, font = pixul_font, alignment = 'center'}})
+        max_units = 7 + current_new_game_plus
       end}
     end
 

@@ -644,6 +644,9 @@ function Arena:quit()
   else
     if not self.arena_clear_text then self.arena_clear_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 48, lines = {{text = '[wavy_mid, cbyc]arena clear!', font = fat_font, alignment = 'center'}}} end
     self:gain_gold()
+    self.t:after(2, function()
+      self.t:tween(0.7, self, {main_slow_amount = 0}, math.linear, function() self.main_slow_amount = 0 end)
+    end)
     self.t:after(3, function()
       if self.level % 3 == 0 then
         input:set_mouse_visible(true)
@@ -660,6 +663,9 @@ function Arena:quit()
           Text2{group = self.ui, x = 20 + 14 + pixul_font:get_text_width(unit.character)/2, y = 40 + (i-1)*19, force_update = true, lines = {
             {text = '[' .. character_color_strings[unit.character] .. ']' .. unit.character, font = pixul_font, alignment = 'left'}
           }}
+        end
+        for i, passive in ipairs(self.passives) do
+          ItemCard{group = self.ui, x = 120 + (i-1)*30, y = gh - 30, w = 30, h = 45, sx = 0.75, sy = 0.75, force_update = true, passive = passive.passive , level = passive.level, xp = passive.xp, parent = self}
         end
       else
         self:transition()
@@ -884,7 +890,13 @@ end
 
 
 function Arena:gain_gold()
-  local merchant = self.player:get_unit'merchant'
+  local merchant
+  for _, unit in ipairs(self.starting_units) do
+    if unit.character == 'merchant' then
+      merchant = true
+      break
+    end
+  end
   self.gold_gained = random:int(level_to_gold_gained[self.level][1], level_to_gold_gained[self.level][2])
   self.interest = math.min(math.floor(gold/5), 5) + math.min((merchant and math.floor(gold/10) or 0), 10)
   gold = gold + self.gold_gained + self.gold_picked_up + self.interest

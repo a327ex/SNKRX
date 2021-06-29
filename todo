@@ -32,6 +32,7 @@ Loop Update
     Some solution that:
       Increases amount of orbs dropped with only 1 or 2 healers
       Decreases amount of orbs dropped on full build
+    Healing orbs are slightly attracted to the snake
   Builders
     Carver (builder, healer) - every 12 seconds, creates a tree that drops 3 healing orbs, Lv.3 effect: drops 6 healing orbs instead
     Engineer (builder) - unchanged
@@ -46,32 +47,28 @@ Loop Update
     Snake size goes up by 1 every loop, up to 12
     Don't offer items if item slots are full
   QoL
-    Selling items
-    Your party + items on end, death and passive screens - https://i.imgur.com/JJUddT3.png
+    Increase item choice slots to 4
     Add option for mouse cursor to always be visible
     Show cooldown on elite attack
     Add visuals divine intervention, fairy buff
     warrior attack range
     barbarian jugg attack
-    remove already owned lvl 3 unit from shop...
+    Items on end screen
+    Party + items on death screen
+    * Items on passive screen
+    * Selling items
+    * Decreased sound effect volume for shoot 5
   Bug fixes
-    Fixed a series of crashes that happened rarely right before changing from the arena back to the shop
-    https://i.imgur.com/Rk6qbDD.png - merchant doesnt give reroll if dies
-    https://i.imgur.com/1soUUdk.png - 5th position stops shooting when 1-4 die
-    https://i.imgur.com/G9DosVw.png - lasting 7 bug
-    https://i.imgur.com/8he1WDm.png - infinite money
-    https://i.imgur.com/0wZ5wma.png - max unit bugged when changing ng mid run, https://i.imgur.com/qrExpq5.png
-    https://i.imgur.com/Ad13Cyo.png
-    if undead from lasting 7 gets healed it becomes immortal
-    engine/game/group.lua:256: attempt to index local 'shape' (a nil value)
-      Traceback engine/game/group.lua:256: in function 'get_objects_in_shape' engine/game/physics.lua:264: in function 'get_objects_in_shape' player.lua:3386: in function 'update'
-    https://i.imgur.com/s4ZFE6z.png
-    https://i.imgur.com/VL8lOXm.png
-    bug with "party x/y" showing wrong numbers
-    https://i.imgur.com/sxwS8et.png
-    Close button on credits
-    https://i.imgur.com/O5zJNc7.png
-    https://i.imgur.com/cQl0VYp.png
+    * Fixed a series of crashes that happened sometimes right before changing from the arena back to the shop
+    * Fixed merchant not giving interest or free reroll if it died in combat
+    * Fixed shoot 5 and death 6 not working if a unit placed before it on the snake died
+    * Fixed undying unit from lasting 7 being able to become immortal if it was healed during the 10 seconds before it truly died
+    * Fixed a bug where max units wouldn't be properly changed when changing NG difficulty in the menu
+    * Fixed Whispers of Doom applying before curses, now it applies after and triggers their effect when enemies are killed due to it
+    * Fixed mobile users not being able to close the credits screen due to there being no close button
+    * Fixed shop party numbers not being updated when units are bought or sold
+    * Fixed a bug where movement speed would become zero if the game was paused while under the effects of decaying haste
+    * Fixed baneling burst not dealing the correct amount of damage
 
 ---
 
@@ -111,6 +108,7 @@ https://steamcommunity.com/app/915310/discussions/0/4658391921156086711/ - gener
 https://steamcommunity.com/app/915310/discussions/0/4658391921156325745/ - math on gold, rerolls and units
 https://steamcommunity.com/app/915310/discussions/0/3069747783686815659/ - general feedback
 https://steamcommunity.com/app/915310/discussions/0/3069747783688708231/ - general feedback
+https://steamcommunity.com/app/915310/discussions/0/3046104862443040220/ - general feedback
 Challenge mode
   Units die permanently when they die
   Slower scaling with less individually threatening units

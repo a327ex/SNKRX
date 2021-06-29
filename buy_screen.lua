@@ -397,7 +397,7 @@ function BuyScreen:set_items()
   local y = 182
   for k, passive in ipairs(self.passives) do
     local i, j = math.index_to_coordinates(k, 4)
-    table.insert(self.items, ItemCard{group = self.main, x = 45 + (i-1)*60, y = y + (j-1)*50, w = 40, h = 50, passive = passive.passive , level = passive.level, xp = passive.xp, parent = self})
+    table.insert(self.items, ItemCard{group = self.main, x = 45 + (i-1)*60, y = y + (j-1)*50, w = 40, h = 50, passive = passive.passive , level = passive.level, xp = passive.xp, parent = self, i = k})
   end
 end
 
@@ -928,7 +928,13 @@ function RerollButton:init(args)
     self.text = Text({{text = '[bg10]reroll: [yellow]2', font = pixul_font, alignment = 'center'}}, global_text_tags)
   elseif self.parent:is(Arena) then
     self.shape = Rectangle(self.x, self.y, 60, 16)
-    local merchant = self.parent.player:get_unit'merchant'
+    local merchant
+    for _, unit in ipairs(self.parent.starting_units) do
+      if unit.character == 'merchant' then
+        merchant = unit
+        break
+      end
+    end
     if self.parent.level == 3 or (merchant and merchant.level == 3) then
       self.free_reroll = true
       self.text = Text({{text = '[bg10]reroll: [yellow]0', font = pixul_font, alignment = 'center'}}, global_text_tags)
@@ -1167,6 +1173,7 @@ function CharacterPart:update(dt)
       self:die()
       self.parent:set_party_and_sets()
       self.parent:refresh_cards()
+      self.parent.party_text:set_text({{text = '[wavy_mid, fg]party ' .. tostring(#self.parent.units) .. '/' .. tostring(max_units), font = pixul_font, alignment = 'center'}})
       system.save_run(self.parent.level, gold, self.parent.units, self.parent.passives, self.parent.shop_level, self.parent.shop_xp, run_passive_pool, locked_state)
     else
       self.parent.parent:gain_gold(self:get_sale_price())
@@ -1383,6 +1390,8 @@ end
 function ItemCard:update(dt)
   self:update_game_object(dt)
 
+  if self.parent:is(Arena) then return end
+
   if self.selected and input.m1.pressed and not self.unlevellable then
     if self.level >= 3 then return end
     if gold < 5 then
@@ -1425,16 +1434,25 @@ function ItemCard:update(dt)
       system.save_run(self.parent.level, gold, self.parent.units, self.parent.passives, self.parent.shop_level, self.parent.shop_xp, run_passive_pool, locked_state)
     end
   end
+
+  if self.selected and input.m2.pressed then
+    _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    self.parent:gain_gold((self.level == 1 and 10) or (self.level == 2 and 20) or (self.level == 3 and 30))
+    table.remove(self.parent.passives, self.i)
+    self:die()
+    self.parent:set_items()
+    system.save_run(self.parent.level, gold, self.parent.units, self.parent.passives, self.parent.shop_level, self.parent.shop_xp, run_passive_pool, locked_state)
+  end
 end
 
 
 function ItemCard:draw()
-  graphics.push(self.x, self.y, 0, self.spring.x, self.spring.x)
+  graphics.push(self.x, self.y, 0, self.sx*self.spring.x, self.sy*self.spring.x)
     if self.selected then
       graphics.rectangle(self.x, self.y, self.w, self.h, 6, 6, bg[-1])
     end
     _G[self.passive]:draw(self.x, self.y, 0, 0.8, 0.7, 0, 0, fg[0])
-    if not self.unlevellable then
+    if not self.unlevellable and not self.parent:is(Arena) then
       local x, y = self.x + self.w/2.5, self.y - self.h/2.5
       if self.level == 1 then
         graphics.rectangle(x - 2, y, 2, 2, nil, nil, self.xp >= 1 and fg[0] or bg[5])
@@ -1466,8 +1484,8 @@ function ItemCard:create_info_text()
   else
     self.info_text = InfoText{group = main.current.ui, force_update = true}
     self.info_text:activate({
-      {text = '[fg]' .. passive_names[self.passive] .. ', [yellow]Lv.' .. self.level .. '[fg], XP: [yellow]' .. self.xp .. '/' .. self.max_xp .. '[fg], +1 XP cost: [yellow]5', font = pixul_font, alignment = 'center',
-        height_multiplier = 1.25},
+      {text = '[fg]' .. passive_names[self.passive] .. ', [yellow]Lv.' .. self.level .. '[fg], XP: [yellow]' .. self.xp .. '/' .. self.max_xp .. '[fg], +1 XP cost: [yellow]5[fg], sells for: [yellow]' .. 
+        tostring((self.level == 1 and 10) or (self.level == 2 and 20) or (self.level == 3 and 30)), font = pixul_font, alignment = 'center', height_multiplier = 1.25},
       {text = passive_descriptions_level[self.passive](self.level), font = pixul_font, alignment = 'center', height_multiplier = 1.25},
     }, nil, nil, nil, nil, 16, 4, nil, 2)
     self.info_text.x, self.info_text.y = gw/2, gh/2 + 10
@@ -1558,6 +1576,7 @@ function ShopCard:update(dt)
       self:die()
       self.parent.cards[self.i] = nil
       self.parent:refresh_cards()
+      self.parent.party_text:set_text({{text = '[wavy_mid, fg]party ' .. tostring(#self.parent.units) .. '/' .. tostring(max_units), font = pixul_font, alignment = 'center'}})
       locked_state = {locked = self.parent.locked, cards = {self.parent.cards[1] and self.parent.cards[1].unit, self.parent.cards[2] and self.parent.cards[2].unit, self.parent.cards[3] and self.parent.cards[3].unit}} 
       system.save_run(self.parent.level, gold, self.parent.units, self.parent.passives, self.parent.shop_level, self.parent.shop_xp, run_passive_pool, locked_state)
     else
