@@ -1005,7 +1005,6 @@ function Player:init(args)
         local unit = random:table(units)
         unit.enchanted_aspd_m = (self.enchanted == 1 and 1.33) or (self.enchanted == 2 and 1.66) or (self.enchanted == 3 and 1.99)
       end
-
     end)
   end
 
@@ -1040,15 +1039,15 @@ function Player:init(args)
 
   if self.leader and self.shoot_5 then
     main.current.t:after(0.1, function()
-      self.t:every(0.33, function()
-        local units = self:get_all_units()
+      main.current.t:every(0.33, function()
+        local units = main.current.player:get_all_units()
         local unit = units[5]
         if unit then
           local target = unit:get_closest_object_in_shape(Circle(unit.x, unit.y, 96), main.current.enemies)
           if target then
-            unit:barrage(unit:angle_to_object(target), 1)
+            unit:barrage(unit:angle_to_object(target), 1, nil, nil, true)
           else
-            unit:barrage(random:float(0, 2*math.pi), 1)
+            unit:barrage(random:float(0, 2*math.pi), 1, nil, nil, true)
           end
         end
       end)
@@ -1057,9 +1056,9 @@ function Player:init(args)
 
   if self.leader and self.death_6 then
     main.current.t:after(0.1, function()
-      self.t:every(3, function()
+      main.current.t:every(3, function()
         flagellant1:play{pitch = random:float(0.95, 1.05), volume = 0.4}
-        local units = self:get_all_units()
+        local units = main.current.player:get_all_units()
         local unit = units[6]
         if unit then
           hit2:play{pitch = random:float(0.95, 1.05), volume = 0.4}
@@ -1284,7 +1283,7 @@ function Player:update(dt)
 
   if self.haste then
     if self.hasted then
-      self.haste_mvspd_m = math.remap(love.timer.getTime() - self.hasted, 0, 4, 1.5, 1)
+      self.haste_mvspd_m = math.clamp(math.remap(love.timer.getTime() - self.hasted, 0, 4, 1.5, 1), 1, 1.5)
     else self.haste_mvspd_m = 1 end
   end
 
@@ -1341,8 +1340,10 @@ function Player:update(dt)
         camera.y = camera.y + math.remap(vy, -100, 100, -8*vd, 8*vd)*dt
         if input.move_right.down then camera.r = math.lerp_angle_dt(0.01, dt, camera.r, math.pi/256)
         elseif input.move_left.down then camera.r = math.lerp_angle_dt(0.01, dt, camera.r, -math.pi/256)
+          --[[
         elseif input.move_down.down then camera.r = math.lerp_angle_dt(0.01, dt, camera.r, math.pi/256)
         elseif input.move_up.down then camera.r = math.lerp_angle_dt(0.01, dt, camera.r, -math.pi/256)
+        ]]--
         else camera.r = math.lerp_angle_dt(0.005, dt, camera.r, 0) end
       end
     end
@@ -1550,7 +1551,7 @@ function Player:hit(damage, from_undead)
 
     elseif self.lasting_7 and self.follower_index == 6 and not self.undead then
       self.undead = true
-      self.t:after(10, function() self:hit(0, true) end)
+      self.t:after(10, function() self:hit(10000, true) end)
 
     else
       hit4:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -1885,14 +1886,15 @@ function Player:dot_attack(area, mods)
 end
 
 
-function Player:barrage(r, n, pierce, ricochet)
+function Player:barrage(r, n, pierce, ricochet, shoot_5)
   n = n or 8
   for i = 1, n do
     self.t:after((i-1)*0.075, function()
-      archer1:play{pitch = random:float(0.95, 1.05), volume = 0.35}
+      if shoot_5 then archer1:play{pitch = random:float(0.95, 1.05), volume = 0.2}
+      else archer1:play{pitch = random:float(0.95, 1.05), volume = 0.35} end
       HitCircle{group = main.current.effects, x = self.x + 0.8*self.shape.w*math.cos(r), y = self.y + 0.8*self.shape.w*math.sin(r), rs = 6}
       local t = {group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), v = 250, r = r + random:float(-math.pi/16, math.pi/16), color = self.color, dmg = self.dmg,
-      parent = self, character = 'barrage', level = self.level, pierce = pierce or 0, ricochet = ricochet or 0}
+      parent = self, character = 'barrage', level = self.level, pierce = pierce or 0, ricochet = ricochet or 0, shoot_5 = shoot_5}
       Projectile(table.merge(t, mods or {}))
     end)
   end
@@ -2288,7 +2290,7 @@ function Projectile:on_trigger_enter(other, contact)
       other:apply_dot((self.crit and 4*self.dmg or self.dmg/2)*(self.dot_dmg_m or 1)*(main.current.chronomancer_dot or 1), 3)
     end
 
-    if self.parent.chain_infused then
+    if self.parent and self.parent.chain_infused then
       local units = self.parent:get_all_units()
       local stormweaver_level = 0
       for _, unit in ipairs(units) do
@@ -2323,7 +2325,7 @@ function Projectile:on_trigger_enter(other, contact)
       other:push(self.knockback*(self.knockback_m or 1), self.r)
     end
 
-    if self.parent.explosive_arrow and table.any(self.parent.classes, function(v) return v == 'ranger' end) then
+    if self.parent and self.parent.explosive_arrow and table.any(self.parent.classes, function(v) return v == 'ranger' end) then
       if random:bool((self.parent.explosive_arrow == 1 and 10) or (self.parent.explosive_arrow == 2 and 20) or (self.parent.explosive_arrow == 3 and 30)) then
         _G[random:table{'cannoneer1', 'cannoneer2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
         Area{group = main.current.effects, x = self.x, y = self.y, r = self.r + random:float(0, 2*math.pi), w = self.parent.area_size_m*32, color = self.color, 
@@ -2332,7 +2334,7 @@ function Projectile:on_trigger_enter(other, contact)
       end
     end
 
-    if self.parent.void_rift and table.any(self.parent.classes, function(v) return v == 'mage' or v == 'nuker' or v == 'voider' end) then
+    if self.parent and self.parent.void_rift and table.any(self.parent.classes, function(v) return v == 'mage' or v == 'nuker' or v == 'voider' end) then
       if random:bool(20) then
         DotArea{group = main.current.effects, x = self.x, y = self.y, rs = self.parent.area_size_m*24, color = self.color, dmg = self.parent.area_dmg_m*self.dmg*(self.parent.dot_dmg_m or 1), void_rift = true, duration = 1}
       end
@@ -3657,7 +3659,8 @@ function Critter:die(x, y, r, n)
 
   if main.current.player.baneling_burst then
     camera:shake(2, 0.5)
-    Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.parent.area_size_m*24, color = self.color, dmg = self.parent.dmg*self.parent.area_dmg_m*0.25, parent = self.parent}
+    Area{group = main.current.effects, x = self.x, y = self.y, r = self.r, w = self.parent.area_size_m*24, color = self.color,
+      dmg = (main.current.player.baneling_burst == 1 and 50) or (main.current.player.baneling_burst == 2 and 100) or (main.current.player.baneling_burst == 3 and 150) or 0, parent = self.parent}
     _G[random:table{'cannoneer1', 'cannoneer2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
   end
 end

@@ -13,9 +13,11 @@ function init()
   shared_init()
 
   input:bind('move_left', {'a', 'left', 'dpleft', 'm1'})
-  input:bind('move_right', {'d', 'right', 'dpright', 'm2'})
+  input:bind('move_right', {'d', 'e', 's', 'right', 'dpright', 'm2'})
+  --[[
   input:bind('move_up', {'w', 'up', 'dpup'})
   input:bind('move_down', {'s', 'down', 'dpdown'})
+  ]]--
   input:bind('enter', {'space', 'return', 'fleft', 'fdown', 'fright'})
 
   local s = {tags = {sfx}}
@@ -726,7 +728,7 @@ function init()
   }
 
   character_effect_descriptions = {
-    ['vagrant'] = function() return '[yellow]+10%[fg] damage and [yellow]+10%[fg] attack speed per active set' end,
+    ['vagrant'] = function() return '[yellow]+15%[fg] attack speed and damage per active set' end,
     ['swordsman'] = function() return "[fg]the swordsman's damage is [yellow]doubled" end,
     ['wizard'] = function() return '[fg]the projectile chains [yellow]2[fg] times' end,
     ['magician'] = function() return '[fg]the magician becomes invulnerable for [yellow]6[fg] seconds but also cannot attack' end,
@@ -783,7 +785,7 @@ function init()
   }
 
   character_effect_descriptions_gray = {
-    ['vagrant'] = function() return '[light_bg]+10% damage and +10% attack speed per active set' end,
+    ['vagrant'] = function() return '[light_bg]+15% attack speed and damage per active set' end,
     ['swordsman'] = function() return "[light_bg]the swordsman's damage is doubled" end,
     ['wizard'] = function() return '[light_bg]the projectile chains 3 times' end,
     ['magician'] = function() return '[light_bg]the magician becomes invulnerable for 6 seconds but also cannot attack' end,
@@ -939,7 +941,7 @@ function init()
     ['warrior'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[light_bg]/[' .. ylb2(lvl) .. ']6 [fg]- [' .. ylb1(lvl) .. ']+25[light_bg]/[' .. ylb2(lvl) .. ']+50 [fg]defense to allied warriors' end,
     ['mage'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[light_bg]/[' .. ylb2(lvl) .. ']6 [fg]- [' .. ylb1(lvl) .. ']-15[light_bg]/[' .. ylb2(lvl) .. ']-30 [fg]enemy defense' end,
     ['rogue'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[light_bg]/[' .. ylb2(lvl) .. ']6 [fg]- [' .. ylb1(lvl) .. ']15%[light_bg]/[' .. ylb2(lvl) .. ']30% [fg]chance to crit to allied rogues, dealing [yellow]4x[] damage' end,
-    ['healer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+15%[light_bg]/[' .. ylb2(lvl) .. ']+30% [fg]healing effectiveness' end,
+    ['healer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+8%[light_bg]/[' .. ylb2(lvl) .. ']+16% [fg] chance for enemies to drop healing orbs on death' end,
     ['enchanter'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+15%[light_bg]/[' .. ylb2(lvl) .. ']+25% [fg]damage to all allies' end,
     ['nuker'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[light_bg]/[' .. ylb2(lvl) .. ']6 [fg]- [' .. ylb1(lvl) .. ']+15%[light_bg]/[' .. ylb2(lvl) .. ']+25% [fg]area damage and size to allied nukers' end,
     ['conjurer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+25%[light_bg]/[' .. ylb2(lvl) .. ']+50% [fg]summon damage and duration' end,
@@ -1545,14 +1547,31 @@ function init()
   -- main:go_to('buy_screen', 7, run.units or {}, {'unleash'})
   
   --[[
+  gold = 10
+  run_passive_pool = {
+    'centipede', 'ouroboros_technique_r', 'ouroboros_technique_l', 'amplify', 'resonance', 'ballista', 'call_of_the_void', 'crucio', 'speed_3', 'damage_4', 'shoot_5', 'death_6', 'lasting_7',
+    'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'hextouch', 'whispers_of_doom',
+    'tremor', 'heavy_impact', 'fracture', 'meat_shield', 'hive', 'baneling_burst', 'blunt_arrow', 'explosive_arrow', 'divine_machine_arrow', 'chronomancy', 'awakening', 'divine_punishment',
+    'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
+    'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance', 'blessing', 'haste', 'divine_barrage', 'orbitism', 'psyker_orbs', 'psychosense', 'rearm', 'taunt', 'summon_instability',
+  }
   main:add(Arena'arena')
-  main:go_to('arena', 10, {
+  main:go_to('arena', 3, {
     {character = 'illusionist', level = 2},
     -- {character = 'carver', level = 2},
     {character = 'engineer', level = 2},
     -- {character = 'saboteur', level = 2},
     -- {character = 'hunter', level = 2},
-  }, {{passive = 'summon_instability', level = 3}})
+  }, {
+    {passive = 'summon_instability', level = 3},
+    {passive = 'summon_instability', level = 3},
+    {passive = 'summon_instability', level = 3},
+    {passive = 'summon_instability', level = 3},
+    {passive = 'summon_instability', level = 3},
+    {passive = 'summon_instability', level = 3},
+    {passive = 'summon_instability', level = 3},
+    {passive = 'summon_instability', level = 3},
+  })
   ]]--
 
   --[[
@@ -1851,6 +1870,7 @@ function open_options(self)
         current_new_game_plus = math.clamp(current_new_game_plus - 1, 0, 5)
         state.current_new_game_plus = current_new_game_plus
         self.ng_t.text:set_text({{text = '[bg10]current: ' .. current_new_game_plus, font = pixul_font, alignment = 'center'}})
+        max_units = 7 + current_new_game_plus
       end}
 
       self.ng_plus_plus_button = Button{group = self.ui, x = gw/2 + 5, y = gh - 50, force_update = true, button_text = 'NG+ up', fg_color = 'bg10', bg_color = 'bg', action = function(b)
@@ -1860,6 +1880,7 @@ function open_options(self)
         current_new_game_plus = math.clamp(current_new_game_plus + 1, 0, new_game_plus)
         state.current_new_game_plus = current_new_game_plus
         self.ng_t.text:set_text({{text = '[bg10]current: ' .. current_new_game_plus, font = pixul_font, alignment = 'center'}})
+        max_units = 7 + current_new_game_plus
       end}
     end
 
