@@ -163,7 +163,7 @@ function BuyScreen:on_enter(from, level, units, passives, shop_level, shop_xp)
     b.info_text = nil
   end}
 
-  trigger:tween(1, main_song_instance, {volume = 0.2}, math.linear)
+  trigger:tween(1, main_song_instance, {volume = 0.2, pitch = 1}, math.linear)
 
   --[[
   if self.level == 1 then
@@ -1439,7 +1439,7 @@ function ItemCard:update(dt)
     _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     self.parent:gain_gold((self.level == 1 and 10) or (self.level == 2 and 20) or (self.level == 3 and 30))
     table.remove(self.parent.passives, self.i)
-    self:die()
+    input.m2.pressed = false
     self.parent:set_items()
     system.save_run(self.parent.level, gold, self.parent.units, self.parent.passives, self.parent.shop_level, self.parent.shop_xp, run_passive_pool, locked_state)
   end

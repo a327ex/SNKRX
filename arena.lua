@@ -398,7 +398,9 @@ function Arena:update(dt)
   end
 
   self:update_game_object(dt*slow_amount)
-  main_song_instance.pitch = math.clamp(slow_amount*self.main_slow_amount, 0.05, 1)
+  if not self.slow_transitioning then
+    main_song_instance.pitch = math.clamp(slow_amount*self.main_slow_amount, 0.05, 1)
+  end
 
   star_group:update(dt*slow_amount)
   self.floor:update(dt*slow_amount)
@@ -645,6 +647,7 @@ function Arena:quit()
     if not self.arena_clear_text then self.arena_clear_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 48, lines = {{text = '[wavy_mid, cbyc]arena clear!', font = fat_font, alignment = 'center'}}} end
     self:gain_gold()
     self.t:after(2, function()
+      self.slow_transitioning = true
       self.t:tween(0.7, self, {main_slow_amount = 0}, math.linear, function() self.main_slow_amount = 0 end)
     end)
     self.t:after(3, function()

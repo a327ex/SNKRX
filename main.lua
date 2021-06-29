@@ -1542,8 +1542,8 @@ function init()
   --[[
   main:add(BuyScreen'buy_screen')
   main:go_to('buy_screen', run.level or 1, run.units or {}, passives, run.shop_level or 1, run.shop_xp or 0)
-  ]]--
   -- main:go_to('buy_screen', 7, run.units or {}, {'unleash'})
+  ]]--
   
   --[[
   gold = 10
@@ -1555,10 +1555,10 @@ function init()
     'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance', 'blessing', 'haste', 'divine_barrage', 'orbitism', 'psyker_orbs', 'psychosense', 'rearm', 'taunt', 'summon_instability',
   }
   main:add(Arena'arena')
-  main:go_to('arena', 3, {
-    {character = 'illusionist', level = 2},
+  main:go_to('arena', 1, {
+    {character = 'vagrant', level = 3},
     -- {character = 'carver', level = 2},
-    {character = 'engineer', level = 2},
+    {character = 'dual_gunner', level = 3},
     -- {character = 'saboteur', level = 2},
     -- {character = 'hunter', level = 2},
   }, {

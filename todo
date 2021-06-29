@@ -17,6 +17,8 @@ Loop Update
       Warping Shots - X/Y/Z% chance for projectiles to ignore wall collisions and warp around the screen 1/2/3 times
       Culling Strike - instantly kill elites below 10/20/30% max HP
       Lightning Strike - X/Y/Z% chance for attacks to create chain lightning, dealing 60/80/100% damage and hitting 2/3/4 enemies
+      Psycholeak - Position X generates 1 additional orb every Y seconds
+      Divine Blessing - generate 1 healing orb every X seconds
   Psyker
     Additional orbs will prefer to be assigned to psykers, if there are no psykers then they will be assigned randomly
     Orb speed scales with the unit's attack speed
