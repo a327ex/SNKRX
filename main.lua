@@ -231,7 +231,7 @@ function init()
     ['voider'] = purple2[0],
     ['sorcerer'] = blue2[0],
     ['mercenary'] = yellow2[0],
-    ['explorer'] = fg[0],
+    ['explorer'] = fg_alt[0],
   }
 
   class_color_strings = {
@@ -250,7 +250,7 @@ function init()
     ['voider'] = 'purple2',
     ['sorcerer'] = 'blue2',
     ['mercenary'] = 'yellow2',
-    ['explorer'] = 'fg',
+    ['explorer'] = 'fg_alt',
   }
 
   character_names = {
@@ -311,7 +311,7 @@ function init()
   }
 
   character_colors = {
-    ['vagrant'] = fg[0],
+    ['vagrant'] = fg_alt[0],
     ['swordsman'] = yellow[0],
     ['wizard'] = blue[0],
     ['magician'] = blue[0],
@@ -368,7 +368,7 @@ function init()
   }
 
   character_color_strings = {
-    ['vagrant'] = 'fg',
+    ['vagrant'] = 'fg_alt',
     ['swordsman'] = 'yellow',
     ['wizard'] = 'blue',
     ['magician'] = 'blue',
@@ -483,7 +483,7 @@ function init()
 
 
   character_class_strings = {
-    ['vagrant'] = '[fg]Explorer, Psyker',
+    ['vagrant'] = '[fg_alt]Explorer, [fg]Psyker',
     ['swordsman'] = '[yellow]Warrior',
     ['wizard'] = '[blue]Mage, [red]Nuker',
     ['magician'] = '[blue]Mage',

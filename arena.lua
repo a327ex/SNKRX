@@ -330,10 +330,6 @@ function Arena:on_enter(from, level, loop, units, passives, shop_level, shop_xp,
     self.t:after(1.125 + math.floor(n/4)*0.25, function() self.spawning_enemies = false end, 'spawning_enemies')
     self.enemy_spawns_prevented = 0
   end)
-
-  self.level = 25*(self.loop+1)
-  self.won = true
-  self:quit()
 end
 
 
