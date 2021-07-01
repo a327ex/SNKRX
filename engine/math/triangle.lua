@@ -14,7 +14,7 @@ function Triangle:init(x, y, w, h)
 end
 
 
--- An equilateral triangle class. This is a tringle with size w centered on x, y pointed to the right (angle 0).
+-- An equilateral triangle class. This is a triangle with size w centered on x, y pointed to the right (angle 0).
 -- Implements every function that Polygon does.
 EquilateralTriangle = Object:extend()
 EquilateralTriangle:implement(Polygon)
