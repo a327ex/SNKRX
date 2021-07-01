@@ -1394,6 +1394,16 @@ function init()
     [25] = {100, 100},
   }
 
+  local k = 1
+  for i = 26, 5000 do
+    local n = i % 25
+    if n == 0 then
+      n = 25
+      k = k + 1
+    end
+    level_to_gold_gained[i] = {level_to_gold_gained[n][1]*k, level_to_gold_gained[n][2]*k}
+  end
+
   level_to_elite_spawn_weights = {
     [1] = {0},
     [2] = {4, 2},
@@ -1422,6 +1432,25 @@ function init()
     [25] = {5, 5, 5, 5, 5, 5},
   }
 
+  local k = 1
+  local l = 0.2
+  for i = 26, 5000 do
+    local n = i % 25
+    if n == 0 then
+      n = 25
+      k = k + 1
+      l = l*2
+    end
+    local a, b, c, d, e, f = unpack(level_to_elite_spawn_weights[n])
+    a = (a or 0) + (a or 0)*l
+    b = (b or 0) + (b or 0)*l
+    c = (c or 0) + (c or 0)*l
+    d = (d or 0) + (d or 0)*l
+    e = (e or 0) + (e or 0)*l
+    f = (f or 0) + (f or 0)*l
+    level_to_elite_spawn_weights[i] = {a, b, c, d, e, f}
+  end
+
   level_to_boss = {
     [6] = 'speed_booster',
     [12] = 'exploder',
@@ -1429,6 +1458,17 @@ function init()
     [24] = 'forcer',
     [25] = 'randomizer',
   }
+
+  local bosses = {'speed_booster', 'exploder', 'swarmer', 'forcer'}
+  local k = 1
+  for i = 30, 5000, 6 do
+    level_to_boss[i] = bosses[k]
+    k = k + 1
+    if k > 4 then k = 1 end
+  end
+  for i = 50, 5000, 25 do
+    level_to_boss[i] = 'randomizer'
+  end
 
   level_to_elite_spawn_types = {
     [1] = {'speed_booster'},
@@ -1457,6 +1497,14 @@ function init()
     [24] = {'tank'},
     [25] = {'speed_booster', 'exploder', 'headbutter', 'tank', 'shooter', 'spawner'},
   }
+
+  for i = 26, 5000 do
+    local n = i % 25
+    if n == 0 then
+      n = 25
+    end
+    level_to_elite_spawn_types[i] = level_to_elite_spawn_types[n]
+  end
 
   level_to_shop_odds = {
     [1] = {70, 20, 10, 0},
@@ -1531,7 +1579,7 @@ function init()
   if not state.new_game_plus then state.new_game_plus = new_game_plus end
   current_new_game_plus = state.current_new_game_plus or new_game_plus
   if not state.current_new_game_plus then state.current_new_game_plus = current_new_game_plus end
-  max_units = 7 + current_new_game_plus
+  max_units = math.clamp(7 + current_new_game_plus, 7, 12)
 
   main_song_instance = _G[random:table{'song1', 'song2', 'song3', 'song4', 'song5'}]:play{volume = 0.5}
   main = Main()
@@ -1870,6 +1918,7 @@ function open_options(self)
         state.current_new_game_plus = current_new_game_plus
         self.ng_t.text:set_text({{text = '[bg10]current: ' .. current_new_game_plus, font = pixul_font, alignment = 'center'}})
         max_units = 7 + current_new_game_plus
+        system.save_run()
       end}
 
       self.ng_plus_plus_button = Button{group = self.ui, x = gw/2 + 5, y = gh - 50, force_update = true, button_text = 'NG+ up', fg_color = 'bg10', bg_color = 'bg', action = function(b)
@@ -1880,6 +1929,7 @@ function open_options(self)
         state.current_new_game_plus = current_new_game_plus
         self.ng_t.text:set_text({{text = '[bg10]current: ' .. current_new_game_plus, font = pixul_font, alignment = 'center'}})
         max_units = 7 + current_new_game_plus
+        system.save_run()
       end}
     end
 

@@ -13,6 +13,9 @@ function Seeker:init(args)
     self:calculate_stats(true)
     self:set_as_steerable(self.v, 1000, 2*math.pi, 2)
 
+    local level = self.level % 25
+    if level == 0 then self.level = 25*math.floor(self.level/25) end
+
     if self.boss == 'speed_booster' then
       self.color = green[0]:clone()
       self.t:every(8, function()

@@ -42,12 +42,12 @@ Loop Update
     Saboteur -> Bomber (builder, nuker): plants a static bomb, when it explodes it deals 2X AoE damage, Lv.3 effect: 100% increased bomb area and damage
     Hunter (builder, ranger, forcer): shoots a projectile that has 20% chance to spawn a pet, Lv.3 effect: spawns 3 pets instead
   Looping
-    Change end screen
-    Loop button on end screen
-    Looping lets you continue with the current snake until you die
-    Difficulty is increased according to the formula for levels 25+
-    Snake size goes up by 1 every loop, up to 12
-    Don't offer items if item slots are full
+    * Change end screen
+    * Loop button on end screen
+    * Looping lets you continue with the current snake until you die
+    * Difficulty is increased according to the formula for levels 25+
+    * Snake size goes up by 1 every loop, up to 12
+    * Don't offer items if at maximum items
   QoL
     Increase item choice slots to 4
     Add option for mouse cursor to always be visible
@@ -55,8 +55,8 @@ Loop Update
     Add visuals divine intervention, fairy buff
     warrior attack range
     barbarian jugg attack
-    Items on end screen
     Party + items on death screen
+    * Items on end screen
     * Items on passive screen
     * Selling items
     * Decreased sound effect volume for shoot 5

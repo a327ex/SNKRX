@@ -3384,7 +3384,7 @@ function Gold:update(dt)
   self:update_game_object(dt)
   self.r = self:get_angle()
 
-  if main.current.player.magnetism then
+  if main.current.player.magnetism and self.magnet_sensor then
     local players = self:get_objects_in_shape(self.magnet_sensor, {Player})
     if players and #players > 0 then
       local x, y = 0, 0

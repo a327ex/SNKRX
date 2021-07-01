@@ -111,8 +111,8 @@ end
 
 function Star:update(dt)
   self:update_game_object(dt)
-  self.x = self.x + self.v*math.cos(-math.pi/4)
-  self.y = self.y + self.v*math.sin(-math.pi/4)
+  self.x = self.x + self.v*math.cos(-math.pi/4)*dt
+  self.y = self.y + self.v*math.sin(-math.pi/4)*dt
   self.vr = self.vr + self.dvr*dt
   if self.x > gw + 64 then self.dead = true end
 end
@@ -569,7 +569,7 @@ global_text_tags = {
 
   cbyc3 = TextTag{init = function(c, i, text)
     c.color = invisible
-    text.t:after((i-1)*0.05, function()
+    text.t:after((i-1)*0.025, function()
       c.color = bg[10]
     end)
   end, draw = function(c, i, text)
