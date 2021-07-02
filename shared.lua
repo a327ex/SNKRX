@@ -105,7 +105,7 @@ function Star:init(args)
   self.sx, self.sy = 0.35, 0.35
   self.vr = 0
   self.dvr = random:float(0, math.pi/4)
-  self.v = random:float(0.5, 0.7)
+  self.v = random:float(100, 140)
 end
 
 
