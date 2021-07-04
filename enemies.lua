@@ -195,6 +195,7 @@ function Seeker:init(args)
       if self.headbutt_charging or self.headbutting then return end
       self.headbutt_charging = true
       self.t:tween(2, self.color, {r = fg[0].r, b = fg[0].b, g = fg[0].g}, math.cubic_in_out, function()
+        if self.silenced or self.barbarian_stunned then return end
         self.t:tween(0.25, self.color, {r = orange[0].r, b = orange[0].b, g = orange[0].g}, math.linear)
         self.headbutt_charging = false
         headbutt1:play{pitch = random:float(0.95, 1.05), volume = 0.2}

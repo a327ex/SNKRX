@@ -47,8 +47,6 @@ function BuyScreen:on_enter(from, level, loop, units, passives, shop_level, shop
   self.shop_xp = shop_xp
   camera.x, camera.y = gw/2, gh/2
 
-  print(self.loop)
-
   input:set_mouse_visible(true)
 
   steam.friends.setRichPresence('steam_display', '#StatusFull')
