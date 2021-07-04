@@ -136,6 +136,7 @@ function BuyScreen:on_enter(from, level, loop, units, passives, shop_level, shop
     locked_state = nil
     TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = state.dark_transitions and bg[-2] or fg[0], transition_action = function()
       slow_amount = 1
+      music_slow_amount = 1
       gold = 3
       passives = {}
       main_song_instance:stop()
@@ -144,7 +145,9 @@ function BuyScreen:on_enter(from, level, loop, units, passives, shop_level, shop
         'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'hextouch', 'whispers_of_doom',
         'tremor', 'heavy_impact', 'fracture', 'meat_shield', 'hive', 'baneling_burst', 'blunt_arrow', 'explosive_arrow', 'divine_machine_arrow', 'chronomancy', 'awakening', 'divine_punishment',
         'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
-        'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance', 'blessing', 'haste', 'divine_barrage', 'orbitism', 'psyker_orbs', 'psychosense', 'rearm', 'taunt', 'summon_instability',
+        'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance', 'blessing', 'haste', 'divine_barrage', 'orbitism', 'psyker_orbs', 'psychosink', 'rearm', 'taunt', 'construct_instability',
+        'intimidation', 'vulnerability', 'temporal_chains', 'ceremonial_dagger', 'homing_barrage', 'critical_strike', 'noxious_strike', 'infesting_strike', 'burning_strike', 'lucky_strike', 'healing_strike', 'stunning_strike',
+        'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 
       }
       max_units = math.clamp(7 + current_new_game_plus + self.loop, 7, 12)
       main:add(BuyScreen'buy_screen')
@@ -539,6 +542,7 @@ function RestartButton:update(dt)
     ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = state.dark_transitions and bg[-2] or fg[0], transition_action = function()
       slow_amount = 1
+      music_slow_amount = 1
       gold = 3
       passives = {}
       main_song_instance:stop()
@@ -547,7 +551,9 @@ function RestartButton:update(dt)
         'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'hextouch', 'whispers_of_doom',
         'tremor', 'heavy_impact', 'fracture', 'meat_shield', 'hive', 'baneling_burst', 'blunt_arrow', 'explosive_arrow', 'divine_machine_arrow', 'chronomancy', 'awakening', 'divine_punishment',
         'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
-        'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance', 'blessing', 'haste', 'divine_barrage', 'orbitism', 'psyker_orbs', 'psychosense', 'rearm', 'taunt', 'summon_instability',
+        'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance', 'blessing', 'haste', 'divine_barrage', 'orbitism', 'psyker_orbs', 'psychosink', 'rearm', 'taunt', 'construct_instability',
+        'intimidation', 'vulnerability', 'temporal_chains', 'ceremonial_dagger', 'homing_barrage', 'critical_strike', 'noxious_strike', 'infesting_strike', 'burning_strike', 'lucky_strike', 'healing_strike', 'stunning_strike',
+        'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 
       }
       system.save_state()
       main:add(BuyScreen'buy_screen')
@@ -1326,8 +1332,9 @@ function PassiveCard:update(dt)
     self.arena.choosing_passives = false
     table.insert(self.arena.passives, {passive = self.passive, level = 1, xp = 0})
     self.arena:restore_passives_to_pool(self.card_i)
-    trigger:tween(0.25, _G, {slow_amount = 1}, math.linear, function()
+    trigger:tween(0.25, _G, {slow_amount = 1, music_slow_amount = 1}, math.linear, function()
       slow_amount = 1
+      music_slow_amount = 1
       self.arena:transition()
     end)
     ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}

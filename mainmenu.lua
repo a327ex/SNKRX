@@ -63,7 +63,7 @@ function MainMenu:on_enter(from)
   end)
 
   self.units = {
-    {character = 'vagrant', level = 1},
+    {character = 'psykino', level = 1},
     {character = 'magician', level = 1},
     {character = 'bane', level = 1},
     {character = 'scout', level = 1},

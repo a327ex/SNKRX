@@ -1,46 +1,48 @@
 Loop Update
   New items:
     General:
-      Intimidation - enemies spawn with -10/20/30% max HP
-      Vulnerability - enemies take +10/20/30% damage
-      Ceremonial Dagger - killing an enemy fires a homing dagger
-      Homing Barrage - X/Y/Z% chance to release a homing barrage on enemy kill
-      Critical Strike - X/Y/Z% chance for attacks to critically strike, dealing 2x damage
-      Noxious Strike - X/Y/Z% chance for attacks to poison enemies, dealing 20% damage per second for 3 seconds
-      Infesting Strike - X/Y/Z% chance for attacks to spawn 2 critters on kill
-      Kinetic Strike - X/Y/Z% chance for attacks to push enemies away with high force
-      Burning Strike - X% chance for attacks to ignite, dealing 20% dps for 3 seconds, ignited enemies ignite nearby enemies on death
-      Lucky Strike - X% chance for attacks to cause enemies to drop gold on death
-      Healing Strike - X% chance for attacks to spawn a healing orb on kill
-      Stunning Strike - X/Y/Z% chance for attacks to stun for 2 seconds
-      Silencing Strike - X/Y/Z% chance for attacks to silence on hit
-      Warping Shots - X/Y/Z% chance for projectiles to ignore wall collisions and warp around the screen 1/2/3 times
-      Culling Strike - instantly kill elites below 10/20/30% max HP
-      Lightning Strike - X/Y/Z% chance for attacks to create chain lightning, dealing 60/80/100% damage and hitting 2/3/4 enemies
-      Psycholeak - Position X generates 1 additional orb every Y seconds
-      Divine Blessing - generate 1 healing orb every X seconds
+      * Intimidation - enemies spawn with -10/20/30% max HP
+      * Vulnerability - enemies take +10/20/30% damage
+      * Temporal Chains - enemies are 10/20/30% slower
+      * Ceremonial Dagger - killing an enemy fires a homing dagger
+      * Homing Barrage - 8/16/24% chance to release a homing barrage on enemy kill
+      * Critical Strike - 5/10/15% chance for attacks to critically strike, dealing 2x damage
+      * Noxious Strike - 8/16/24% chance for attacks to poison enemies, dealing 20% dps for 3 seconds
+      * Infesting Strike - 10/20/30% chance for attacks to spawn 2 critters on kill
+      * Kinetic Strike - 10/20/30% chance for attacks to push enemies away with high force
+      * Burning Strike - 15% chance for attacks to ignite, dealing 20% dps for 3 seconds
+      * Lucky Strike - 8% chance for attacks to cause enemies to drop gold on death
+      * Healing Strike - 8% chance for attacks to spawn a healing orb on kill
+      * Stunning Strike - 8/16/24% chance for attacks to stun for 2 seconds
+      * Silencing Strike - 8/16/24% chance for attacks to silence for 4 seconds on hit
+      * Culling Strike - instantly kill elites below 10/20/30% max HP
+      * Lightning Strike - 5/10/15% chance for projectiles to create chain lightning, dealing 60/80/100% damage
+      * Psycholeak - position 1 generates 1 psyker orb every 10 seconds
+      * Divine Blessing - generate 1 healing orb every 8 seconds
+      * Hardening - +150% defense for 3 seconds after an ally dies
   Psyker
-    Additional orbs will prefer to be assigned to psykers, if there are no psykers then they will be assigned randomly
-    Orb speed scales with the unit's attack speed
-    Increase default orb range
-    Decrease default and maximum orb speed
-    Increased orb damage
-    Psyker class bonus: +2/+4 total orbs
-    Remove Psychosense
-    Add "Orbs shoot projectiles"
+    * Orb speed scales with the unit's attack speed
+    * Increased default orb range
+    * Decreased default orb speed
+    * Additional psyker orbs will prefer to be assigned to psykers, if there are no psykers then they will be assigned to units randomly
+    * Changed psyker class bonus: +2/4 total orbs
+    * Removed Psychosense
+    * Added Psychosink - psyker orbs deal +40/80/120% damage
   Healer
-    Double healing per orb
-    Fix heal targetting, should always target lowest HP unit
-    Some solution that:
-      Increases amount of orbs dropped with only 1 or 2 healers
-      Decreases amount of orbs dropped on full build
-    Healing orbs are slightly attracted to the snake
+    * Double healing per orb
+    * Fixed heal targetting, now it should always target the lowest HP unit
+    * Healing orbs and gold coins are now slightly attracted to the snake with a weak magnetism effect
+    * Changed healer class bonus: +15/30% chance to create an additional healing orb on healing orb creation
+    * Psykeeper: spawn 3 healing orbs every time the psykeeper takes 25% of max HP in damage
+  Warriors
+    * Decreased sensor range for all warriors, this will make them attack only when enemies are closer and consequently make it so that they hit more enemies in general
+    * Juggernaut and barbarian now only attack when there are enemies nearby
   Builders
-    Carver (builder, healer) - every 12 seconds, creates a tree that drops 3 healing orbs, Lv.3 effect: drops 6 healing orbs instead
-    Engineer (builder) - unchanged
-    Illusionist -> Golemancer (builder, sorcerer): spawns 1 golem every 6 seconds, it shoots 2 rocks that deal X damage each, Lv.3 effect: golem rocks stun enemies for 2 seconds
-    Saboteur -> Bomber (builder, nuker): plants a static bomb, when it explodes it deals 2X AoE damage, Lv.3 effect: 100% increased bomb area and damage
-    Hunter (builder, ranger, forcer): shoots a projectile that has 20% chance to spawn a pet, Lv.3 effect: spawns 3 pets instead
+    * Carver (builder, healer) - creates a tree that creates 1 healing orb every 6 seconds, Lv.3 effect: healing orbs are created twice as fast
+    * Engineer (builder): unchanged
+    * Illusionist -> Artificer (builder, sorcerer): unchanged
+    * Saboteur -> Bomber (builder, nuker): plants a bomb, when it explodes it deals 2X AoE damage, Lv.3 effect: +100% bomb area and damage
+    * Hunter -> Sentry (builder, ranger): spawns a turret that shoots projectiles, each dealing X damage, Lv.3 effect: +50% attack speed and the projectiles ricochet twice
   Looping
     * Change end screen
     * Loop button on end screen
@@ -49,13 +51,12 @@ Loop Update
     * Snake size goes up by 1 every loop, up to 12
     * Don't offer items if at maximum items
   QoL
-    Increase item choice slots to 4
-    Add option for mouse cursor to always be visible
-    Show cooldown on elite attack
-    Add visuals divine intervention, fairy buff
-    warrior attack range
-    barbarian jugg attack
-    Party + items on death screen
+    Default to mouse controls
+    * Show cooldown on elite attack
+    * Added visuals for divine intervention and fairy buffs
+    * Increased item choice slots to 4
+    * Party + items on death screen
+    * Silenced units are now gray
     * Items on end screen
     * Items on passive screen
     * Selling items
@@ -71,6 +72,10 @@ Loop Update
     * Fixed shop party numbers not being updated when units are bought or sold
     * Fixed a bug where movement speed would become zero if the game was paused while under the effects of decaying haste
     * Fixed baneling burst not dealing the correct amount of damage
+
+
+Weekly maintenance updates:
+
 
 ---
 
@@ -120,6 +125,7 @@ Enemy ideas - https://steamcommunity.com/app/915310/discussions/0/30697477836918
 Unit ideas - https://i.imgur.com/VNMS2YV.png
 Unit ideas - https://steamcommunity.com/app/915310/discussions/0/3069747783693969554/
 Unit ideas - https://steamcommunity.com/app/915310/discussions/0/3046104336668792953/
+Achievement ideas - https://i.imgur.com/Q7jHWB2.png, https://i.imgur.com/2l5eist.png
 
 Draft system
 Ban system
