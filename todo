@@ -51,7 +51,7 @@ Loop Update
     * Snake size goes up by 1 every loop, up to 12
     * Don't offer items if at maximum items
   QoL
-    Default to mouse controls
+    * Right click goes down on volume buttons
     * Show cooldown on elite attack
     * Added visuals for divine intervention and fairy buffs
     * Increased item choice slots to 4

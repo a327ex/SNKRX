@@ -869,7 +869,7 @@ function init()
     ['jester'] = function() return '[light_bg]curses 6 enemies and all knives seek enemies and pierce 2 times' end,
     ['assassin'] = function() return '[light_bg]poison inflicted from crits deals 8x damage' end,
     ['host'] = function() return '[light_bg]+100% critter spawn rate and spawn 2 critters instead' end,
-    ['carver'] = function() return '[light_bg]carves a tree that heals twice as fast, in a bigger area, and heals 2 units instead' end,
+    ['carver'] = function() return '[light_bg]carves a tree that creates healing orbs twice as fast' end,
     ['bane'] = function() return "[light_bg]100% increased area for bane's void rifts" end,
     ['psykino'] = function() return '[light_bg]enemies take ' .. 4*get_character_stat('psykino', 3, 'dmg') .. ' damage and are pushed away when the area expires' end,
     ['barrager'] = function() return '[light_bg]every 3rd attack the barrage shoots 15 projectiles and they push harder' end,
@@ -1581,15 +1581,19 @@ function init()
     [25] = 'randomizer',
   }
 
-  local bosses = {'speed_booster', 'exploder', 'swarmer', 'forcer'}
+  local bosses = {'speed_booster', 'exploder', 'swarmer', 'forcer', 'randomizer'}
+  level_to_boss[31] = 'speed_booster'
+  level_to_boss[37] = 'exploder'
+  level_to_boss[43] = 'swarmer'
+  level_to_boss[49] = 'forcer'
+  level_to_boss[50] = 'randomizer'
+  local i = 31
   local k = 1
-  for i = 30, 5000, 6 do
+  while i < 5000 do
     level_to_boss[i] = bosses[k]
     k = k + 1
-    if k > 4 then k = 1 end
-  end
-  for i = 50, 5000, 25 do
-    level_to_boss[i] = 'randomizer'
+    if k == 5 then i = i + 1 else i = i + 6 end
+    if k == 6 then k = 1 end
   end
 
   level_to_elite_spawn_types = {
@@ -1940,7 +1944,17 @@ function open_options(self)
       b.selected = true
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       sfx.volume = sfx.volume + 0.1
-      if sfx.volume > 1 then sfx.volume = 0 end
+      if sfx.volume > 1 then sfx.volume = 1 end
+      state.sfx_volume = sfx.volume
+      b:set_text('sfx volume: ' .. tostring((state.sfx_volume or 0.5)*10))
+    end,
+    action_2 = function(b)
+      ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      b.spring:pull(0.2, 200, 10)
+      b.selected = true
+      ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      sfx.volume = sfx.volume - 0.1
+      if sfx.volume <= 0 then sfx.volume = 0 end
       state.sfx_volume = sfx.volume
       b:set_text('sfx volume: ' .. tostring((state.sfx_volume or 0.5)*10))
     end}
@@ -1952,7 +1966,17 @@ function open_options(self)
       b.selected = true
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       music.volume = music.volume + 0.1
-      if music.volume > 1 then music.volume = 0 end
+      if music.volume > 1 then music.volume = 1 end
+      state.music_volume = music.volume
+      b:set_text('music volume: ' .. tostring((state.music_volume or 0.5)*10))
+    end,
+    action_2 = function(b)
+      ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      b.spring:pull(0.2, 200, 10)
+      b.selected = true
+      ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      music.volume = music.volume - 0.1
+      if music.volume <= 0 then music.volume = 0 end
       state.music_volume = music.volume
       b:set_text('music volume: ' .. tostring((state.music_volume or 0.5)*10))
     end}

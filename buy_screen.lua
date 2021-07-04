@@ -623,7 +623,14 @@ function Button:update(dt)
     end
   else
     if self.selected and input.m1.pressed then
-      self:action()
+      if self.action then
+        self:action()
+      end
+    end
+    if self.selected and input.m2.pressed then
+      if self.action_2 then
+        self:action_2()
+      end
     end
   end
 end
@@ -1974,7 +1981,7 @@ function ClassIcon:on_mouse_enter()
   local i, j, k, owned = class_set_numbers[self.class](self.units)
   self.info_text = InfoText{group = main.current.ui}
   self.info_text:activate({
-    {text = '[' .. class_color_strings[self.class] .. ']' .. self.class:capitalize() .. '[fg] - owned: [yellow]' .. owned, font = pixul_font, alignment = 'center', height_multiplier = 1.25},
+    {text = '[' .. class_color_strings[self.class] .. ']' .. (self.class == 'conjurer' and 'Builder' or self.class:capitalize()) .. '[fg] - owned: [yellow]' .. owned, font = pixul_font, alignment = 'center', height_multiplier = 1.25},
     {text = class_descriptions[self.class]((k and (owned >= k and 3)) or (owned >= j and 2) or (owned >= i and 1) or 0), font = pixul_font, alignment = 'center'},
   }, nil, nil, nil, nil, 16, 4, nil, 2)
   self.info_text.x, self.info_text.y = gw/2, gh/2 + 10

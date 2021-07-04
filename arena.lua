@@ -107,7 +107,7 @@ function Arena:on_enter(from, level, loop, units, passives, shop_level, shop_xp,
     -- self.level_1000_text2 = Text2{group = self.ui, x = gw/2, y = gh/2 + 64, lines = {{text = '[fg, wavy_mid]SNKRX', font = pixul_font, alignment = 'center'}}}
     -- Wall{group = self.main, vertices = math.to_rectangle_vertices(gw/2 - 0.45*self.level_1000_text.w, gh/2 - 0.3*self.level_1000_text.h, gw/2 + 0.45*self.level_1000_text.w, gh/2 - 3), snkrx = true, color = bg[-1]}
   
-  elseif self.level == 6 or self.level == 12 or self.level == 18 or self.level == 24 or self.level == 25 then
+  elseif (self.level - (25*self.loop)) % 6 == 0 or self.level % 25 == 0 then
     self.boss_level = true
     self.start_time = 3
     self.t:after(1, function()
@@ -222,7 +222,7 @@ function Arena:on_enter(from, level, loop, units, passives, shop_level, shop_xp,
           self.hfx:pull('condition2', 0.0625)
           self.t:after(0.5, function()
             if random:bool(self.level_to_distributed_enemies_chance[self.level]) then
-              local n = math.ceil((8 + (self.wave-1)*2)/7)
+              local n = math.ceil((8 + (self.wave+math.min(self.loop*6, 60)-1)*2)/7)
               for i = 1, n do
                 self.t:after((i-1)*2, function()
                   self:spawn_distributed_enemies()
@@ -235,7 +235,7 @@ function Arena:on_enter(from, level, loop, units, passives, shop_level, shop_xp,
               local spawn_points = {left = {x = self.x1 + 32, y = gh/2}, middle = {x = gw/2, y = gh/2}, right = {x = self.x2 - 32, y = gh/2}}
               local p = spawn_points[spawn_type]
               SpawnMarker{group = self.effects, x = p.x, y = p.y}
-              self.t:after(1.125, function() self:spawn_n_enemies(p, nil, 8 + (self.wave-1)*2) end)
+              self.t:after(1.125, function() self:spawn_n_enemies(p, nil, 8 + (self.wave+math.min(self.loop*12, 200)-1)*2) end)
             end
           end)
         end, self.max_waves+1)
@@ -982,6 +982,7 @@ function Arena:transition()
         self.shop_xp = 0
         self.shop_level = self.shop_level + 1
       end
+      if self.shop_level > 5 then self.shop_level = 5 end
     end
     slow_amount = 1
     music_slow_amount = 1

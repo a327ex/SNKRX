@@ -14,7 +14,7 @@ function Media:on_enter(from)
   graphics.set_background_color(blue[0])
   Text2{group = self.ui, x = gw/2, y = gh/2, lines = {
     {text = '[fg]SNKRX', font = fat_font, alignment = 'center', height_offset = -15},
-    {text = '[fg]orb update', font = pixul_font, alignment = 'center'},
+    {text = '[fg]loop update', font = pixul_font, alignment = 'center'},
   }}
 end
 

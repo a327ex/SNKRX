@@ -100,6 +100,7 @@ function MainMenu:on_enter(from)
       gold = run.gold or 3
       passives = run.passives or {}
       locked_state = run.locked_state
+      current_new_game_plus = run.current_new_game_plus or current_new_game_plus or 0
       system.save_state()
       main:add(BuyScreen'buy_screen')
       main:go_to('buy_screen', run.level or 1, run.loop or 0, run.units or {}, passives, run.shop_level or 1, run.shop_xp or 0)
