@@ -29,6 +29,7 @@ function shared_init()
   graphics.set_background_color(bg[0])
   graphics.set_color(fg[0])
   slow_amount = 1
+  music_slow_amount = 1
 
   sfx = SoundTag()
   sfx.volume = state.sfx_volume or 0.5
@@ -105,7 +106,7 @@ function Star:init(args)
   self.sx, self.sy = 0.35, 0.35
   self.vr = 0
   self.dvr = random:float(0, math.pi/4)
-  self.v = random:float(0.5, 0.7)
+  self.v = random:float(30, 42)
 end
 
 

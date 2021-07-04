@@ -380,6 +380,7 @@ function Arena:update(dt)
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = state.dark_transitions and bg[-2] or fg[0], transition_action = function()
         slow_amount = 1
+        music_slow_amount = 1
         gold = 3
         passives = {}
         main_song_instance:stop()
@@ -388,9 +389,9 @@ function Arena:update(dt)
           'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'hextouch', 'whispers_of_doom',
           'tremor', 'heavy_impact', 'fracture', 'meat_shield', 'hive', 'baneling_burst', 'blunt_arrow', 'explosive_arrow', 'divine_machine_arrow', 'chronomancy', 'awakening', 'divine_punishment',
           'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
-          'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance', 'blessing', 'haste', 'divine_barrage', 'orbitism', 'psyker_orbs', 'psychosense', 'rearm', 'taunt', 'construct_instability',
+          'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance', 'blessing', 'haste', 'divine_barrage', 'orbitism', 'psyker_orbs', 'psychosink', 'rearm', 'taunt', 'construct_instability',
           'intimidation', 'vulnerability', 'temporal_chains', 'ceremonial_dagger', 'homing_barrage', 'critical_strike', 'noxious_strike', 'infesting_strike', 'burning_strike', 'lucky_strike', 'healing_strike', 'stunning_strike',
-          'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing',
+          'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening',
         }
         max_units = math.clamp(7 + current_new_game_plus + self.loop, 7, 12)
         main:add(BuyScreen'buy_screen')
@@ -411,9 +412,7 @@ function Arena:update(dt)
   end
 
   self:update_game_object(dt*slow_amount)
-  if not self.slow_transitioning then
-    main_song_instance.pitch = math.clamp(slow_amount*self.main_slow_amount, 0.05, 1)
-  end
+  main_song_instance.pitch = math.clamp(slow_amount*music_slow_amount, 0.05, 1)
 
   star_group:update(dt*slow_amount)
   self.floor:update(dt*slow_amount)
@@ -446,6 +445,7 @@ function Arena:quit()
 
       system.save_run()
       trigger:tween(1, _G, {slow_amount = 0}, math.linear, function() slow_amount = 0 end, 'slow_amount')
+      trigger:tween(1, _G, {music_slow_amount = 0}, math.linear, function() music_slow_amount = 0 end, 'music_slow_amount')
       trigger:tween(4, camera, {x = gw/2, y = gh/2, r = 0}, math.linear, function() camera.x, camera.y, camera.r = gw/2, gh/2, 0 end)
       self.win_text = Text2{group = self.ui, x = gw/2 + 40, y = gh/2 - 69, force_update = true, lines = {{text = '[wavy_mid, cbyc2]congratulations!', font = fat_font, alignment = 'center'}}}
       trigger:after(2.5, function()
@@ -593,7 +593,7 @@ function Arena:quit()
         steam.userStats.storeStats()
       end
 
-      if self.psyker_level >= 1 then
+      if self.psyker_level >= 2 then
         state.achievement_psykers_win = true
         system.save_state()
         steam.userStats.setAchievement('PSYKERS_WIN')
@@ -684,6 +684,7 @@ function Arena:quit()
         input:set_mouse_visible(true)
         self.arena_clear_text.dead = true
         trigger:tween(1, _G, {slow_amount = 0}, math.linear, function() slow_amount = 0 end, 'slow_amount')
+        trigger:tween(1, _G, {music_slow_amount = 0}, math.linear, function() music_slow_amount = 0 end, 'music_slow_amount')
         trigger:tween(4, camera, {x = gw/2, y = gh/2, r = 0}, math.linear, function() camera.x, camera.y, camera.r = gw/2, gh/2, 0 end)
         self:set_passives()
         RerollButton{group = main.current.ui, x = gw - 40, y = gh - 40, parent = self, force_update = true}
@@ -713,34 +714,39 @@ function Arena:set_passives(from_reroll)
     if self.cards[1] then self.cards[1].dead = true end
     if self.cards[2] then self.cards[2].dead = true end
     if self.cards[3] then self.cards[3].dead = true end
+    if self.cards[4] then self.cards[4].dead = true end
     self.cards = {}
   end
 
-  local card_w, card_h = 100, 100
-  local w = 3*card_w + 2*20
+  local card_w, card_h = 70, 100
+  local w = 4*card_w + 3*20
   self.choosing_passives = true
   self.cards = {}
   local passive_1 = random:table_remove(run_passive_pool)
   local passive_2 = random:table_remove(run_passive_pool)
   local passive_3 = random:table_remove(run_passive_pool)
+  local passive_4 = random:table_remove(run_passive_pool)
   if passive_1 then
     table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 0*(card_w + 20) + card_w/2 + 45, y = gh/2 - 20, w = card_w, h = card_h, card_i = 1, arena = self, passive = passive_1, force_update = true})
   end
   if passive_2 then
-    table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 1*(card_w + 20) + card_w/2 + 45, y = gh/2 - 20, w = card_w, h = card_h, card_i = 2, arena = self, passive = passive_2, force_update = true})
+    table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 1*(card_w + 20) + card_w/2 + 45, y = gh/2, w = card_w, h = card_h, card_i = 2, arena = self, passive = passive_2, force_update = true})
   end
   if passive_3 then
     table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 2*(card_w + 20) + card_w/2 + 45, y = gh/2 - 20, w = card_w, h = card_h, card_i = 3, arena = self, passive = passive_3, force_update = true})
   end
+  if passive_4 then
+    table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 3*(card_w + 20) + card_w/2 + 45, y = gh/2, w = card_w, h = card_h, card_i = 4, arena = self, passive = passive_4, force_update = true})
+  end
   self.passive_text = Text2{group = self.ui, x = gw/2 + 45, y = gh/2 - 75, lines = {{text = '[fg, wavy]choose one', font = fat_font, alignment = 'center'}}}
-  if not passive_1 and not passive_2 and not passive_3 then
+  if not passive_1 and not passive_2 and not passive_3 and not passive_4 then
     self:transition()
   end
 end
 
 
 function Arena:restore_passives_to_pool(j)
-  for i = 1, 3 do
+  for i = 1, 4 do
     if i ~= j then
       if self.cards[i] then
         table.insert(run_passive_pool, self.cards[i].passive)
@@ -814,10 +820,22 @@ function Arena:die()
     locked_state = nil
     system.save_run()
     self.t:tween(2, self, {main_slow_amount = 0}, math.linear, function() self.main_slow_amount = 0 end)
+    self.t:tween(2, _G, {music_slow_amount = 0}, math.linear, function() music_slow_amount = 0 end)
     self.died_text = Text2{group = self.ui, x = gw/2, y = gh/2 - 32, lines = {
       {text = '[wavy_mid, cbyc]you died...', font = fat_font, alignment = 'center', height_multiplier = 1.25},
     }}
+    trigger:tween(2, camera, {x = gw/2, y = gh/2, r = 0}, math.linear, function() camera.x, camera.y, camera.r = gw/2, gh/2, 0 end)
     self.t:after(2, function()
+      self.build_text = Text2{group = self.ui, x = 40, y = 20, force_update = true, lines = {{text = "[wavy_mid, fg]your build", font = pixul_font, alignment = 'center'}}}
+      for i, unit in ipairs(self.units) do
+        CharacterPart{group = self.ui, x = 20, y = 40 + (i-1)*19, character = unit.character, level = unit.level, force_update = true, cant_click = true, parent = self}
+        Text2{group = self.ui, x = 20 + 14 + pixul_font:get_text_width(unit.character)/2, y = 40 + (i-1)*19, force_update = true, lines = {
+          {text = '[' .. character_color_strings[unit.character] .. ']' .. unit.character, font = pixul_font, alignment = 'left'}
+        }}
+      end
+      for i, passive in ipairs(self.passives) do
+        ItemCard{group = self.ui, x = 120 + (i-1)*30, y = 30, w = 30, h = 45, sx = 0.75, sy = 0.75, force_update = true, passive = passive.passive , level = passive.level, xp = passive.xp, parent = self}
+      end
       self.death_info_text = Text2{group = self.ui, x = gw/2, y = gh/2, sx = 0.7, sy = 0.7, lines = {
         {text = '[wavy_mid, fg]level reached: [wavy_mid, yellow]' .. self.level, font = fat_font, alignment = 'center'},
       }}
@@ -828,6 +846,7 @@ function Arena:die()
         ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
         TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = state.dark_transitions and bg[-2] or fg[0], transition_action = function()
           slow_amount = 1
+          music_slow_amount = 1
           gold = 3
           passives = {}
           main_song_instance:stop()
@@ -836,9 +855,9 @@ function Arena:die()
             'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'hextouch', 'whispers_of_doom',
             'tremor', 'heavy_impact', 'fracture', 'meat_shield', 'hive', 'baneling_burst', 'blunt_arrow', 'explosive_arrow', 'divine_machine_arrow', 'chronomancy', 'awakening', 'divine_punishment',
             'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
-            'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance', 'blessing', 'haste', 'divine_barrage', 'orbitism', 'psyker_orbs', 'psychosense', 'rearm', 'taunt', 'construct_instability',
+            'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance', 'blessing', 'haste', 'divine_barrage', 'orbitism', 'psyker_orbs', 'psychosink', 'rearm', 'taunt', 'construct_instability',
             'intimidation', 'vulnerability', 'temporal_chains', 'ceremonial_dagger', 'homing_barrage', 'critical_strike', 'noxious_strike', 'infesting_strike', 'burning_strike', 'lucky_strike', 'healing_strike', 'stunning_strike',
-            'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing',
+            'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening',
           }
           max_units = math.clamp(7 + current_new_game_plus + self.loop, 7, 12)
           main:add(BuyScreen'buy_screen')
@@ -965,6 +984,7 @@ function Arena:transition()
       end
     end
     slow_amount = 1
+    music_slow_amount = 1
     main:add(BuyScreen'buy_screen')
     system.save_run(self.level+1, self.loop, gold, self.units, self.passives, self.shop_level, self.shop_xp, run_passive_pool, locked_state)
     main:go_to('buy_screen', self.level+1, self.loop, self.units, self.passives, self.shop_level, self.shop_xp)

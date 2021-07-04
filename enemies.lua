@@ -29,7 +29,7 @@ function Seeker:init(args)
             enemy:speed_boost(3 + self.level*0.025 + current_new_game_plus*0.1)
           end
         end
-      end)
+      end, nil, nil, 'boss_attack')
 
     elseif self.boss == 'forcer' then
       self.color = yellow[0]:clone()
@@ -76,7 +76,7 @@ function Seeker:init(args)
           end
           self.px, self.py = nil, nil
         end)
-      end)
+      end, nil, nil, 'boss_attack')
 
     elseif self.boss == 'swarmer' then
       self.color = purple[0]:clone()
@@ -92,7 +92,7 @@ function Seeker:init(args)
           critter3:play{pitch = random:float(0.95, 1.05), volume = 0.6}
           for i = 1, random:int(4, 6) do EnemyCritter{group = main.current.main, x = enemy.x, y = enemy.y, color = purple[0], r = random:float(0, 2*math.pi), v = 8 + 0.1*enemy.level, dmg = 2*enemy.dmg} end
         end
-      end)
+      end, nil, nil, 'boss_attack')
 
     elseif self.boss == 'exploder' then
       self.color = blue[0]:clone()
@@ -107,7 +107,7 @@ function Seeker:init(args)
           mine1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
           ExploderMine{group = main.current.main, x = enemy.x, y = enemy.y, color = blue[0], parent = enemy}
         end
-      end)
+      end, nil, nil, 'boss_attack')
 
     elseif self.boss == 'randomizer' then
       self.t:every_immediate(0.07, function() self.color = _G[random:table{'green', 'purple', 'yellow', 'blue'}][0]:clone() end)
@@ -158,7 +158,7 @@ function Seeker:init(args)
             end
           end
         end
-      end)
+      end, nil, nil, 'boss_attack')
     end
 
   else
@@ -355,6 +355,13 @@ function Seeker:draw()
     end
   graphics.pop()
 
+  if self.boss then
+    local t, c = self.t:get_timer_and_delay('boss_attack')
+    local n = t/c
+    graphics.line(self.x - self.shape.w/2, self.y + 8, self.x + self.shape.w/2, self.y + 8, bg[-3], 2)
+    graphics.line(self.x - self.shape.w/2, self.y + 8, self.x - self.shape.w/2 + self.shape.w*n, self.y + 8, self.color, 2)
+  end
+
   if self.px and self.py then
     if self.phidden then return end
     graphics.push(self.px, self.py, self.vr, self.spring.x, self.spring.x)
@@ -546,6 +553,7 @@ function Seeker:hit(damage, projectile, dot, from_enemy)
       end
     end
 
+    --[[
     if main.current.healer_level > 0 then
       if random:bool((main.current.healer_level == 2 and 16) or (main.current.healer_level == 1 and 8) or 0) then
         trigger:after(0.01, function()
@@ -553,6 +561,7 @@ function Seeker:hit(damage, projectile, dot, from_enemy)
         end)
       end
     end
+    ]]--
 
     if self.boss then
       slow(0.25, 1)

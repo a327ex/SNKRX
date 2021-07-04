@@ -24,7 +24,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'swordsman' then
-    self.attack_sensor = Circle(self.x, self.y, 64)
+    self.attack_sensor = Circle(self.x, self.y, 48)
     self.t:cooldown(3, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       self:attack(96)
     end, nil, nil, 'attack')
@@ -458,12 +458,14 @@ function Player:init(args)
     end, nil, nil, 'attack')
 
   elseif self.character == 'barbarian' then
-    self.t:every(8, function()
+    self.attack_sensor = Circle(self.x, self.y, 48)
+    self.t:cooldown(8, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       self:attack(96, {stun = 4})
     end, nil, nil, 'attack')
 
   elseif self.character == 'juggernaut' then
-    self.t:every(8, function()
+    self.attack_sensor = Circle(self.x, self.y, 64)
+    self.t:cooldown(8, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       self:attack(128, {juggernaut_push = true})
     end, nil, nil, 'attack')
 
@@ -662,7 +664,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'highlander' then
-    self.attack_sensor = Circle(self.x, self.y, 48)
+    self.attack_sensor = Circle(self.x, self.y, 36)
     self.t:cooldown(4, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       if self.level == 3 then
         self.t:every(0.25, function()
@@ -681,11 +683,13 @@ function Player:init(args)
         local unit_2 = random:table_remove(units)
         if unit_1 then
           unit_1.fairy_aspd_m = 3
-          unit_1.t:after(5.98, function() unit_1.fairy_aspd_m = 1 end)
+          unit_1.fairyd = true
+          unit_1.t:after(5.98, function() unit_1.fairy_aspd_m = 1; unit_1.fairyd = false end)
         end
         if unit_2 then
           unit_2.fairy_aspd_m = 3
-          unit_2.t:after(5.98, function() unit_2.fairy_aspd_m = 1 end)
+          unit_2.fairyd = true
+          unit_2.t:after(5.98, function() unit_2.fairy_aspd_m = 1; unit_2.fairyd = false end)
         end
         heal1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
         buff1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -708,8 +712,9 @@ function Player:init(args)
       else
         local unit = random:table(self:get_all_units())
         if unit then
+          unit.fairyd = true
           unit.fairy_aspd_m = 2
-          unit.t:after(5.98, function() unit.fairy_aspd_m = 1 end)
+          unit.t:after(5.98, function() unit.fairy_aspd_m = 1; unit.fairyd = false end)
         end
         heal1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
         buff1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -801,9 +806,9 @@ function Player:init(args)
       end)
     end
 
-    self.t:every(15, function()
+    self.t:every(12, function()
       local x, y = random:float(main.current.x1 + 16, main.current.x2 - 16), random:float(main.current.y1 + 16, main.current.y2 - 16)
-      for i = 1, 5 do
+      for i = 1, 3 do
         SpawnEffect{group = main.current.effects, x = x, y = y, color = green[0], action = function(x, y)
           local check_circle = Circle(x, y, 2)
           local objects = main.current.main:get_objects_in_shape(check_circle, {Seeker, EnemyCritter, Critter, Volcano, Saboteur, Bomb, Pet, Turret, Sentry, Automaton})
@@ -1067,7 +1072,7 @@ function Player:init(args)
   end
 
   if self.leader then
-    self.t:after(0.5, function()
+    self.t:after(1, function()
       local units = self:get_all_units()
       for _, unit in ipairs(units) do
         if table.any(unit.classes, function(v) return v == 'psyker' end) then
@@ -1075,9 +1080,21 @@ function Player:init(args)
         end
       end
 
+      local psykers = {}
+      for _, unit in ipairs(units) do
+        if table.any(unit.classes, function(v) return v == 'psyker' end) then
+          table.insert(psykers, unit)
+        end
+      end
+
+      for i = 1, ((main.current.psyker_level == 2 and 4) or (main.current.psyker_level == 1 and 2) or (main.current.psyker_level == 0 and 0) or 0) do
+        local unit = random:table(#psykers > 0 and psykers or units)
+        Projectile{group = main.current.main, x = unit.x + 24*math.cos(unit.r), y = unit.y + 24*math.sin(unit.r), color = fg[0], v = 200, dmg = unit.dmg, character = 'psyker', parent = unit}
+      end
+
       if self.psyker_orbs then
-        for i = 1, self.psyker_orbs do
-          local unit = random:table(units)
+        for i = 1, ((self.psyker_orbs == 1 and 1) or (self.psyker_orbs == 2 and 2) or (self.psyker_orbs == 3 and 4) or 0) do
+          local unit = random:table(#psykers > 0 and psykers or units)
           Projectile{group = main.current.main, x = unit.x + 24*math.cos(unit.r), y = unit.y + 24*math.sin(unit.r), color = fg[0], v = 200, dmg = unit.dmg, character = 'psyker', parent = unit}
         end
       end
@@ -1302,7 +1319,7 @@ function Player:update(dt)
   self.buff_def_a = (self.warrior_def_a or 0)
   self.buff_aspd_m = (self.chronomancer_aspd_m or 1)*(self.vagrant_aspd_m or 1)*(self.outlaw_aspd_m or 1)*(self.fairy_aspd_m or 1)*(self.psyker_aspd_m or 1)*(self.chronomancy_aspd_m or 1)*(self.awakening_aspd_m or 1)*(self.berserking_aspd_m or 1)*(self.reinforce_aspd_m or 1)*(self.squire_aspd_m or 1)*(self.speed_3_aspd_m or 1)*(self.last_stand_aspd_m or 1)*(self.enchanted_aspd_m or 1)*(self.explorer_aspd_m or 1)
   self.buff_dmg_m = (self.squire_dmg_m or 1)*(self.vagrant_dmg_m or 1)*(self.enchanter_dmg_m or 1)*(self.swordsman_dmg_m or 1)*(self.flagellant_dmg_m or 1)*(self.psyker_dmg_m or 1)*(self.ballista_dmg_m or 1)*(self.awakening_dmg_m or 1)*(self.reinforce_dmg_m or 1)*(self.payback_dmg_m or 1)*(self.immolation_dmg_m or 1)*(self.damage_4_dmg_m or 1)*(self.offensive_stance_dmg_m or 1)*(self.last_stand_dmg_m or 1)*(self.dividends_dmg_m or 1)*(self.explorer_dmg_m or 1)
-  self.buff_def_m = (self.squire_def_m or 1)*(self.ouroboros_def_m or 1)*(self.unwavering_stance_def_m or 1)*(self.reinforce_def_m or 1)*(self.defensive_stance_def_m or 1)*(self.last_stand_def_m or 1)*(self.unrelenting_stance_def_m or 1)
+  self.buff_def_m = (self.squire_def_m or 1)*(self.ouroboros_def_m or 1)*(self.unwavering_stance_def_m or 1)*(self.reinforce_def_m or 1)*(self.defensive_stance_def_m or 1)*(self.last_stand_def_m or 1)*(self.unrelenting_stance_def_m or 1)*(self.hardening_def_m or 1)
   self.buff_area_size_m = (self.nuker_area_size_m or 1)*(self.magnify_area_size_m or 1)*(self.unleash_area_size_m or 1)*(self.last_stand_area_size_m or 1)
   self.buff_area_dmg_m = (self.nuker_area_dmg_m or 1)*(self.amplify_area_dmg_m or 1)*(self.unleash_area_dmg_m or 1)*(self.last_stand_area_dmg_m or 1)
   self.buff_mvspd_m = (self.wall_rider_mvspd_m or 1)*(self.centipede_mvspd_m or 1)*(self.squire_mvspd_m or 1)*(self.last_stand_mvspd_m or 1)*(self.haste_mvspd_m or 1)
@@ -1412,6 +1429,14 @@ function Player:draw()
 
     if self.ouroboros_def_m and self.ouroboros_def_m > 1 then
       graphics.rectangle(self.x, self.y, 1.25*self.shape.w, 1.25*self.shape.h, 3, 3, yellow_transparent)
+    end
+
+    if self.divined then
+      graphics.rectangle(self.x, self.y, 1.25*self.shape.w, 1.25*self.shape.h, 3, 3, green_transparent)
+    end
+
+    if self.fairyd then
+      graphics.rectangle(self.x, self.y, 1.25*self.shape.w, 1.25*self.shape.h, 3, 3, blue_transparent)
     end
   end
   graphics.pop()
@@ -1525,7 +1550,7 @@ function Player:hit(damage, from_undead)
 
   if self.character == 'psykeeper' then
     self.stored_heal = self.stored_heal + actual_damage
-    if self.stored_heal > (0.2*self.max_hp) then
+    if self.stored_heal > (0.25*self.max_hp) then
       self.stored_heal = 0
       local check_circle = Circle(random:float(main.current.x1 + 16, main.current.x2 - 16), random:float(main.current.y1 + 16, main.current.y2 - 16), 2)
       local objects = main.current.main:get_objects_in_shape(check_circle, {Seeker, EnemyCritter, Critter, Volcano, Saboteur, Bomb, Pet, Turret, Sentry, Automaton})
@@ -1533,13 +1558,15 @@ function Player:hit(damage, from_undead)
         check_circle:move_to(random:float(main.current.x1 + 16, main.current.x2 - 16), random:float(main.current.y1 + 16, main.current.y2 - 16))
         objects = main.current.main:get_objects_in_shape(check_circle, {Seeker, EnemyCritter, Critter, Volcano, Saboteur, Bomb, Pet, Turret, Sentry, Automaton})
       end
-      SpawnEffect{group = main.current.effects, x = check_circle.x, y = check_circle.y, color = green[0], action = function(x, y)
-        local check_circle = Circle(x, y, 2)
-        local objects = main.current.main:get_objects_in_shape(check_circle, {Seeker, EnemyCritter, Critter, Sentry, Volcano, Saboteur, Bomb, Pet, Turret, Automaton})
-        if #objects == 0 then
-          HealingOrb{group = main.current.main, x = x, y = y}
-        end
-      end}
+      for i = 1, 3 do
+        SpawnEffect{group = main.current.effects, x = check_circle.x, y = check_circle.y, color = green[0], action = function(x, y)
+          local check_circle = Circle(x, y, 2)
+          local objects = main.current.main:get_objects_in_shape(check_circle, {Seeker, EnemyCritter, Critter, Sentry, Volcano, Saboteur, Bomb, Pet, Turret, Automaton})
+          if #objects == 0 then
+            HealingOrb{group = main.current.main, x = x, y = y}
+          end
+        end}
+      end
     end
 
     if self.level == 3 then
@@ -1607,6 +1634,14 @@ function Player:hit(damage, from_undead)
             r = r + math.pi/4
           end
         end)
+      end
+
+      if self.hardening then
+        local units = self:get_all_units()
+        for _, unit in ipairs(units) do
+          unit.hardening_def_m = 2.5
+          unit.t:after(3, function() unit.hardening_def_m = 1 end)
+        end
       end
 
       if self.annihilation and table.any(self.classes, function(v) return v == 'voider' end) then
@@ -1921,7 +1956,7 @@ Projectile:implement(Physics)
 function Projectile:init(args)
   self:init_game_object(args)
   self.hfx:add('hit', 1)
-  self:set_as_rectangle(10, 4, 'dynamic', main.current.player.warping_shots and 'true_ghost' or 'projectile')
+  self:set_as_rectangle(10, 4, 'dynamic', 'projectile')
   self.pierce = args.pierce or 0
   self.chain = args.chain or 0
   self.ricochet = args.ricochet or 0
@@ -1976,9 +2011,10 @@ function Projectile:init(args)
 
   elseif self.character == 'psyker' then
     self.pierce = 10000
-    self.orbit_distance = random:float(32, 40)*((self.parent.psychosense == 1 and 1.33) or (self.parent.psychosense == 2 and 1.66) or (self.parent.psychosense == 3 and 1.99) or 1)
-    self.orbit_speed = random:float(4, 6)*((self.parent.orbitism == 1 and 1.33) or (self.parent.orbitism == 2 and 1.66) or (self.parent.orbitism == 3 and 1.99) or 1)
+    self.orbit_distance = random:float(56, 64)
+    self.orbit_speed = random:float(2, 4)*((self.parent.orbitism == 1 and 1.25) or (self.parent.orbitism == 2 and 1.50) or (self.parent.orbitism == 3 and 1.75) or 1)*(1/self.parent.aspd_m)
     self.orbit_offset = random:float(0, 2*math.pi)
+    self.dmg = self.dmg*((self.parent.psychosink == 1 and 1.4) or (self.parent.psychosink == 2 and 1.8) or (self.parent.psychosink == 3 and 2.2) or 1)
 
   elseif self.character == 'lich' then
     self.spring:pull(0.15)
@@ -2048,8 +2084,8 @@ function Projectile:update(dt)
 
   if self.character == 'psyker' then
     if self.parent.dead then self.dead = true; self.parent = nil; return end
-    self:set_position(self.parent.x + self.orbit_distance*math.cos(self.orbit_speed*time + self.orbit_offset),
-      self.parent.y + self.orbit_distance*math.sin(self.orbit_speed*time + self.orbit_offset))
+    self:set_position(self.parent.x + self.orbit_distance*math.cos(self.orbit_speed*main.current.t.time + self.orbit_offset),
+      self.parent.y + self.orbit_distance*math.sin(self.orbit_speed*main.current.t.time + self.orbit_offset))
     local dx, dy = self.x - (self.previous_x or 0), self.y - (self.previous_y or 0)
     self.r = Vector(dx, dy):angle()
     self:set_angle(self.r)
@@ -3070,7 +3106,7 @@ function Sentry:init(args)
       archer1:play{pitch = random:float(0.95, 1.05), volume = 0.35}
       HitCircle{group = main.current.effects, x = self.x + 0.8*self.shape.w*math.cos(r), y = self.y + 0.8*self.shape.w*math.sin(r), rs = 6}
       local t = {group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), v = 200, r = r, color = self.color,
-      dmg = self.parent.dmg*(self.parent.conjurer_buff_m or 1), character = 'sentry', parent = self.parent}
+      dmg = self.parent.dmg*(self.parent.conjurer_buff_m or 1), character = 'sentry', parent = self.parent, ricochet = self.parent.level == 3 and 2 or 0}
       Projectile(table.merge(t, mods or {}))
       r = r + math.pi/2
     end
@@ -3093,7 +3129,7 @@ function Sentry:init(args)
           archer1:play{pitch = random:float(0.95, 1.05), volume = 0.35}
           HitCircle{group = main.current.effects, x = self.x + 0.8*self.shape.w*math.cos(r), y = self.y + 0.8*self.shape.w*math.sin(r), rs = 6}
           local t = {group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), v = 200, r = r, color = self.color,
-          dmg = self.parent.dmg*(self.parent.conjurer_buff_m or 1), character = 'sentry', parent = self.parent}
+          dmg = self.parent.dmg*(self.parent.conjurer_buff_m or 1), character = 'sentry', parent = self.parent, ricochet = self.parent.level == 3 and 2 or 0}
           Projectile(table.merge(t, mods or {}))
           r = r + math.pi/2
         end
@@ -3109,7 +3145,7 @@ function Sentry:init(args)
         end
       end)
     end
-  end)
+  end, nil, nil, 'attack')
 end
 
 
@@ -3117,6 +3153,7 @@ function Sentry:update(dt)
   self:update_game_object(dt)
   self.r = self.r + math.pi*dt
   self:set_angle(self.r)
+  self.t:set_every_multiplier('attack', self.parent.level == 3 and 0.75 or 1)
 end
 
 
@@ -3606,7 +3643,8 @@ function Gold:init(args)
   self.cant_be_picked_up = true
   self.t:after(0.5, function() self.cant_be_picked_up = false end)
   gold1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-  self.magnet_sensor = Circle(self.x, self.y, 32)
+  self.weak_magnet_sensor = Circle(self.x, self.y, 16)
+  self.magnet_sensor = Circle(self.x, self.y, 56)
 end
 
 
@@ -3614,21 +3652,20 @@ function Gold:update(dt)
   self:update_game_object(dt)
   self.r = self:get_angle()
 
-  if main.current.player.magnetism and self.magnet_sensor then
-    local players = self:get_objects_in_shape(self.magnet_sensor, {Player})
-    if players and #players > 0 then
-      local x, y = 0, 0
-      for _, p in ipairs(players) do
-        x = x + p.x
-        y = y + p.y
-      end
-      x = x/#players
-      y = y/#players
-      local r = self:angle_to_point(x, y)
-      self:apply_force(20*math.cos(r), 20*math.sin(r))
+  local players = self:get_objects_in_shape(main.current.player.magnetism and self.magnet_sensor or self.weak_magnet_sensor, {Player})
+  if players and #players > 0 then
+    local x, y = 0, 0
+    for _, p in ipairs(players) do
+      x = x + p.x
+      y = y + p.y
     end
+    x = x/#players
+    y = y/#players
+    local r = self:angle_to_point(x, y)
+    self:apply_force(20*math.cos(r), 20*math.sin(r))
   end
   if self.magnet_sensor then self.magnet_sensor:move_to(self.x, self.y) end
+  if self.weak_magnet_sensor then self.weak_magnet_sensor:move_to(self.x, self.y) end
 end
 
 
@@ -3710,7 +3747,16 @@ function HealingOrb:init(args)
   self.cant_be_picked_up = true
   self.t:after(0.5, function() self.cant_be_picked_up = false end)
   illusion1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-  self.magnet_sensor = Circle(self.x, self.y, 32)
+  self.weak_magnet_sensor = Circle(self.x, self.y, 16)
+  self.magnet_sensor = Circle(self.x, self.y, 56)
+
+  if main.current.healer_level > 0 and not self.healer_effect_orb then
+    if random:bool((main.current.healer_level == 1 and 15) or (main.current.healer_level == 2 and 30)) then
+      SpawnEffect{group = main.current.effects, x = self.x, y = self.y, color = green[0], action = function(x, y)
+        HealingOrb{group = main.current.main, x = x, y = y, healer_effect_orb = true}
+      end}
+    end
+  end
 end
 
 
@@ -3718,21 +3764,20 @@ function HealingOrb:update(dt)
   self:update_game_object(dt)
   self.r = self:get_angle()
 
-  if main.current.player.magnetism then
-    local players = self:get_objects_in_shape(self.magnet_sensor, {Player})
-    if players and #players > 0 then
-      local x, y = 0, 0
-      for _, p in ipairs(players) do
-        x = x + p.x
-        y = y + p.y
-      end
-      x = x/#players
-      y = y/#players
-      local r = self:angle_to_point(x, y)
-      self:apply_force(20*math.cos(r), 20*math.sin(r))
+  local players = self:get_objects_in_shape(main.current.player.magnetism and self.magnet_sensor or self.weak_magnet_sensor, {Player})
+  if players and #players > 0 then
+    local x, y = 0, 0
+    for _, p in ipairs(players) do
+      x = x + p.x
+      y = y + p.y
     end
+    x = x/#players
+    y = y/#players
+    local r = self:angle_to_point(x, y)
+    self:apply_force(20*math.cos(r), 20*math.sin(r))
   end
   if self.magnet_sensor then self.magnet_sensor:move_to(self.x, self.y) end
+  if self.weak_magnet_sensor then self.weak_magnet_sensor:move_to(self.x, self.y) end
 end
 
 
@@ -3757,16 +3802,17 @@ function HealingOrb:on_trigger_enter(other, contact)
     heal1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
 
     local units = other:get_all_units()
-    local lowest_hp = 10000
+    local lowest_hp = 10
     local lowest_unit
     for _, unit in ipairs(units) do
-      if unit.hp < lowest_hp and unit.hp < unit.max_hp then
-        lowest_hp = unit.hp
+      local r = unit.hp/unit.max_hp
+      if r < lowest_hp then
+        lowest_hp = r
         lowest_unit = unit
       end
     end
     if lowest_unit then
-      lowest_unit:heal(0.1*lowest_unit.max_hp*(lowest_unit.heal_effect_m or 1))
+      lowest_unit:heal(0.2*lowest_unit.max_hp*(lowest_unit.heal_effect_m or 1))
     end
 
     if main.current.player.haste then
