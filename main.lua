@@ -1956,6 +1956,7 @@ function open_options(self)
       b.selected = true
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       sfx.volume = sfx.volume - 0.1
+      if math.abs(sfx.volume) < 0.001 then sfx.volume = 0 end
       if sfx.volume <= 0 then sfx.volume = 0 end
       state.sfx_volume = sfx.volume
       b:set_text('sfx volume: ' .. tostring((state.sfx_volume or 0.5)*10))
@@ -1978,6 +1979,7 @@ function open_options(self)
       b.selected = true
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       music.volume = music.volume - 0.1
+      if math.abs(music.volume) < 0.001 then music.volume = 0 end
       if music.volume <= 0 then music.volume = 0 end
       state.music_volume = music.volume
       b:set_text('music volume: ' .. tostring((state.music_volume or 0.5)*10))
