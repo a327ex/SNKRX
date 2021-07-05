@@ -648,7 +648,7 @@ function Player:init(args)
       local r = self:angle_to_object(closest_enemy)
       self.barrager_counter = self.barrager_counter + 1
       if self.barrager_counter == 3 and self.level == 3 then
-        self.barrage_counter = 0
+        self.barrager_counter = 0
         for i = 1, 15 do
           self.t:after((i-1)*0.05, function()
             self:shoot(r + random:float(-math.pi/32, math.pi/32), {knockback = (self.level == 3 and 14 or 7)})
@@ -2365,6 +2365,7 @@ function Projectile:on_trigger_enter(other, contact)
         local src = other
         for j = 1, 3 do
           main.current.t:after((j-1)*0.1, function()
+            if not self.parent then return end
             _G[random:table{'spark1', 'spark2', 'spark3'}]:play{pitch = random:float(0.9, 1.1), volume = 0.3}
             for i = 1, 3 do
               table.insert(self.infused_enemies_hit, src)
@@ -3102,13 +3103,18 @@ function Sentry:init(args)
   self.t:every({2.75, 3.5}, function()
     self.hfx:use('hit', 0.25, 200, 10)
     local r = self.r
-    for i = 1, 4 do
-      archer1:play{pitch = random:float(0.95, 1.05), volume = 0.35}
-      HitCircle{group = main.current.effects, x = self.x + 0.8*self.shape.w*math.cos(r), y = self.y + 0.8*self.shape.w*math.sin(r), rs = 6}
-      local t = {group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), v = 200, r = r, color = self.color,
-      dmg = self.parent.dmg*(self.parent.conjurer_buff_m or 1), character = 'sentry', parent = self.parent, ricochet = self.parent.level == 3 and 2 or 0}
-      Projectile(table.merge(t, mods or {}))
-      r = r + math.pi/2
+    local n = random:bool((main.current.ranger_level == 2 and 16) or (main.current.ranger_level == 1 and 8) or 0) and 4 or 1
+    for j = 1, n do
+      self.t:after((j-1)*0.1, function()
+        for i = 1, 4 do
+          archer1:play{pitch = random:float(0.95, 1.05), volume = 0.35}
+          HitCircle{group = main.current.effects, x = self.x + 0.8*self.shape.w*math.cos(r), y = self.y + 0.8*self.shape.w*math.sin(r), rs = 6}
+          local t = {group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), v = 200, r = r, color = self.color,
+          dmg = self.parent.dmg*(self.parent.conjurer_buff_m or 1), character = 'sentry', parent = self.parent, ricochet = self.parent.level == 3 and 2 or 0}
+          Projectile(table.merge(t, mods or {}))
+          r = r + math.pi/2
+        end
+      end)
     end
 
     if self.parent.taunt and random:bool((self.parent.taunt == 1 and 10) or (self.parent.taunt == 2 and 20) or (self.parent.taunt == 3 and 30)) then
@@ -3651,6 +3657,8 @@ end
 function Gold:update(dt)
   self:update_game_object(dt)
   self.r = self:get_angle()
+  if not self.magnet_sensor then return end
+  if not self.weak_magnet_sensor then return end
 
   local players = self:get_objects_in_shape(main.current.player.magnetism and self.magnet_sensor or self.weak_magnet_sensor, {Player})
   if players and #players > 0 then
@@ -3763,6 +3771,8 @@ end
 function HealingOrb:update(dt)
   self:update_game_object(dt)
   self.r = self:get_angle()
+  if not self.magnet_sensor then return end
+  if not self.weak_magnet_sensor then return end
 
   local players = self:get_objects_in_shape(main.current.player.magnetism and self.magnet_sensor or self.weak_magnet_sensor, {Player})
   if players and #players > 0 then

@@ -549,6 +549,7 @@ function Seeker:hit(damage, projectile, dot, from_enemy)
     if main.current.mercenary_level > 0 then
       if random:bool((main.current.mercenary_level == 2 and 16) or (main.current.mercenary_level == 1 and 8) or 0) then
         trigger:after(0.01, function()
+          if not main.current.main.world then return end
           Gold{group = main.current.main, x = self.x, y = self.y}
         end)
       end
@@ -652,6 +653,7 @@ function Seeker:hit(damage, projectile, dot, from_enemy)
     if main.current.player.ceremonial_dagger and not from_enemy then
       trigger:after(0.01, function()
         if tostring(self.x) == tostring(0/0) or tostring(self.y) == tostring(0/0) then return end
+        if not main.current.main.world then return end
         _G[random:table{'scout1', 'scout2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.35}
         HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6}
         local r = random:float(0, 2*math.pi)
@@ -663,6 +665,7 @@ function Seeker:hit(damage, projectile, dot, from_enemy)
 
     if main.current.player.homing_barrage and not from_enemy then
       trigger:after(0.01, function()
+        if not main.current.player then return end
         if random:bool((main.current.player.homing_barrage == 1 and 8) or (main.current.player.homing_barrage == 2 and 16) or (main.current.player.homing_barrage == 3 and 24)) then
           local target = main.current.player:get_closest_object_in_shape(Circle(main.current.player.x, main.current.player.y, 128), main.current.enemies)
           main.current.player:barrage(target and main.current.player:angle_to_object(target) or main.current.player.r, 4, nil, nil, nil, true)
@@ -672,6 +675,7 @@ function Seeker:hit(damage, projectile, dot, from_enemy)
 
     if main.current.player.infesting_strike and not from_enemy then
       trigger:after(0.01, function()
+        if not main.current.player then return end
         if random:bool((main.current.player.infesting_strike == 1 and 10) or (main.current.player.infesting_strike == 2 and 20) or (main.current.player.infesting_strike == 3 and 30)) then
           critter1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
           for i = 1, 2 do
@@ -683,6 +687,7 @@ function Seeker:hit(damage, projectile, dot, from_enemy)
 
     if main.current.player.lucky_strike and not from_enemy then
       if random:bool(8) then
+        if not main.current.main.world then return end
         trigger:after(0.01, function()
           Gold{group = main.current.main, x = self.x, y = self.y}
         end)
@@ -691,6 +696,7 @@ function Seeker:hit(damage, projectile, dot, from_enemy)
 
     if main.current.player.healing_strike and not from_enemy then
       if random:bool(8) then
+        if not main.current.main.world then return end
         trigger:after(0.01, function()
           HealingOrb{group = main.current.main, x = self.x, y = self.y}
         end)
@@ -817,8 +823,10 @@ function ExploderMine:init(args)
       for i = 1, 4 do HitParticle{group = main.current.effects, x = self.x, y = self.y, r = random:float(0, 2*math.pi), color = self.color} end
       HitCircle{group = main.current.effects, x = self.x, y = self.y}
       local n = math.floor(8 + current_new_game_plus*1.5)
-      for i = 1, n do
-        EnemyProjectile{group = main.current.main, x = self.x, y = self.y, color = blue[0], r = (i-1)*math.pi/(n/2), v = 120 + math.min(5*self.parent.level, 300), dmg = 1.3*self.parent.dmg}
+      if main.current.main.world then
+        for i = 1, n do
+          EnemyProjectile{group = main.current.main, x = self.x, y = self.y, color = blue[0], r = (i-1)*math.pi/(n/2), v = 120 + math.min(5*self.parent.level, 300), dmg = 1.3*self.parent.dmg}
+        end
       end
       self.dead = true
     end, 'mine_count')

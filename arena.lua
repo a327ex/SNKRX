@@ -449,6 +449,14 @@ function Arena:quit()
       trigger:tween(4, camera, {x = gw/2, y = gh/2, r = 0}, math.linear, function() camera.x, camera.y, camera.r = gw/2, gh/2, 0 end)
       self.win_text = Text2{group = self.ui, x = gw/2 + 40, y = gh/2 - 69, force_update = true, lines = {{text = '[wavy_mid, cbyc2]congratulations!', font = fat_font, alignment = 'center'}}}
       trigger:after(2.5, function()
+        local open_url = function(b, url)
+          ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+          b.spring:pull(0.2, 200, 10)
+          b.selected = true
+          ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+          system.open_url(url)
+        end
+
         self.build_text = Text2{group = self.ui, x = 40, y = 20, force_update = true, lines = {{text = "[wavy_mid, fg]your build", font = pixul_font, alignment = 'center'}}}
         for i, unit in ipairs(self.units) do
           CharacterPart{group = self.ui, x = 20, y = 40 + (i-1)*19, character = unit.character, level = unit.level, force_update = true, cant_click = true, parent = self}
@@ -482,13 +490,6 @@ function Arena:quit()
           self.try_loop_text = Text2{group = self.ui, x = gw - 144, y = gh - 20, force_update = true, lines = {
             {text = '[bg10]continue run (+difficulty):', font = pixul_font},
           }}
-          local open_url = function(b, url)
-            ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-            b.spring:pull(0.2, 200, 10)
-            b.selected = true
-            ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-            system.open_url(url)
-          end
           Button{group = self.ui, x = gw/2 - 50 + 40, y = gh/2 + 12, force_update = true, button_text = 'nimble quest', fg_color = 'bluem5', bg_color = 'blue', action = function(b) open_url(b, 'https://store.steampowered.com/app/259780/Nimble_Quest/') end}
           Button{group = self.ui, x = gw/2 + 50 + 40, y = gh/2 + 12, force_update = true, button_text = 'dota underlords', fg_color = 'bluem5', bg_color = 'blue', action = function(b) open_url(b, 'https://store.steampowered.com/app/1046930/Dota_Underlords/') end}
 
