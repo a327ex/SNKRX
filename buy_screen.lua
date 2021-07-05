@@ -1450,6 +1450,7 @@ function ItemCard:update(dt)
   if self.selected and input.m2.pressed then
     _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     self.parent:gain_gold((self.level == 1 and 10) or (self.level == 2 and 20) or (self.level == 3 and 30))
+    table.insert(run_passive_pool, self.passive)
     table.remove(self.parent.passives, self.i)
     input.m2.pressed = false
     self.parent:set_items()

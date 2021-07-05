@@ -1731,16 +1731,15 @@ function init()
     'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening',
   }
   main:add(Arena'arena')
-  main:go_to('arena', 6, 0, {
-    {character = 'cleric', level = 1},
-    {character = 'priest', level = 3},
-    {character = 'carver', level = 1},
-    {character = 'psykeeper', level = 1},
-    {character = 'fairy', level = 3},
+  main:go_to('arena', 16, 0, {
+    {character = 'archer', level = 3},
+    {character = 'barrager', level = 3},
+    {character = 'corruptor', level = 3},
+    {character = 'host', level = 3},
+    {character = 'beastmaster', level = 3},
+    {character = 'infestor', level = 3},
   }, {
-    {passive = 'psychosink', level = 3},
-    {passive = 'psyker_orbs', level = 3},
-    {passive = 'awakening', level = 3},
+    {passive = 'hive', level = 3},
   })
   ]]--
 

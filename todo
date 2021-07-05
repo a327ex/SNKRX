@@ -1,81 +1,13 @@
-Loop Update
-  New items:
-    General:
-      * Intimidation - enemies spawn with -10/20/30% max HP
-      * Vulnerability - enemies take +10/20/30% damage
-      * Temporal Chains - enemies are 10/20/30% slower
-      * Ceremonial Dagger - killing an enemy fires a homing dagger
-      * Homing Barrage - 8/16/24% chance to release a homing barrage on enemy kill
-      * Critical Strike - 5/10/15% chance for attacks to critically strike, dealing 2x damage
-      * Noxious Strike - 8/16/24% chance for attacks to poison enemies, dealing 20% dps for 3 seconds
-      * Infesting Strike - 10/20/30% chance for attacks to spawn 2 critters on kill
-      * Kinetic Strike - 10/20/30% chance for attacks to push enemies away with high force
-      * Burning Strike - 15% chance for attacks to ignite, dealing 20% dps for 3 seconds
-      * Lucky Strike - 8% chance for attacks to cause enemies to drop gold on death
-      * Healing Strike - 8% chance for attacks to spawn a healing orb on kill
-      * Stunning Strike - 8/16/24% chance for attacks to stun for 2 seconds
-      * Silencing Strike - 8/16/24% chance for attacks to silence for 4 seconds on hit
-      * Culling Strike - instantly kill elites below 10/20/30% max HP
-      * Lightning Strike - 5/10/15% chance for projectiles to create chain lightning, dealing 60/80/100% damage
-      * Psycholeak - position 1 generates 1 psyker orb every 10 seconds
-      * Divine Blessing - generate 1 healing orb every 8 seconds
-      * Hardening - +150% defense for 3 seconds after an ally dies
-  Psyker
-    * Orb speed scales with the unit's attack speed
-    * Increased default orb range
-    * Decreased default orb speed
-    * Additional psyker orbs will prefer to be assigned to psykers, if there are no psykers then they will be assigned to units randomly
-    * Changed psyker class bonus: +2/4 total orbs
-    * Removed Psychosense
-    * Added Psychosink - psyker orbs deal +40/80/120% damage
-  Healer
-    * Double healing per orb
-    * Fixed heal targetting, now it should always target the lowest HP unit
-    * Healing orbs and gold coins are now slightly attracted to the snake with a weak magnetism effect
-    * Changed healer class bonus: +15/30% chance to create an additional healing orb on healing orb creation
-    * Psykeeper: spawn 3 healing orbs every time the psykeeper takes 25% of max HP in damage
-  Warriors
-    * Decreased sensor range for all warriors, this will make them attack only when enemies are closer and consequently make it so that they hit more enemies in general
-    * Juggernaut and barbarian now only attack when there are enemies nearby
-  Builders
-    * Carver (builder, healer) - creates a tree that creates 1 healing orb every 6 seconds, Lv.3 effect: healing orbs are created twice as fast
-    * Engineer (builder): unchanged
-    * Illusionist -> Artificer (builder, sorcerer): unchanged
-    * Saboteur -> Bomber (builder, nuker): plants a bomb, when it explodes it deals 2X AoE damage, Lv.3 effect: +100% bomb area and damage
-    * Hunter -> Sentry (builder, ranger): spawns a turret that shoots projectiles, each dealing X damage, Lv.3 effect: +50% attack speed and the projectiles ricochet twice
-  Looping
-    * Change end screen
-    * Loop button on end screen
-    * Looping lets you continue with the current snake until you die
-    * Difficulty is increased according to the formula for levels 25+
-    * Snake size goes up by 1 every loop, up to 12
-    * Don't offer items if at maximum items
-  QoL
-    * Right click goes down on volume buttons
-    * Show cooldown on elite attack
-    * Added visuals for divine intervention and fairy buffs
-    * Increased item choice slots to 4
-    * Party + items on death screen
-    * Silenced units are now gray
-    * Items on end screen
-    * Items on passive screen
-    * Selling items
-    * Decreased sound effect volume for shoot 5
-  Bug fixes
-    * Fixed a series of crashes that happened sometimes right before changing from the arena back to the shop
-    * Fixed merchant not giving interest or free reroll if it died in combat
-    * Fixed shoot 5 and death 6 not working if a unit placed before it on the snake died
-    * Fixed undying unit from lasting 7 being able to become immortal if it was healed during the 10 seconds before it truly died
-    * Fixed a bug where max units wouldn't be properly changed when changing NG difficulty in the menu
-    * Fixed Whispers of Doom applying before curses, now it applies after and triggers their effect when enemies are killed due to it
-    * Fixed mobile users not being able to close the credits screen due to there being no close button
-    * Fixed shop party numbers not being updated when units are bought or sold
-    * Fixed a bug where movement speed would become zero if the game was paused while under the effects of decaying haste
-    * Fixed baneling burst not dealing the correct amount of damage
-
-
 Weekly maintenance updates:
 
+#1
+  * Fixed several blue screen crashes due to broken looping state
+  * Limited critters to 100 due to performance issues
+  * Fixed sold items not being restored to the passive pool
+  * Fixed gambler's volume being too loud with high amounts of gold
+  * Fixed soundtrack button not working on the win screen
+  * Fixed volume text bug when decreasing it from 1 to 0
+  * Fixed a bug where the first run would not have certain items in the item pool
 
 ---
 
@@ -106,7 +38,7 @@ Assists (2/4) -
   Pardoner (tier 3 assist, mercenary) - 
   Oracle (tier 1 assist) - +10% dodge chance to adjacent units, Lv.3 effect - +20% dodge chance to adjacent units
   Seraph (tier 2 assist, healer) - periodically chooses 1 random unit and gives it +100% defense for 6 seconds, Lv.3 - choose 2 units instead
-Passive that makes critters and summons block enemy projectiles
+Add a few builder units that create walls/solids the player can hide behind (https://www.youtube.com/watch?v=KqwBZ_2f7QU&t=2331s)
 Hexblaster? - curser that consumes curses to deal damage
 Bench? - https://i.imgur.com/B1gNVKk.png
 Balance option for when there are more sets - https://i.imgur.com/JMynwbL.png
