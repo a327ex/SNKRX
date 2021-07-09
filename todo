@@ -1,13 +1,22 @@
 Weekly maintenance updates:
 
 #1
+  
   * Fixed several blue screen crashes due to broken looping state
-  * Limited critters to 100 due to performance issues
+  * Fixed several blue screen crashes due to broken physics state
+  * Fixed a bug where double clicking the loop button would lead to broken looping state and crashes
   * Fixed sold items not being restored to the passive pool
   * Fixed gambler's volume being too loud with high amounts of gold
   * Fixed soundtrack button not working on the win screen
   * Fixed volume text bug when decreasing it from 1 to 0
+  * Fixed volume buttons not looping
   * Fixed a bug where the first run would not have certain items in the item pool
+  * Fixed psyker orbs item saying "+1/2/3" in the shop when it is "+1/2/4"
+  * Fixed kinetic strike not being in the passive pool
+  * Fixed a bug where sometimes restarting the game from a looped run would let you have more units than normal on the next run
+  * Limited critters to 100 due to performance issues
+  * Limited health orbs on the arena to 30 due to performance issues
+  * Limited gold coins on the arena to 30 due to performance issues
 
 ---
 
@@ -32,6 +41,7 @@ Bodyguard - https://i.imgur.com/Y2pP20v.png
 Conjurer unit that creates an unit that actively protects you from enemy projectiles
 Guardians - https://i.imgur.com/Ynu5Cdw.png
 Cultists - https://i.imgur.com/GsfoZBd.png
+psyker + builder - https://i.imgur.com/VjY6r1d.png
 Assists (2/4) - 
   Ringmaster (tier 4 assist, nuker) - +15% to all stats to adjacent units, Lv.3 effect - create a cross that deals AoE damage 5 times for 10 seconds
   Absorber (tier 2 assist, warrior) - absorbs 50% damage from adjacent units, Lv.3 effect - absorbs 75% damage from adjacent units and gives the absorber +25% defense
@@ -91,6 +101,7 @@ Roguelite update:
     Challenge + reward
       Go through the labyrinth without hitting any walls
       Go through the traps without getting hit
+    Room ideas - https://i.imgur.com/ajqtTOc.png
   Units die permanently when they die (dead units can be stored in bench to be revived later)
   Units can have items attached to them like in Underlords
   Unit item ideas:

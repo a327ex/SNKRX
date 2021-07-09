@@ -121,6 +121,7 @@ function BuyScreen:on_enter(from, level, loop, units, passives, shop_level, shop
     }, nil, nil, nil, nil, 16, 4, nil, 2)
     b.info_text.x, b.info_text.y = b.x, b.y + 20
   end, mouse_exit = function(b)
+    if not b.info_text then return end
     b.info_text:deactivate()
     b.info_text.dead = true
     b.info_text = nil
@@ -145,9 +146,9 @@ function BuyScreen:on_enter(from, level, loop, units, passives, shop_level, shop
         'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
         'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance', 'blessing', 'haste', 'divine_barrage', 'orbitism', 'psyker_orbs', 'psychosink', 'rearm', 'taunt', 'construct_instability',
         'intimidation', 'vulnerability', 'temporal_chains', 'ceremonial_dagger', 'homing_barrage', 'critical_strike', 'noxious_strike', 'infesting_strike', 'burning_strike', 'lucky_strike', 'healing_strike', 'stunning_strike',
-        'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 
+        'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 'kinetic_strike',
       }
-      max_units = math.clamp(7 + current_new_game_plus + self.loop, 7, 12)
+      max_units = math.clamp(7 + current_new_game_plus, 7, 12)
       main:add(BuyScreen'buy_screen')
       system.save_run()
       main:go_to('buy_screen', 1, 0, {}, passives, 1, 0)
@@ -159,6 +160,7 @@ function BuyScreen:on_enter(from, level, loop, units, passives, shop_level, shop
     }, nil, nil, nil, nil, 16, 4, nil, 2)
     b.info_text.x, b.info_text.y = b.x, b.y + 20
   end, mouse_exit = function(b)
+    if not b.info_text then return end
     b.info_text:deactivate()
     b.info_text.dead = true
     b.info_text = nil
@@ -551,8 +553,9 @@ function RestartButton:update(dt)
         'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
         'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance', 'blessing', 'haste', 'divine_barrage', 'orbitism', 'psyker_orbs', 'psychosink', 'rearm', 'taunt', 'construct_instability',
         'intimidation', 'vulnerability', 'temporal_chains', 'ceremonial_dagger', 'homing_barrage', 'critical_strike', 'noxious_strike', 'infesting_strike', 'burning_strike', 'lucky_strike', 'healing_strike', 'stunning_strike',
-        'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 
+        'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 'kinetic_strike',
       }
+      max_units = math.clamp(7 + current_new_game_plus, 7, 12)
       system.save_state()
       main:add(BuyScreen'buy_screen')
       system.save_run()

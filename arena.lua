@@ -391,7 +391,7 @@ function Arena:update(dt)
           'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
           'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance', 'blessing', 'haste', 'divine_barrage', 'orbitism', 'psyker_orbs', 'psychosink', 'rearm', 'taunt', 'construct_instability',
           'intimidation', 'vulnerability', 'temporal_chains', 'ceremonial_dagger', 'homing_barrage', 'critical_strike', 'noxious_strike', 'infesting_strike', 'burning_strike', 'lucky_strike', 'healing_strike', 'stunning_strike',
-          'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening',
+          'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 'kinetic_strike',
         }
         max_units = math.clamp(7 + current_new_game_plus + self.loop, 7, 12)
         main:add(BuyScreen'buy_screen')
@@ -858,9 +858,9 @@ function Arena:die()
             'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
             'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance', 'blessing', 'haste', 'divine_barrage', 'orbitism', 'psyker_orbs', 'psychosink', 'rearm', 'taunt', 'construct_instability',
             'intimidation', 'vulnerability', 'temporal_chains', 'ceremonial_dagger', 'homing_barrage', 'critical_strike', 'noxious_strike', 'infesting_strike', 'burning_strike', 'lucky_strike', 'healing_strike', 'stunning_strike',
-            'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening',
+            'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 'kinetic_strike',
           }
-          max_units = math.clamp(7 + current_new_game_plus + self.loop, 7, 12)
+          max_units = math.clamp(7 + current_new_game_plus, 7, 12)
           main:add(BuyScreen'buy_screen')
           system.save_run()
           main:go_to('buy_screen', 1, 0, {}, passives, 1, 0)
@@ -873,7 +873,10 @@ end
 
 
 function Arena:endless()
+  if self.clicked_loop then return end
+  self.clicked_loop = true
   current_new_game_plus = current_new_game_plus - 1
+  if current_new_game_plus < 0 then current_new_game_plus = 0 end
   self.loop = self.loop + 1
   self:transition()
 end

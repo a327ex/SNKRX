@@ -1432,7 +1432,7 @@ function init()
     ['haste'] = function(lvl) return '[yellow]+50%[fg] movement speed that decays over [yellow]4[fg] seconds on healing orb pick up' end,
     ['divine_barrage'] = function(lvl) return ts(lvl, '20%', '40%', '60%') .. ' chance to release a ricocheting barrage on healing orb pick up' end,
     ['orbitism'] = function(lvl) return ts(lvl, '+25%', '50%', '75%') .. ' psyker orb movement speed' end,
-    ['psyker_orbs'] = function(lvl) return ts(lvl, '+1', '2', '3') .. ' psyker orbs' end,
+    ['psyker_orbs'] = function(lvl) return ts(lvl, '+1', '2', '4') .. ' psyker orbs' end,
     ['psychosense'] = function(lvl) return ts(lvl, '+33%', '66%', '99%') .. ' orb range' end,
     ['psychosink'] = function(lvl) return '[fg]psyker orbs deal ' .. ts(lvl, '+40%', '80%', '120%') .. ' damage' end,
     ['rearm'] = function(lvl) return '[fg]constructs repeat their attacks once' end,
@@ -1728,7 +1728,7 @@ function init()
     'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
     'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance', 'blessing', 'haste', 'divine_barrage', 'orbitism', 'psyker_orbs', 'psychosink', 'rearm', 'taunt', 'construct_instability',
     'intimidation', 'vulnerability', 'temporal_chains', 'ceremonial_dagger', 'homing_barrage', 'critical_strike', 'noxious_strike', 'infesting_strike', 'burning_strike', 'lucky_strike', 'healing_strike', 'stunning_strike',
-    'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening',
+    'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 'kinetic_strike',
   }
   main:add(Arena'arena')
   main:go_to('arena', 16, 0, {
@@ -1914,9 +1914,9 @@ function open_options(self)
             'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
             'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance', 'blessing', 'haste', 'divine_barrage', 'orbitism', 'psyker_orbs', 'psychosink', 'rearm', 'taunt', 'construct_instability',
             'intimidation', 'vulnerability', 'temporal_chains', 'ceremonial_dagger', 'homing_barrage', 'critical_strike', 'noxious_strike', 'infesting_strike', 'burning_strike', 'lucky_strike', 'healing_strike', 'stunning_strike',
-            'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 
+            'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 'kinetic_strike',
           }
-          max_units = math.clamp(7 + current_new_game_plus + self.loop, 7, 12)
+          max_units = math.clamp(7 + current_new_game_plus, 7, 12)
           main:add(BuyScreen'buy_screen')
           locked_state = nil
           system.save_run()
@@ -1946,7 +1946,7 @@ function open_options(self)
       b.selected = true
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       sfx.volume = sfx.volume + 0.1
-      if sfx.volume > 1 then sfx.volume = 1 end
+      if sfx.volume > 1 then sfx.volume = 0 end
       state.sfx_volume = sfx.volume
       b:set_text('sfx volume: ' .. tostring((state.sfx_volume or 0.5)*10))
     end,
@@ -1956,8 +1956,8 @@ function open_options(self)
       b.selected = true
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       sfx.volume = sfx.volume - 0.1
-      if math.abs(sfx.volume) < 0.001 then sfx.volume = 0 end
-      if sfx.volume <= 0 then sfx.volume = 0 end
+      if math.abs(sfx.volume) < 0.001 and sfx.volume > 0 then sfx.volume = 0 end
+      if sfx.volume < 0 then sfx.volume = 1 end
       state.sfx_volume = sfx.volume
       b:set_text('sfx volume: ' .. tostring((state.sfx_volume or 0.5)*10))
     end}
@@ -1969,7 +1969,7 @@ function open_options(self)
       b.selected = true
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       music.volume = music.volume + 0.1
-      if music.volume > 1 then music.volume = 1 end
+      if music.volume > 1 then music.volume = 0 end
       state.music_volume = music.volume
       b:set_text('music volume: ' .. tostring((state.music_volume or 0.5)*10))
     end,
@@ -1979,8 +1979,8 @@ function open_options(self)
       b.selected = true
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       music.volume = music.volume - 0.1
-      if math.abs(music.volume) < 0.001 then music.volume = 0 end
-      if music.volume <= 0 then music.volume = 0 end
+      if math.abs(music.volume) < 0.001 and music.volume > 0 then music.volume = 0 end
+      if music.volume < 0 then music.volume = 1 end
       state.music_volume = music.volume
       b:set_text('music volume: ' .. tostring((state.music_volume or 0.5)*10))
     end}
