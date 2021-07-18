@@ -246,10 +246,10 @@ function Unit:calculate_stats(first_run)
         end
         self.base_hp = 100 + (current_new_game_plus*5) + (90 + current_new_game_plus*10)*y[x]
         self.base_dmg = (12 + current_new_game_plus*2) + (2 + current_new_game_plus)*y[x]
-        self.base_mvspd = 35 + 1.5*y[x]
+        self.base_mvspd = math.min(35 + 1.5*y[x], 35 + 1.5*y[150])
         if x % 25 == 0 then
           self.base_dmg = (12 + current_new_game_plus*2) + (1.25 + current_new_game_plus)*y[x]
-          self.base_mvspd = 35 + 1.1*y[x]
+          self.base_mvspd = math.min(35 + 1.1*y[x], 35 + 1.1*y[150])
         end
       else
         local x = self.level
@@ -265,7 +265,7 @@ function Unit:calculate_stats(first_run)
         end
         self.base_hp = 25 + 16.5*y[x]
         self.base_dmg = 4.5 + 2.5*y[x]
-        self.base_mvspd = 70 + 3*y[x]
+        self.base_mvspd = math.min(70 + 3*y[x], 70 + 3*y[150])
       end
     else
       if self.boss then
@@ -284,10 +284,10 @@ function Unit:calculate_stats(first_run)
         end
         self.base_hp = 100 + (current_new_game_plus*5) + (90 + current_new_game_plus*10)*y[x]
         self.base_dmg = (12 + current_new_game_plus*2) + (2 + current_new_game_plus)*y[x]
-        self.base_mvspd = 35 + 1.5*y[x]
+        self.base_mvspd = math.min(35 + 1.5*y[x], 35 + 1.5*y[150])
         if x % 25 == 0 then
           self.base_dmg = (12 + current_new_game_plus*2) + (1.75 + 0.5*current_new_game_plus)*y[x]
-          self.base_mvspd = 35 + 1.2*y[x]
+          self.base_mvspd = math.min(35 + 1.2*y[x], 35 + 1.2*y[150])
         end
       else
         local x = self.level
@@ -303,7 +303,7 @@ function Unit:calculate_stats(first_run)
         end
         self.base_hp = 22 + (current_new_game_plus*3) + (15 + current_new_game_plus*2.7)*y[x]
         self.base_dmg = (4 + current_new_game_plus*1.15) + (2 + current_new_game_plus*0.83)*y[x]
-        self.base_mvspd = 70 + 3*y[x]
+        self.base_mvspd = math.min(70 + 3*y[x], 70 + 3*y[150])
       end
     end
   elseif self:is(Saboteur) then

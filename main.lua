@@ -774,7 +774,7 @@ function init()
   }
 
   character_effect_descriptions = {
-    ['vagrant'] = function() return '[yellow]+15%[fg] attack speed and damage per active set' end,
+    ['vagrant'] = function() return '[yellow]+15%[fg] attack speed and damage per active class' end,
     ['swordsman'] = function() return "[fg]the swordsman's damage is [yellow]doubled" end,
     ['wizard'] = function() return '[fg]the projectile chains [yellow]2[fg] times' end,
     ['magician'] = function() return '[fg]the magician becomes invulnerable for [yellow]6[fg] seconds but also cannot attack' end,
@@ -834,7 +834,7 @@ function init()
   }
 
   character_effect_descriptions_gray = {
-    ['vagrant'] = function() return '[light_bg]+15% attack speed and damage per active set' end,
+    ['vagrant'] = function() return '[light_bg]+15% attack speed and damage per active class' end,
     ['swordsman'] = function() return "[light_bg]the swordsman's damage is doubled" end,
     ['wizard'] = function() return '[light_bg]the projectile chains 3 times' end,
     ['magician'] = function() return '[light_bg]the magician becomes invulnerable for 6 seconds but also cannot attack' end,
@@ -1010,7 +1010,7 @@ function init()
         ylb1(lvl) .. ']4[light_bg]/[' .. ylb2(lvl) .. ']3[light_bg]/[' .. ylb3(lvl) .. ']2[fg] attacks'
     end,
     ['mercenary'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+8%[light_bg]/[' .. ylb2(lvl) .. ']+16% [fg]chance for enemies to drop gold on death' end,
-    ['explorer'] = function(lvl) return '[yellow]+15%[fg] attack speed and damage per active set to allied explorers' end,
+    ['explorer'] = function(lvl) return '[yellow]+15%[fg] attack speed and damage per active class to allied explorers' end,
   }
 
   tier_to_characters = {
@@ -1731,15 +1731,15 @@ function init()
     'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 'kinetic_strike',
   }
   main:add(Arena'arena')
-  main:go_to('arena', 16, 0, {
-    {character = 'archer', level = 3},
-    {character = 'barrager', level = 3},
-    {character = 'corruptor', level = 3},
-    {character = 'host', level = 3},
-    {character = 'beastmaster', level = 3},
-    {character = 'infestor', level = 3},
+  main:go_to('arena', 7, 0, {
+    {character = 'arcanist', level = 1},
+    {character = 'artificer', level = 1},
+    {character = 'witch', level = 1},
+    {character = 'warden', level = 3},
+    {character = 'psychic', level = 1},
+    {character = 'vulcanist', level = 1},
   }, {
-    {passive = 'hive', level = 3},
+    {passive = 'magnify', level = 3},
   })
   ]]--
 
@@ -1875,6 +1875,7 @@ function open_options(self)
         if self.restart_button then self.restart_button.dead = true; self.restart_button = nil end
         if self.mouse_button then self.mouse_button.dead = true; self.mouse_button = nil end
         if self.dark_transition_button then self.dark_transition_button.dead = true; self.dark_transition_button = nil end
+        if self.run_timer_button then self.run_timer_button.dead = true; self.run_timer_button = nil end
         if self.sfx_button then self.sfx_button.dead = true; self.sfx_button = nil end
         if self.music_button then self.music_button.dead = true; self.music_button = nil end
         if self.video_button_1 then self.video_button_1.dead = true; self.video_button_1 = nil end
@@ -1904,6 +1905,7 @@ function open_options(self)
         TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = state.dark_transitions and bg[-2] or fg[0], transition_action = function()
           slow_amount = 1
           music_slow_amount = 1
+          run_time = 0
           gold = 3
           passives = {}
           main_song_instance:stop()
@@ -1925,18 +1927,25 @@ function open_options(self)
       end}
     end
 
-    self.mouse_button = Button{group = self.ui, x = gw/2 - 57, y = gh - 150, force_update = true, button_text = 'mouse control: ' .. tostring(state.mouse_control and 'yes' or 'no'), fg_color = 'bg10', bg_color = 'bg',
+    self.mouse_button = Button{group = self.ui, x = gw/2 - 113, y = gh - 150, force_update = true, button_text = 'mouse control: ' .. tostring(state.mouse_control and 'yes' or 'no'), fg_color = 'bg10', bg_color = 'bg',
     action = function(b)
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       state.mouse_control = not state.mouse_control
       b:set_text('mouse control: ' .. tostring(state.mouse_control and 'yes' or 'no'))
     end}
 
-    self.dark_transition_button = Button{group = self.ui, x = gw/2 + 64, y = gh - 150, force_update = true, button_text = 'dark transitions: ' .. tostring(state.dark_transitions and 'yes' or 'no'),
+    self.dark_transition_button = Button{group = self.ui, x = gw/2 + 13, y = gh - 150, force_update = true, button_text = 'dark transitions: ' .. tostring(state.dark_transitions and 'yes' or 'no'),
     fg_color = 'bg10', bg_color = 'bg', action = function(b)
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       state.dark_transitions = not state.dark_transitions
       b:set_text('dark transitions: ' .. tostring(state.dark_transitions and 'yes' or 'no'))
+    end}
+
+    self.run_timer_button = Button{group = self.ui, x = gw/2 + 121, y = gh - 150, force_update = true, button_text = 'run timer: ' .. tostring(state.run_timer and 'yes' or 'no'), fg_color = 'bg10', bg_color = 'bg',
+    action = function(b)
+      ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      state.run_timer = not state.run_timer
+      b:set_text('run timer: ' .. tostring(state.run_timer and 'yes' or 'no'))
     end}
 
     self.sfx_button = Button{group = self.ui, x = gw/2 - 46, y = gh - 175, force_update = true, button_text = 'sfx volume: ' .. tostring((state.sfx_volume or 0.5)*10), fg_color = 'bg10', bg_color = 'bg',
@@ -2113,6 +2122,7 @@ function close_options(self)
     if self.restart_button then self.restart_button.dead = true; self.restart_button = nil end
     if self.mouse_button then self.mouse_button.dead = true; self.mouse_button = nil end
     if self.dark_transition_button then self.dark_transition_button.dead = true; self.dark_transition_button = nil end
+    if self.run_timer_button then self.run_timer_button.dead = true; self.run_timer_button = nil end
     if self.sfx_button then self.sfx_button.dead = true; self.sfx_button = nil end
     if self.music_button then self.music_button.dead = true; self.music_button = nil end
     if self.video_button_1 then self.video_button_1.dead = true; self.video_button_1 = nil end

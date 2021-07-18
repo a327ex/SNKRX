@@ -2965,7 +2965,7 @@ ForceField:implement(GameObject)
 ForceField:implement(Physics)
 function ForceField:init(args)
   self:init_game_object(args)
-  self:set_as_circle(12, 'static', 'force_field')
+  self:set_as_circle((self.parent and self.parent.magnify and (self.parent.magnify == 1 and 14) or (self.parent.magnify == 2 and 17) or (self.parent.magnify == 3 and 20)) or 12, 'static', 'force_field')
   self.hfx:add('hit', 1)
   
   self.color = fg[0]

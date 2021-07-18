@@ -136,6 +136,7 @@ function BuyScreen:on_enter(from, level, loop, units, passives, shop_level, shop
     TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = state.dark_transitions and bg[-2] or fg[0], transition_action = function()
       slow_amount = 1
       music_slow_amount = 1
+      run_time = 0
       gold = 3
       passives = {}
       main_song_instance:stop()
@@ -188,6 +189,10 @@ end
 function BuyScreen:update(dt)
   if main_song_instance:isStopped() then
     main_song_instance = _G[random:table{'song1', 'song2', 'song3', 'song4', 'song5'}]:play{volume = 0.2}
+  end
+
+  if not self.paused then
+    run_time = run_time + dt
   end
 
   self:update_game_object(dt*slow_amount)
@@ -543,6 +548,7 @@ function RestartButton:update(dt)
     TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = state.dark_transitions and bg[-2] or fg[0], transition_action = function()
       slow_amount = 1
       music_slow_amount = 1
+      run_time = 0
       gold = 3
       passives = {}
       main_song_instance:stop()
@@ -845,6 +851,36 @@ function LevelButton:update(dt)
       self.selected = true
       self.spring:pull(0.2, 200, 10)
       gold = gold - 5
+      self.parent.shop_text:set_text{{text = '[wavy_mid, fg]shop [fg]- [fg, nudge_down]gold: [yellow, nudge_down]' .. gold, font = pixul_font, alignment = 'center'}}
+      self.text = Text({{text = '[bg10]' .. tostring(self.parent.shop_level), font = pixul_font, alignment = 'center'}}, global_text_tags)
+      system.save_run(self.parent.level, self.parent.loop, gold, self.parent.units, self.parent.passives, self.parent.shop_level, self.parent.shop_xp, run_passive_pool, locked_state)
+    end
+  end
+
+  if self.selected and input.m2.pressed then
+    if self.parent.shop_level <= 1 then return end
+    if gold < 10 then
+      self.spring:pull(0.2, 200, 10)
+      self.selected = true
+      error1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      if not self.info_text_2 then
+        self.info_text_2 = InfoText{group = main.current.ui}
+        self.info_text_2:activate({
+          {text = '[fg]not enough gold', font = pixul_font, alignment = 'center'},
+        }, nil, nil, nil, nil, 16, 4, nil, 2)
+        self.info_text_2.x, self.info_text_2.y = gw/2, gh/2 + 30
+      end
+      self.t:after(2, function() self.info_text_2:deactivate(); self.info_text_2.dead = true; self.info_text_2 = nil end, 'info_text_2')
+    else
+      ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      self.shop_xp = 0
+      self.parent.shop_level = self.parent.shop_level - 1
+      self.max_xp = (self.parent.shop_level == 1 and 3) or (self.parent.shop_level == 2 and 4) or (self.parent.shop_level == 3 and 5) or (self.parent.shop_level == 4 and 6) or (self.parent.shop_level == 5 and 0)
+      self.parent.shop_xp = self.shop_xp
+      self:create_info_text()
+      self.selected = true
+      self.spring:pull(0.2, 200, 10)
+      gold = gold - 10
       self.parent.shop_text:set_text{{text = '[wavy_mid, fg]shop [fg]- [fg, nudge_down]gold: [yellow, nudge_down]' .. gold, font = pixul_font, alignment = 'center'}}
       self.text = Text({{text = '[bg10]' .. tostring(self.parent.shop_level), font = pixul_font, alignment = 'center'}}, global_text_tags)
       system.save_run(self.parent.level, self.parent.loop, gold, self.parent.units, self.parent.passives, self.parent.shop_level, self.parent.shop_xp, run_passive_pool, locked_state)

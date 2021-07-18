@@ -362,6 +362,10 @@ function Arena:update(dt)
     main_song_instance = _G[random:table{'song1', 'song2', 'song3', 'song4', 'song5'}]:play{volume = 0.5}
   end
 
+  if not self.paused and not self.died and not self.won then
+    run_time = run_time + dt
+  end
+
   if self.shop_text then self.shop_text:update(dt) end
 
   if input.escape.pressed and not self.transitioning and not self.in_credits and not self.choosing_passives then
@@ -381,6 +385,7 @@ function Arena:update(dt)
       TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = state.dark_transitions and bg[-2] or fg[0], transition_action = function()
         slow_amount = 1
         music_slow_amount = 1
+        run_time = 0
         gold = 3
         passives = {}
         main_song_instance:stop()
@@ -800,7 +805,12 @@ function Arena:draw()
       end
     end
   end
+
+  if state.run_timer then
+    graphics.print_centered(math.round(run_time, 0), fat_font, self.x2 - 12, self.y2 + 16, 0, 0.6, 0.6, nil, nil, fg[0])
+  end
   camera:detach()
+
 
   if self.level == 20 and self.trailer then graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent) end
   if self.choosing_passives or self.won or self.paused or self.died then graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent) end
@@ -848,6 +858,7 @@ function Arena:die()
         TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = state.dark_transitions and bg[-2] or fg[0], transition_action = function()
           slow_amount = 1
           music_slow_amount = 1
+          run_time = 0
           gold = 3
           passives = {}
           main_song_instance:stop()
@@ -875,7 +886,8 @@ end
 function Arena:endless()
   if self.clicked_loop then return end
   self.clicked_loop = true
-  current_new_game_plus = current_new_game_plus - 1
+  if current_new_game_plus >= 5 then current_new_game_plus = 5
+  else current_new_game_plus = current_new_game_plus - 1 end
   if current_new_game_plus < 0 then current_new_game_plus = 0 end
   self.loop = self.loop + 1
   self:transition()
