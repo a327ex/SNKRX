@@ -126,10 +126,12 @@ function engine_run(config)
             return a or 0
           end
         elseif name == "focus" then
+          --[[]
           if main.current:is(Arena) then
             if not a then open_options(main.current)
             else close_options(main.current) end
           end
+          ]]--
         elseif name == "keypressed" then input.keyboard_state[a] = true; input.last_key_pressed = a
         elseif name == "keyreleased" then input.keyboard_state[a] = false
         elseif name == "mousepressed" then input.mouse_state[input.mouse_buttons[c]] = true; input.last_key_pressed = input.mouse_buttons[c]

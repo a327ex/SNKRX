@@ -7,7 +7,7 @@ Weekly maintenance updates:
   * Warden's bubble is now affected by magnify
   * Changed all text instances of "active set" to "active class" to avoid confusion
   * Added a run timer option - note that the timer will be off for saved runs that started before the patch
-  * Alt tabbing now automatically pauses the game while in the arena
+  -- * Alt tabbing now automatically pauses the game while in the arena
   * Shop level can now be reduced
 
 #1
