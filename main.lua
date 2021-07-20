@@ -1121,9 +1121,9 @@ function init()
   }
 
   tier_to_characters = {
-    [1] = {'vagrant', 'swordsman', 'magician', 'archer', 'scout', 'cleric', 'arcanist', 'merchant', 'adventurer', 'sylph', 'host', 'locust'},
+    [1] = {'vagrant', 'swordsman', 'magician', 'archer', 'scout', 'cleric', 'arcanist', 'merchant', 'adventurer', 'sylph', 'host'},
     [2] = {'wizard', 'bomber', 'sage', 'squire', 'dual_gunner', 'sentry', 'chronomancer', 'barbarian', 'cryomancer', 'beastmaster', 'jester', 'carver', 'psychic', 'witch', 'silencer', 'outlaw', 'miner', 'brawler', 'launcher'},
-    [3] = {'elementor', 'stormweaver', 'spellblade', 'psykeeper', 'engineer', 'juggernaut', 'pyromancer', 'assassin', 'bane', 'barrager', 'infestor', 'flagellant', 'artificer', 'usurer', 'gambler', 'sniper', 'mortar', 'blood_elf'},
+    [3] = {'elementor', 'stormweaver', 'spellblade', 'psykeeper', 'engineer', 'juggernaut', 'pyromancer', 'assassin', 'bane', 'barrager', 'infestor', 'flagellant', 'artificer', 'usurer', 'gambler', 'sniper', 'mortar', 'blood_elf', 'locust'},
     [4] = {'priest', 'highlander', 'psykino', 'fairy', 'blade', 'plague_doctor', 'cannoneer', 'vulcanist', 'warden', 'corruptor', 'thief', 'psybanker', 'psylander'},
   }
 
@@ -1196,7 +1196,7 @@ function init()
 	['sylph'] = 1,
 	['blood_elf'] = 3,
 	['psylander'] = 4,
-	['locust'] = 1
+	['locust'] = 3
   }
 
   launches_projectiles = function(character)
