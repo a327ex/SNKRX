@@ -13,8 +13,82 @@ function Player:init(args)
   self.visual_shape = 'rectangle'
   self.classes = character_classes[self.character]
   self.damage_dealt = 0
+  self.executions = 0
+  self.executed = 0
 
-  if self.character == 'vagrant' then
+  if self.character == 'locust' then
+    self.attack_sensor = Circle(self.x, self.y, 96)
+    self.t:cooldown(5, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
+      local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
+      if closest_enemy then
+		self:attack(36, {x = closest_enemy.x, y = closest_enemy.y})
+      end
+    end, nil, nil, 'attack')
+
+  elseif self.character == 'blood_elf' then -- Sniper Hour
+    self.attack_sensor = Circle(self.x, self.y, 256)
+    self.t:cooldown(3, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
+      local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
+      if closest_enemy then
+        self:shoot(self:angle_to_object(closest_enemy), {ricochet = 1, pierce = 75})
+      end
+    end, nil, nil, 'shoot')
+
+  elseif self.character == 'adventurer' then
+    self.attack_sensor = Circle(self.x, self.y, 128)
+    self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
+		self.t:every(0.125, function()
+			local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
+			if closest_enemy then
+				self:shoot(self:angle_to_object(closest_enemy))
+			end
+		end, 4)
+    end, nil, nil, 'shoot')
+
+  elseif self.character == 'sylph' then
+    self.attack_sensor = Circle(self.x, self.y, 48)
+    self.t:cooldown(3, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
+      local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
+      if closest_enemy then
+		self:attack(96)
+      end
+    end, nil, nil, 'attack')
+
+  elseif self.character == 'mortar' then
+    self.attack_sensor = Circle(self.x, self.y, 128)
+    self.t:cooldown(6, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
+	  local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
+	  local posx = closest_enemy.x
+	  local posy = closest_enemy.y
+	  self.t:after(0.5, function()
+			if closest_enemy then
+				self:dot_attack(30, {duration = 12, x = closest_enemy.x, y = closest_enemy.y})
+			end
+	  end)
+    end, nil, nil, 'attack')
+
+  elseif self.character == 'brawler' then
+    self.attack_sensor = Circle(self.x, self.y, 48)
+    self.t:cooldown(3, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
+      local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
+      if closest_enemy then
+		self:attack(96)
+      end
+    end, nil, nil, 'shoot')
+
+  elseif self.character == 'sniper' then -- Sniper Hour
+    self.attack_sensor = Circle(self.x, self.y, 256)
+    self.t:cooldown(16, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
+      local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
+      if closest_enemy then
+        self:shoot(self:angle_to_object(closest_enemy), {pierce = 10, v = 700})
+		if self.level == 3 then
+		    self:attack(64, {x = closest_enemy.x, y = closest_enemy.y})
+		end
+      end
+    end, nil, nil, 'shoot')
+
+  elseif self.character == 'vagrant' then
     self.attack_sensor = Circle(self.x, self.y, 96)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
@@ -478,6 +552,36 @@ function Player:init(args)
       end
     end, nil, nil, 'shoot')
 
+  elseif self.character == 'psylander' then
+	self.reach = 64
+	self.randomy = random:float(0, 3)
+    self.attack_sensor = Circle(self.x, self.y, self.reach)
+	self.counter = 0
+    self.t:after(0.05, function()
+      self.dot_area = DotArea{group = main.current.effects, x = self.x, y = self.y, rs = self.area_size_m*48, color = self.color, dmg = self.area_dmg_m*self.dmg, character = self.character, level = self.level, parent = self}
+    end)
+	if (self.level == 3) then
+		self.t:cooldown(1, function()  local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
+			self.attack_sensor2 = Circle(self.x, self.y, self.reach+32)
+			local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor2, main.current.enemies)
+			self.counter = self.counter + 1
+			if (closest_enemy) and (self.psylander_rogue_bonus > 1) then
+				self:shoot(self:angle_to_object(closest_enemy), {chain = (self.psylander_rogue_bonus-1)*3})
+			end
+			if (self.counter%5 > 4) and (self.psylander_nuker_bonus > 1) then
+				self:attack((self.psylander_nuker_bonus*3)+15, {x = closest_enemy.x, y = closest_enemy.y})
+			end
+		end, nil, nil, 'attack')
+		self.t:every(0.01, function()
+			if (self.psylander_ranger_bonus) then
+				self.reach = (self.psylander_ranger_bonus*16)+48
+			else
+				self.reach = 64
+			end
+			Circle(self.x, self.y, self.reach)
+		end)
+	end
+
   elseif self.character == 'cryomancer' then
     self.t:after(0.01, function()
       self.dot_area = DotArea{group = main.current.effects, x = self.x, y = self.y, rs = self.area_size_m*48, color = self.color, dmg = self.area_dmg_m*self.dmg, character = self.character, level = self.level, parent = self}
@@ -595,14 +699,14 @@ function Player:init(args)
 
   elseif self.character == 'host' then
     if self.level == 3 then
-      self.t:every(1, function()
+      self.t:every(0.5, function()
         critter1:play{pitch = random:float(0.95, 1.05), volume = 0.35}
         for i = 1, 2 do
           Critter{group = main.current.main, x = self.x, y = self.y, color = orange[0], r = random:float(0, 2*math.pi), v = 10, dmg = self.dmg, parent = self}
         end
       end, nil, nil, 'spawn')
     else
-      self.t:every(2, function()
+      self.t:every(1, function()
         critter1:play{pitch = random:float(0.95, 1.05), volume = 0.35}
         Critter{group = main.current.main, x = self.x, y = self.y, color = orange[0], r = random:float(0, 2*math.pi), v = 10, dmg = self.dmg, parent = self}
       end, nil, nil, 'spawn')
@@ -736,7 +840,7 @@ function Player:init(args)
 
   elseif self.character == 'warden' then
     self.sorcerer_count = 0
-    self.t:every(12, function()
+    self.t:cooldown(12, function()
       local ward = function()
         if self.level == 3 then
           local units = self:get_all_units()
@@ -1118,6 +1222,55 @@ function Player:init(args)
       end}
     end)
   end
+  
+  if (self.character == 'psylander') then
+	self.psylander_warrior_def_m = 1
+	self.psylander_enchanter_dmg_m = 1
+	self.psylander_rogue_mvspd_m = 1
+	self.psylander_nuker_area_dmg_m = 1
+	self.psylander_nuker_area_size_m = 1
+	self.psylander_orb_rotate_speed = 1
+	self.psylander_orb_rotate_speed = 1
+	self.psylander_forcer_power = 1
+	self.psylander_ranger_bonus = 1
+	self.psylander_nuker_bonus = 1
+	self.psylander_rogue_bonus = 1
+	local all_units = self:get_all_units()
+	for _, unit in ipairs(all_units) do
+		  if self.level == 3 and table.any(unit.classes, function(v) return v == 'warrior' end) and unit.character ~= 'psylander' then
+				if (unit.leader) then unit:recalculate_followers() end
+				if (self.leader) then self:recalculate_followers() end
+				if (self.executions < 6) then
+					self.executions = self.executions + 1
+					self.psylander_warrior_def_m = self.psylander_warrior_def_m + 0.75
+					if table.any(unit.classes, function(v) return v == 'enchanter' end) then
+						self.psylander_enchanter_dmg_m = self.psylander_enchanter_dmg_m + 0.25
+					end
+					if table.any(unit.classes, function(v) return v == 'rogue' end) then
+						self.psylander_rogue_mvspd_m = self.psylander_rogue_mvspd_m + 0.25
+						self.psylander_rogue_bonus = self.psylander_rogue_bonus + 1
+					end
+					if table.any(unit.classes, function(v) return v == 'nuker' end) then
+						self.psylander_nuker_area_dmg_m = self.psylander_nuker_area_size_m + 0.05
+						self.psylander_nuker_area_dmg_m = self.psylander_nuker_area_dmg_m + 0.25
+					end
+					if table.any(unit.classes, function(v) return v == 'forcer' end) then
+						self.knockback_m = self.knockback_m + 0.5
+					end
+					if table.any(unit.classes, function(v) return v == 'explorer' end) then
+						self.psylander_orb_rotate_speed = self.psylander_orb_rotate_speed + 0.5
+						self.psylander_enchanter_dmg_m = self.psylander_enchanter_dmg_m + 0.15
+					end
+					if table.any(unit.classes, function(v) return v == 'mage' end) then
+						self.psylander_enchanter_dmg_m = self.psylander_enchanter_dmg_m + 0.25
+					end
+					if table.any(unit.classes, function(v) return v == 'ranger' end) then
+						self.psylander_ranger_bonus = self.psylander_ranger_bonus + 1
+					end
+				end
+			end
+	  end
+  end
 
   self.mouse_control_v_buffer = {}
 
@@ -1131,6 +1284,7 @@ end
 function Player:update(dt)
   self:update_game_object(dt)
 
+
   if self.character == 'squire' then
     local all_units = self:get_all_units()
     for _, unit in ipairs(all_units) do
@@ -1141,6 +1295,22 @@ function Player:update(dt)
         unit.squire_def_m = 1.5
         unit.squire_aspd_m = 1.3
         unit.squire_mvspd_m = 1.3
+      end
+    end
+ 
+
+	psybanker_hp = 0
+    local all_units = self:get_all_units()
+    for _, unit in ipairs(all_units) do
+      if table.any(unit.classes, function(v) return v == 'mercenary' end) then
+        psybanker_hp = psybanker_hp + 0.1
+      end
+    end
+  elseif self.character == 'psybanker' then
+    local all_units = self:get_all_units()
+    for _, unit in ipairs(all_units) do
+      if self.level == 3 and table.any(unit.classes, function(v) return v == 'mercenary' end) then
+        unit.psybanker_def_m = 1 + (psybanker_hp or 0)
       end
     end
   elseif self.character == 'chronomancer' then
@@ -1181,6 +1351,40 @@ function Player:update(dt)
     self.outlaw_aspd_m = 1.5
   end
 
+  if self.character == 'adventurer'  then
+    if (self.level == 3) then
+		self.druid_stats_m = 1.5
+	end
+  end
+
+  if self.character == 'mortar'  then
+    if (self.level == 3) then
+		self.hecatia_damage_m = 1.3
+	end
+  end
+
+  if self.character == 'brawler' and self.level == 3 then
+    local class_levels = get_class_levels(self:get_all_units())
+    local number_of_active_sets = 0
+    if class_levels.ranger >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.warrior >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.mage >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.rogue >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.healer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.conjurer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.enchanter >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.psyker >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.nuker >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.curser >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.forcer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.swarmer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.voider >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.sorcerer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.mercenary >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    if class_levels.explorer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    self.brawler_def_m = 1 + 0.15*number_of_active_sets
+  end
+
   if table.any(self.classes, function(v) return v == 'ranger' end) then
     if main.current.ranger_level == 2 then self.chance_to_barrage = 16
     elseif main.current.ranger_level == 1 then self.chance_to_barrage = 8
@@ -1209,7 +1413,7 @@ function Player:update(dt)
   if table.any(self.classes, function(v) return v == 'rogue' end) then
     if main.current.rogue_level == 2 then self.chance_to_crit = 30
     elseif main.current.rogue_level == 1 then self.chance_to_crit = 15
-    elseif main.current.rogue_level == 0 then self.chance_to_crit = 0 end
+    elseif main.current.rogue_level == 0 then self.chance_to_crit = 5 end
   end
 
   if main.current.enchanter_level == 2 then self.enchanter_dmg_m = 1.25
@@ -1310,20 +1514,40 @@ function Player:update(dt)
     self.flagellant_hp_m = 2
   end
 
+  if self.character == 'sniper' then
+    self.sniper_dmg_m = 4
+    self.sniper_area_dmg_m = 0.125
+	self.sniper_mvspd_m = 0.04
+  end
+
   if self.haste then
     if self.hasted then
       self.haste_mvspd_m = math.clamp(math.remap(love.timer.getTime() - self.hasted, 0, 4, 1.5, 1), 1, 1.5)
     else self.haste_mvspd_m = 1 end
   end
+  
+  if (self.character == 'psylander') then
+	local all_units = self:get_all_units()
+	for _, unit in ipairs(all_units) do
+		  if self.level == 3 and table.any(unit.classes, function(v) return v == 'warrior' end) and unit.character ~= 'psylander' then
+				if (unit.leader) then unit:recalculate_followers() end
+				if (self.leader) then self:recalculate_followers() end
+				if (self.executed < 6) then
+					self.executed = self.executed + 1
+					unit:hit(99999999)
+				end
+			end
+	  end
+  end
 
   self.buff_def_a = (self.warrior_def_a or 0)
-  self.buff_aspd_m = (self.chronomancer_aspd_m or 1)*(self.vagrant_aspd_m or 1)*(self.outlaw_aspd_m or 1)*(self.fairy_aspd_m or 1)*(self.psyker_aspd_m or 1)*(self.chronomancy_aspd_m or 1)*(self.awakening_aspd_m or 1)*(self.berserking_aspd_m or 1)*(self.reinforce_aspd_m or 1)*(self.squire_aspd_m or 1)*(self.speed_3_aspd_m or 1)*(self.last_stand_aspd_m or 1)*(self.enchanted_aspd_m or 1)*(self.explorer_aspd_m or 1)
-  self.buff_dmg_m = (self.squire_dmg_m or 1)*(self.vagrant_dmg_m or 1)*(self.enchanter_dmg_m or 1)*(self.swordsman_dmg_m or 1)*(self.flagellant_dmg_m or 1)*(self.psyker_dmg_m or 1)*(self.ballista_dmg_m or 1)*(self.awakening_dmg_m or 1)*(self.reinforce_dmg_m or 1)*(self.payback_dmg_m or 1)*(self.immolation_dmg_m or 1)*(self.damage_4_dmg_m or 1)*(self.offensive_stance_dmg_m or 1)*(self.last_stand_dmg_m or 1)*(self.dividends_dmg_m or 1)*(self.explorer_dmg_m or 1)
-  self.buff_def_m = (self.squire_def_m or 1)*(self.ouroboros_def_m or 1)*(self.unwavering_stance_def_m or 1)*(self.reinforce_def_m or 1)*(self.defensive_stance_def_m or 1)*(self.last_stand_def_m or 1)*(self.unrelenting_stance_def_m or 1)*(self.hardening_def_m or 1)
-  self.buff_area_size_m = (self.nuker_area_size_m or 1)*(self.magnify_area_size_m or 1)*(self.unleash_area_size_m or 1)*(self.last_stand_area_size_m or 1)
-  self.buff_area_dmg_m = (self.nuker_area_dmg_m or 1)*(self.amplify_area_dmg_m or 1)*(self.unleash_area_dmg_m or 1)*(self.last_stand_area_dmg_m or 1)
-  self.buff_mvspd_m = (self.wall_rider_mvspd_m or 1)*(self.centipede_mvspd_m or 1)*(self.squire_mvspd_m or 1)*(self.last_stand_mvspd_m or 1)*(self.haste_mvspd_m or 1)
-  self.buff_hp_m = (self.flagellant_hp_m or 1)
+  self.buff_aspd_m = (self.chronomancer_aspd_m or 1)*(self.vagrant_aspd_m or 1)*(self.psylander_orb_rotate_speed or 1)*(self.outlaw_aspd_m or 1)*(self.fairy_aspd_m or 1)*(self.psyker_aspd_m or 1)*(self.chronomancy_aspd_m or 1)*(self.awakening_aspd_m or 1)*(self.berserking_aspd_m or 1)*(self.reinforce_aspd_m or 1)*(self.squire_aspd_m or 1)*(self.speed_3_aspd_m or 1)*(self.last_stand_aspd_m or 1)*(self.enchanted_aspd_m or 1)*(self.explorer_aspd_m or 1)*(self.druid_stats_m or 1)
+  self.buff_dmg_m = (self.squire_dmg_m or 1)*(self.vagrant_dmg_m or 1)*(self.enchanter_dmg_m or 1)*(self.swordsman_dmg_m or 1)*(self.flagellant_dmg_m or 1)*(self.psyker_dmg_m or 1)*(self.ballista_dmg_m or 1)*(self.awakening_dmg_m or 1)*(self.reinforce_dmg_m or 1)*(self.payback_dmg_m or 1)*(self.immolation_dmg_m or 1)*(self.damage_4_dmg_m or 1)*(self.offensive_stance_dmg_m or 1)*(self.last_stand_dmg_m or 1)*(self.druid_stats_m or 1)*(self.dividends_dmg_m or 1)*(self.explorer_dmg_m or 1)*(self.sniper_dmg_m or 1)*(psylander_enchanter_dmg_m or 1)
+  self.buff_def_m = (self.squire_def_m or 1)*(self.ouroboros_def_m or 1)*(self.brawler_def_m or 1)*(self.unwavering_stance_def_m or 1)*(self.reinforce_def_m or 1)*(self.defensive_stance_def_m or 1)*(self.last_stand_def_m or 1)*(self.unrelenting_stance_def_m or 1)*(self.hardening_def_m or 1)*(self.psybanker_def_m or 1)*(self.druid_stats_m or 1)*(self.psylander_warrior_def_m or 1)
+  self.buff_area_size_m = (self.nuker_area_size_m or 1)*(self.magnify_area_size_m or 1)*(self.unleash_area_size_m or 1)*(self.last_stand_area_size_m or 1)*(self.druid_stats_m or 1)*(psylander_nuker_area_dmg_m or 1)
+  self.buff_area_dmg_m = (self.nuker_area_dmg_m or 1)*(self.amplify_area_dmg_m or 1)*(self.unleash_area_dmg_m or 1)*(self.last_stand_area_dmg_m or 1)*(self.sniper_area_dmg_m or 1)*(self.druid_stats_m or 1)*(hecatia_damage_m or 1)*(psylander_nuker_area_dmg_m or 1)
+  self.buff_mvspd_m = (self.wall_rider_mvspd_m or 1)*(self.centipede_mvspd_m or 1)*(self.squire_mvspd_m or 1)*(self.last_stand_mvspd_m or 1)*(self.haste_mvspd_m or 1)*(sniper_mvspd_m or 1)*(self.druid_stats_m or 1)*(psylander_rogue_mvspd_m or 1)
+  self.buff_hp_m = (self.flagellant_hp_m or 1)*(self.druid_stats_m or 1)
   self:calculate_stats()
 
   if self.attack_sensor then self.attack_sensor:move_to(self.x, self.y) end
@@ -1564,7 +1788,7 @@ function Player:hit(damage, from_undead)
           local objects = main.current.main:get_objects_in_shape(check_circle, {Seeker, EnemyCritter, Critter, Sentry, Volcano, Saboteur, Bomb, Pet, Turret, Automaton})
           if #objects == 0 then
             HealingOrb{group = main.current.main, x = x, y = y}
-          end
+          end 
         end}
       end
     end
@@ -1802,11 +2026,20 @@ function Player:shoot(r, mods)
       end
     end)
   end
-
   if self.character == 'outlaw' then
     HitCircle{group = main.current.effects, x = self.x + 0.8*self.shape.w*math.cos(r), y = self.y + 0.8*self.shape.w*math.sin(r), rs = 6}
     r = r - 2*math.pi/8
     for i = 1, 5 do
+      local t = {group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), v = 250, r = r, color = self.color, dmg = self.dmg*dmg_m, crit = crit, character = self.character,
+        parent = self, level = self.level}
+      Projectile(table.merge(t, mods or {}))
+      r = r + math.pi/8
+    end
+
+  elseif self.character == 'brawler' then
+    HitCircle{group = main.current.effects, x = self.x + 0.8*self.shape.w*math.cos(r), y = self.y + 0.8*self.shape.w*math.sin(r), rs = 6}
+    r = r - 2*math.pi/8
+    for i = 1, 16 do
       local t = {group = main.current.main, x = self.x + 1.6*self.shape.w*math.cos(r), y = self.y + 1.6*self.shape.w*math.sin(r), v = 250, r = r, color = self.color, dmg = self.dmg*dmg_m, crit = crit, character = self.character,
         parent = self, level = self.level}
       Projectile(table.merge(t, mods or {}))
@@ -2043,6 +2276,15 @@ function Projectile:init(args)
 
   elseif self.character == 'witch' and self.level == 3 then
     self.chain = 1
+	
+  elseif self.character == 'blood_elf' then
+    self.t:after(1, function() 
+		HealingOrb{group = main.current.main, x = self.x, y = self.y}
+		if self.level == 3 then
+			HealingOrb{group = main.current.main, x = self.x, y = self.y}
+			HealingOrb{group = main.current.main, x = self.x, y = self.y}
+		end
+	end)
 
   elseif self.character == 'miner' then
     self.homing = true
@@ -2212,7 +2454,7 @@ function Projectile:on_collision_enter(other, contact)
   else r = 0 end
 
   if other:is(Wall) then
-    if self.character == 'archer' or self.character == 'hunter' or self.character == 'barrage' or self.character == 'barrager' or self.character == 'sentry' then
+    if self.character == 'archer' or self.character == 'hunter' or self.character == 'barrage' or self.character == 'barrager' or self.character == 'sentry' or self.character == 'sniper' or self.character == 'blood_elf' then
       if self.ricochet <= 0 then
         self:die(x, y, r, 0)
         WallArrow{group = main.current.main, x = x, y = y, r = self.r, color = self.color}
@@ -2308,7 +2550,7 @@ function Projectile:on_trigger_enter(other, contact)
       magic_area1:play{pitch = random:float(0.95, 1.05), volume = 0.15}
     elseif self.character == 'arcanist_projectile' then
       magic_area1:play{pitch = random:float(0.95, 1.05), volume = 0.075}
-    else
+	else
       hit3:play{pitch = random:float(0.95, 1.05), volume = 0.35}
     end
 
@@ -2431,6 +2673,13 @@ function Area:init(args)
       if self.level == 3 then
         enemy:slow(0.4, 6)
       end
+    elseif self.character == 'sylph' then
+      local r = self.parent:angle_to_object(enemy)
+      enemy:push(random:float(75,100)*(self.knockback_m or 1), r)
+	enemy:hit(self.dmg + resonance_dmg, self)
+	  if self.level == 3 then
+		enemy:slow(0.6, 10)
+	  end
     elseif self.character == 'swordsman' then
       if self.parent.resonance then resonance_dmg = (self.dmg + self.dmg*0.15*#enemies)*resonance_m*#enemies end
       enemy:hit(self.dmg + self.dmg*0.15*#enemies + resonance_dmg, self)
@@ -2443,6 +2692,8 @@ function Area:init(args)
     elseif self.character == 'launcher' then
       if self.parent.resonance then resonance_dmg = (self.level == 3 and 6*self.dmg*0.05*#enemies or 2*self.dmg*0.05*#enemies) end
       enemy:curse('launcher', 4*(self.hex_duration_m or 1), (self.level == 3 and 6*self.dmg or 2*self.dmg) + resonance_dmg, self.parent)
+	elseif self.character == 'locust' then
+	  Critter{group = main.current.main, x = self.x+random:float(-0.5*self.w, 0.5*self.w), y = self.y+random:float(-0.5*self.w, 0.5*self.w), color = orange[0], r = random:float(0, 2*math.pi), v = 0, dmg = self.dmg, parent = self.parent}
     elseif self.character == 'freezing_field' then
       enemy:slow(0.5, 2)
     else
@@ -2558,9 +2809,15 @@ function DotArea:init(args)
   self.shape = Circle(self.x, self.y, self.rs)
   self.closest_sensor = Circle(self.x, self.y, 128)
 
-  if self.character == 'plague_doctor' or self.character == 'pyromancer' or self.character == 'witch' or self.character == 'burning_field' then
+  if self.character == 'plague_doctor' or self.character == 'pyromancer' or self.character == 'witch' or self.character == 'burning_field' or self.character == 'mortar' then
     self.t:every(0.2, function()
       local enemies = main.current.main:get_objects_in_shape(self.shape, main.current.enemies)
+		if self.character == 'mortar' then
+			if self.level == 3 then
+				self.rs = self.rs + 0.25
+				self.shape = Circle(self.x, self.y, self.rs)
+			end
+		end
       if #enemies > 0 then self.spring:pull(0.05, 200, 10) end
       for _, enemy in ipairs(enemies) do
         hit2:play{pitch = random:float(0.8, 1.2), volume = 0.2}
@@ -2571,6 +2828,27 @@ function DotArea:init(args)
           end
         end
         enemy:hit((self.dot_dmg_m or 1)*self.dmg/5, self, true)
+        HitCircle{group = main.current.effects, x = enemy.x, y = enemy.y, rs = 6, color = fg[0], duration = 0.1}
+        for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = self.color} end
+        for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = enemy.color} end
+      end
+    end, nil, nil, 'dot')
+
+  elseif self.character == 'psylander' then
+    self.t:every(0.2, function()
+	  self.psylander_force_power = self.parent.psylander_forcer_power
+      local enemies = main.current.main:get_objects_in_shape(self.shape, main.current.enemies)
+      if #enemies > 0 then
+        self.spring:pull(0.15, 200, 10)
+        hit2:play{pitch = random:float(0.8, 1.2), volume = 0.4}
+      end
+      for _, enemy in ipairs(enemies) do
+        enemy:hit((self.dot_dmg_m or 1)*self.dmg/1.25, self, true)
+		if self.psylander_force_power > 1 and self.pushing == true and random:float(0, 10) > 7 then
+			local r = self.parent:angle_to_object(enemy)
+			local power = (self.parent.knockback_m or 1)*(self.psylander_force_power*self.psylander_force_power)
+			enemy:push(random:float(8,12)*power, r)
+		end
         HitCircle{group = main.current.effects, x = enemy.x, y = enemy.y, rs = 6, color = fg[0], duration = 0.1}
         for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = self.color} end
         for i = 1, 1 do HitParticle{group = main.current.effects, x = enemy.x, y = enemy.y, color = enemy.color} end
@@ -2677,7 +2955,7 @@ function DotArea:update(dt)
   self.vr = self.vr + self.dvr*dt
 
   if self.parent then
-    if (self.character == 'plague_doctor' and self.level == 3 and not self.plague_doctor_unmovable) or self.character == 'cryomancer' or self.character == 'pyromancer' then
+    if (self.character == 'plague_doctor' and self.level == 3 and not self.plague_doctor_unmovable) or self.character == 'cryomancer' or self.character == 'pyromancer' or (self.character == 'psylander' and not self.psylander_immobile) then
       self.x, self.y = self.parent.x, self.parent.y
       self.shape:move_to(self.x, self.y)
     end
@@ -3871,7 +4149,7 @@ function Critter:init(args)
   self.t:after(0.5, function() self.invulnerable = false end)
 
   self.dmg = args.dmg or self.parent.dmg
-  self.hp = 1 + ((main.current.swarmer_level == 2 and 3) or (main.current.swarmer_level == 1 and 1) or 0) + (self.parent.hive or 0)
+  self.hp = 1 + ((main.current.swarmer_level == 2 and 3) or (main.current.swarmer_level == 1 and 1) or 0) + (self.parent.hive or 0) + (((self.parent.character == 'locust' and self.parent.level == 3) and 1) or 0)
 end
 
 

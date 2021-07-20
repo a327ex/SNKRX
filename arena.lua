@@ -61,6 +61,7 @@ function Arena:on_enter(from, level, loop, units, passives, shop_level, shop_xp,
   self.gold_picked_up = 0
   self.damage_dealt = 0
   self.damage_taken = 0
+  self.enemiesKilled = 0
   self.main_slow_amount = 1
   self.enemies = {Seeker, EnemyCritter}
   self.color = self.color or fg[0]
@@ -975,8 +976,15 @@ function Arena:gain_gold()
       break
     end
   end
+  local psybanker
+  for _, unit in ipairs(self.starting_units) do
+    if unit.character == 'psybanker' then
+      psybanker = true
+      break
+    end
+  end
   self.gold_gained = random:int(level_to_gold_gained[self.level][1], level_to_gold_gained[self.level][2])
-  self.interest = math.min(math.floor(gold/5), 5) + math.min((merchant and math.floor(gold/10) or 0), 10)
+  self.interest = math.min(math.floor(gold/5), 5) + math.min((merchant and math.floor(gold/10) or 0), 10) + (psybanker and math.floor(self.enemiesKilled/10) or 0)
   gold = gold + self.gold_gained + self.gold_picked_up + self.interest
 end
 

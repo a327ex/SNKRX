@@ -63,11 +63,13 @@ function MainMenu:on_enter(from)
   end)
 
   self.units = {
-    {character = 'psykino', level = 1},
+    {character = 'adventurer', level = 1},
     {character = 'magician', level = 1},
+	{character = 'arcanist', level = 1},
     {character = 'bane', level = 1},
     {character = 'scout', level = 1},
     {character = 'cannoneer', level = 1},
+    {character = 'miner', level = 1},
     {character = 'swordsman', level = 1},
     {character = 'archer', level = 1},
   }
@@ -81,6 +83,7 @@ function MainMenu:on_enter(from)
   end
 
   self.title_text = Text({{text = '[wavy_mid, fg]SNKRX', font = fat_font, alignment = 'center'}}, global_text_tags)
+  self.title_text2 = Text({{text = "[wavy_mid, green]Despacit Mod", font = pixul_font, alignment = 'center'}}, global_text_tags)
 
   self.arena_run_button = Button{group = self.main_ui, x = 55, y = gh/2 - 10, force_update = true, button_text = 'arena run', fg_color = 'bg10', bg_color = 'bg', action = function(b)
     ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -107,7 +110,7 @@ function MainMenu:on_enter(from)
       system.save_state()
       main:add(BuyScreen'buy_screen')
       main:go_to('buy_screen', run.level or 1, run.loop or 0, run.units or {}, passives, run.shop_level or 1, run.shop_xp or 0)
-    end, text = Text({{text = '[wavy, ' .. tostring(state.dark_transitions and 'fg' or 'bg') .. ']starting...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
+    end, text = Text({{text = '[wavy, ' .. tostring(state.dark_transitions and 'fg' or 'bg') .. ']starting ...', font = pixul_font, alignment = 'center'}}, global_text_tags)}
   end}
   self.options_button = Button{group = self.main_ui, x = 47, y = gh/2 + 12, force_update = true, button_text = 'options', fg_color = 'bg10', bg_color = 'bg', action = function(b)
     if not self.paused then
@@ -135,6 +138,13 @@ function MainMenu:on_enter(from)
     b.selected = true
     ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     system.open_url('https://discord.gg/Yjk2Q5gDqA')
+  end}
+  self.discord_button2 = Button{group = self.main_ui, x = gw - 79, y = 17, force_update = true, button_text = 'join the mod discord!', fg_color = 'bg10', bg_color = 'bg', action = function(b)
+    ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    b.spring:pull(0.2, 200, 10)
+    b.selected = true
+    ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    system.open_url('https://discord.gg/MEXKSAWAU2')
   end}
 end
 
@@ -185,6 +195,7 @@ function MainMenu:update(dt)
     self.effects:update(dt*slow_amount)
     self.main_ui:update(dt*slow_amount)
     if self.title_text then self.title_text:update(dt) end
+    if self.title_text2 then self.title_text2:update(dt) end
     self.ui:update(dt*slow_amount)
   else
     self.ui:update(dt*slow_amount)
@@ -208,6 +219,7 @@ function MainMenu:draw()
 
   self.main_ui:draw()
   self.title_text:draw(60, gh/2 - 40)
+  self.title_text2:draw(60, gh/2 - 31)
   if self.paused then graphics.rectangle(gw/2, gh/2, 2*gw, 2*gh, nil, nil, modal_transparent) end
   self.ui:draw()
 end

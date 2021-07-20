@@ -7,7 +7,7 @@ function Seeker:init(args)
   self:init_unit()
 
   if self.boss then
-    self:set_as_rectangle(18, 7, 'dynamic', 'enemy')
+    self:set_as_rectangle(27, 14, 'dynamic', 'enemy')
     self:set_restitution(0.5)
     self.classes = {'mini_boss'}
     self:calculate_stats(true)
@@ -542,6 +542,7 @@ function Seeker:hit(damage, projectile, dot, from_enemy)
 
   if self.hp <= 0 then
     self.dead = true
+	main.current.enemiesKilled = main.current.enemiesKilled + 1
     for i = 1, random:int(4, 6) do HitParticle{group = main.current.effects, x = self.x, y = self.y, color = self.color} end
     HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 12}:scale_down(0.3):change_color(0.5, self.color)
     _G[random:table{'enemy_die1', 'enemy_die2'}]:play{pitch = random:float(0.9, 1.1), volume = 0.5}
