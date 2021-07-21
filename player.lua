@@ -25,6 +25,15 @@ function Player:init(args)
       end
     end, nil, nil, 'attack')
 
+  --[[elseif self.character == 'blood_elf' then -- spawn critter
+    self.attack_sensor = Circle(self.x, self.y, 256)
+    self.t:cooldown(3, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
+      local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
+      if closest_enemy then
+        self:shoot(self:angle_to_object(closest_enemy), {ricochet = 1, pierce = 75})
+      end
+    end, nil, nil, 'shoot')]]
+
   elseif self.character == 'blood_elf' then -- Sniper Hour
     self.attack_sensor = Circle(self.x, self.y, 256)
     self.t:cooldown(3, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -82,9 +91,6 @@ function Player:init(args)
       local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
       if closest_enemy then
         self:shoot(self:angle_to_object(closest_enemy), {pierce = 10, v = 700})
-		if self.level == 3 then
-		    self:attack(64, {x = closest_enemy.x, y = closest_enemy.y})
-		end
       end
     end, nil, nil, 'shoot')
 
@@ -606,7 +612,11 @@ function Player:init(args)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
       if closest_enemy then
-        self:shoot(self:angle_to_object(closest_enemy), {spawn_critters_on_crit = 2})
+        if (self.level == 3) then
+			self:shoot(self:angle_to_object(closest_enemy), {spawn_large_critters_on_crit = 3})
+		else
+			self:shoot(self:angle_to_object(closest_enemy), {spawn_critters_on_crit = 2})
+		end
       end
     end, nil, nil, 'shoot')
 
@@ -1414,6 +1424,12 @@ function Player:update(dt)
     if main.current.rogue_level == 2 then self.chance_to_crit = 30
     elseif main.current.rogue_level == 1 then self.chance_to_crit = 15
     elseif main.current.rogue_level == 0 then self.chance_to_crit = 5 end
+	if (main.current.critboost) then
+		self.chance_to_crit = self.chance_to_crit + (main.current.critboost*4)
+	end
+	if (self.character == 'beastmaster') and self.level == 3 and self.chance_to_crit then
+		self.chance_to_crit = self.chance_to_crit + 10
+	end
   end
 
   if main.current.enchanter_level == 2 then self.enchanter_dmg_m = 1.25
@@ -1755,15 +1771,6 @@ function Player:hit(damage, from_undead)
     end
   end
 
-  if self.character == 'beastmaster' and self.level == 3 then
-    critter1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-    trigger:after(0.01, function()
-      for i = 1, 4 do
-        Critter{group = main.current.main, x = self.x, y = self.y, color = orange[0], r = random:float(0, 2*math.pi), v = 20, dmg = self.dmg, parent = self}
-      end
-    end)
-  end
-
   if self.crucio then
     local enemies = main.current.main:get_objects_by_classes(main.current.enemies)
     for _, enemy in ipairs(enemies) do
@@ -2022,6 +2029,24 @@ function Player:shoot(r, mods)
     critter1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     trigger:after(0.01, function()
       for i = 1, mods.spawn_critters_on_crit do
+        Critter{group = main.current.main, x = self.x, y = self.y, color = orange[0], r = random:float(0, 2*math.pi), v = 10, dmg = self.dmg, parent = self}
+      end
+    end)
+  end
+
+  if crit and mods.spawn_large_critters_on_crit then
+    critter1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    trigger:after(0.01, function()
+      for i = 1, mods.spawn_large_critters_on_crit do
+        Critter{group = main.current.main, x = self.x, y = self.y, color = orange[0], r = random:float(0, 2*math.pi), v = 10, dmg = self.dmg, parent = self, size = 1}
+      end
+    end)
+  end
+
+  if mods.spawn_critters_on_hit then
+    critter1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    trigger:after(0.01, function()
+      for i = 1, mods.spawn_critters_on_hit do
         Critter{group = main.current.main, x = self.x, y = self.y, color = orange[0], r = random:float(0, 2*math.pi), v = 10, dmg = self.dmg, parent = self}
       end
     end)
@@ -2577,6 +2602,10 @@ function Projectile:on_trigger_enter(other, contact)
         end
       end)
     end
+	
+	if (self.character == 'sniper' and self.level == 3 and self.crit) then
+	  self:attack(64, {x = other.x, y = other.y, damage = self.damage / 4})
+	end
 
     if self.character == 'assassin' then
       other:apply_dot((self.crit and 4*self.dmg or self.dmg/2)*(self.dot_dmg_m or 1)*(main.current.chronomancer_dot or 1), 3)
@@ -4136,8 +4165,11 @@ function Critter:init(args)
   self:init_game_object(args)
   if tostring(self.x) == tostring(0/0) or tostring(self.y) == tostring(0/0) then self.dead = true; return end
   if #self.group:get_objects_by_class(Critter) > 100 then self.dead = true; return end
+  if not (self.size) then
+	self.size = 0
+  end
   self:init_unit()
-  self:set_as_rectangle(7, 4, 'dynamic', 'player')
+  self:set_as_rectangle(7+(self.size*3), 4+(self.size*1.8), 'dynamic', 'player')
   self:set_restitution(0.5)
 
   self.classes = {'enemy_critter'}
@@ -4148,8 +4180,9 @@ function Critter:init(args)
   self.invulnerable = true
   self.t:after(0.5, function() self.invulnerable = false end)
 
-  self.dmg = args.dmg or self.parent.dmg
-  self.hp = 1 + ((main.current.swarmer_level == 2 and 3) or (main.current.swarmer_level == 1 and 1) or 0) + (self.parent.hive or 0) + (((self.parent.character == 'locust' and self.parent.level == 3) and 1) or 0)
+  self.dmg = (args.dmg or self.parent.dmg)*((self.size/5)+1)
+  self.mhp = 1 + ((main.current.swarmer_level == 2 and 3) or (main.current.swarmer_level == 1 and 1) or 0) + (self.parent.hive or 0) + (((self.parent.character == 'locust' and self.parent.level == 3) and 1) or 0)+(self.size*3)
+  self.hp = self.mhp
 end
 
 

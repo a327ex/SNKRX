@@ -658,7 +658,7 @@ function Seeker:hit(damage, projectile, dot, from_enemy)
         _G[random:table{'scout1', 'scout2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.35}
         HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6}
         local r = random:float(0, 2*math.pi)
-        local t = {group = main.current.main, x = self.x + 8*math.cos(r), y = self.y + 8*math.sin(r), v = 250, r = r, color = red[0], dmg = self.max_hp,
+        local t = {group = main.current.main, x = self.x + 8*math.cos(r), y = self.y + 8*math.sin(r), v = 250, r = r, color = red[0], dmg = 0.5*self.max_hp,
           homing = true, character = 'jester', parent = main.current.player}
         Projectile(table.merge(t, mods or {}))
       end)

@@ -237,6 +237,7 @@ function init()
   psycholeak = Image('psycholeak')
   divine_blessing = Image('divine_blessing')
   hardening = Image('hardening')
+  critboost = Image('criticalboost')
 
   class_colors = {
     ['warrior'] = yellow[0],
@@ -876,7 +877,7 @@ function init()
     ['cryomancer'] = function() return '[fg]enemies are also slowed by [yellow]60%[fg] while in the area' end,
     ['pyromancer'] = function() return '[fg]enemies killed by the pyromancer explode, dealing [yellow]' .. get_character_stat('pyromancer', 3, 'dmg') .. '[fg] AoE damage' end,
     ['corruptor'] = function() return '[fg]spawn [yellow]2[fg] small critters if the corruptor hits an enemy' end,
-    ['beastmaster'] = function() return '[fg]spawn [yellow]4[fg] small critters if the beastmaster gets hit' end,
+    ['beastmaster'] = function() return '[fg]spawns [yellow]3[fg] large critters on crit. gains [yellow]+10%[fg] crit chance' end,
     ['launcher'] = function() return '[fg]enemies launched take [yellow]300%[fg] more damage when they hit walls' end,
     ['jester'] = function() return '[fg]all knives seek enemies and pierce [yellow]2[fg] times' end,
     ['assassin'] = function() return '[fg]poison inflicted from crits deals [yellow]8x[fg] damage' end,
@@ -903,7 +904,7 @@ function init()
     ['usurer'] = function() return '[fg]if the same enemy is cursed [yellow]3[fg] times it takes [yellow]' .. 10*get_character_stat('usurer', 3, 'dmg') .. '[fg] damage' end,
     ['gambler'] = function() return '[yellow]60/40/20%[fg] chance to cast the attack [yellow]2/3/4[fg] times' end,
     ['thief'] = function() return '[fg]if the knife crits it deals [yellow]' .. 10*get_character_stat('thief', 3, 'dmg') .. '[fg] damage, chains [yellow]10[fg] times and grants [yellow]1[fg] gold' end,
-	['sniper'] = function() return '[fg]bullets release an AoE that deals ' .. 0.125*get_character_stat('sniper', 3, 'dmg') .. ' damage' end,
+	['sniper'] = function() return '[fg]bullets release an AoE that deals ' .. 0.25*get_character_stat('sniper', 3, 'dmg') .. ' damage upon crit' end,
 	['brawler'] = function() return '[fg]gives itself [yellow]+15%[fg] defense per active class' end,
 	['psybanker'] = function() return '[fg]increase the defense of allied mercenaries by [yellow]+10%[fg] for every mercenary' end,
 	['adventurer'] = function() return "[fg]increases the adventurer's stats by [yellow]50%[fg]" end,
@@ -945,7 +946,7 @@ function init()
     ['cryomancer'] = function() return '[light_bg]enemies are also slowed by 60% while in the area' end,
     ['pyromancer'] = function() return '[light_bg]enemies killed by the pyromancer explode, dealing ' .. get_character_stat('pyromancer', 3, 'dmg') .. ' AoE damage' end,
     ['corruptor'] = function() return '[light_bg]spawn 2 small critters if the corruptor hits an enemy' end,
-    ['beastmaster'] = function() return '[light_bg]spawn 4 small critters if the beastmaster gets hit' end,
+    ['beastmaster'] = function() return '[light_bg]spawns 3 large critters on crit. gains +10% crit chance' end,
     ['launcher'] = function() return '[light_bg]enemies launched take 300% more damage when they hit walls' end,
     ['jester'] = function() return '[light_bg]curses 6 enemies and all knives seek enemies and pierce 2 times' end,
     ['assassin'] = function() return '[light_bg]poison inflicted from crits deals 8x damage' end,
@@ -972,7 +973,7 @@ function init()
     ['usurer'] = function() return '[light_bg]if the same enemy is cursed 3 times it takes ' .. 10*get_character_stat('usurer', 3, 'dmg') .. ' damage' end,
     ['gambler'] = function() return '[light_bg]60/40/20% chance to cast the attack 2/3/4 times' end,
     ['thief'] = function() return '[light_bg]if the knife crits it deals ' .. 10*get_character_stat('thief', 3, 'dmg') .. ' damage, chains 10 times and grants 1 gold' end,
-	['sniper'] = function() return '[light_bg]bullets release an AoE that deal ' .. 0.125*get_character_stat('sniper', 3, 'dmg') .. ' damage' end,
+	['sniper'] = function() return '[light_bg]bullets release an AoE that deal ' .. 0.25*get_character_stat('sniper', 3, 'dmg') .. ' damage damage upon crit' end,
 	['brawler'] = function() return '[light_bg]gives itself +15% defense per active class' end,
 	['psybanker'] = function() return '[light_bg]increase the defense of allied mercenaries by +10% for every mercenary' end,
 	['adventurer'] = function() return "[light_bg]increases the adventurer's stats by 50%" end,
@@ -1082,8 +1083,8 @@ function init()
     else return 'light_bg' end
   end
   local rlb1 = function(lvl)
-    if lvl == 3 then return 'light_bg'
-    elseif lvl == 2 then return 'light_bg'
+    if lvl == 2 then return 'light_bg'
+    elseif lvl == 1 then return 'light_bg'
     else return 'yellow' end
   end
   local ylb2 = function(lvl)
@@ -1100,8 +1101,8 @@ function init()
     ['warrior'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[light_bg]/[' .. ylb2(lvl) .. ']6 [fg]- [' .. ylb1(lvl) .. ']+25[light_bg]/[' .. ylb2(lvl) .. ']+50 [fg]defense to allied warriors' end,
     ['mage'] = function(lvl) return '[' .. ylb1(lvl) .. ']3[light_bg]/[' .. ylb2(lvl) .. ']6 [fg]- [' .. ylb1(lvl) .. ']-15[light_bg]/[' .. ylb2(lvl) .. ']-30 [fg]enemy defense' end,
     ['rogue'] = function(lvl)
-		return '[' .. rlb1(lvl) .. ']1[light_bg]/[' .. ylb2(lvl) .. ']3[light_bg]/[' .. ylb3(lvl) .. ']6 [fg]- [' .. rlb1(lvl) .. ']5%[light_bg]/[' .. 
-		 ylb2(lvl) .. ']15% [' .. ylb3(lvl)  .. ']30% [fg]chance to crit to allied rogues, dealing [yellow]4x[] damage'
+		return '[' .. rlb1(lvl) .. ']1[light_bg]/[' .. ylb2(lvl+1) .. ']3[light_bg]/[' .. ylb3(lvl+1) .. ']6 [fg]- [' .. rlb1(lvl) .. ']5%[light_bg]/[' .. 
+		 ylb2(lvl+1) .. ']15% [' .. ylb3(lvl+1)  .. ']/30% [fg]chance to crit to allied rogues, dealing [yellow]4x[] damage'
 	end,
     ['healer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+15%[light_bg]/[' .. ylb2(lvl) .. ']+30% [fg] chance to create [yellow]+1[fg] healing orb on healing orb creation' end,
     ['enchanter'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+15%[light_bg]/[' .. ylb2(lvl) .. ']+25% [fg]damage to all allies' end,
@@ -1404,6 +1405,7 @@ function init()
     ['psycholeak'] = 'Psycholeak',
     ['divine_blessing'] = 'Divine Blessing',
     ['hardening'] = 'Hardening',
+	['critboost'] = 'Critical Boost'
   }
 
   passive_descriptions = {
@@ -1491,6 +1493,7 @@ function init()
     ['psycholeak'] = '[fg]position [yellow]1[fg] generates [yellow]1[fg] psyker orb every [yellow]10[fg] seconds',
     ['divine_blessing'] = '[fg]generate [yellow]1[fg] healing orb every [yellow]8[fg] seconds',
     ['hardening'] = '[yellow]+150%[fg] defense to all allies for [yellow]3[fg] seconds after an ally dies',
+	['critboost'] = 'all rogues gain [yellow]+4/+8/+12%[fg] chance to crit'
   }
 
   local ts = function(lvl, a, b, c) return '[' .. ylb1(lvl) .. ']' .. tostring(a) .. '[light_bg]/[' .. ylb2(lvl) .. ']' .. tostring(b) .. '[light_bg]/[' .. ylb3(lvl) .. ']' .. tostring(c) .. '[fg]' end
@@ -1579,6 +1582,7 @@ function init()
     ['psycholeak'] = function(lvl) return '[fg]position [yellow]1[fg] generates [yellow]1[fg] psyker orb every [yellow]10[fg] seconds' end,
     ['divine_blessing'] = function(lvl) return '[fg]generate [yellow]1[fg] healing orb every [yellow]8[fg] seconds' end,
     ['hardening'] = function(lvl) return '[yellow]+150%[fg] defense to all allies for [yellow]3[fg] seconds after an ally dies' end,
+    ['critboost'] = function(lvl) return '[fg]all rogues gain ' .. ts(lvl, '+4', '+8', '12%') .. ' chance to crit' end,
   }
 
   level_to_tier_weights = {
@@ -2037,7 +2041,7 @@ function open_options(self)
             'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
             'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance', 'blessing', 'haste', 'divine_barrage', 'orbitism', 'psyker_orbs', 'psychosink', 'rearm', 'taunt', 'construct_instability',
             'intimidation', 'vulnerability', 'temporal_chains', 'ceremonial_dagger', 'homing_barrage', 'critical_strike', 'noxious_strike', 'infesting_strike', 'burning_strike', 'lucky_strike', 'healing_strike', 'stunning_strike',
-            'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 'kinetic_strike',
+            'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 'kinetic_strike'
           }
           max_units = math.clamp(7 + current_new_game_plus, 7, 12)
           main:add(BuyScreen'buy_screen')
