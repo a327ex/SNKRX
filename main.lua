@@ -1705,7 +1705,7 @@ function init()
   if not state.new_game_plus then state.new_game_plus = new_game_plus end
   current_new_game_plus = state.current_new_game_plus or new_game_plus
   if not state.current_new_game_plus then state.current_new_game_plus = current_new_game_plus end
-  max_units = math.clamp(7 + current_new_game_plus, 7, 12)
+  max_units = math.clamp(7 + current_new_game_plus+state.loop, 7, 12)
 
   main_song_instance = _G[random:table{'song1', 'song2', 'song3', 'song4', 'song5'}]:play{volume = 0.5}
   main = Main()
