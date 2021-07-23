@@ -46,6 +46,7 @@ function BuyScreen:on_enter(from, level, loop, units, passives, shop_level, shop
   self.shop_level = shop_level
   self.shop_xp = shop_xp
   camera.x, camera.y = gw/2, gh/2
+  max_units=math.clamp(7 + current_new_game_plus+self.loop, 7, 12)
 
   input:set_mouse_visible(true)
 
