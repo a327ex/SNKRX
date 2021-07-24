@@ -595,6 +595,7 @@ function Seeker:hit(damage, projectile, dot, from_enemy)
       if self.silenced or self.barbarian_stunned then return end
       critter1:play{pitch = random:float(0.95, 1.05), volume = 0.35}
       trigger:after(0.01, function()
+        if not main.current.main.world then return end
         for i = 1, random:int(5, 8) do
           EnemyCritter{group = main.current.main, x = self.x, y = self.y, color = purple[0], r = random:float(0, 2*math.pi), v = 10 + 0.1*self.level, dmg = 2*self.dmg, projectile = projectile}
         end
@@ -645,7 +646,7 @@ function Seeker:hit(damage, projectile, dot, from_enemy)
 
     if self.bane_cursed then
       trigger:after(0.01, function()
-        DotArea{group = main.current.effects, x = self.x, y = self.y, rs = (self.bane_ref.level == 3 and 2 or 1)*self.bane_ref.area_size_m*18, color = purple[0],
+        DotArea{group = main.current.effects, x = self.x, y = self.y, rs = (self.bane_ref.level == 3 and 2 or 1)*self.bane_ref.area_size_m*27, color = purple[0],
           dmg = self.bane_ref.area_dmg_m*self.bane_ref.dmg*(self.bane_ref.dot_dmg_m or 1), void_rift = true, duration = 1}
       end)
     end

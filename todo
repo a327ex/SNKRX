@@ -1,5 +1,28 @@
 Weekly maintenance updates:
 
+#3
+
+  * Fixed a bug that would cause incorrect party size after loading a looped run (thanks ArnaudOechslin https://github.com/a327ex/SNKRX/pull/15)
+  * Fixed a rare crash due to enemy critters being spawned during a level transition
+  * Improved descriptions for engineer and sentry to avoid confusion
+  * Fixed engineer's and artificer's cooldown not being displayed properly
+  * Changed freezing field's color to blue for better visual clarity
+  * Increased cryomancer's area of effect by 50%
+  * Increased bane's void rift's size by 50%
+  * Beastmaster now has 10% crit chance by default
+  * The fairy will no longer buff non-attacking units
+  * Awakening and enchanted items will no longer buff non-attacking units
+  * Changed magician's Lv.3 effect to "+50% attack speed every 12 seconds for 6 seconds"
+  Added the following keyboard shortcuts:
+    While in the shop:
+      * R rerolls units
+      * 1, 2, 3 buys units
+      * Enter/space starts the round
+    While in the item selection screen:
+      * R rerolls items
+      * 1, 2, 3, 4 buys items
+  * Credit yongminparks
+
 #2
 
   * Fixed a bug where NG+5 difficulty would go down to NG+4 after looping

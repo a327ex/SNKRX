@@ -49,8 +49,8 @@ function Player:init(args)
     end, nil, nil, 'attack')
     if self.level == 3 then
       self.t:every(12, function()
-        self.magician_invulnerable = true
-        self.t:after(6, function() self.magician_invulnerable = false end, 'magician_invulnerable')
+        self.magician_aspd_m = 1.5
+        self.t:after(6, function() self.magician_aspd_m = 1 end, 'magician_aspd_m')
       end)
     end
 
@@ -230,7 +230,7 @@ function Player:init(args)
           end)
         end
       end
-    end)
+    end, nil, nil, 'spawn')
 
   elseif self.character == 'outlaw' then
     self.attack_sensor = Circle(self.x, self.y, 96)
@@ -411,7 +411,7 @@ function Player:init(args)
       SpawnEffect{group = main.current.effects, x = self.x, y = self.y, color = orange[0], action = function(x, y)
         Turret{group = main.current.main, x = x, y = y, parent = self}
       end}
-    end)
+    end, nil, nil, 'spawn')
 
     if self.level == 3 then
       self.t:every(24, function()
@@ -480,7 +480,7 @@ function Player:init(args)
 
   elseif self.character == 'cryomancer' then
     self.t:after(0.01, function()
-      self.dot_area = DotArea{group = main.current.effects, x = self.x, y = self.y, rs = self.area_size_m*48, color = self.color, dmg = self.area_dmg_m*self.dmg, character = self.character, level = self.level, parent = self}
+      self.dot_area = DotArea{group = main.current.effects, x = self.x, y = self.y, rs = self.area_size_m*72, color = self.color, dmg = self.area_dmg_m*self.dmg, character = self.character, level = self.level, parent = self}
     end)
 
   elseif self.character == 'pyromancer' then
@@ -679,8 +679,12 @@ function Player:init(args)
     self.t:every(6, function()
       if self.level == 3 then
         local units = self:get_all_units()
-        local unit_1 = random:table_remove(units)
-        local unit_2 = random:table_remove(units)
+        local unit_1 = random:table(units)
+        local runs = 0
+        while table.any(non_attacking_characters, function(v) return v == unit_1 end) and runs < 1000 do unit_1 = random:table(units); runs = runs + 1 end
+        local unit_2 = random:table(units)
+        local runs = 0
+        while table.any(non_attacking_characters, function(v) return v == unit_2 end) and runs < 1000 do unit_2 = random:table(units); runs = runs + 1 end
         if unit_1 then
           unit_1.fairy_aspd_m = 3
           unit_1.fairyd = true
@@ -711,6 +715,8 @@ function Player:init(args)
 
       else
         local unit = random:table(self:get_all_units())
+        local runs = 0
+        while table.any(non_attacking_characters, function(v) return v == unit end) and runs < 1000 do unit = random:table(self:get_all_units()); runs = runs + 1 end
         if unit then
           unit.fairyd = true
           unit.fairy_aspd_m = 2
@@ -918,6 +924,8 @@ function Player:init(args)
         end
       end
       local mage = random:table(mages)
+      local runs = 0
+      while table.any(non_attacking_characters, function(v) return v == mage end) and runs < 1000 do mage = random:table(mages); runs = runs + 1 end
       if mage then
         mage.awakening_aspd_m = (self.awakening == 1 and 1.5) or (self.awakening == 2 and 1.75) or (self.awakening == 3 and 2)
         mage.awakening_dmg_m = (self.awakening == 1 and 1.5) or (self.awakening == 2 and 1.75) or (self.awakening == 3 and 2)
@@ -1002,6 +1010,8 @@ function Player:init(args)
       
       if enchanter_amount >= 2 then
         local unit = random:table(units)
+        local runs = 0
+        while table.any(non_attacking_characters, function(v) return v == unit end) and runs < 1000 do unit = random:table(units); runs = runs + 1 end
         unit.enchanted_aspd_m = (self.enchanted == 1 and 1.33) or (self.enchanted == 2 and 1.66) or (self.enchanted == 3 and 1.99)
       end
     end)
@@ -1317,7 +1327,7 @@ function Player:update(dt)
   end
 
   self.buff_def_a = (self.warrior_def_a or 0)
-  self.buff_aspd_m = (self.chronomancer_aspd_m or 1)*(self.vagrant_aspd_m or 1)*(self.outlaw_aspd_m or 1)*(self.fairy_aspd_m or 1)*(self.psyker_aspd_m or 1)*(self.chronomancy_aspd_m or 1)*(self.awakening_aspd_m or 1)*(self.berserking_aspd_m or 1)*(self.reinforce_aspd_m or 1)*(self.squire_aspd_m or 1)*(self.speed_3_aspd_m or 1)*(self.last_stand_aspd_m or 1)*(self.enchanted_aspd_m or 1)*(self.explorer_aspd_m or 1)
+  self.buff_aspd_m = (self.chronomancer_aspd_m or 1)*(self.vagrant_aspd_m or 1)*(self.outlaw_aspd_m or 1)*(self.fairy_aspd_m or 1)*(self.psyker_aspd_m or 1)*(self.chronomancy_aspd_m or 1)*(self.awakening_aspd_m or 1)*(self.berserking_aspd_m or 1)*(self.reinforce_aspd_m or 1)*(self.squire_aspd_m or 1)*(self.speed_3_aspd_m or 1)*(self.last_stand_aspd_m or 1)*(self.enchanted_aspd_m or 1)*(self.explorer_aspd_m or 1)*(self.magician_aspd_m or 1)
   self.buff_dmg_m = (self.squire_dmg_m or 1)*(self.vagrant_dmg_m or 1)*(self.enchanter_dmg_m or 1)*(self.swordsman_dmg_m or 1)*(self.flagellant_dmg_m or 1)*(self.psyker_dmg_m or 1)*(self.ballista_dmg_m or 1)*(self.awakening_dmg_m or 1)*(self.reinforce_dmg_m or 1)*(self.payback_dmg_m or 1)*(self.immolation_dmg_m or 1)*(self.damage_4_dmg_m or 1)*(self.offensive_stance_dmg_m or 1)*(self.last_stand_dmg_m or 1)*(self.dividends_dmg_m or 1)*(self.explorer_dmg_m or 1)
   self.buff_def_m = (self.squire_def_m or 1)*(self.ouroboros_def_m or 1)*(self.unwavering_stance_def_m or 1)*(self.reinforce_def_m or 1)*(self.defensive_stance_def_m or 1)*(self.last_stand_def_m or 1)*(self.unrelenting_stance_def_m or 1)*(self.hardening_def_m or 1)
   self.buff_area_size_m = (self.nuker_area_size_m or 1)*(self.magnify_area_size_m or 1)*(self.unleash_area_size_m or 1)*(self.last_stand_area_size_m or 1)
@@ -1689,7 +1699,7 @@ function Player:sorcerer_repeat()
     if self.freezing_field then
       frost1:play{pitch = random:float(0.8, 1.2), volume = 0.3}
       elementor1:play{pitch = random:float(0.9, 1.1), volume = 0.3}
-      Area{group = main.current.effects, x = enemy.x, y = enemy.y, w = self.area_size_m*36, color = fg[0], character = 'freezing_field', parent = self}
+      Area{group = main.current.effects, x = enemy.x, y = enemy.y, w = self.area_size_m*36, color = blue[0], character = 'freezing_field', parent = self}
     end
   end
 end
@@ -1779,6 +1789,7 @@ function Player:shoot(r, mods)
 
   local dmg_m = 1
   local crit = false
+  if self.character == 'beastmaster' then crit = random:bool(10) end
   if self.chance_to_crit and random:bool(self.chance_to_crit) then dmg_m = ((self.assassination == 1 and 8) or (self.assassination == 2 and 10) or (self.assassination == 3 and 12) or 4); crit = true end
   if self.assassination and table.any(self.classes, function(v) return v == 'rogue' end) then
     if not crit then

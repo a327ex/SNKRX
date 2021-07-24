@@ -615,7 +615,7 @@ function init()
     ['chronomancer'] = function(lvl) return '[yellow]+20%[fg] attack speed to all allies' end,
     ['spellblade'] = function(lvl) return '[fg]throws knives that deal [yellow]' .. get_character_stat('spellblade', lvl, 'dmg') .. '[fg] damage, pierce and spiral outwards' end,
     ['psykeeper'] = function(lvl) return '[fg]creates [yellow]3[fg] healing orbs every time the psykeeper takes [yellow]25%[fg] of its max HP in damage' end,
-    ['engineer'] = function(lvl) return '[fg]drops sentries that shoot bursts of projectiles, each dealing [yellow]' .. get_character_stat('engineer', lvl, 'dmg') .. '[fg] damage' end,
+    ['engineer'] = function(lvl) return '[fg]drops turrets that shoot bursts of projectiles, each dealing [yellow]' .. get_character_stat('engineer', lvl, 'dmg') .. '[fg] damage' end,
     ['plague_doctor'] = function(lvl) return '[fg]creates an area that deals [yellow]' .. get_character_stat('plague_doctor', lvl, 'dmg') .. '[fg] damage per second' end,
     ['barbarian'] = function(lvl) return '[fg]deals [yellow]' .. get_character_stat('barbarian', lvl, 'dmg') .. '[fg] AoE damage and stuns enemies hit for [yellow]4[fg] seconds' end,
     ['juggernaut'] = function(lvl) return '[fg]deals [yellow]' .. get_character_stat('juggernaut', lvl, 'dmg') .. '[fg] AoE damage and pushes enemies away with a strong force' end,
@@ -657,7 +657,7 @@ function init()
     ['vagrant'] = '[fg]Experience',
     ['swordsman'] = '[yellow]Cleave',
     ['wizard'] = '[blue]Magic Missile',
-    ['magician'] = '[blue]Ethereal Form',
+    ['magician'] = '[blue]Quick Cast',
     ['archer'] = '[green]Bounce Shot',
     ['scout'] = '[red]Dagger Resonance',
     ['cleric'] = '[green]Mass Heal',
@@ -717,7 +717,7 @@ function init()
     ['vagrant'] = '[light_bg]Experience',
     ['swordsman'] = '[light_bg]Cleave',
     ['wizard'] = '[light_bg]Magic Missile',
-    ['magician'] = '[light_bg]Ethereal Form',
+    ['magician'] = '[light_bg]Quick Cast',
     ['archer'] = '[light_bg]Bounce Shot',
     ['scout'] = '[light_bg]Dagger Resonance',
     ['cleric'] = '[light_bg]Mass Heal ',
@@ -777,7 +777,7 @@ function init()
     ['vagrant'] = function() return '[yellow]+15%[fg] attack speed and damage per active class' end,
     ['swordsman'] = function() return "[fg]the swordsman's damage is [yellow]doubled" end,
     ['wizard'] = function() return '[fg]the projectile chains [yellow]2[fg] times' end,
-    ['magician'] = function() return '[fg]the magician becomes invulnerable for [yellow]6[fg] seconds but also cannot attack' end,
+    ['magician'] = function() return '[yellow]+50%[[fg] attack speed every [yellow]12[fg] seconds for [yellow]6[fg] seconds' end,
     ['archer'] = function() return '[fg]the arrow ricochets off walls [yellow]3[fg] times' end,
     ['scout'] = function() return '[yellow]+25%[fg] damage per chain and [yellow]+3[fg] chains' end,
     ['cleric'] = function() return '[fg]creates [yellow]4[fg] healing orbs every [yellow]8[fg] seconds' end,
@@ -792,7 +792,7 @@ function init()
     ['cannoneer'] = function() return '[fg]showers the hit area in [yellow]7[fg] additional cannon shots that deal [yellow]' .. get_character_stat('cannoneer', 3, 'dmg')/2 .. '[fg] AoE damage' end,
     ['dual_gunner'] = function() return '[fg]every 5th attack shoot in rapid succession for [yellow]2[fg] seconds' end,
     ['hunter'] = function() return '[fg]summons [yellow]3[fg] pets and the pets ricochet off walls once' end,
-    ['sentry'] = function() return '[yellow]+50%[fg] sentry attack speed and the projectiles ricochet [yellow]twice[fg]' end,
+    ['sentry'] = function() return '[yellow]+50%[fg] sentry turret attack speed and the projectiles ricochet [yellow]twice[fg]' end,
     ['chronomancer'] = function() return '[fg]enemies take damage over time [yellow]50%[fg] faster' end,
     ['spellblade'] = function() return '[fg]faster projectile speed and tighter turns' end,
     ['psykeeper'] = function() return '[fg]deal [yellow]double[fg] the damage taken by the psykeeper to all enemies' end,
@@ -837,7 +837,7 @@ function init()
     ['vagrant'] = function() return '[light_bg]+15% attack speed and damage per active class' end,
     ['swordsman'] = function() return "[light_bg]the swordsman's damage is doubled" end,
     ['wizard'] = function() return '[light_bg]the projectile chains 3 times' end,
-    ['magician'] = function() return '[light_bg]the magician becomes invulnerable for 6 seconds but also cannot attack' end,
+    ['magician'] = function() return '[light_bg]+50% attack speed every 12 seconds for 6 seconds' end,
     ['archer'] = function() return '[light_bg]the arrow ricochets off walls 3 times' end,
     ['scout'] = function() return '[light_bg]+25% damage per chain and +3 chains' end,
     ['cleric'] = function() return '[light_bg]creates 4 healing orbs' end,
@@ -852,7 +852,7 @@ function init()
     ['cannoneer'] = function() return '[light_bg]showers the hit area in 7 additional cannon shots that deal ' .. get_character_stat('cannoneer', 3, 'dmg')/2 .. ' AoE damage' end,
     ['dual_gunner'] = function() return '[light_bg]every 5th attack shoot in rapid succession for 2 seconds' end,
     ['hunter'] = function() return '[light_bg]summons 3 pets and the pets ricochet off walls once' end,
-    ['sentry'] = function() return '[light_bg]+50% attack speed and the projectiles ricochet twice' end,
+    ['sentry'] = function() return '[light_bg]+50% sentry turret attack speed and the projectiles ricochet twice' end,
     ['chronomancer'] = function() return '[light_bg]enemies take damage over time 50% faster' end,
     ['spellblade'] = function() return '[light_bg]faster projectile speed and tighter turns' end,
     ['psykeeper'] = function() return '[light_bg]deal double the damage taken by the psykeeper to all enemies' end,
@@ -1731,15 +1731,10 @@ function init()
     'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 'kinetic_strike',
   }
   main:add(Arena'arena')
-  main:go_to('arena', 7, 0, {
-    {character = 'arcanist', level = 1},
-    {character = 'artificer', level = 1},
-    {character = 'witch', level = 1},
-    {character = 'warden', level = 3},
-    {character = 'psychic', level = 1},
-    {character = 'vulcanist', level = 1},
+  main:go_to('arena', 21, 0, {
+    {character = 'magician', level = 3},
   }, {
-    {passive = 'magnify', level = 3},
+    {passive = 'awakening', level = 3},
   })
   ]]--
 

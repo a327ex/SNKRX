@@ -46,6 +46,7 @@ function BuyScreen:on_enter(from, level, loop, units, passives, shop_level, shop
   self.shop_level = shop_level
   self.shop_xp = shop_xp
   camera.x, camera.y = gw/2, gh/2
+  max_units = math.clamp(7 + current_new_game_plus + self.loop, 7, 12)
 
   input:set_mouse_visible(true)
 
@@ -698,7 +699,7 @@ end
 function GoButton:update(dt)
   self:update_game_object(dt)
 
-  if self.selected and input.m1.pressed and not self.transitioning then
+  if ((self.selected and input.m1.pressed) or input.enter.pressed) and not self.transitioning then
     if #self.parent.units == 0 then
       if not self.info_text then
         error1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -724,6 +725,8 @@ function GoButton:update(dt)
         main:go_to('arena', self.parent.level, self.parent.loop, self.parent.units, self.parent.passives, self.parent.shop_level, self.parent.shop_xp, self.parent.locked)
       end, text = Text({{text = '[wavy, ' .. tostring(state.dark_transitions and 'fg' or 'bg') .. ']level ' .. tostring(self.parent.level) .. '/' .. tostring(25*(self.parent.loop+1)), font = pixul_font, alignment = 'center'}}, global_text_tags)}
     end
+
+    if input.enter.pressed then self.selected = false end
   end
 end
 
@@ -998,7 +1001,7 @@ end
 function RerollButton:update(dt)
   self:update_game_object(dt)
 
-  if self.selected and input.m1.pressed then
+  if (self.selected and input.m1.pressed) or input.r.pressed then
     if self.parent:is(BuyScreen) then
       if gold < 2 then
         self.spring:pull(0.2, 200, 10)
@@ -1045,6 +1048,8 @@ function RerollButton:update(dt)
         self.text = Text({{text = '[bg10]reroll: [yellow]5', font = pixul_font, alignment = 'center'}}, global_text_tags)
       end
     end
+
+    if input.r.pressed then self.selected = false end
   end
 end
 
@@ -1372,7 +1377,7 @@ function PassiveCard:update(dt)
   self:update_game_object(dt)
   self.passive_name:update(dt)
 
-  if self.selected and input.m1.pressed and self.arena.choosing_passives then
+  if ((self.selected and input.m1.pressed) or input[tostring(self.card_i)].pressed) and self.arena.choosing_passives then
     self.arena.choosing_passives = false
     table.insert(self.arena.passives, {passive = self.passive, level = 1, xp = 0})
     self.arena:restore_passives_to_pool(self.card_i)
@@ -1621,7 +1626,7 @@ end
 function ShopCard:update(dt)
   self:update_game_object(dt)
 
-  if self.selected and input.m1.pressed then
+  if (self.selected and input.m1.pressed) or input[tostring(self.i)].pressed then
     if self.parent:buy(self.unit, self.i) then
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}

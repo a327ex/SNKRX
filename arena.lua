@@ -943,7 +943,7 @@ function Arena:create_credits()
     open_url(b, 'https://freesound.org/people/benzix2/sounds/467951/') end}
   Button{group = self.credits, x = 204, y = 160, button_text = 'lord', fg_color = 'yellowm5', bg_color = 'yellow', credits_button = true, action = function(b)
     open_url(b, 'https://store.steampowered.com/developer/T_TGames') end}
-  Button{group = self.credits, x = 254, y = 160, button_text = 'InspectorJ', fg_color = 'yellowm5', bg_color = 'yellow', credits_button = true, action = function(b)
+  Button{group = self.credits, x = 262, y = 160, button_text = 'InspectorJ', fg_color = 'yellowm5', bg_color = 'yellow', credits_button = true, action = function(b)
     open_url(b, 'https://freesound.org/people/InspectorJ/sounds/458586/') end}
   Text2{group = self.credits, x = 70, y = 190, lines = {{text = '[red]playtesters: ', font = pixul_font}}}
   Button{group = self.credits, x = 130, y = 190, button_text = 'Jofer', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
@@ -962,8 +962,8 @@ function Arena:create_credits()
     open_url(b, 'https://twitter.com/Ge0forceBE') end}
   Button{group = self.credits, x = 193, y = 210, button_text = 'Vlad', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
     open_url(b, 'https://twitter.com/thecryru') end}
-  Button{group = self.credits, x = 223, y = 210, button_text = 'F', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
-    open_url(b, 'https://twitter.com/notyps') end}
+  Button{group = self.credits, x = 258, y = 210, button_text = 'Yongmin Park', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
+    open_url(b, 'https://twitter.com/yongminparks') end}
 end
 
 
