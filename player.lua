@@ -681,10 +681,10 @@ function Player:init(args)
         local units = self:get_all_units()
         local unit_1 = random:table(units)
         local runs = 0
-        while table.any(non_attacking_characters, function(v) return v == unit_1 end) and runs < 1000 do unit_1 = random:table(units); runs = runs + 1 end
+        while table.any(non_attacking_characters, function(v) return v == unit_1.character end) and runs < 1000 do unit_1 = random:table(units); runs = runs + 1 end
         local unit_2 = random:table(units)
         local runs = 0
-        while table.any(non_attacking_characters, function(v) return v == unit_2 end) and runs < 1000 do unit_2 = random:table(units); runs = runs + 1 end
+        while table.any(non_attacking_characters, function(v) return v == unit_2.character end) and runs < 1000 do unit_2 = random:table(units); runs = runs + 1 end
         if unit_1 then
           unit_1.fairy_aspd_m = 3
           unit_1.fairyd = true
@@ -716,7 +716,7 @@ function Player:init(args)
       else
         local unit = random:table(self:get_all_units())
         local runs = 0
-        while table.any(non_attacking_characters, function(v) return v == unit end) and runs < 1000 do unit = random:table(self:get_all_units()); runs = runs + 1 end
+        while table.any(non_attacking_characters, function(v) return v == unit.character end) and runs < 1000 do unit = random:table(self:get_all_units()); runs = runs + 1 end
         if unit then
           unit.fairyd = true
           unit.fairy_aspd_m = 2
@@ -925,7 +925,7 @@ function Player:init(args)
       end
       local mage = random:table(mages)
       local runs = 0
-      while table.any(non_attacking_characters, function(v) return v == mage end) and runs < 1000 do mage = random:table(mages); runs = runs + 1 end
+      while table.any(non_attacking_characters, function(v) return v == mage.character end) and runs < 1000 do mage = random:table(mages); runs = runs + 1 end
       if mage then
         mage.awakening_aspd_m = (self.awakening == 1 and 1.5) or (self.awakening == 2 and 1.75) or (self.awakening == 3 and 2)
         mage.awakening_dmg_m = (self.awakening == 1 and 1.5) or (self.awakening == 2 and 1.75) or (self.awakening == 3 and 2)
@@ -1011,7 +1011,7 @@ function Player:init(args)
       if enchanter_amount >= 2 then
         local unit = random:table(units)
         local runs = 0
-        while table.any(non_attacking_characters, function(v) return v == unit end) and runs < 1000 do unit = random:table(units); runs = runs + 1 end
+        while table.any(non_attacking_characters, function(v) return v == unit.character end) and runs < 1000 do unit = random:table(units); runs = runs + 1 end
         unit.enchanted_aspd_m = (self.enchanted == 1 and 1.33) or (self.enchanted == 2 and 1.66) or (self.enchanted == 3 and 1.99)
       end
     end)
