@@ -170,18 +170,6 @@ function BuyScreen:on_enter(from, level, loop, units, passives, shop_level, shop
 
   trigger:tween(1, main_song_instance, {volume = 0.2, pitch = 1}, math.linear)
 
-  --[[
-  if self.level == 1 then
-    self.screen_text = Text2{group = self.ui, x = gw/2, y = gh/2, lines = {
-      {text = '[bg3]press K if screen is too large', font = pixul_font, alignment = 'center'},
-      {text = '[bg3]press L if screen is too small', font = pixul_font, alignment = 'center'},
-    }}
-    self.t:after(8, function()
-      self.t:tween(0.2, self.screen_text, {sy = 0}, math.linear, function() self.screen_text.sy = 0 end)
-    end)
-  end
-  ]]--
-
   locked_state = {locked = self.locked, cards = {self.cards[1] and self.cards[1].unit, self.cards[2] and self.cards[2].unit, self.cards[3] and self.cards[3].unit}} 
   system.save_run(self.level, self.loop, gold, self.units, self.passives, self.shop_level, self.shop_xp, run_passive_pool, locked_state)
 end

@@ -170,15 +170,6 @@ function Seeker:init(args)
     self:set_as_steerable(self.v, 2000, 4*math.pi, 4)
   end
 
-  --[[
-  if random:bool(35) then
-    local n = random:int(1, 3)
-    self.speed_booster = n == 1
-    self.exploder = n == 2
-    self.headbutter = n == 3
-  end
-  ]]--
-
   if self.speed_booster then
     self.color = green[0]:clone()
     self.area_sensor = Circle(self.x, self.y, 128)
@@ -604,6 +595,7 @@ function Seeker:hit(damage, projectile, dot, from_enemy)
 
     if pyrod then
       trigger:after(0.01, function()
+        if not main.current.main.world then return end
         Area{group = main.current.main, x = self.x, y = self.y, color = red[0], w = 32*pyrod.parent.area_size_m, r = random:float(0, 2*math.pi), dmg = pyrod.parent.area_dmg_m*pyrod.dmg,
           character = pyrod.character, level = pyrod.level, parent = pyrod.parent}
       end)
