@@ -681,10 +681,14 @@ function Player:init(args)
         local units = self:get_all_units()
         local unit_1 = random:table(units)
         local runs = 0
-        while table.any(non_attacking_characters, function(v) return v == unit_1.character end) and runs < 1000 do unit_1 = random:table(units); runs = runs + 1 end
+        if unit_1 then
+          while table.any(non_attacking_characters, function(v) return v == unit_1.character end) and runs < 1000 do unit_1 = random:table(units); runs = runs + 1 end
+        end
         local unit_2 = random:table(units)
         local runs = 0
-        while table.any(non_attacking_characters, function(v) return v == unit_2.character end) and runs < 1000 do unit_2 = random:table(units); runs = runs + 1 end
+        if unit_2 then
+          while table.any(non_attacking_characters, function(v) return v == unit_2.character end) and runs < 1000 do unit_2 = random:table(units); runs = runs + 1 end
+        end
         if unit_1 then
           unit_1.fairy_aspd_m = 3
           unit_1.fairyd = true
@@ -1011,8 +1015,10 @@ function Player:init(args)
       if enchanter_amount >= 2 then
         local unit = random:table(units)
         local runs = 0
-        while table.any(non_attacking_characters, function(v) return v == unit.character end) and runs < 1000 do unit = random:table(units); runs = runs + 1 end
-        unit.enchanted_aspd_m = (self.enchanted == 1 and 1.33) or (self.enchanted == 2 and 1.66) or (self.enchanted == 3 and 1.99)
+        if unit then
+          while table.any(non_attacking_characters, function(v) return v == unit.character end) and runs < 1000 do unit = random:table(units); runs = runs + 1 end
+          unit.enchanted_aspd_m = (self.enchanted == 1 and 1.33) or (self.enchanted == 2 and 1.66) or (self.enchanted == 3 and 1.99)
+        end
       end
     end)
   end
