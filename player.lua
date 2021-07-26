@@ -924,9 +924,9 @@ function Player:init(args)
         end
       end
       local mage = random:table(mages)
-      local runs = 0
-      while table.any(non_attacking_characters, function(v) return v == mage.character end) and runs < 1000 do mage = random:table(mages); runs = runs + 1 end
       if mage then
+        local runs = 0
+        while table.any(non_attacking_characters, function(v) return v == mage.character end) and runs < 1000 do mage = random:table(mages); runs = runs + 1 end
         mage.awakening_aspd_m = (self.awakening == 1 and 1.5) or (self.awakening == 2 and 1.75) or (self.awakening == 3 and 2)
         mage.awakening_dmg_m = (self.awakening == 1 and 1.5) or (self.awakening == 2 and 1.75) or (self.awakening == 3 and 2)
       end
