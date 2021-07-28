@@ -218,7 +218,7 @@ end
 
 function Unit:calculate_damage(dmg)
   if self.def >= 0 then dmg = dmg*(100/(100+self.def))
-  else dmg = dmg*(2 - 100/(100+self.def)) end
+  else dmg = dmg*(2 - 100/(100-self.def)) end
   return dmg
 end
 
