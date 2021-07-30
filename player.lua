@@ -677,18 +677,11 @@ function Player:init(args)
 
   elseif self.character == 'fairy' then
     self.t:every(6, function()
+      local units = self:get_all_units()
+      units = table.select(units, function(v) return self:is_attacker(v) end)
       if self.level == 3 then
-        local units = self:get_all_units()
-        local unit_1 = random:table(units)
-        local runs = 0
-        if unit_1 then
-          while table.any(non_attacking_characters, function(v) return v == unit_1.character end) and runs < 1000 do unit_1 = random:table(units); runs = runs + 1 end
-        end
+        local unit_1 = random:table_remove(units)
         local unit_2 = random:table(units)
-        local runs = 0
-        if unit_2 then
-          while table.any(non_attacking_characters, function(v) return v == unit_2.character end) and runs < 1000 do unit_2 = random:table(units); runs = runs + 1 end
-        end
         if unit_1 then
           unit_1.fairy_aspd_m = 3
           unit_1.fairyd = true
@@ -718,9 +711,7 @@ function Player:init(args)
         end
 
       else
-        local unit = random:table(self:get_all_units())
-        local runs = 0
-        while table.any(non_attacking_characters, function(v) return v == unit.character end) and runs < 1000 do unit = random:table(self:get_all_units()); runs = runs + 1 end
+        local unit = random:table(units)
         if unit then
           unit.fairyd = true
           unit.fairy_aspd_m = 2
@@ -921,16 +912,9 @@ function Player:init(args)
   if self.leader and self.awakening then
     main.current.t:after(0.1, function()
       local units = self:get_all_units()
-      local mages = {}
-      for _, unit in ipairs(units) do
-        if table.any(unit.classes, function(v) return v == 'mage' end) then
-          table.insert(mages, unit)
-        end
-      end
-      local mage = random:table(mages)
+      units = table.select(units, function(v) return self:is_class(v, 'mage') and self:is_attacker(v)end)
+      local mage = random:table(units)
       if mage then
-        local runs = 0
-        while table.any(non_attacking_characters, function(v) return v == mage.character end) and runs < 1000 do mage = random:table(mages); runs = runs + 1 end
         mage.awakening_aspd_m = (self.awakening == 1 and 1.5) or (self.awakening == 2 and 1.75) or (self.awakening == 3 and 2)
         mage.awakening_dmg_m = (self.awakening == 1 and 1.5) or (self.awakening == 2 and 1.75) or (self.awakening == 3 and 2)
       end
@@ -1002,21 +986,24 @@ function Player:init(args)
     end)
   end
 
-  if self.enchanted then
+  if self.leader and self.enchanted then
     main.current.t:after(0.1, function()
       local units = self:get_all_units()
       local enchanter_amount = 0
-      for _, unit in ipairs(units) do
-        if table.any(unit.classes, function(v) return v == 'enchanter' end) then
+
+      -- Count sorceror units and filter out non attacking units at the same time.
+      for i = #units, 1, -1 do
+        if self:is_class(units[i], 'enchanter') then
           enchanter_amount = enchanter_amount + 1
+        end
+        if not self:is_attacker(units[i]) then
+          table.remove(units, i)
         end
       end
       
       if enchanter_amount >= 2 then
         local unit = random:table(units)
-        local runs = 0
         if unit then
-          while table.any(non_attacking_characters, function(v) return v == unit.character end) and runs < 1000 do unit = random:table(units); runs = runs + 1 end
           unit.enchanted_aspd_m = (self.enchanted == 1 and 1.33) or (self.enchanted == 2 and 1.66) or (self.enchanted == 3 and 1.99)
         end
       end
@@ -1727,6 +1714,16 @@ end
 function Player:chain_infuse(duration)
   self.chain_infused = true
   self.t:after(duration or 2, function() self.chain_infused = false end, 'chain_infuse')
+end
+
+
+function Player:is_attacker(unit)
+  return table.all(non_attacking_characters, function(v) return v ~= unit.character end)
+end
+
+
+function Player:is_class(unit, class)
+  return table.any(unit.classes, function(v) return v == class end)
 end
 
 
