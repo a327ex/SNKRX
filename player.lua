@@ -1718,7 +1718,7 @@ end
 
 
 function Player:is_attacker(unit)
-  return table.all(non_attacking_characters, function(v) return v ~= unit.character end)
+  return table.all(non_speed_buffable, function(v) return v ~= unit.character end)
 end
 
 
