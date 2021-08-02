@@ -14,9 +14,11 @@ function Player:init(args)
   self.classes = character_classes[self.character]
   self.damage_dealt = 0
   
+  self.has_cooldown = false
   self.can_use_aspd = false
 
   if self.character == 'vagrant' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 96)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -27,6 +29,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'swordsman' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 48)
     self.t:cooldown(3, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -34,6 +37,7 @@ function Player:init(args)
     end, nil, nil, 'attack')
 
   elseif self.character == 'wizard' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 128)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -44,6 +48,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'magician' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 96)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -61,6 +66,7 @@ function Player:init(args)
     end
 
   elseif self.character == 'gambler' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.sorcerer_count = 0
     local cast = function(pitch_a)
@@ -117,6 +123,7 @@ function Player:init(args)
     end, nil, nil, 'attack')
 
   elseif self.character == 'archer' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 160)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -127,6 +134,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'scout' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 64)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -137,6 +145,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'thief' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 64)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -147,6 +156,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'cleric' then
+    self.has_cooldown = true
     self.t:every(8, function()
       if self.level == 3 then
         for i = 1, 4 do
@@ -196,6 +206,7 @@ function Player:init(args)
     end, nil, nil, 'heal')
 
   elseif self.character == 'arcanist' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.sorcerer_count = 0
     self.attack_sensor = Circle(self.x, self.y, 128)
@@ -217,6 +228,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'artificer' then
+    self.has_cooldown = true
     self.sorcerer_count = 0
     self.attack_sensor = Circle(self.x, self.y, 96)
     self.t:every(6, function()
@@ -244,6 +256,7 @@ function Player:init(args)
     end, nil, nil, 'spawn')
 
   elseif self.character == 'outlaw' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 96)
     self.t:cooldown(3, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -254,6 +267,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'blade' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 64)
     self.t:cooldown(4, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -261,6 +275,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'elementor' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 128)
     self.t:cooldown(7, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -271,6 +286,7 @@ function Player:init(args)
     end, nil, nil, 'attack')
 
   elseif self.character == 'psychic' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.sorcerer_count = 0
     self.attack_sensor = Circle(self.x, self.y, self.level == 3 and 512 or 64)
@@ -305,6 +321,7 @@ function Player:init(args)
     end, nil, nil, 'attack')
 
   elseif self.character == 'saboteur' then
+    self.has_cooldown = true
     self.t:every(8, function()
       self.t:every(0.25, function()
         SpawnEffect{group = main.current.effects, x = self.x, y = self.y, color = self.color, action = function(x, y)
@@ -314,6 +331,7 @@ function Player:init(args)
     end, nil, nil, 'spawn')
 
   elseif self.character == 'bomber' then
+    self.has_cooldown = true
     self.t:every(8, function()
       SpawnEffect{group = main.current.effects, x = self.x, y = self.y, color = self.color, action = function(x, y)
         Bomb{group = main.current.main, x = x, y = y, parent = self, level = self.level, conjurer_buff_m = self.conjurer_buff_m or 1}
@@ -321,6 +339,7 @@ function Player:init(args)
     end, nil, nil, 'spawn')
 
   elseif self.character == 'stormweaver' then
+    self.has_cooldown = true
     self.t:every(8, function()
       stormweaver1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       local units = self:get_all_units()
@@ -330,6 +349,7 @@ function Player:init(args)
     end, nil, nil, 'buff')
 
   elseif self.character == 'sage' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     if self.level == 3 then
 	  self.can_do_damage = true
@@ -343,6 +363,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'cannoneer' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 128)
     self.t:cooldown(6, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -353,6 +374,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'vulcanist' then
+    self.has_cooldown = true
     self.sorcerer_count = 0
     self.attack_sensor = Circle(self.x, self.y, 128)
     self.t:every(12, function()
@@ -393,6 +415,7 @@ function Player:init(args)
     end, nil, nil, 'attack')
 
   elseif self.character == 'dual_gunner' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.dg_counter = 0
     self.attack_sensor = Circle(self.x, self.y, 96)
@@ -405,6 +428,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'hunter' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 160)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -420,6 +444,7 @@ function Player:init(args)
     end
 
   elseif self.character == 'spellblade' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.t:every(2, function()
       self:shoot(random:float(0, 2*math.pi))
@@ -430,6 +455,7 @@ function Player:init(args)
     self.last_heal_time = love.timer.getTime()
 
   elseif self.character == 'engineer' then
+    self.has_cooldown = true
     self.t:every(8, function()
       SpawnEffect{group = main.current.effects, x = self.x, y = self.y, color = orange[0], action = function(x, y)
         Turret{group = main.current.main, x = x, y = y, parent = self}
@@ -454,6 +480,7 @@ function Player:init(args)
     end
 
   elseif self.character == 'plague_doctor' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.t:every(5, function()
       self:dot_attack(24, {duration = 12, plague_doctor_unmovable = true})
@@ -466,6 +493,7 @@ function Player:init(args)
     end
 
   elseif self.character == 'witch' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.sorcerer_count = 0
     self.t:every(4, function()
@@ -483,6 +511,7 @@ function Player:init(args)
     end, nil, nil, 'attack')
 
   elseif self.character == 'barbarian' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 48)
     self.t:cooldown(8, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -490,6 +519,7 @@ function Player:init(args)
     end, nil, nil, 'attack')
 
   elseif self.character == 'juggernaut' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 64)
     self.t:cooldown(8, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -516,6 +546,7 @@ function Player:init(args)
     end)
 
   elseif self.character == 'corruptor' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 160)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -526,6 +557,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'beastmaster' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 160)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -536,6 +568,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'launcher' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 96)
     self.t:cooldown(6, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -553,6 +586,7 @@ function Player:init(args)
     end, nil, nil, 'attack')
 
   elseif self.character == 'jester' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 96)
     self.wide_attack_sensor = Circle(self.x, self.y, 128)
@@ -570,6 +604,7 @@ function Player:init(args)
     end, nil, nil, 'attack')
 
   elseif self.character == 'usurer' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 96)
     self.wide_attack_sensor = Circle(self.x, self.y, 128)
@@ -586,6 +621,7 @@ function Player:init(args)
     end, nil, nil, 'attack')
 
   elseif self.character == 'silencer' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.sorcerer_count = 0
     self.attack_sensor = Circle(self.x, self.y, 96)
@@ -619,6 +655,7 @@ function Player:init(args)
     end, nil, nil, 'attack')
 
   elseif self.character == 'assassin' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 64)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -629,6 +666,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'host' then
+    self.has_cooldown = true
     if self.level == 3 then
       self.t:every(1, function()
         critter1:play{pitch = random:float(0.95, 1.05), volume = 0.35}
@@ -644,16 +682,19 @@ function Player:init(args)
     end
 
   elseif self.character == 'carver' then
+    self.has_cooldown = true
     self.t:every(16, function()
       Tree{group = main.current.main, x = self.x, y = self.y, color = self.color, parent = self, level = self.level}
     end, nil, nil, 'spawn')
 
   elseif self.character == 'sentry' then
+    self.has_cooldown = true
     self.t:every(7, function()
       Sentry{group = main.current.main, x = self.x, y = self.y, color = self.color, parent = self, level = self.level}
     end, nil, nil, 'spawn')
 
   elseif self.character == 'bane' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 96)
     self.wide_attack_sensor = Circle(self.x, self.y, 128)
@@ -669,6 +710,7 @@ function Player:init(args)
     end, nil, nil, 'attack')
 
   elseif self.character == 'psykino' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     if self.level == 3 then
 	  self.can_do_damage = true
@@ -681,6 +723,7 @@ function Player:init(args)
     end, nil, nil, 'attack')
 
   elseif self.character == 'barrager' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.barrager_counter = 0
     self.attack_sensor = Circle(self.x, self.y, 128)
@@ -705,6 +748,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'highlander' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 36)
     self.t:cooldown(4, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -718,6 +762,7 @@ function Player:init(args)
     end, nil, nil, 'attack')
 
   elseif self.character == 'fairy' then
+    self.has_cooldown = true
     self.t:every(6, function()
       local units = self:get_all_units()
       units = table.select(units, function(v) return v.can_use_aspd end)
@@ -778,6 +823,7 @@ function Player:init(args)
     end, nil, nil, 'heal')
 
   elseif self.character == 'warden' then
+    self.has_cooldown = true
     self.sorcerer_count = 0
     self.t:every(12, function()
       local ward = function()
@@ -837,6 +883,7 @@ function Player:init(args)
     end, nil, nil, 'buff')
 
   elseif self.character == 'priest' then
+    self.has_cooldown = true
     if self.level == 3 then
       self.t:after(0.01, function()
         local all_units = self:get_all_units()
@@ -866,6 +913,7 @@ function Player:init(args)
     end, nil, nil, 'heal')
 
   elseif self.character == 'infestor' then
+    self.has_cooldown = true
     self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 96)
     self.wide_attack_sensor = Circle(self.x, self.y, 128)
@@ -881,6 +929,7 @@ function Player:init(args)
     end, nil, nil, 'attack')
 
   elseif self.character == 'flagellant' then
+    self.has_cooldown = true
     self.t:every(8, function()
       buff1:play{pitch = random:float(0.95, 1.05), volume = 0.3}
       flagellant1:play{pitch = random:float(0.95, 1.05), volume = 0.4}

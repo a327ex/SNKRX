@@ -1195,8 +1195,7 @@ function CharacterHP:draw()
     end
   graphics.pop()
 
-  if state.cooldown_snake then
-    if table.any(non_cooldown_characters, function(v) return v == self.parent.character end) then return end
+  if state.cooldown_snake and self.parent.has_cooldown then
     local p = self.parent
     graphics.push(p.x, p.y, 0, self.hfx.hit.x, self.hfx.hit.y)
       if not p.dead then
