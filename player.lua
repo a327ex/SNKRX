@@ -13,8 +13,11 @@ function Player:init(args)
   self.visual_shape = 'rectangle'
   self.classes = character_classes[self.character]
   self.damage_dealt = 0
+  
+  self.can_use_aspd = false
 
   if self.character == 'vagrant' then
+    self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 96)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
@@ -24,12 +27,14 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'swordsman' then
+    self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 48)
     self.t:cooldown(3, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       self:attack(96)
     end, nil, nil, 'attack')
 
   elseif self.character == 'wizard' then
+    self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 128)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
@@ -39,6 +44,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'magician' then
+    self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 96)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       if self.magician_invulnerable then return end
@@ -55,6 +61,7 @@ function Player:init(args)
     end
 
   elseif self.character == 'gambler' then
+    self.can_use_aspd = true
     self.sorcerer_count = 0
     local cast = function(pitch_a)
       local enemy = table.shuffle(main.current.main:get_objects_by_classes(main.current.enemies))[1]
@@ -110,6 +117,7 @@ function Player:init(args)
     end, nil, nil, 'attack')
 
   elseif self.character == 'archer' then
+    self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 160)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
@@ -119,6 +127,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'scout' then
+    self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 64)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
@@ -128,6 +137,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'thief' then
+    self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 64)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
@@ -186,6 +196,7 @@ function Player:init(args)
     end, nil, nil, 'heal')
 
   elseif self.character == 'arcanist' then
+    self.can_use_aspd = true
     self.sorcerer_count = 0
     self.attack_sensor = Circle(self.x, self.y, 128)
     self.t:cooldown(4, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -233,6 +244,7 @@ function Player:init(args)
     end, nil, nil, 'spawn')
 
   elseif self.character == 'outlaw' then
+    self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 96)
     self.t:cooldown(3, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
@@ -242,12 +254,14 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'blade' then
+    self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 64)
     self.t:cooldown(4, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       self:shoot()
     end, nil, nil, 'shoot')
 
   elseif self.character == 'elementor' then
+    self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 128)
     self.t:cooldown(7, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       local enemy = self:get_random_object_in_shape(self.attack_sensor, main.current.enemies)
@@ -257,6 +271,7 @@ function Player:init(args)
     end, nil, nil, 'attack')
 
   elseif self.character == 'psychic' then
+    self.can_use_aspd = true
     self.sorcerer_count = 0
     self.attack_sensor = Circle(self.x, self.y, self.level == 3 and 512 or 64)
     self.t:cooldown(3, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -315,6 +330,10 @@ function Player:init(args)
     end, nil, nil, 'buff')
 
   elseif self.character == 'sage' then
+    self.can_use_aspd = true
+    if self.level == 3 then
+	  self.can_do_damage = true
+	end
     self.attack_sensor = Circle(self.x, self.y, 96)
     self.t:cooldown(9, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
@@ -324,6 +343,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'cannoneer' then
+    self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 128)
     self.t:cooldown(6, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
@@ -373,6 +393,7 @@ function Player:init(args)
     end, nil, nil, 'attack')
 
   elseif self.character == 'dual_gunner' then
+    self.can_use_aspd = true
     self.dg_counter = 0
     self.attack_sensor = Circle(self.x, self.y, 96)
     self.gun_kata_sensor = Circle(self.x, self.y, 160)
@@ -384,6 +405,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'hunter' then
+    self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 160)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
@@ -398,6 +420,7 @@ function Player:init(args)
     end
 
   elseif self.character == 'spellblade' then
+    self.can_use_aspd = true
     self.t:every(2, function()
       self:shoot(random:float(0, 2*math.pi))
     end, nil, nil, 'shoot')
@@ -431,6 +454,7 @@ function Player:init(args)
     end
 
   elseif self.character == 'plague_doctor' then
+    self.can_use_aspd = true
     self.t:every(5, function()
       self:dot_attack(24, {duration = 12, plague_doctor_unmovable = true})
     end, nil, nil, 'attack')
@@ -442,6 +466,7 @@ function Player:init(args)
     end
 
   elseif self.character == 'witch' then
+    self.can_use_aspd = true
     self.sorcerer_count = 0
     self.t:every(4, function()
       self:dot_attack(42, {duration = random:float(12, 16)})
@@ -458,12 +483,14 @@ function Player:init(args)
     end, nil, nil, 'attack')
 
   elseif self.character == 'barbarian' then
+    self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 48)
     self.t:cooldown(8, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       self:attack(96, {stun = 4})
     end, nil, nil, 'attack')
 
   elseif self.character == 'juggernaut' then
+    self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 64)
     self.t:cooldown(8, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       self:attack(128, {juggernaut_push = true})
@@ -489,6 +516,7 @@ function Player:init(args)
     end)
 
   elseif self.character == 'corruptor' then
+    self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 160)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
@@ -498,6 +526,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'beastmaster' then
+    self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 160)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
@@ -507,6 +536,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'launcher' then
+    self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 96)
     self.t:cooldown(6, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       buff1:play{pitch = random:float(0.9, 1.1), volume = 0.5}
@@ -523,6 +553,7 @@ function Player:init(args)
     end, nil, nil, 'attack')
 
   elseif self.character == 'jester' then
+    self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 96)
     self.wide_attack_sensor = Circle(self.x, self.y, 128)
     self.t:cooldown(6, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -539,6 +570,7 @@ function Player:init(args)
     end, nil, nil, 'attack')
 
   elseif self.character == 'usurer' then
+    self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 96)
     self.wide_attack_sensor = Circle(self.x, self.y, 128)
     self.t:cooldown(6, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -554,6 +586,7 @@ function Player:init(args)
     end, nil, nil, 'attack')
 
   elseif self.character == 'silencer' then
+    self.can_use_aspd = true
     self.sorcerer_count = 0
     self.attack_sensor = Circle(self.x, self.y, 96)
     self.wide_attack_sensor = Circle(self.x, self.y, 128)
@@ -565,6 +598,7 @@ function Player:init(args)
         for _, enemy in ipairs(enemies) do
           enemy:curse('silencer', 6*(self.hex_duration_m or 1), self.level == 3, self)
           if self.level == 3 then
+	        self.can_do_damage = true
             enemy:apply_dot(self.dmg*(self.dot_dmg_m or 1)*(main.current.chronomancer_dot or 1), 6*(self.hex_duration_m or 1))
           end
           HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 6, color = blue2[0], duration = 0.1}
@@ -585,6 +619,7 @@ function Player:init(args)
     end, nil, nil, 'attack')
 
   elseif self.character == 'assassin' then
+    self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 64)
     self.t:cooldown(2, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       local closest_enemy = self:get_closest_object_in_shape(self.attack_sensor, main.current.enemies)
@@ -619,6 +654,7 @@ function Player:init(args)
     end, nil, nil, 'spawn')
 
   elseif self.character == 'bane' then
+    self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 96)
     self.wide_attack_sensor = Circle(self.x, self.y, 128)
     self.t:cooldown(6, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -633,6 +669,10 @@ function Player:init(args)
     end, nil, nil, 'attack')
 
   elseif self.character == 'psykino' then
+    self.can_use_aspd = true
+    if self.level == 3 then
+	  self.can_do_damage = true
+	end
     self.t:every(4, function()
       local center_enemy = self:get_random_object_in_shape(Circle(self.x, self.y, 160), main.current.enemies)
       if center_enemy then
@@ -641,6 +681,7 @@ function Player:init(args)
     end, nil, nil, 'attack')
 
   elseif self.character == 'barrager' then
+    self.can_use_aspd = true
     self.barrager_counter = 0
     self.attack_sensor = Circle(self.x, self.y, 128)
     self.t:cooldown(4, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -664,6 +705,7 @@ function Player:init(args)
     end, nil, nil, 'shoot')
 
   elseif self.character == 'highlander' then
+    self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 36)
     self.t:cooldown(4, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
       if self.level == 3 then
@@ -677,18 +719,11 @@ function Player:init(args)
 
   elseif self.character == 'fairy' then
     self.t:every(6, function()
+      local units = self:get_all_units()
+      units = table.select(units, function(v) return v.can_use_aspd end)
       if self.level == 3 then
-        local units = self:get_all_units()
-        local unit_1 = random:table(units)
-        local runs = 0
-        if unit_1 then
-          while table.any(non_attacking_characters, function(v) return v == unit_1.character end) and runs < 1000 do unit_1 = random:table(units); runs = runs + 1 end
-        end
+        local unit_1 = random:table_remove(units)
         local unit_2 = random:table(units)
-        local runs = 0
-        if unit_2 then
-          while table.any(non_attacking_characters, function(v) return v == unit_2.character end) and runs < 1000 do unit_2 = random:table(units); runs = runs + 1 end
-        end
         if unit_1 then
           unit_1.fairy_aspd_m = 3
           unit_1.fairyd = true
@@ -718,9 +753,7 @@ function Player:init(args)
         end
 
       else
-        local unit = random:table(self:get_all_units())
-        local runs = 0
-        while table.any(non_attacking_characters, function(v) return v == unit.character end) and runs < 1000 do unit = random:table(self:get_all_units()); runs = runs + 1 end
+        local unit = random:table(units)
         if unit then
           unit.fairyd = true
           unit.fairy_aspd_m = 2
@@ -833,6 +866,7 @@ function Player:init(args)
     end, nil, nil, 'heal')
 
   elseif self.character == 'infestor' then
+    self.can_use_aspd = true
     self.attack_sensor = Circle(self.x, self.y, 96)
     self.wide_attack_sensor = Circle(self.x, self.y, 128)
     self.t:cooldown(6, function() local enemies = self:get_objects_in_shape(self.attack_sensor, main.current.enemies); return enemies and #enemies > 0 end, function()
@@ -921,16 +955,9 @@ function Player:init(args)
   if self.leader and self.awakening then
     main.current.t:after(0.1, function()
       local units = self:get_all_units()
-      local mages = {}
-      for _, unit in ipairs(units) do
-        if table.any(unit.classes, function(v) return v == 'mage' end) then
-          table.insert(mages, unit)
-        end
-      end
-      local mage = random:table(mages)
+      units = table.select(units, function(v) return self:is_class(v, 'mage') and v.can_use_aspd end)
+      local mage = random:table(units)
       if mage then
-        local runs = 0
-        while table.any(non_attacking_characters, function(v) return v == mage.character end) and runs < 1000 do mage = random:table(mages); runs = runs + 1 end
         mage.awakening_aspd_m = (self.awakening == 1 and 1.5) or (self.awakening == 2 and 1.75) or (self.awakening == 3 and 2)
         mage.awakening_dmg_m = (self.awakening == 1 and 1.5) or (self.awakening == 2 and 1.75) or (self.awakening == 3 and 2)
       end
@@ -1002,21 +1029,24 @@ function Player:init(args)
     end)
   end
 
-  if self.enchanted then
+  if self.leader and self.enchanted then
     main.current.t:after(0.1, function()
       local units = self:get_all_units()
       local enchanter_amount = 0
-      for _, unit in ipairs(units) do
-        if table.any(unit.classes, function(v) return v == 'enchanter' end) then
+
+      -- Count sorceror units and filter out non attacking units at the same time.
+      for i = #units, 1, -1 do
+        if self:is_class(units[i], 'enchanter') then
           enchanter_amount = enchanter_amount + 1
+        end
+        if not units[i].can_use_aspd then
+          table.remove(units, i)
         end
       end
       
       if enchanter_amount >= 2 then
         local unit = random:table(units)
-        local runs = 0
         if unit then
-          while table.any(non_attacking_characters, function(v) return v == unit.character end) and runs < 1000 do unit = random:table(units); runs = runs + 1 end
           unit.enchanted_aspd_m = (self.enchanted == 1 and 1.33) or (self.enchanted == 2 and 1.66) or (self.enchanted == 3 and 1.99)
         end
       end
@@ -1727,6 +1757,11 @@ end
 function Player:chain_infuse(duration)
   self.chain_infused = true
   self.t:after(duration or 2, function() self.chain_infused = false end, 'chain_infuse')
+end
+
+
+function Player:is_class(unit, class)
+  return table.any(unit.classes, function(v) return v == class end)
 end
 
 
