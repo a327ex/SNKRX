@@ -45,8 +45,10 @@ function BuyScreen:on_enter(from, level, loop, units, passives, shop_level, shop
   self.passives = passives
   self.shop_level = shop_level
   self.shop_xp = shop_xp
+  self.num_cards = 3
   camera.x, camera.y = gw/2, gh/2
-  max_units = math.clamp(7 + current_new_game_plus + self.loop, 7, 12)
+  -- max_units = math.clamp(7 + current_new_game_plus + self.loop, 7, 12)
+  max_units = math.clamp(7 + current_new_game_plus, 7, 12)
 
   input:set_mouse_visible(true)
 
@@ -58,10 +60,10 @@ function BuyScreen:on_enter(from, level, loop, units, passives, shop_level, shop
   self.ui = Group()
   self.tutorial = Group()
 
-  self.locked = locked_state and locked_state.locked
-  LockButton{group = self.main, x = 205, y = 18, parent = self}
+  -- self.locked = locked_state and locked_state.locked
+  -- LockButton{group = self.main, x = 205, y = 18, parent = self}
 
-  self:set_cards(self.shop_level, nil, true)
+  self:set_cards(self.shop_level, nil, from.name == 'main_menu')
   self:set_party_and_sets()
   self:set_items()
 
@@ -77,7 +79,7 @@ function BuyScreen:on_enter(from, level, loop, units, passives, shop_level, shop
   end
   self.level_text = Text({{text = '[fg]Lv.' .. tostring(self.level) .. get_elite_str(self.level), font = pixul_font, alignment = 'center'}}, global_text_tags)
 
-  RerollButton{group = self.main, x = 150, y = 18, parent = self}
+  self.reroll_button = RerollButton{group = self.main, x = 150, y = 18, parent = self, reroll_cost = 2}
   GoButton{group = self.main, x = gw - 90, y = gh - 20, parent = self}
   LevelButton{group = self.main, x = gw/2, y = 18, parent = self}
   self.tutorial_button = Button{group = self.main, x = gw/2 + 129, y = 18, button_text = '?', fg_color = 'bg10', bg_color = 'bg', action = function()
@@ -133,7 +135,7 @@ function BuyScreen:on_enter(from, level, loop, units, passives, shop_level, shop
     ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-    locked_state = nil
+    locked_state = {['locks'] = {false, false, false}, ['cards'] = {}}
     TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = state.dark_transitions and bg[-2] or fg[0], transition_action = function()
       slow_amount = 1
       music_slow_amount = 1
@@ -148,7 +150,7 @@ function BuyScreen:on_enter(from, level, loop, units, passives, shop_level, shop
         'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
         'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance', 'blessing', 'haste', 'divine_barrage', 'orbitism', 'psyker_orbs', 'psychosink', 'rearm', 'taunt', 'construct_instability',
         'intimidation', 'vulnerability', 'temporal_chains', 'ceremonial_dagger', 'homing_barrage', 'critical_strike', 'noxious_strike', 'infesting_strike', 'burning_strike', 'lucky_strike', 'healing_strike', 'stunning_strike',
-        'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 'kinetic_strike',
+        'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 'kinetic_strike', 'mine_detector',
       }
       max_units = math.clamp(7 + current_new_game_plus, 7, 12)
       main:add(BuyScreen'buy_screen')
@@ -170,7 +172,7 @@ function BuyScreen:on_enter(from, level, loop, units, passives, shop_level, shop
 
   trigger:tween(1, main_song_instance, {volume = 0.2, pitch = 1}, math.linear)
 
-  locked_state = {locked = self.locked, cards = {self.cards[1] and self.cards[1].unit, self.cards[2] and self.cards[2].unit, self.cards[3] and self.cards[3].unit}} 
+  -- locked_state = {locked = self.locked, cards = {self.cards[1] and self.cards[1].unit, self.cards[2] and self.cards[2].unit, self.cards[3] and self.cards[3].unit}}
   system.save_run(self.level, self.loop, gold, self.units, self.passives, self.shop_level, self.shop_xp, run_passive_pool, locked_state)
 end
 
@@ -300,6 +302,7 @@ function BuyScreen:buy(character, i)
                 unit.reserve[1] = 0
                 unit.level = 3
                 unit.spawn_effect = true
+                if character == 'physician' then self.reroll_button:adjust_reroll_cost(-1) end
               else
                 unit.reserve[2] = unit.reserve[2] + 1
                 unit.reserve[1] = 0
@@ -341,28 +344,79 @@ end
 
 
 function BuyScreen:set_cards(shop_level, dont_spawn_effect, first_call)
-  if self.cards then for i = 1, 3 do if self.cards[i] then self.cards[i]:die(dont_spawn_effect) end end end
-  self.cards = {}
-  local all_units = {}
-  local unit_1
-  local unit_2
-  local unit_3
   local shop_level = shop_level or 1
   local tier_weights = level_to_shop_odds[shop_level]
-  repeat 
-    unit_1 = random:table(tier_to_characters[random:weighted_pick(unpack(tier_weights))])
-    unit_2 = random:table(tier_to_characters[random:weighted_pick(unpack(tier_weights))])
-    unit_3 = random:table(tier_to_characters[random:weighted_pick(unpack(tier_weights))])
-    all_units = {unit_1, unit_2, unit_3}
-  until not table.all(all_units, function(v) return table.any(non_attacking_characters, function(u) return v == u end) end)
-  if first_call and locked_state then
-    if locked_state.cards[1] then self.cards[1] = ShopCard{group = self.main, x = 60, y = 75, w = 80, h = 90, unit = locked_state.cards[1], parent = self, i = 1} end
-    if locked_state.cards[2] then self.cards[2] = ShopCard{group = self.main, x = 140, y = 75, w = 80, h = 90, unit = locked_state.cards[2], parent = self, i = 2} end
-    if locked_state.cards[3] then self.cards[3] = ShopCard{group = self.main, x = 220, y = 75, w = 80, h = 90, unit = locked_state.cards[3], parent = self, i = 3} end
+  local tier_to_unlocked = table.copy(tier_to_characters)
+
+  -- Reroll only if the run data hasn't been newly loaded, i.e. coming from main menu.
+  local reroll = first_call == nil or first_call == false
+
+  -- Add unlocked characters to the list of units that can be bought.
+  if state.achievement_its_full_of_stars then table.insert(tier_to_unlocked[character_tiers['astralist']], 'astralist') end
+  if state.achievement_im_snkman then table.insert(tier_to_unlocked[character_tiers['avenger']], 'avenger') end
+  if state.achievement_lord_of_war then table.insert(tier_to_unlocked[character_tiers['warmonger']], 'warmonger') end
+  if state.achievement_attack_the_core then table.insert(tier_to_unlocked[character_tiers['technomancer']], 'technomancer'); print('core') end
+  if state.achievement_new_game_5 then table.insert(tier_to_unlocked[character_tiers['physician']], 'physician') end
+
+  -- Remove already maxed characters from the list of units that can be bought.
+  for _, unit in ipairs(self.units) do
+    if unit.level > 2 then
+      table.delete(tier_to_unlocked[character_tiers[unit.character]], unit.character)
+    end
+  end
+
+  -- Process the locked_state.
+  if (locked_state == nil) or (locked_state.locks == nil) or (locked_state.cards == nil) then
+
+    -- It's the first run, a reset run, or corrupted data, so init a fresh locked_state.
+    locked_state = {['locks'] = {false, false, false}, ['cards'] = {}}
+
+    -- Force a reroll for the newly create locked_state card data.
+    reroll = true
+
+  elseif type(locked_state.locks) == 'boolean' then
+
+    -- Disable reroll if the cards were locked in the old system.
+    reroll = reroll and not locked_state.locks
+
+    -- Convert old 'locks' to the new multi lock system.
+    locked_state.locks = {locked_state.locks, locked_state.locks, locked_state.locks}
+
   else
-    self.cards[1] = ShopCard{group = self.main, x = 60, y = 75, w = 80, h = 90, unit = unit_1, parent = self, i = 1}
-    self.cards[2] = ShopCard{group = self.main, x = 140, y = 75, w = 80, h = 90, unit = unit_2, parent = self, i = 2}
-    self.cards[3] = ShopCard{group = self.main, x = 220, y = 75, w = 80, h = 90, unit = unit_3, parent = self, i = 3}
+
+    -- If the locked_state exists and has valid data, check if all cards are locked and disable reroll accordingly.
+    local all_locked = true
+    for i = 1, self.num_cards do
+      all_locked = all_locked and locked_state.locks[i] == true
+    end
+    reroll = reroll and not all_locked
+  end
+
+  -- Reroll units for unlocked cards, making sure that not all the cards contain non-attacking units.
+  while reroll do
+    for i = 1, self.num_cards do
+      if locked_state.locks[i] ~= true then
+        locked_state.cards[i] = random:table(tier_to_unlocked[random:weighted_pick(unpack(tier_weights))])
+      end
+    end
+    reroll = table.all(locked_state.cards, function(v) return table.any(non_attacking_characters, function(u) return v == u end) end)
+  end
+
+  -- Update the shop cards with the rerolled unit data.
+  -- Note: there are 3 variables that affect the outcome: locked_state.cards, self.cards and locked_state.locks.
+  --       3 combinations have locked_state.cards[i] == self.cards[i] and so require no update.
+  --       2 combinations have a nil locked_state.cards[i] and non nil self.cards[i] which is not possible given the code flow.
+  --       The remaining 3 combinations are handled below and require a new self.cards[i] to be created in each case.
+  if type(self.cards) ~= 'table' then self.cards = {} end
+  for i = 1, self.num_cards do
+    if locked_state.cards[i] then
+      if self.cards[i] and not locked_state.locks[i] then
+        self.cards[i]:die(dont_spawn_effect)
+        self.cards[i] = ShopCard{group = self.main, x = i * 90 - 30, y = 75, w = 88, h = 90, unit = locked_state.cards[i], parent = self, i = i}
+      elseif self.cards[i] == nil then -- for both cases where locked_state.locks[i] is true or false.
+        self.cards[i] = ShopCard{group = self.main, x = i * 90 - 30, y = 75, w = 88, h = 90, unit = locked_state.cards[i], parent = self, i = i}
+      end
+    end
   end
 end
 
@@ -534,6 +588,7 @@ function RestartButton:update(dt)
     ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    locked_state = nil
     TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = state.dark_transitions and bg[-2] or fg[0], transition_action = function()
       slow_amount = 1
       music_slow_amount = 1
@@ -548,7 +603,7 @@ function RestartButton:update(dt)
         'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
         'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance', 'blessing', 'haste', 'divine_barrage', 'orbitism', 'psyker_orbs', 'psychosink', 'rearm', 'taunt', 'construct_instability',
         'intimidation', 'vulnerability', 'temporal_chains', 'ceremonial_dagger', 'homing_barrage', 'critical_strike', 'noxious_strike', 'infesting_strike', 'burning_strike', 'lucky_strike', 'healing_strike', 'stunning_strike',
-        'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 'kinetic_strike',
+        'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 'kinetic_strike', 'mine_detector',
       }
       max_units = math.clamp(7 + current_new_game_plus, 7, 12)
       system.save_state()
@@ -700,7 +755,7 @@ function GoButton:update(dt)
       self.t:after(2, function() self.info_text:deactivate(); self.info_text.dead = true; self.info_text = nil end, 'info_text')
 
     else
-      locked_state = {locked = self.parent.locked, cards = {self.parent.cards[1] and self.parent.cards[1].unit, self.parent.cards[2] and self.parent.cards[2].unit, self.parent.cards[3] and self.parent.cards[3].unit}} 
+      -- locked_state = {locked = self.parent.locked, cards = {self.parent.cards[1] and self.parent.cards[1].unit, self.parent.cards[2] and self.parent.cards[2].unit, self.parent.cards[3] and self.parent.cards[3].unit}}
       ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       self.spring:pull(0.2, 200, 10)
       self.selected = true
@@ -748,10 +803,18 @@ function LockButton:init(args)
   self:init_game_object(args)
   self.shape = Rectangle(self.x, self.y, 32, 16)
   self.interact_with_mouse = true
+  if locked_state.locks[self.parent.i] then
+    self.text = Text({{text = '[bg10]unlock', font = pixul_font, alignment = 'center'}}, global_text_tags)
+    self.shape.w = 44
+  else
+    self.text = Text({{text = '[fgm5]lock', font = pixul_font, alignment = 'center'}}, global_text_tags)
+  end
+  --[[
   if self.parent.locked then self.shape.w = 44
   else self.shape.w = 32 end
   if self.parent.locked then self.text = Text({{text = '[fgm5]' .. tostring(self.parent.locked and 'unlock' or 'lock'), font = pixul_font, alignment = 'center'}}, global_text_tags)
   else self.text = Text({{text = '[bg10]' .. tostring(self.parent.locked and 'unlock' or 'lock'), font = pixul_font, alignment = 'center'}}, global_text_tags) end
+  ]]--
 end
 
 
@@ -759,6 +822,23 @@ function LockButton:update(dt)
   self:update_game_object(dt)
 
   if self.selected and input.m1.pressed then
+    ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+    self.spring:pull(0.2, 200, 10)
+    if locked_state.locks[self.parent.i] then
+      locked_state.locks[self.parent.i] = false
+      self.text:set_text{{text = '[fgm5]lock', font = pixul_font, alignment = 'center'}}
+      self.shape.w = 32
+    else
+      locked_state.locks[self.parent.i] = true
+      self.text:set_text{{text = '[bg10]unlock', font = pixul_font, alignment = 'center'}}
+      self.shape.w = 44
+    end
+
+    -- self is the button, self.parent is the shop card, and self.parent.parent is the BuyScreen.
+    local p = self.parent.parent
+    system.save_run(p.level, p.loop, gold, p.units, p.passives, p.shop_level, p.shop_xp, run_passive_pool, locked_state)
+
+    --[[
     self.parent.locked = not self.parent.locked
     if not self.parent.locked then locked_state = nil end
     if self.parent.locked then
@@ -771,6 +851,7 @@ function LockButton:update(dt)
     self.text:set_text{{text = '[fgm5]' .. tostring(self.parent.locked and 'unlock' or 'lock'), font = pixul_font, alignment = 'center'}}
     if self.parent.locked then self.shape.w = 44
     else self.shape.w = 32 end
+    ]]--
   end
 end
 
@@ -787,13 +868,13 @@ function LockButton:on_mouse_enter()
   ui_hover1:play{pitch = random:float(1.3, 1.5), volume = 0.5}
   pop2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
   self.selected = true
-  self.text:set_text{{text = '[fgm5]' .. tostring(self.parent.locked and 'unlock' or 'lock'), font = pixul_font, alignment = 'center'}}
+  -- self.text:set_text{{text = '[fgm5]' .. tostring(self.parent.locked and 'unlock' or 'lock'), font = pixul_font, alignment = 'center'}}
   self.spring:pull(0.2, 200, 10)
 end
 
 
 function LockButton:on_mouse_exit()
-  if not self.parent.locked then self.text:set_text{{text = '[bg10]' .. tostring(self.parent.locked and 'unlock' or 'lock'), font = pixul_font, alignment = 'center'}} end
+  -- if not self.parent.locked then self.text:set_text{{text = '[bg10]' .. tostring(self.parent.locked and 'unlock' or 'lock'), font = pixul_font, alignment = 'center'}} end
   self.selected = false
 end
 
@@ -964,23 +1045,34 @@ RerollButton:implement(GameObject)
 function RerollButton:init(args)
   self:init_game_object(args)
   self.interact_with_mouse = true
+  self.reroll_cost = self.reroll_cost or 5
   if self.parent:is(BuyScreen) then
+    for _, unit in ipairs(self.parent.units) do
+      if unit.character == 'physician' and unit.level == 3 then
+        self.reroll_cost = self.reroll_cost -1
+        if self.reroll_cost < 0 then self.reroll_cost = 0 end
+        break
+      end
+    end
     self.shape = Rectangle(self.x, self.y, 54, 16)
-    self.text = Text({{text = '[bg10]reroll: [yellow]2', font = pixul_font, alignment = 'center'}}, global_text_tags)
+    self.text = Text({{text = '[bg10]reroll: [yellow]' .. self.reroll_cost, font = pixul_font, alignment = 'center'}}, global_text_tags)
   elseif self.parent:is(Arena) then
     self.shape = Rectangle(self.x, self.y, 60, 16)
     local merchant
     for _, unit in ipairs(self.parent.starting_units) do
-      if unit.character == 'merchant' then
+      if unit.character == 'merchant' and unit.level == 3  then
         merchant = unit
-        break
+        -- break
+      elseif unit.character == 'warmonger' and unit.level == 3  then
+        self.reroll_cost = self.reroll_cost - self.parent.shop_level
+        if self.reroll_cost < 0 then self.reroll_cost = 0 end
       end
     end
     if self.parent.level == 3 or (merchant and merchant.level == 3) then
       self.free_reroll = true
       self.text = Text({{text = '[bg10]reroll: [yellow]0', font = pixul_font, alignment = 'center'}}, global_text_tags)
     else
-      self.text = Text({{text = '[bg10]reroll: [yellow]5', font = pixul_font, alignment = 'center'}}, global_text_tags)
+      self.text = Text({{text = '[bg10]reroll: [yellow]' .. self.reroll_cost, font = pixul_font, alignment = 'center'}}, global_text_tags)
     end
   end
 end
@@ -991,14 +1083,23 @@ function RerollButton:update(dt)
 
   if (self.selected and input.m1.pressed) or input.r.pressed then
     if self.parent:is(BuyScreen) then
-      if gold < 2 then
+      local is_error = false
+      local error_text = ''
+      local all_locked = true
+      for i = 1, self.parent.num_cards do
+        all_locked = all_locked and locked_state.locks[i] == true
+      end
+      if gold < self.reroll_cost then is_error = true; error_text = '[fg]not enough gold'
+      elseif all_locked then is_error = true; error_text = '[fg]all shop cards are locked'
+      end
+      if is_error then
         self.spring:pull(0.2, 200, 10)
         self.selected = true
         error1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
         if not self.info_text then
           self.info_text = InfoText{group = main.current.ui}
           self.info_text:activate({
-            {text = '[fg]not enough gold', font = pixul_font, alignment = 'center'},
+            {text = error_text, font = pixul_font, alignment = 'center'},
           }, nil, nil, nil, nil, 16, 4, nil, 2)
           self.info_text.x, self.info_text.y = gw/2, gh/2 + 10
         end
@@ -1008,12 +1109,12 @@ function RerollButton:update(dt)
         self.parent:set_cards(self.parent.shop_level, true)
         self.selected = true
         self.spring:pull(0.2, 200, 10)
-        gold = gold - 2
+        gold = gold - self.reroll_cost
         self.parent.shop_text:set_text{{text = '[wavy_mid, fg]shop [fg]- [fg, nudge_down]gold: [yellow, nudge_down]' .. gold, font = pixul_font, alignment = 'center'}}
         system.save_run(self.parent.level, self.parent.loop, gold, self.parent.units, self.parent.passives, self.parent.shop_level, self.parent.shop_xp, run_passive_pool, locked_state)
       end
     elseif self.parent:is(Arena) then
-      if gold < 5 and not self.free_reroll then
+      if gold < self.reroll_cost and not self.free_reroll then
         self.spring:pull(0.2, 200, 10)
         self.selected = true
         error1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -1030,10 +1131,10 @@ function RerollButton:update(dt)
         self.parent:set_passives(true)
         self.selected = true
         self.spring:pull(0.2, 200, 10)
-        if not self.free_reroll then gold = gold - 5 end
+        if not self.free_reroll then gold = gold - self.reroll_cost end
         self.parent.shop_text:set_text{{text = '[fg, nudge_down]gold: [yellow, nudge_down]' .. gold, font = pixul_font, alignment = 'center'}}
         self.free_reroll = false
-        self.text = Text({{text = '[bg10]reroll: [yellow]5', font = pixul_font, alignment = 'center'}}, global_text_tags)
+        self.text = Text({{text = '[bg10]reroll: [yellow]' .. self.reroll_cost, font = pixul_font, alignment = 'center'}}, global_text_tags)
       end
     end
 
@@ -1059,12 +1160,12 @@ function RerollButton:on_mouse_enter()
   pop2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
   self.selected = true
   if self.parent:is(BuyScreen) then
-    self.text:set_text{{text = '[fgm5]reroll: 2', font = pixul_font, alignment = 'center'}}
+    self.text:set_text{{text = '[fgm5]reroll: ' .. self.reroll_cost, font = pixul_font, alignment = 'center'}}
   elseif self.parent:is(Arena) then
     if self.free_reroll then
       self.text:set_text{{text = '[fgm5]reroll: 0', font = pixul_font, alignment = 'center'}}
     else
-      self.text:set_text{{text = '[fgm5]reroll: 5', font = pixul_font, alignment = 'center'}}
+      self.text:set_text{{text = '[fgm5]reroll: ' .. self.reroll_cost, font = pixul_font, alignment = 'center'}}
     end
   end
   self.spring:pull(0.2, 200, 10)
@@ -1073,15 +1174,24 @@ end
 
 function RerollButton:on_mouse_exit()
   if self.parent:is(BuyScreen) then
-    self.text:set_text{{text = '[bg10]reroll: [yellow]2', font = pixul_font, alignment = 'center'}}
+    self.text:set_text{{text = '[bg10]reroll: [yellow]' .. self.reroll_cost, font = pixul_font, alignment = 'center'}}
   elseif self.parent:is(Arena) then
     if self.free_reroll then
       self.text:set_text{{text = '[fgm5]reroll: [yellow]0', font = pixul_font, alignment = 'center'}}
     else
-      self.text:set_text{{text = '[fgm5]reroll: [yellow]5', font = pixul_font, alignment = 'center'}}
+      self.text:set_text{{text = '[fgm5]reroll: [yellow]' .. self.reroll_cost, font = pixul_font, alignment = 'center'}}
     end
   end
   self.selected = false
+end
+
+
+function RerollButton:adjust_reroll_cost(amount)
+  self.reroll_cost = self.reroll_cost + amount
+  if self.reroll_cost < 0 then self.reroll_cost = 0 end
+  if self.parent:is(BuyScreen) then
+    self.text:set_text{{text = '[bg10]reroll: [yellow]' .. self.reroll_cost, font = pixul_font, alignment = 'center'}}
+  end
 end
 
 
@@ -1115,15 +1225,18 @@ function TutorialCharacterPart:on_mouse_enter()
   self.selected = true
   self.spring:pull(0.2, 200, 10)
   self.info_text = InfoText{group = main.current.tutorial}
+  self.info_text:activate(generate_character_text(self.character, self.level, nil, nil), nil, nil, nil, nil, 16, 4, nil, 2)
+  --[[
   self.info_text:activate({
     {text = '[' .. character_color_strings[self.character] .. ']' .. self.character:capitalize() .. '[fg] - [yellow]Lv.' .. self.level,
     font = pixul_font, alignment = 'center', height_multiplier = 1.25},
     {text = '[fg]Classes: ' .. character_class_strings[self.character], font = pixul_font, alignment = 'center', height_multiplier = 1.25},
     {text = character_descriptions[self.character](self.level), font = pixul_font, alignment = 'center', height_multiplier = 2},
-    {text = '[' .. (self.level == 3 and 'yellow' or 'light_bg') .. ']Lv.3 [' .. (self.level == 3 and 'fg' or 'light_bg') .. ']Effect - ' .. 
+    {text = '[' .. (self.level == 3 and 'yellow' or 'light_bg') .. ']Lv.3 [' .. (self.level == 3 and 'fg' or 'light_bg') .. ']Effect - ' ..
       (self.level == 3 and character_effect_names[self.character] or character_effect_names_gray[self.character]), font = pixul_font, alignment = 'center', height_multiplier = 1.25},
     {text = (self.level == 3 and character_effect_descriptions[self.character]() or character_effect_descriptions_gray[self.character]()), font = pixul_font, alignment = 'center'},
   }, nil, nil, nil, nil, 16, 4, nil, 2)
+  ]]--
   self.info_text.x, self.info_text.y = gw/2, gh/2 + gh/4 - 12
 end
 
@@ -1217,6 +1330,7 @@ function CharacterPart:update(dt)
       self.parent:set_party_and_sets()
       self.parent:refresh_cards()
       self.parent.party_text:set_text({{text = '[wavy_mid, fg]party ' .. tostring(#self.parent.units) .. '/' .. tostring(max_units), font = pixul_font, alignment = 'center'}})
+      if self.character == 'physician' and self.level == 3 then self.parent.reroll_button:adjust_reroll_cost(1) end
       system.save_run(self.parent.level, self.parent.loop, gold, self.parent.units, self.parent.passives, self.parent.shop_level, self.parent.shop_xp, run_passive_pool, locked_state)
     else
       self.parent.parent:gain_gold(self:get_sale_price())
@@ -1259,15 +1373,18 @@ function CharacterPart:on_mouse_enter()
   self.selected = true
   self.spring:pull(0.2, 200, 10)
   self.info_text = InfoText{group = main.current.ui, force_update = self.force_update}
+  self.info_text:activate(generate_character_text(self.character, self.level, self:get_sale_price(), nil), nil, nil, nil, nil, 16, 4, nil, 2)
+  --[[
   self.info_text:activate({
     {text = '[' .. character_color_strings[self.character] .. ']' .. self.character:capitalize() .. '[fg] - [yellow]Lv.' .. self.level .. '[fg], tier [yellow]' .. character_tiers[self.character] .. '[fg] - sells for [yellow]' ..
       self:get_sale_price(), font = pixul_font, alignment = 'center', height_multiplier = 1.25},
     {text = '[fg]Classes: ' .. character_class_strings[self.character], font = pixul_font, alignment = 'center', height_multiplier = 1.25},
     {text = character_descriptions[self.character](self.level), font = pixul_font, alignment = 'center', height_multiplier = 2},
-    {text = '[' .. (self.level == 3 and 'yellow' or 'light_bg') .. ']Lv.3 [' .. (self.level == 3 and 'fg' or 'light_bg') .. ']Effect - ' .. 
+    {text = '[' .. (self.level == 3 and 'yellow' or 'light_bg') .. ']Lv.3 [' .. (self.level == 3 and 'fg' or 'light_bg') .. ']Effect - ' ..
       (self.level == 3 and character_effect_names[self.character] or character_effect_names_gray[self.character]), font = pixul_font, alignment = 'center', height_multiplier = 1.25},
     {text = (self.level == 3 and character_effect_descriptions[self.character]() or character_effect_descriptions_gray[self.character]()), font = pixul_font, alignment = 'center'},
   }, nil, nil, nil, nil, 16, 4, nil, 2)
+  ]]--
   self.info_text.x, self.info_text.y = gw/2, gh/2 + 10
 
   --[[
@@ -1529,7 +1646,7 @@ function ItemCard:create_info_text()
   else
     self.info_text = InfoText{group = main.current.ui, force_update = true}
     self.info_text:activate({
-      {text = '[fg]' .. passive_names[self.passive] .. ', [yellow]Lv.' .. self.level .. '[fg], XP: [yellow]' .. self.xp .. '/' .. self.max_xp .. '[fg], +1 XP cost: [yellow]5[fg], sells for: [yellow]' .. 
+      {text = '[fg]' .. passive_names[self.passive] .. ', [yellow]Lv.' .. self.level .. '[fg], XP: [yellow]' .. self.xp .. '/' .. self.max_xp .. '[fg], +1 XP cost: [yellow]5[fg], sells for: [yellow]' ..
         tostring((self.level == 1 and 10) or (self.level == 2 and 20) or (self.level == 3 and 30)), font = pixul_font, alignment = 'center', height_multiplier = 1.25},
       {text = passive_descriptions_level[self.passive](self.level), font = pixul_font, alignment = 'center', height_multiplier = 1.25},
     }, nil, nil, nil, nil, 16, 4, nil, 2)
@@ -1589,6 +1706,7 @@ function ShopCard:init(args)
     table.insert(self.class_icons, ClassIcon{group = main.current.effects, x = x + (i-1)*20, y = self.y + 6, class = class, character = self.unit, units = self.parent.units, parent = self})
   end
   self.cost = character_tiers[self.unit]
+  self.lock_button = LockButton{group = main.current.effects, x = self.x, y = self.y + 55, parent = self}
   self.spring:pull(0.2, 200, 10)
   self:refresh()
 end
@@ -1619,10 +1737,12 @@ function ShopCard:update(dt)
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       self:die()
+      locked_state.locks[self.i] = false
+      locked_state.cards[self.i] = nil
       self.parent.cards[self.i] = nil
       self.parent:refresh_cards()
       self.parent.party_text:set_text({{text = '[wavy_mid, fg]party ' .. tostring(#self.parent.units) .. '/' .. tostring(max_units), font = pixul_font, alignment = 'center'}})
-      locked_state = {locked = self.parent.locked, cards = {self.parent.cards[1] and self.parent.cards[1].unit, self.parent.cards[2] and self.parent.cards[2].unit, self.parent.cards[3] and self.parent.cards[3].unit}} 
+      -- locked_state = {locked = self.parent.locked, cards = {self.parent.cards[1] and self.parent.cards[1].unit, self.parent.cards[2] and self.parent.cards[2].unit, self.parent.cards[3] and self.parent.cards[3].unit}}
       system.save_run(self.parent.level, self.parent.loop, gold, self.parent.units, self.parent.passives, self.parent.shop_level, self.parent.shop_xp, run_passive_pool, locked_state)
     else
       error1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -1658,7 +1778,11 @@ end
 
 function ShopCard:draw()
   graphics.push(self.x, self.y, 0, self.sx*self.spring.x, self.sy*self.spring.x)
-    if self.selected then
+    if locked_state.locks[self.i] and self.selected then
+      graphics.rectangle(self.x, self.y, self.w - 2, self.h - 2, 6, 6, bg[3])
+    elseif locked_state.locks[self.i] then
+      graphics.rectangle(self.x, self.y, self.w - 2, self.h - 2, 6, 6, bg[7])
+    elseif self.selected then
       graphics.rectangle(self.x, self.y, self.w, self.h, 6, 6, bg[-1])
     end
     if self.owned then
@@ -1723,6 +1847,7 @@ function ShopCard:die(dont_spawn_effect)
     self.info_text.dead = true
     self.info_text = nil
   end
+  self.lock_button.dead = true
 end
 
 
@@ -1757,15 +1882,18 @@ function CharacterIcon:on_mouse_enter()
   ui_hover1:play{pitch = random:float(1.3, 1.5), volume = 0.5}
   self.spring:pull(0.2, 200, 10)
   self.info_text = InfoText{group = main.current.ui}
+  self.info_text:activate(generate_character_text(self.character, nil, nil, self.parent.cost), nil, nil, nil, nil, 16, 4, nil, 2)
+  --[[
   self.info_text:activate({
     {text = '[' .. character_color_strings[self.character] .. ']' .. self.character:capitalize() .. '[fg] - cost: [yellow]' .. self.parent.cost, font = pixul_font, alignment = 'center', height_multiplier = 1.25},
     {text = '[fg]Classes: ' .. character_class_strings[self.character], font = pixul_font, alignment = 'center', height_multiplier = 1.25},
     {text = character_descriptions[self.character](1), font = pixul_font, alignment = 'center', height_multiplier = 2},
-    {text = '[' .. (self.level == 3 and 'yellow' or 'light_bg') .. ']Lv.3 [' .. (self.level == 3 and 'fg' or 'light_bg') .. ']Effect - ' .. 
+    {text = '[' .. (self.level == 3 and 'yellow' or 'light_bg') .. ']Lv.3 [' .. (self.level == 3 and 'fg' or 'light_bg') .. ']Effect - ' ..
       (self.level == 3 and character_effect_names[self.character] or character_effect_names_gray[self.character]), font = pixul_font, alignment = 'center', height_multiplier = 1.25},
     {text = (self.level == 3 and character_effect_descriptions[self.character]() or character_effect_descriptions_gray[self.character]()), font = pixul_font, alignment = 'center'},
     -- {text = character_stats[self.character](1), font = pixul_font, alignment = 'center'},
   }, nil, nil, nil, nil, 16, 4, nil, 2)
+  ]]--
   self.info_text.x, self.info_text.y = gw/2, gh/2 + 10
 end
 
@@ -2079,4 +2207,68 @@ end
 function ClassIcon:unhighlight()
   self.highlighted = false
   self.spring:pull(0.05, 200, 10)
+end
+
+function generate_character_text(character, level, sale, cost)
+  local t = {}
+
+  local line = '[' .. character_color_strings[character] .. ']' .. character:capitalize() .. '[fg] - '
+  if cost then
+    line = line .. 'cost: [yellow]' .. cost
+  else
+    line = line .. '[yellow]Lv.' .. level
+    if sale then
+      line = line .. '[fg], tier [yellow]' .. character_tiers[character] .. '[fg] - sells for [yellow]' .. sale
+    end
+  end
+  local element = {text = line, font = pixul_font, alignment = 'center', height_multiplier = 1.25}
+  table.insert(t, element)
+
+  line = '[fg]Classes: ' .. character_class_strings[character]
+  element = {text = line, font = pixul_font, alignment = 'center', height_multiplier = 1.25}
+  table.insert(t, element)
+
+  level = level or 1
+  line = character_descriptions[character](level)
+  local n
+  if type(line) == 'table' then
+    n = line['line_count'] or 1
+    for i = 1, n - 1 do
+      element = {text = line[i], font = pixul_font, alignment = 'center', height_multiplier = 1.1}
+      table.insert(t, element)
+    end
+    element = {text = line[n], font = pixul_font, alignment = 'center', height_multiplier = 2}
+    table.insert(t, element)
+  else
+    element = {text = line, font = pixul_font, alignment = 'center', height_multiplier = 2}
+    table.insert(t, element)
+  end
+
+  if level == 3 then
+    line = '[yellow]Lv.3 [fg]Effect - ' .. character_effect_names[character]
+  else
+    line = '[light_bg]Lv.3 Effect - ' .. character_effect_names_gray[character]
+  end
+  element = {text = line, font = pixul_font, alignment = 'center', height_multiplier = 1.25}
+  table.insert(t, element)
+
+  if level == 3 then
+    line = character_effect_descriptions[character]()
+  else
+    line = character_effect_descriptions_gray[character]()
+  end
+  if type(line) == 'table' then
+    n = line['line_count'] or 1
+    for i = 1, n - 1 do
+      element = {text = line[i], font = pixul_font, alignment = 'center', height_multiplier = 1.1}
+      table.insert(t, element)
+    end
+    element = {text = line[n], font = pixul_font, alignment = 'center'}
+    table.insert(t, element)
+  else
+    element = {text = line, font = pixul_font, alignment = 'center'}
+    table.insert(t, element)
+  end
+
+  return t
 end

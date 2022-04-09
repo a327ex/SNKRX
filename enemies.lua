@@ -427,7 +427,7 @@ function Seeker:on_collision_enter(other, contact)
       hit2:play{pitch = random:float(0.95, 1.05), volume = 0.35}
       if other:is(Seeker) or other:is(Player) then self.headbutting = false end
     end
-  
+
   elseif other:is(Turret) then
     self.headbutting = false
     _G[random:table{'player_hit1', 'player_hit2'}]:play{pitch = random:float(0.95, 1.05), volume = 0.35}
@@ -537,6 +537,7 @@ function Seeker:hit(damage, projectile, dot, from_enemy)
     HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 12}:scale_down(0.3):change_color(0.5, self.color)
     _G[random:table{'enemy_die1', 'enemy_die2'}]:play{pitch = random:float(0.9, 1.1), volume = 0.5}
 
+    --[[ MOD: always have a chance to drop gold.
     if main.current.mercenary_level > 0 then
       if random:bool((main.current.mercenary_level == 2 and 16) or (main.current.mercenary_level == 1 and 8) or 0) then
         trigger:after(0.01, function()
@@ -544,6 +545,13 @@ function Seeker:hit(damage, projectile, dot, from_enemy)
           Gold{group = main.current.main, x = self.x, y = self.y}
         end)
       end
+    end
+    ]]--
+    if random:bool((main.current.mercenary_level == 2 and 20) or (main.current.mercenary_level == 1 and 12) or 4) then
+      trigger:after(0.01, function()
+        if not main.current.main.world then return end
+        Gold{group = main.current.main, x = self.x, y = self.y}
+      end)
     end
 
     --[[
@@ -695,6 +703,9 @@ function Seeker:hit(damage, projectile, dot, from_enemy)
         end)
       end
     end
+
+    if projectile and projectile.parent and projectile.parent.on_enemy_kill then projectile.parent.on_enemy_kill(self) end
+
   end
 end
 
@@ -798,27 +809,43 @@ end
 
 ExploderMine = Object:extend()
 ExploderMine:implement(GameObject)
+ExploderMine:implement(Physics)
 function ExploderMine:init(args)
   self:init_game_object(args)
   self.hfx:add('hit', 1)
   self.vr = 0
   self.dvr = random:float(-math.pi/4, math.pi/4)
   self.rs = 0
+  self.color = blue[-10]
+  self.counter = 0
+  self.disarmed = false
+  self.hacked = false
+  self.detect_radius = (main.current.player.mine_detector == 1 and 30) or (main.current.player.mine_detector == 2 and 55) or (main.current.player.mine_detector == 3 and 80) or 5
+  self:set_as_circle(self.detect_radius, 'static', 'ghost')
   self.t:tween(0.05, self, {rs = args.rs}, math.cubic_in_out, function()
     self.spring:pull(0.15)
-    self.t:every(0.8 - current_new_game_plus*0.1, function()
-      mine1:play{pitch = 1 + self.t:get_every_iteration'mine_count'*0.1, volume = 0.5}
+    self.t:every(2.5 - current_new_game_plus*0.2, function()
+      self.counter = self.counter + 1
+      self:update_color()
+      mine1:play{pitch = 1 + self.counter * 0.1, volume = 0.5}
       self.spring:pull(0.5, 200, 10)
       self.hfx:use('hit', 0.5, 200, 10, 0.2)
-    end, 3, function()
-      shoot1:play{pitch = random:float(0.95, 1.05), volume = 0.4}
-      cannoneer1:play{pitch = random:float(0.95, 1.05), volume = 0.4}
-      for i = 1, 4 do HitParticle{group = main.current.effects, x = self.x, y = self.y, r = random:float(0, 2*math.pi), color = self.color} end
-      HitCircle{group = main.current.effects, x = self.x, y = self.y}
-      local n = math.floor(8 + current_new_game_plus*1.5)
+    end, 4, function()
       if main.current.main.world then
-        for i = 1, n do
-          EnemyProjectile{group = main.current.main, x = self.x, y = self.y, color = blue[0], r = (i-1)*math.pi/(n/2), v = 120 + math.min(5*self.parent.level, 300), dmg = 1.3*self.parent.dmg}
+        shoot1:play{pitch = random:float(0.95, 1.05), volume = 0.4}
+        cannoneer1:play{pitch = random:float(0.95, 1.05), volume = 0.4}
+        for i = 1, 4 do HitParticle{group = main.current.effects, x = self.x, y = self.y, r = random:float(0, 2*math.pi), color = self.color} end
+        HitCircle{group = main.current.effects, x = self.x, y = self.y}
+        if not self.disarmed then
+          local n = math.floor(8 + current_new_game_plus*1.5)
+          for i = 1, n do
+            if self.hacked then
+              Projectile{group = main.current.main, x = self.x, y = self.y, color = red[0], r = (i-1)*math.pi/(n/2), v = 300, dmg = 3*self.parent.dmg, character = self.parent.character,
+                         parent = self.parent, level = self.parent.level, ricochet = self.parent.ricochet}
+            else
+              EnemyProjectile{group = main.current.main, x = self.x, y = self.y, color = blue[0], r = (i-1)*math.pi/(n/2), v = 120 + math.min(5*self.parent.level, 300), dmg = 1.3*self.parent.dmg}
+            end
+          end
         end
       end
       self.dead = true
@@ -837,6 +864,43 @@ function ExploderMine:draw()
   graphics.push(self.x, self.y, 0, self.spring.x, self.spring.x)
     graphics.circle(self.x, self.y, 2.5, self.hfx.hit.f and fg[0] or self.color)
   graphics.pop()
+end
+
+
+function ExploderMine:on_trigger_enter(other, contact)
+  -- if self.cant_be_picked_up then return end
+  if other:is(Player) and not (self.disarmed or self.hacked) then
+    HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 4, color = fg[0], duration = 0.1}
+    for i = 1, 2 do HitParticle{group = main.current.effects, x = self.x, y = self.y, color = self.color} end
+    disarm1:play{pitch = random:float(0.9, 1.1), volume = 1}
+    disarm2:play{pitch = random:float(0.9, 1.1), volume = 0,5}
+    local units = other:get_all_units()
+    for _, unit in ipairs(units) do
+      if unit.character == 'technomancer' then
+        self.hacked = true
+        self.parent = unit
+        if unit.level == 3 then
+          unit.exploder = true
+          for _, drone in ipairs(unit.drones) do
+            drone.mine_time = unit.power_up_duration
+          end
+          unit.t:after(unit.power_up_duration, function() unit.exploder = false end, 'mine_pickup')
+        end
+        break
+      end
+    end
+    self.disarmed = not self.hacked
+    self:update_color()
+  end
+end
+
+
+function ExploderMine:update_color()
+  if self.counter < 5 then
+    if self.hacked then self.color = red[-10 + self.counter * 5]
+    elseif self.disarmed then self.color = bg[1 + self.counter * 2]
+    else self.color = blue[-10 + self.counter * 5] end
+  end
 end
 
 

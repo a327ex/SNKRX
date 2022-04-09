@@ -25,6 +25,8 @@ function init()
   gambler1 = Sound('Collect 5.ogg', s)
   usurer1 = Sound('Shadow Punch 2.ogg', s)
   orb1 = Sound('Collect 2.ogg', s)
+  disarm1 = Sound('Collect 4.ogg', s)
+  disarm2 = Sound('Damage 3.ogg', s)
   gold1 = Sound('Collect 5.ogg', s)
   gold2 = Sound('Coins - Gears - Slot.ogg', s)
   psychic1 = Sound('Magical Impact 13.ogg', s)
@@ -36,6 +38,7 @@ function init()
   earth3 = Sound('Earth Bolt 20.ogg', s)
   illusion1 = Sound('Buff 5.ogg', s)
   thunder1 = Sound('399656__bajko__sfx-thunder-blast.ogg', s)
+  thunder2 = Sound('Wind Bolt 8.ogg', s)
   flagellant1 = Sound('Whipping Horse 3.ogg', s)
   bard2 = Sound('376532__womb-affliction__flute-trill.ogg', s)
   arcane2 = Sound('Magical Impact 12.ogg', s)
@@ -96,6 +99,7 @@ function init()
   spawn_mark1 = Sound('Bonus 2.ogg', s)
   spawn_mark2 = Sound('Bonus.ogg', s)
   alert1 = Sound('Click.ogg', s)
+  alert2 = Sound('Alert sounds 3.ogg', s)
   elementor1 = Sound('Wind Bolt 18.ogg', s)
   saboteur_hit1 = Sound('Explosion Flesh_01.ogg', s)
   saboteur_hit2 = Sound('Explosion Flesh_02.ogg', s)
@@ -233,6 +237,7 @@ function init()
   psycholeak = Image('psycholeak')
   divine_blessing = Image('divine_blessing')
   hardening = Image('hardening')
+  mine_detector = Image('mine_detector')
 
   class_colors = {
     ['warrior'] = yellow[0],
@@ -330,6 +335,12 @@ function init()
     ['usurer'] = 'Usurer',
     ['gambler'] = 'Gambler',
     ['thief'] = 'Thief',
+    ['astralist'] = 'Astralist',
+    ['physician'] = 'Physician',
+    ['warmonger'] = 'Warmonger',
+    ['avenger'] = 'Avenger',
+    ['herald'] = 'Herald',
+    ['technomancer'] = 'Technomancer',
   }
 
   character_colors = {
@@ -390,6 +401,12 @@ function init()
     ['usurer'] = purple[0],
     ['gambler'] = yellow2[0],
     ['thief'] = red[0],
+    ['astralist'] = purple[0],
+    ['physician'] = green[0],
+    ['warmonger'] = yellow2[0],
+    ['avenger'] = blue2[0],
+    ['herald'] = fg[0],
+    ['technomancer'] = red[0],
   }
 
   character_color_strings = {
@@ -450,6 +467,12 @@ function init()
     ['usurer'] = 'purple',
     ['gambler'] = 'yellow2',
     ['thief'] = 'red',
+    ['astralist'] = 'purple',
+    ['physician'] = 'green',
+    ['warmonger'] = 'yellow2',
+    ['avenger'] = 'blue2',
+    ['herald'] = 'fg',
+    ['technomancer'] = 'red',
   }
 
   character_classes = {
@@ -510,6 +533,12 @@ function init()
     ['usurer'] = {'curser', 'mercenary', 'voider'},
     ['gambler'] = {'mercenary', 'sorcerer'},
     ['thief'] = {'rogue', 'mercenary'},
+    ['astralist'] = {'voider', 'explorer', 'psyker'},
+    ['physician'] = {'healer', 'mercenary'},
+    ['warmonger'] = {'nuker', 'mercenary'},
+    ['avenger'] = {'healer', 'voider', 'sorcerer'},
+    ['herald'] = {'warrior', 'enchanter', 'psyker'},
+    ['technomancer'] = {'ranger', 'conjurer', 'rogue'},
   }
 
   character_class_strings = {
@@ -570,6 +599,12 @@ function init()
     ['usurer'] = '[purple]Curser, [yellow2]Mercenary, [purple]Voider',
     ['gambler'] = '[yellow2]Mercenary, [blue2]Sorcerer',
     ['thief'] = '[red]Rogue, [yellow2]Mercenary',
+    ['astralist'] = '[purple]Voider, [fg]Explorer, Psyker',
+    ['physician'] = '[green]Healer, [yellow2]Mercenary',
+    ['warmonger'] = '[red]Nuker, [yellow2]Mercenary',
+    ['avenger'] = '[green]Healer, [purple]Voider, [blue2]Sorcerer',
+    ['herald'] = '[yellow]Warrior, [blue]Enchanter, [fg]Psyker',
+    ['technomancer'] = '[green]Ranger, [orange]Builder, [red]Rogue',
   }
 
   get_character_stat_string = function(character, level)
@@ -603,7 +638,7 @@ function init()
     ['bomber'] = function(lvl) return '[fg]plants a bomb, when it explodes it deals [yellow]' .. 2*get_character_stat('bomber', lvl, 'dmg') .. ' AoE[fg] damage' end,
     ['stormweaver'] = function(lvl) return '[fg]infuses projectiles with chain lightning that deals [yellow]20%[fg] damage to [yellow]2[fg] enemies' end,
     ['sage'] = function(lvl) return '[fg]shoots a slow projectile that draws enemies in' end,
-    ['squire'] = function(lvl) return '[yellow]+20%[fg] damage and defense to all allies' end, 
+    ['squire'] = function(lvl) return '[yellow]+20%[fg] damage and defense to all allies' end,
     ['cannoneer'] = function(lvl) return '[fg]shoots a projectile that deals [yellow]' .. 2*get_character_stat('cannoneer', lvl, 'dmg') .. ' AoE[fg] damage' end,
     ['dual_gunner'] = function(lvl) return '[fg]shoots two parallel projectiles, each dealing [yellow]' .. get_character_stat('dual_gunner', lvl, 'dmg') .. '[fg] damage' end,
     ['hunter'] = function(lvl) return '[fg]shoots an arrow that deals [yellow]' .. get_character_stat('hunter', lvl, 'dmg') .. '[fg] damage and has a [yellow]20%[fg] chance to summon a pet' end,
@@ -647,6 +682,20 @@ function init()
     ['usurer'] = function(lvl) return '[fg]curses [yellow]3[fg] nearby enemies indefinitely with debt, dealing [yellow]' .. get_character_stat('usurer', lvl, 'dmg') .. '[fg] damage per second' end,
     ['gambler'] = function(lvl) return '[fg]deal [yellow]2X[fg] damage to a single random enemy where X is how much gold you have' end,
     ['thief'] = function(lvl) return '[fg]throws a knife that deals [yellow]' .. 2*get_character_stat('thief', lvl, 'dmg') .. '[fg] damage and chains [yellow]5[fg] times' end,
+    ['astralist'] = function(lvl) return {line_count = 2,
+                                          '[fg]shoots a slow moving projectile that deals [yellow]' .. get_character_stat('astralist', lvl, 'dmg') .. '[fg] damage',
+                                          '[fg]projectiles have [yellow]2[fg] pierce, and slow enemies hit by [yellow]80%[fg] for [yellow]2[fg] seconds'} end,
+    ['physician'] = function(lvl) return '[fg]picking up gold releases [yellow]1[fg] healing orb' end,
+    ['warmonger'] = function(lvl) return '[fg]deals [yellow]' .. get_character_stat('warmonger', lvl, 'dmg') .. '[fg] damage in [yellow]1[fg] random area for each shop level' end,
+    ['avenger'] = function(lvl) return {line_count = 3,
+                                        '[fg]shoots a projectile that deals [yellow]' .. get_character_stat('avenger', lvl, 'dmg') .. '[fg] damage, has [yellow]2[fg] pierce and [yellow]10[fg] knockback',
+                                        '[fg]on enemy hit, has a [yellow]20%[fg] chance to create a void rift',
+                                        '[fg]on enemy hit, has a [yellow]20%[fg] chance to create a healing orb'} end,
+    ['herald'] = function(lvl) return '[fg]deals [yellow]' .. get_character_stat('herald', lvl, 'dmg') .. '[fg] AoE damage, on enemy kill gain [yellow]1%[fg] max hp' end,
+    ['technomancer'] = function(lvl) return {line_count = 3,
+                                             '[fg]shoots a projectile straight forward that deals [yellow]' .. get_character_stat('technomancer', lvl, 'dmg') .. ' [fg] damage',
+                                             '[fg]spawns [yellow]2[fg] drones that follow beside and copy the main attack[yellow]',
+                                             '[fg]instead of disarming enemy mines, hack them to hurt enemies when they detonate'} end,
   }
 
   character_effect_names = {
@@ -707,6 +756,12 @@ function init()
     ['usurer'] = '[purple]Bankruptcy',
     ['gambler'] = '[yellow2]Multicast',
     ['thief'] = '[red]Ultrakill',
+    ['astralist'] = '[purple]Star Seeker',
+    ['physician'] = '[green]Waiting Room',
+    ['warmonger'] = '[yellow2]War Bonds',
+    ['avenger'] = '[blue2]Double Edged',
+    ['herald'] = '[fg]Clarion Call',
+    ['technomancer'] = '[red]Multiple Options',
   }
 
   character_effect_names_gray = {
@@ -767,6 +822,12 @@ function init()
     ['usurer'] = '[light_bg]Bankruptcy',
     ['gambler'] = '[light_bg]Multicast',
     ['thief'] = '[light_bg]Ultrakill',
+    ['astralist'] = '[light_bg]Star Seeker',
+    ['physician'] = '[light_bg]Waiting Room',
+    ['warmonger'] = '[light_bg]War Bonds',
+    ['avenger'] = '[light_bg]Double Edged',
+    ['herald'] = '[light_bg]Clarion Call',
+    ['technomancer'] = '[light_bg]Multiple Options',
   }
 
   character_effect_descriptions = {
@@ -827,6 +888,26 @@ function init()
     ['usurer'] = function() return '[fg]if the same enemy is cursed [yellow]3[fg] times it takes [yellow]' .. 10*get_character_stat('usurer', 3, 'dmg') .. '[fg] damage' end,
     ['gambler'] = function() return '[yellow]60/40/20%[fg] chance to cast the attack [yellow]2/3/4[fg] times' end,
     ['thief'] = function() return '[fg]if the knife crits it deals [yellow]' .. 10*get_character_stat('thief', 3, 'dmg') .. '[fg] damage, chains [yellow]10[fg] times and grants [yellow]1[fg] gold' end,
+    ['astralist'] = function() return {line_count = 2,
+                                       '[fg]instead release [yellow]3[fg] projectiles from the middle of the arena',
+                                       '[fg]projectiles are now also homing and deal [yellow]' .. get_character_stat('astralist', 3, 'dmg') .. '[fg] damage for [yellow]2[fg] seconds'} end,
+    ['physician'] = function() return {line_count = 2,
+                                       '[fg]character rerolls cost [yellow]1[fg] less gold',
+                                       '[fg]picking up gold releases [yellow]2[fg] healing orbs'} end,
+    ['warmonger'] = function() return '[fg]item rerolls cost [yellow]1[fg] less gold for each shop level' end,
+    ['avenger'] = function() return {line_count = 3,
+                                     '[yellow]x2[fg] damage, [yellow]x2[fg] attack speed, [yellow]x2[fg] pierce, [yellow]x2[fg] knockback',
+                                     '[fg]on enemy kill repeat attack and increment sorcerer repeat counter',
+                                     '[fg]on healing orb pickup create a void nova and increment repeat counter'} end,
+    ['herald'] = function() return {line_count = 3,
+                                    '[fg]Attack hits all enemies, on enemy kill gain [yellow]5%[fg] max hp instead',
+                                    '[fg]deal [yellow]10%[fg] of current hp as damage to self and grant [yellow]+1%[fg] max hp to all allies',
+                                    '[fg]also deal [yellow]5%[fg] of current hp as extra damage to enemies hit'} end,
+    ['technomancer'] = function() return {line_count = 4,
+                                          '[yellow]+2[fg] drones, pickups give a special [yellow]4[fg] second bonus to drones',
+                                          '[yellow2]coin[fg] - increase attack speed by [yellow]300%',
+                                          '[green]healing orb[fg] - projectiles bounce [yellow]3[fg] times',
+                                          '[blue]exploder mine[fg] - projectiles explode when they die'} end,
   }
 
   character_effect_descriptions_gray = {
@@ -887,32 +968,52 @@ function init()
     ['usurer'] = function() return '[light_bg]if the same enemy is cursed 3 times it takes ' .. 10*get_character_stat('usurer', 3, 'dmg') .. ' damage' end,
     ['gambler'] = function() return '[light_bg]60/40/20% chance to cast the attack 2/3/4 times' end,
     ['thief'] = function() return '[light_bg]if the knife crits it deals ' .. 10*get_character_stat('thief', 3, 'dmg') .. ' damage, chains 10 times and grants 1 gold' end,
+    ['astralist'] = function() return {line_count = 2,
+                                       '[light_bg]instead release 3 projectiles from the middle of the arena',
+                                       '[light_bg]projectiles are now also homing and deal ' .. get_character_stat('astralist', 3, 'dmg') .. 'damage for 2 seconds'} end,
+    ['physician'] = function() return {line_count = 2,
+                                       '[light_bg]character rerolls cost 1 less gold',
+                                       '[light_bg]picking up gold releases 2 healing orbs'} end,
+    ['warmonger'] = function() return '[light_bg]item rerolls cost 1 less gold for each shop level' end,
+    ['avenger'] = function() return {line_count = 3,
+                                     '[light_bg]x2 damage, x2 attack speed, x2 pierce, x2 knockback',
+                                     '[light_bg]on enemy kill repeat attack and increment sorcerer repeat counter',
+                                     '[light_bg]on healing orb pickup create a void nova and increment repeat counter'} end,
+    ['herald'] = function() return {line_count = 3,
+                                    '[light_bg]Attack hits all enemies, on enemy kill gain 5% max hp instead',
+                                    '[light_bg]deal 10% of current hp as damage to self and grant +1% max hp to all allies',
+                                    '[light_bg]also deal 5% of current hp as extra damage to enemies hit'} end,
+    ['technomancer'] = function() return {line_count = 4,
+                                          '[light_bg]+2 drones, pickups give a special 4 second bonus to drones',
+                                          '[light_bg]coin - increase attack speed by 300%',
+                                          '[light_bg]healing orb - projectiles bounce 3 times',
+                                          '[light_bg]exploder mine - projectiles explode when they die'}  end,
   }
 
   character_stats = {
     ['vagrant'] = function(lvl) return get_character_stat_string('vagrant', lvl) end,
-    ['swordsman'] = function(lvl) return get_character_stat_string('swordsman', lvl) end, 
-    ['wizard'] = function(lvl) return get_character_stat_string('wizard', lvl) end, 
-    ['magician'] = function(lvl) return get_character_stat_string('magician', lvl) end, 
-    ['archer'] = function(lvl) return get_character_stat_string('archer', lvl) end, 
-    ['scout'] = function(lvl) return get_character_stat_string('scout', lvl) end, 
-    ['cleric'] = function(lvl) return get_character_stat_string('cleric', lvl) end, 
-    ['outlaw'] = function(lvl) return get_character_stat_string('outlaw', lvl) end, 
-    ['blade'] = function(lvl) return get_character_stat_string('blade', lvl) end, 
-    ['elementor'] = function(lvl) return get_character_stat_string('elementor', lvl) end, 
-    ['saboteur'] = function(lvl) return get_character_stat_string('saboteur', lvl) end, 
-    ['bomber'] = function(lvl) return get_character_stat_string('bomber', lvl) end, 
-    ['stormweaver'] = function(lvl) return get_character_stat_string('stormweaver', lvl) end, 
-    ['sage'] = function(lvl) return get_character_stat_string('sage', lvl) end, 
-    ['squire'] = function(lvl) return get_character_stat_string('squire', lvl) end, 
-    ['cannoneer'] = function(lvl) return get_character_stat_string('cannoneer', lvl) end, 
-    ['dual_gunner'] = function(lvl) return get_character_stat_string('dual_gunner', lvl) end, 
-    ['hunter'] = function(lvl) return get_character_stat_string('hunter', lvl) end, 
-    ['sentry'] = function(lvl) return get_character_stat_string('sentry', lvl) end, 
-    ['chronomancer'] = function(lvl) return get_character_stat_string('chronomancer', lvl) end, 
-    ['spellblade'] = function(lvl) return get_character_stat_string('spellblade', lvl) end, 
-    ['psykeeper'] = function(lvl) return get_character_stat_string('psykeeper', lvl) end, 
-    ['engineer'] = function(lvl) return get_character_stat_string('engineer', lvl) end, 
+    ['swordsman'] = function(lvl) return get_character_stat_string('swordsman', lvl) end,
+    ['wizard'] = function(lvl) return get_character_stat_string('wizard', lvl) end,
+    ['magician'] = function(lvl) return get_character_stat_string('magician', lvl) end,
+    ['archer'] = function(lvl) return get_character_stat_string('archer', lvl) end,
+    ['scout'] = function(lvl) return get_character_stat_string('scout', lvl) end,
+    ['cleric'] = function(lvl) return get_character_stat_string('cleric', lvl) end,
+    ['outlaw'] = function(lvl) return get_character_stat_string('outlaw', lvl) end,
+    ['blade'] = function(lvl) return get_character_stat_string('blade', lvl) end,
+    ['elementor'] = function(lvl) return get_character_stat_string('elementor', lvl) end,
+    ['saboteur'] = function(lvl) return get_character_stat_string('saboteur', lvl) end,
+    ['bomber'] = function(lvl) return get_character_stat_string('bomber', lvl) end,
+    ['stormweaver'] = function(lvl) return get_character_stat_string('stormweaver', lvl) end,
+    ['sage'] = function(lvl) return get_character_stat_string('sage', lvl) end,
+    ['squire'] = function(lvl) return get_character_stat_string('squire', lvl) end,
+    ['cannoneer'] = function(lvl) return get_character_stat_string('cannoneer', lvl) end,
+    ['dual_gunner'] = function(lvl) return get_character_stat_string('dual_gunner', lvl) end,
+    ['hunter'] = function(lvl) return get_character_stat_string('hunter', lvl) end,
+    ['sentry'] = function(lvl) return get_character_stat_string('sentry', lvl) end,
+    ['chronomancer'] = function(lvl) return get_character_stat_string('chronomancer', lvl) end,
+    ['spellblade'] = function(lvl) return get_character_stat_string('spellblade', lvl) end,
+    ['psykeeper'] = function(lvl) return get_character_stat_string('psykeeper', lvl) end,
+    ['engineer'] = function(lvl) return get_character_stat_string('engineer', lvl) end,
     ['plague_doctor'] = function(lvl) return get_character_stat_string('plague_doctor', lvl) end,
     ['barbarian'] = function(lvl) return get_character_stat_string('barbarian', lvl) end,
     ['juggernaut'] = function(lvl) return get_character_stat_string('juggernaut', lvl) end,
@@ -947,6 +1048,12 @@ function init()
     ['usurer'] = function(lvl) return get_character_stat_string('usurer', lvl) end,
     ['gambler'] = function(lvl) return get_character_stat_string('gambler', lvl) end,
     ['thief'] = function(lvl) return get_character_stat_string('thief', lvl) end,
+    ['astralist'] = function(lvl) return get_character_stat_string('astralist', lvl) end,
+    ['physician'] = function(lvl) return get_character_stat_string('physician', lvl) end,
+    ['warmonger'] = function(lvl) return get_character_stat_string('warmonger', lvl) end,
+    ['avenger'] = function(lvl) return get_character_stat_string('avenger', lvl) end,
+    ['herald'] = function(lvl) return get_character_stat_string('herald', lvl) end,
+    ['technomancer'] = function(lvl) return get_character_stat_string('technomancer', lvl) end,
   }
 
   class_stat_multipliers = {
@@ -1001,8 +1108,8 @@ function init()
     ['forcer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+25%[light_bg]/[' .. ylb2(lvl) .. ']+50% [fg]knockback force to all allies' end,
     ['swarmer'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+1[light_bg]/[' .. ylb2(lvl) .. ']+3 [fg]hits to critters' end,
     ['voider'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+20%[light_bg]/[' .. ylb2(lvl) .. ']+40% [fg]damage over time to allied voiders' end,
-    ['sorcerer'] = function(lvl) 
-      return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4[light_bg]/[' .. ylb3(lvl) .. ']6 [fg]- sorcerers repeat their attacks once every [' .. 
+    ['sorcerer'] = function(lvl)
+      return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4[light_bg]/[' .. ylb3(lvl) .. ']6 [fg]- sorcerers repeat their attacks once every [' ..
         ylb1(lvl) .. ']4[light_bg]/[' .. ylb2(lvl) .. ']3[light_bg]/[' .. ylb3(lvl) .. ']2[fg] attacks'
     end,
     ['mercenary'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+8%[light_bg]/[' .. ylb2(lvl) .. ']+16% [fg]chance for enemies to drop gold on death' end,
@@ -1016,7 +1123,7 @@ function init()
     [4] = {'priest', 'highlander', 'psykino', 'fairy', 'blade', 'plague_doctor', 'cannoneer', 'vulcanist', 'warden', 'corruptor', 'thief'},
   }
 
-  non_attacking_characters = {'cleric', 'stormweaver', 'squire', 'chronomancer', 'sage', 'psykeeper', 'bane', 'carver', 'fairy', 'priest', 'flagellant', 'merchant', 'miner'}
+  non_attacking_characters = {'cleric', 'stormweaver', 'squire', 'chronomancer', 'sage', 'bane', 'carver', 'fairy', 'priest', 'merchant', 'miner', 'infestor', 'jester', 'silencer', 'warden', 'physician'}
 
   character_tiers = {
     ['vagrant'] = 1,
@@ -1076,11 +1183,17 @@ function init()
     ['usurer'] = 3,
     ['gambler'] = 3,
     ['thief'] = 4,
+    ['astralist'] = 4,
+    ['physician'] = 1,
+    ['warmonger'] = 2,
+    ['avenger'] = 4,
+    ['herald'] = 4,
+    ['technomancer'] = 4,
   }
 
   launches_projectiles = function(character)
-    local classes = {'vagrant', 'archer', 'scout', 'outlaw', 'blade', 'wizard', 'cannoneer', 'dual_gunner', 'hunter', 'spellblade', 'engineer', 'corruptor', 'beastmaster', 'jester', 'assassin', 'barrager', 
-      'arcanist', 'illusionist', 'artificer', 'miner', 'thief', 'sentry'}
+    local classes = {'vagrant', 'archer', 'scout', 'outlaw', 'blade', 'wizard', 'cannoneer', 'dual_gunner', 'hunter', 'spellblade', 'engineer', 'corruptor', 'beastmaster', 'jester', 'assassin', 'barrager',
+      'arcanist', 'illusionist', 'artificer', 'miner', 'thief', 'sentry', 'astralist', 'avenger', 'technomancer'}
     return table.any(classes, function(v) return v == character end)
   end
 
@@ -1278,6 +1391,7 @@ function init()
     ['psycholeak'] = 'Psycholeak',
     ['divine_blessing'] = 'Divine Blessing',
     ['hardening'] = 'Hardening',
+    ['mine_detector'] = 'Mine Detector',
   }
 
   passive_descriptions = {
@@ -1365,6 +1479,7 @@ function init()
     ['psycholeak'] = '[fg]position [yellow]1[fg] generates [yellow]1[fg] psyker orb every [yellow]10[fg] seconds',
     ['divine_blessing'] = '[fg]generate [yellow]1[fg] healing orb every [yellow]8[fg] seconds',
     ['hardening'] = '[yellow]+150%[fg] defense to all allies for [yellow]3[fg] seconds after an ally dies',
+    ['mine_detector'] = '[yellow]+25/50/75[[fg] range for disarming enemy exploder mines',
   }
 
   local ts = function(lvl, a, b, c) return '[' .. ylb1(lvl) .. ']' .. tostring(a) .. '[light_bg]/[' .. ylb2(lvl) .. ']' .. tostring(b) .. '[light_bg]/[' .. ylb3(lvl) .. ']' .. tostring(c) .. '[fg]' end
@@ -1453,6 +1568,7 @@ function init()
     ['psycholeak'] = function(lvl) return '[fg]position [yellow]1[fg] generates [yellow]1[fg] psyker orb every [yellow]10[fg] seconds' end,
     ['divine_blessing'] = function(lvl) return '[fg]generate [yellow]1[fg] healing orb every [yellow]8[fg] seconds' end,
     ['hardening'] = function(lvl) return '[yellow]+150%[fg] defense to all allies for [yellow]3[fg] seconds after an ally dies' end,
+    ['mine_detector'] = function(lvl) return ts(lvl, '+25', '50', '75') ..  ' range for disarming enemy exploder mines' end,
   }
 
   level_to_tier_weights = {
@@ -1490,7 +1606,7 @@ function init()
     [4] = {4, 5},
     [5] = {5, 8},
     [6] = {8, 10},
-    [7] = {8, 10}, 
+    [7] = {8, 10},
     [8] = {12, 14},
     [9] = {14, 18},
     [10] = {10, 13},
@@ -1501,9 +1617,9 @@ function init()
     [15] = {14, 18},
     [16] = {12, 12},
     [17] = {12, 12},
-    [18] = {20, 24}, 
+    [18] = {20, 24},
     [19] = {8, 12},
-    [20] = {10, 14}, 
+    [20] = {10, 14},
     [21] = {20, 28},
     [22] = {32, 32},
     [23] = {36, 36},
@@ -1690,7 +1806,7 @@ function init()
   end
 
   unlevellable_items = {
-    'speed_3', 'damage_4', 'shoot_5', 'death_6', 'lasting_7', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'annihilation', 
+    'speed_3', 'damage_4', 'shoot_5', 'death_6', 'lasting_7', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'annihilation',
     'tremor', 'heavy_impact', 'fracture', 'meat_shield', 'divine_punishment', 'unleash', 'freezing_field', 'burning_field', 'gravity_field',
     'magnetism', 'insurance', 'dividends', 'haste', 'rearm', 'ceremonial_dagger', 'burning_strike', 'lucky_strike', 'healing_strike', 'psycholeak', 'divine_blessing', 'hardening',
   }
@@ -1705,15 +1821,15 @@ function init()
   main_song_instance = _G[random:table{'song1', 'song2', 'song3', 'song4', 'song5'}]:play{volume = 0.5}
   main = Main()
 
-  main:add(MainMenu'mainmenu')
-  main:go_to('mainmenu')
+  main:add(MainMenu'main_menu')
+  main:go_to('main_menu')
 
   --[[
   main:add(BuyScreen'buy_screen')
   main:go_to('buy_screen', run.level or 1, run.units or {}, passives, run.shop_level or 1, run.shop_xp or 0)
   -- main:go_to('buy_screen', 7, run.units or {}, {'unleash'})
   ]]--
-  
+
   --[[
   gold = 10
   run_passive_pool = {
@@ -1723,7 +1839,7 @@ function init()
     'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
     'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance', 'blessing', 'haste', 'divine_barrage', 'orbitism', 'psyker_orbs', 'psychosink', 'rearm', 'taunt', 'construct_instability',
     'intimidation', 'vulnerability', 'temporal_chains', 'ceremonial_dagger', 'homing_barrage', 'critical_strike', 'noxious_strike', 'infesting_strike', 'burning_strike', 'lucky_strike', 'healing_strike', 'stunning_strike',
-    'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 'kinetic_strike',
+    'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 'kinetic_strike', 'mine_detector',
   }
   main:add(Arena'arena')
   main:go_to('arena', 21, 0, {
@@ -1906,7 +2022,7 @@ function open_options(self)
             'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
             'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance', 'blessing', 'haste', 'divine_barrage', 'orbitism', 'psyker_orbs', 'psychosink', 'rearm', 'taunt', 'construct_instability',
             'intimidation', 'vulnerability', 'temporal_chains', 'ceremonial_dagger', 'homing_barrage', 'critical_strike', 'noxious_strike', 'infesting_strike', 'burning_strike', 'lucky_strike', 'healing_strike', 'stunning_strike',
-            'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 'kinetic_strike',
+            'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 'kinetic_strike', 'mine_detector',
           }
           max_units = math.clamp(7 + current_new_game_plus, 7, 12)
           main:add(BuyScreen'buy_screen')
@@ -2023,14 +2139,14 @@ function open_options(self)
       love.window.setMode(window_width, window_height)
     end}
 
-    self.screen_shake_button = Button{group = self.ui, x = gw/2 - 57, y = gh - 100, w = 110, force_update = true, button_text = '[bg10]screen shake: ' .. tostring(state.no_screen_shake and 'no' or 'yes'), 
+    self.screen_shake_button = Button{group = self.ui, x = gw/2 - 57, y = gh - 100, w = 110, force_update = true, button_text = '[bg10]screen shake: ' .. tostring(state.no_screen_shake and 'no' or 'yes'),
     fg_color = 'bg10', bg_color = 'bg', action = function(b)
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       state.no_screen_shake = not state.no_screen_shake
       b:set_text('screen shake: ' .. tostring(state.no_screen_shake and 'no' or 'yes'))
     end}
 
-    self.cooldown_snake_button = Button{group = self.ui, x = gw/2 + 75, y = gh - 100, w = 145, force_update = true, button_text = '[bg10]cooldowns on snake: ' .. tostring(state.cooldown_snake and 'yes' or 'no'), 
+    self.cooldown_snake_button = Button{group = self.ui, x = gw/2 + 75, y = gh - 100, w = 145, force_update = true, button_text = '[bg10]cooldowns on snake: ' .. tostring(state.cooldown_snake and 'yes' or 'no'),
     fg_color = 'bg10', bg_color = 'bg', action = function(b)
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       state.cooldown_snake = not state.cooldown_snake
@@ -2044,7 +2160,7 @@ function open_options(self)
       b:set_text('arrow on snake: ' .. tostring(state.arrow_snake and 'yes' or 'no'))
     end}
 
-    self.screen_movement_button = Button{group = self.ui, x = gw/2 - 69, y = gh - 75, w = 135, force_update = true, button_text = '[bg10]screen movement: ' .. tostring(state.no_screen_movement and 'no' or 'yes'), 
+    self.screen_movement_button = Button{group = self.ui, x = gw/2 - 69, y = gh - 75, w = 135, force_update = true, button_text = '[bg10]screen movement: ' .. tostring(state.no_screen_movement and 'no' or 'yes'),
     fg_color = 'bg10', bg_color = 'bg', action = function(b)
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       state.no_screen_movement = not state.no_screen_movement
