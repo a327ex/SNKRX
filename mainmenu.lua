@@ -122,19 +122,12 @@ function MainMenu:on_enter(from)
     love.event.quit()
   end}
   self.t:every(2, function() self.soundtrack_button.spring:pull(0.025, 200, 10) end)
-  self.soundtrack_button = Button{group = self.main_ui, x = gw - 72, y = gh - 40, force_update = true, button_text = 'buy the soundtrack!', fg_color = 'bg10', bg_color = 'bg', action = function(b)
+  self.soundtrack_button = Button{group = self.main_ui, x = gw - 72, y = gh - 17, force_update = true, button_text = 'buy the soundtrack!', fg_color = 'bg10', bg_color = 'bg', action = function(b)
     ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     b.spring:pull(0.2, 200, 10)
     b.selected = true
     ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
     system.open_url('https://kubbimusic.com/album/ember')
-  end}
-  self.discord_button = Button{group = self.main_ui, x = gw - 92, y = gh - 17, force_update = true, button_text = 'join the community discord!', fg_color = 'bg10', bg_color = 'bg', action = function(b)
-    ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-    b.spring:pull(0.2, 200, 10)
-    b.selected = true
-    ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-    system.open_url('https://discord.gg/Yjk2Q5gDqA')
   end}
 end
 

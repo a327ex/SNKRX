@@ -1,4 +1,4 @@
 #!/bin/bash
 
-cd E:/a327ex/SNKRX
+cd D:/code/SNKRX
 engine/love/build_steam.bat SNKRX
