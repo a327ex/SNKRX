@@ -104,7 +104,7 @@ function Arena:on_enter(from, level, loop, units, passives, shop_level, shop_xp,
 
   if self.level == 1000 then
     self.level_1000_text = Text2{group = self.ui, x = gw/2, y = gh/2, lines = {{text = '[fg, wavy_mid]SNKRX', font = fat_font, alignment = 'center'}}}
-  
+
   elseif (self.level - (25*self.loop)) % 6 == 0 or self.level % 25 == 0 then
     self.boss_level = true
     self.start_time = 3
@@ -353,7 +353,7 @@ function Arena:update(dt)
   end
 
   if not self.paused and not self.died and not self.won then
-    run_time = run_time + dt
+    run_time = run_time + dt/4
   end
 
   if self.shop_text then self.shop_text:update(dt) end
@@ -386,9 +386,10 @@ function Arena:update(dt)
           'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
           'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance', 'blessing', 'haste', 'divine_barrage', 'orbitism', 'psyker_orbs', 'psychosink', 'rearm', 'taunt', 'construct_instability',
           'intimidation', 'vulnerability', 'temporal_chains', 'ceremonial_dagger', 'homing_barrage', 'critical_strike', 'noxious_strike', 'infesting_strike', 'burning_strike', 'lucky_strike', 'healing_strike', 'stunning_strike',
-          'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 'kinetic_strike',
+          'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 'kinetic_strike', 'mine_detector',
         }
-        max_units = math.clamp(7 + current_new_game_plus + self.loop, 7, 12)
+        -- max_units = math.clamp(7 + current_new_game_plus + self.loop, 7, 12)
+        max_units = math.clamp(7 + current_new_game_plus, 7, 12)
         main:add(BuyScreen'buy_screen')
         locked_state = nil
         system.save_run()
@@ -436,7 +437,8 @@ function Arena:quit()
       end
       current_new_game_plus = current_new_game_plus + 1
       state.current_new_game_plus = current_new_game_plus
-      max_units = math.clamp(7 + current_new_game_plus + self.loop, 7, 12)
+      -- max_units = math.clamp(7 + current_new_game_plus + self.loop, 7, 12)
+      max_units = math.clamp(7 + current_new_game_plus, 7, 12)
 
       system.save_run()
       trigger:tween(1, _G, {slow_amount = 0}, math.linear, function() slow_amount = 0 end, 'slow_amount')
@@ -482,12 +484,35 @@ function Arena:quit()
           SteamFollowButton{group = self.ui, x = gw/2 + 40, y = gh/2 + 58, force_update = true}
           Button{group = self.ui, x = gw - 40, y = gh - 44, force_update = true, button_text = 'credits', fg_color = 'bg10', bg_color = 'bg', action = function() self:create_credits() end}
           Button{group = self.ui, x = gw - 39, y = gh - 20, force_update = true, button_text = '  loop  ', fg_color = 'bg10', bg_color = 'bg', action = function() self:endless() end}
-          self.try_loop_text = Text2{group = self.ui, x = gw - 144, y = gh - 20, force_update = true, lines = {
-            {text = '[bg10]continue run (+difficulty):', font = pixul_font},
+          self.try_loop_text = Text2{group = self.ui, x = gw - (self.loop < 5 and 191 or 143), y = gh - 20, force_update = true, lines = {
+            {text = '[bg10]continue run (+difficulty' .. (self.loop < 5 and ', +1 max passive):' or '):'), font = pixul_font},
           }}
           Button{group = self.ui, x = gw/2 - 50 + 40, y = gh/2 + 12, force_update = true, button_text = 'nimble quest', fg_color = 'bluem5', bg_color = 'blue', action = function(b) open_url(b, 'https://store.steampowered.com/app/259780/Nimble_Quest/') end}
           Button{group = self.ui, x = gw/2 + 50 + 40, y = gh/2 + 12, force_update = true, button_text = 'dota underlords', fg_color = 'bluem5', bg_color = 'blue', action = function(b) open_url(b, 'https://store.steampowered.com/app/1046930/Dota_Underlords/') end}
 
+          if self.loop > 3 and not state.achievement_its_full_of_stars then
+            UnlocksText{group = self.ui, character = 'astralist'}
+            state.achievement_its_full_of_stars = true
+            system.save_state()
+          elseif self.loop > 2 and not state.achievement_im_snkman then
+            UnlocksText{group = self.ui, character = 'avenger'}
+            state.achievement_im_snkman = true
+            system.save_state()
+          elseif self.loop > 1 and not state.achievement_lord_of_war then
+            UnlocksText{group = self.ui, character = 'warmonger'}
+            state.achievement_lord_of_war = true
+            system.save_state()
+          elseif self.loop > 0 and not state.achievement_attack_the_core then
+            UnlocksText{group = self.ui, character = 'technomancer'}
+            state.achievement_attack_the_core = true
+            system.save_state()
+          elseif not state.achievement_new_game_5 then
+            UnlocksText{group = self.ui, character = 'physician'}
+            state.achievement_new_game_5 = true
+            system.save_state()
+            steam.userStats.setAchievement('GAME_COMPLETE')
+            steam.userStats.storeStats()
+          end
         else
           self.win_text2 = Text2{group = self.ui, x = gw/2 + 40, y = gh/2 + 5, force_update = true, lines = {
             {text = "[fg]you've beaten the game!", font = pixul_font, alignment = 'center', height_multiplier = 1.24},
@@ -509,8 +534,8 @@ function Arena:quit()
           Button{group = self.ui, x = gw/2 + 40, y = gh/2 + 33, force_update = true, button_text = 'buy the soundtrack!', fg_color = 'greenm5', bg_color = 'green', action = function(b) open_url(b, 'https://kubbimusic.com/album/ember') end}
           Button{group = self.ui, x = gw - 40, y = gh - 44, force_update = true, button_text = '  loop  ', fg_color = 'bg10', bg_color = 'bg', action = function() self:endless() end}
           RestartButton{group = self.ui, x = gw - 40, y = gh - 20, force_update = true}
-          self.try_loop_text = Text2{group = self.ui, x = gw - 200, y = gh - 44, force_update = true, lines = {
-            {text = '[bg10]continue run (+difficulty, +1 max snake size):', font = pixul_font},
+          self.try_loop_text = Text2{group = self.ui, x = gw - (self.loop < 5 and 191 or 143), y = gh - 44, force_update = true, lines = {
+            {text = '[bg10]continue run (+difficulty' .. (self.loop < 5 and ', +1 max passive):' or '):'), font = pixul_font},
           }}
           self.try_ng_text = Text2{group = self.ui, x = gw - 187, y = gh - 20, force_update = true, lines = {
             {text = '[bg10]new run (+difficulty, +1 max snake size):', font = pixul_font},
@@ -525,14 +550,16 @@ function Arena:quit()
         steam.userStats.setAchievement('NEW_GAME_1')
         steam.userStats.storeStats()
       end
-
+      -- Can never reach this condition since current_new_game_plus is reset to 5 above.
+      -- Functionality moved to that section.
+      --[[
       if current_new_game_plus == 6 then
         state.achievement_new_game_5 = true
         system.save_state()
         steam.userStats.setAchievement('GAME_COMPLETE')
         steam.userStats.storeStats()
       end
-
+      ]]--
       if self.ranger_level >= 2 then
         state.achievement_rangers_win = true
         system.save_state()
@@ -676,14 +703,14 @@ function Arena:quit()
       self.t:tween(0.7, self, {main_slow_amount = 0}, math.linear, function() self.main_slow_amount = 0 end)
     end)
     self.t:after(3, function()
-      if (self.level-(25*self.loop)) % 3 == 0 and #self.passives < 8 then
+      if (self.level-(25*self.loop)) % 3 == 0 and #self.passives < 8 + math.min(self.loop, 4) then
         input:set_mouse_visible(true)
         self.arena_clear_text.dead = true
         trigger:tween(1, _G, {slow_amount = 0}, math.linear, function() slow_amount = 0 end, 'slow_amount')
         trigger:tween(1, _G, {music_slow_amount = 0}, math.linear, function() music_slow_amount = 0 end, 'music_slow_amount')
         trigger:tween(4, camera, {x = gw/2, y = gh/2, r = 0}, math.linear, function() camera.x, camera.y, camera.r = gw/2, gh/2, 0 end)
         self:set_passives()
-        RerollButton{group = main.current.ui, x = gw - 40, y = gh - 40, parent = self, force_update = true}
+        RerollButton{group = main.current.ui, x = gw - 40, y = gh - 40, reroll_cost = 5, parent = self, force_update = true}
         self.shop_text = Text({{text = '[wavy_mid, fg]gold: [yellow]' .. gold, font = pixul_font, alignment = 'center'}}, global_text_tags)
 
         self.build_text = Text2{group = self.ui, x = 40, y = 20, force_update = true, lines = {{text = "[wavy_mid, fg]your build", font = pixul_font, alignment = 'center'}}}
@@ -859,7 +886,7 @@ function Arena:die()
             'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
             'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance', 'blessing', 'haste', 'divine_barrage', 'orbitism', 'psyker_orbs', 'psychosink', 'rearm', 'taunt', 'construct_instability',
             'intimidation', 'vulnerability', 'temporal_chains', 'ceremonial_dagger', 'homing_barrage', 'critical_strike', 'noxious_strike', 'infesting_strike', 'burning_strike', 'lucky_strike', 'healing_strike', 'stunning_strike',
-            'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 'kinetic_strike',
+            'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 'kinetic_strike', 'mine_detector',
           }
           max_units = math.clamp(7 + current_new_game_plus, 7, 12)
           main:add(BuyScreen'buy_screen')
@@ -936,23 +963,23 @@ function Arena:create_credits()
   Button{group = self.credits, x = 262, y = 160, button_text = 'InspectorJ', fg_color = 'yellowm5', bg_color = 'yellow', credits_button = true, action = function(b)
     open_url(b, 'https://freesound.org/people/InspectorJ/sounds/458586/') end}
   Text2{group = self.credits, x = 70, y = 190, lines = {{text = '[red]playtesters: ', font = pixul_font}}}
-  Button{group = self.credits, x = 130, y = 190, button_text = 'Jofer', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
+  Button{group = self.credits, x = 130, y = 190, button_text = 'Jofer', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b)
     open_url(b, 'https://twitter.com/JofersGames') end}
-  Button{group = self.credits, x = 172, y = 190, button_text = 'ekun', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
+  Button{group = self.credits, x = 172, y = 190, button_text = 'ekun', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b)
     open_url(b, 'https://twitter.com/ekunenuke') end}
-  Button{group = self.credits, x = 224, y = 190, button_text = 'cvisy_GN', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
+  Button{group = self.credits, x = 224, y = 190, button_text = 'cvisy_GN', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b)
     open_url(b, 'https://twitter.com/cvisy_GN') end}
-  Button{group = self.credits, x = 292, y = 190, button_text = 'Blue Fairy', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
+  Button{group = self.credits, x = 292, y = 190, button_text = 'Blue Fairy', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b)
     open_url(b, 'https://twitter.com/blue9fairy') end}
-  Button{group = self.credits, x = 362, y = 190, button_text = 'Phil Blank', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
+  Button{group = self.credits, x = 362, y = 190, button_text = 'Phil Blank', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b)
     open_url(b, 'https://twitter.com/PhilBlankGames') end}
-  Button{group = self.credits, x = 440, y = 190, button_text = 'DefineDoddy', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
+  Button{group = self.credits, x = 440, y = 190, button_text = 'DefineDoddy', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b)
     open_url(b, 'https://twitter.com/DefineDoddy') end}
-  Button{group = self.credits, x = 140, y = 210, button_text = 'Ge0force', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
+  Button{group = self.credits, x = 140, y = 210, button_text = 'Ge0force', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b)
     open_url(b, 'https://twitter.com/Ge0forceBE') end}
-  Button{group = self.credits, x = 193, y = 210, button_text = 'Vlad', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
+  Button{group = self.credits, x = 193, y = 210, button_text = 'Vlad', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b)
     open_url(b, 'https://twitter.com/thecryru') end}
-  Button{group = self.credits, x = 258, y = 210, button_text = 'Yongmin Park', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b) 
+  Button{group = self.credits, x = 258, y = 210, button_text = 'Yongmin Park', fg_color = 'redm5', bg_color = 'red', credits_button = true, action = function(b)
     open_url(b, 'https://twitter.com/yongminparks') end}
 end
 
@@ -973,7 +1000,7 @@ end
 
 function Arena:transition()
   self.transitioning = true
-  if not self.lock then locked_state = nil end
+  -- if not self.lock then locked_state = nil end
   ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
   TransitionEffect{group = main.transitions, x = self.player.x, y = self.player.y, color = state.dark_transitions and bg[-2] or self.color, transition_action = function(t)
     if self.level % 2 == 0 and self.shop_level < 5 then
@@ -997,7 +1024,7 @@ function Arena:transition()
     main:go_to('buy_screen', self.level+1, self.loop, self.units, self.passives, self.shop_level, self.shop_xp)
     t.t:after(0.1, function()
       t.text:set_text({
-        {text = '[nudge_down, ' .. tostring(state.dark_transitions and 'fg' or 'bg') .. ']gold gained: ' .. tostring(self.gold_gained or 0) .. ' + ' .. tostring(self.gold_picked_up or 0), font = pixul_font, 
+        {text = '[nudge_down, ' .. tostring(state.dark_transitions and 'fg' or 'bg') .. ']gold gained: ' .. tostring(self.gold_gained or 0) .. ' + ' .. tostring(self.gold_picked_up or 0), font = pixul_font,
           alignment = 'center', height_multiplier = 1.5},
         {text = '[wavy_lower, ' .. tostring(state.dark_transitions and 'fg' or 'bg') .. ']interest: 0', font = pixul_font, alignment = 'center', height_multiplier = 1.5},
         {text = '[wavy_lower, ' .. tostring(state.dark_transitions and 'fg' or 'bg') .. ']total: 0', font = pixul_font, alignment = 'center'}
@@ -1195,8 +1222,7 @@ function CharacterHP:draw()
     end
   graphics.pop()
 
-  if state.cooldown_snake then
-    if table.any(non_cooldown_characters, function(v) return v == self.parent.character end) then return end
+  if state.cooldown_snake and self.parent.has_cooldown then
     local p = self.parent
     graphics.push(p.x, p.y, 0, self.hfx.hit.x, self.hfx.hit.y)
       if not p.dead then
@@ -1210,4 +1236,45 @@ end
 
 function CharacterHP:change_hp()
   self.hfx:use('hit', 0.5)
+end
+
+
+
+
+UnlocksText = Object:extend()
+UnlocksText:implement(GameObject)
+function UnlocksText:init(args)
+  self:init_game_object(args)
+  self.x, self.y = gw/2, gh/2
+  self.w, self.h = 50, 64
+  self.sx, self.sy = 0, 0
+  self.character = self.character or 'physician'
+  self.text = Text({
+    {text = "[" .. character_color_strings[self.character] .. "]unlocked the " .. character_names[self.character], font = pixul_font, alignment = 'center'}
+  }, global_text_tags)
+  self.force_update = true
+
+  -- auto popup
+  self.t:after(0.5, function()
+    self.t:tween(0.1, self, {sx = 1, sy = 1}, math.cubic_in_out, function()
+      self.t:after(3, function()
+        self.t:tween(0.05, self, {sx = 0, sy = 0}, math.cubic_in_out, function()
+          self.dead = true end)
+        end)
+      end)
+    self.spring:pull(0.5) end)
+  return self
+end
+
+
+function UnlocksText:update(dt)
+  self:update_game_object(dt)
+end
+
+
+function UnlocksText:draw()
+  graphics.push(self.x, self.y, 0, self.sx*self.spring.x, self.sy*self.spring.x)
+  graphics.rectangle(self.x, self.y, self.w + self.text.w, self.h, 5, 5, bg[-1])
+  self.text:draw(self.x, self.y)
+  graphics.pop()
 end

@@ -659,6 +659,19 @@ function InfoText:deactivate()
 end
 
 
+function InfoText:popup(text, ox, oy, sx, sy, ow, oh, tox, toy, delay)
+  self.ox, self.oy = ox or 0, oy or 0
+  self.sx, self.sy = 0, 0
+  self.ow, self.oh = ow or 0, oh or 0
+  self.tox, self.toy = tox or 0, toy or 0
+  self.text:set_text(text)
+  self.t:tween(0.1, self, {sx = sx or 1, sy = sy or 1}, math.cubic_in_out)
+  self.spring:pull(0.5)
+  delay = delay or 1
+  self.t:after(delay, function() self.t:tween(0.05, self, {sy = 0}, math.linear, function() self.dead = true end) end)
+end
+
+
 
 
 ColorRamp = Object:extend()
