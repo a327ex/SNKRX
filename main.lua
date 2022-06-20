@@ -1016,9 +1016,10 @@ function init()
     [4] = {'priest', 'highlander', 'psykino', 'fairy', 'blade', 'plague_doctor', 'cannoneer', 'vulcanist', 'warden', 'corruptor', 'thief'},
   }
 
-  non_attacking_characters = {'cleric', 'stormweaver', 'squire', 'chronomancer', 'sage', 'psykeeper', 'bane', 'carver', 'fairy', 'priest', 'flagellant', 'merchant', 'miner'}
-  non_cooldown_characters = {'squire', 'chronomancer', 'psykeeper', 'merchant', 'miner'}
-
+  non_attacking_characters = {'cleric', 'stormweaver', 'squire', 'chronomancer', 'sage', 'bane', 'carver', 'fairy', 'priest', 'merchant', 'miner', 'infestor', 'jester', 'silencer', 'warden'}
+  non_cooldown_characters = {'squire', 'chronomancer', 'psykeeper', 'merchant', 'miner', 'cryomancer', 'pyromancer'}
+  non_speed_buffable = {'artificer', 'bomber', 'carver', 'chronomancer', 'cleric', 'cryomancer', 'engineer', 'fairy', 'flagellant', 'host', 'merchant', 'miner', 'priest', 'psykeeper', 'pyromancer', 'sentry', 'squire', 'stormweaver', 'vulcanist', 'warden'}
+  
   character_tiers = {
     ['vagrant'] = 1,
     ['swordsman'] = 1,
