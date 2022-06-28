@@ -1017,7 +1017,6 @@ function init()
   }
 
   non_attacking_characters = {'cleric', 'stormweaver', 'squire', 'chronomancer', 'sage', 'psykeeper', 'bane', 'carver', 'fairy', 'priest', 'flagellant', 'merchant', 'miner'}
-  non_cooldown_characters = {'squire', 'chronomancer', 'psykeeper', 'merchant', 'miner'}
 
   character_tiers = {
     ['vagrant'] = 1,
