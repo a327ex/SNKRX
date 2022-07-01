@@ -37,9 +37,9 @@ function shared_init()
   slow_amount = 1
 
   sfx = SoundTag()
-  sfx.volume = 0.5
+  sfx.volume = state.sfx_volume or 0.5
   music = SoundTag()
-  music.volume = 0.5
+  music.volume = state.music_volume or 0.5
 
   if state.volume_muted then sfx.volume = 0 end
   if state.music_muted then music.volume = 0 end
@@ -94,9 +94,10 @@ function shared_draw(draw_action)
     shadow_shader:unset()
   end)
 
-  background_canvas:draw(0, 0, 0, sx, sy)
-  shadow_canvas:draw(1.5*sx, 1.5*sy, 0, sx, sy)
-  main_canvas:draw(0, 0, 0, sx, sy)
+  local x, y = 0, 0
+  background_canvas:draw(x, y, 0, sx, sy)
+  shadow_canvas:draw(x + 1.5*sx, y + 1.5*sy, 0, sx, sy)
+  main_canvas:draw(x, y, 0, sx, sy)
 end
 
 
@@ -116,8 +117,8 @@ end
 
 function Star:update(dt)
   self:update_game_object(dt)
-  self.x = self.x + self.v*math.cos(-math.pi/4)
-  self.y = self.y + self.v*math.sin(-math.pi/4)
+  self.x = self.x + self.v*math.cos(-math.pi/4)*dt
+  self.y = self.y + self.v*math.sin(-math.pi/4)*dt
   self.vr = self.vr + self.dvr*dt
   if self.x > gw + 64 then self.dead = true end
 end
@@ -595,7 +596,7 @@ global_text_tags = {
 
   cbyc3 = TextTag{init = function(c, i, text)
     c.color = invisible
-    text.t:after((i-1)*0.05, function()
+    text.t:after((i-1)*0.025, function()
       c.color = bg[10]
     end)
   end, draw = function(c, i, text)

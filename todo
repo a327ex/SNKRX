@@ -1,89 +1,87 @@
-Looping Update
+Loop Update
   New items:
     General:
-      Intimidation - enemies spawn with -10/20/30% max HP
-      Vulnerability - enemies take +10/20/30% damage
-      Ceremonial Dagger - killing an enemy fires a homing dagger
-      Homing Barrage - X/Y/Z% chance to release a homing barrage on enemy kill
-      Critical Strike - X/Y/Z% chance for attacks to critically strike, dealing 2x damage
-      Noxious Strike - X/Y/Z% chance for attacks to poison enemies, dealing 20% damage per second for 3 seconds
-      Infesting Strike - X/Y/Z% chance for attacks to spawn 2 critters on kill
-      Kinetic Strike - X/Y/Z% chance for attacks to push enemies away with high force
-      Burning Strike - X% chance for attacks to ignite, dealing 20% dps for 3 seconds, ignited enemies ignite nearby enemies on death
-      Lucky Strike - X% chance for attacks to cause enemies to drop gold
-      Healing Strike - X% chance for attacks to spawn a healing orb on kill
-      Stunning Strike - X/Y/Z% chance for attacks to stun for 2 seconds
-      Silencing Strike - X/Y/Z% chance for attacks to silence on hit
-      Warping Shots - X/Y/Z% chance for projectiles to ignore wall collisions and warp around the screen 1/2/3 times
-      Culling Strike - instantly kill elites below 10/20/30% max HP
-      Lightning Strike - X/Y/Z% chance for attacks to create chain lightning, dealing 60/80/100% damage and hitting 2/3/4 enemies
-    Healer:
-      Blessing - +10/20/30% healing effectiveness
-      Divine Favor - healing over maximum HP provides a shield that prevents damage once
-      Divine Barrage - 10/20/30% chance to release a homing barrage when picking up a healing orb
-    Psyker:
-      Orbitism - 33/66/99% faster orb speed
-      Psychic Leak - orbs deal extra damage based on the amount of damage all psykers have taken recently
-      Psychokinesis - 
-    Conjurer:
-      Rearm - summons repeat their attacks once
-      Taunt - 10/20/30% chance for summons to taunt nearby enemies on attack
-      Summon Instability - summons explode when disappearing, dealing 100/150/200% damage
-    Changes:
-      Magnetism - also attracts healing orbs
-  Healer rework:
-    Enemies have a 8/16% chance to spawn healing orbs on death, orbs prioritize healing low health allies
-      Cleric: creates 1 healing orb, Lv.3: creates 4 healing orbs and grants +20% healing effectiveness
-      Priest: creates 6 healing orbs
-      Fairy: grants a random unit 100% attack speed for 6 seconds and creates 1 healing orb
-  Psyker rework:
-    Create orbitting, damaging balls at the head of the snake equal to the number of psykers
-      Flagellant - Lv.3: deals no damage to self and grants +10% damage to all allies per cast
-      Psychic - Lv.3: gains up to 300% damage the less HP the psychic has
-      Psykino - Lv.3: gains up to 100% attack speed the less HP the psykino has
-      Psykeeper - creates a healing orb every time the psykeeper takes 30% of its max HP in damage, Lv.3: deal double the damage taken by the psykeeper to all enemies
+      * Intimidation - enemies spawn with -10/20/30% max HP
+      * Vulnerability - enemies take +10/20/30% damage
+      * Temporal Chains - enemies are 10/20/30% slower
+      * Ceremonial Dagger - killing an enemy fires a homing dagger
+      * Homing Barrage - 8/16/24% chance to release a homing barrage on enemy kill
+      * Critical Strike - 5/10/15% chance for attacks to critically strike, dealing 2x damage
+      * Noxious Strike - 8/16/24% chance for attacks to poison enemies, dealing 20% dps for 3 seconds
+      * Infesting Strike - 10/20/30% chance for attacks to spawn 2 critters on kill
+      * Kinetic Strike - 10/20/30% chance for attacks to push enemies away with high force
+      * Burning Strike - 15% chance for attacks to ignite, dealing 20% dps for 3 seconds
+      * Lucky Strike - 8% chance for attacks to cause enemies to drop gold on death
+      * Healing Strike - 8% chance for attacks to spawn a healing orb on kill
+      * Stunning Strike - 8/16/24% chance for attacks to stun for 2 seconds
+      * Silencing Strike - 8/16/24% chance for attacks to silence for 4 seconds on hit
+      * Culling Strike - instantly kill elites below 10/20/30% max HP
+      * Lightning Strike - 5/10/15% chance for projectiles to create chain lightning, dealing 60/80/100% damage
+      * Psycholeak - Position 1 generates 1 psyker orb every 10 seconds
+      * Divine Blessing - generate 1 healing orb every 8 seconds
+  Psyker
+    Additional orbs will prefer to be assigned to psykers, if there are no psykers then they will be assigned randomly
+    Orb speed scales with the unit's attack speed
+    Increase default orb range
+    Decrease default and maximum orb speed
+    Increased orb damage
+    Psyker class bonus: +2/+4 total orbs
+    Remove Psychosense
+    Add "Orbs shoot projectiles"
+  Healer
+    Double healing per orb
+    Fix heal targetting, should always target lowest HP unit
+    Some solution that:
+      Increases amount of orbs dropped with only 1 or 2 healers
+      Decreases amount of orbs dropped on full build
+    Healing orbs are slightly attracted to the snake
+  Warriors
+    Increase sensor range
+    Set juggernaut and barbarian's attacks on :cooldown calls
+  Builders
+    * Carver (builder, healer) - creates a tree that creates 1 healing orb every 6 seconds, Lv.3 effect: healing orbs are created twice as fast
+    * Engineer (builder): unchanged
+    * Illusionist -> Artificer (builder, sorcerer): unchanged
+    * Saboteur -> Bomber (builder, nuker): plants a bomb, when it explodes it deals 2X AoE damage, Lv.3 effect: +100% bomb area and damage
+    * Hunter -> Sentry (builder, ranger): spawns a turret that shoots projectiles, each dealing X damage, Lv.3 effect: +50% attack speed and the projectiles ricochet twice
   Looping
-    Change end screen
-    Loop button on end screen
-    Looping lets you continue with the current snake until you die
-    Difficulty is increased according to the formula for levels 25+
-    Snake size goes up by 1 every loop, up to 12
-  Balance
-    * Decreased reroll cost to 8
-    * Increased sage's attack speed
+    * Change end screen
+    * Loop button on end screen
+    * Looping lets you continue with the current snake until you die
+    * Difficulty is increased according to the formula for levels 25+
+    * Snake size goes up by 1 every loop, up to 12
+    * Don't offer items if at maximum items
   QoL
-    Your party + items on end, death and passive screens - https://i.imgur.com/JJUddT3.png
-    Volume slider
-    Add visuals divine intervention, fairy buff
-    Options menu from buy screen
+    Increase item choice slots to 4
     Add option for mouse cursor to always be visible
-    Add main menu
-      Soundtrack button
-      Arena run button
-      Options button
-      Quit button
-    https://i.imgur.com/4hOt5uX.png "party 7/9"
-    https://i.imgur.com/dlGbx0k.png lvl 3 effect on shop card
+    Show cooldown on elite attack
+    Add visuals divine intervention, fairy buff
+    Party + items on death screen
+    * Silenced units are now gray
+    * Items on end screen
+    * Items on passive screen
+    * Selling items
+    * Decreased sound effect volume for shoot 5
   Bug fixes
-    Fix fullscreen with different resolutions that don't scale properly - https://steamcommunity.com/app/915310/discussions/0/3106901665841020282/
-    Fix enemies still spawning after arena clear (this happens with the extra enemy spawns that were blocked earlier)
-    Kill enemies that go outside play area - https://i.imgur.com/QPgZbve.png
-    https://i.imgur.com/lCdPFZx.png - dvr crash, already fixed i think
-    https://i.imgur.com/Rk6qbDD.png - merchant doesnt give reroll if dies
-    https://i.imgur.com/8he1WDm.png - infinite money
-    https://i.imgur.com/0wZ5wma.png - max unit bugged when changing ng mid run, https://i.imgur.com/qrExpq5.png
-    https://i.imgur.com/1soUUdk.png - 5th position stops shooting when 1-4 die
-    https://i.imgur.com/cJMFDfc.png - lasting 7 doesnt work?
-    "your build" only shows alive units, this is the same problem as merchant not giving interest if dead?
-    https://i.imgur.com/Ta3lBui.png - Pet bug due to enemies spawning after arena is clear
-
+    Fix stars
+    * Fixed a series of crashes that happened sometimes right before changing from the arena back to the shop
+    * Fixed merchant not giving interest or free reroll if it died in combat
+    * Fixed shoot 5 and death 6 not working if a unit placed before it on the snake died
+    * Fixed undying unit from lasting 7 being able to become immortal if it was healed during the 10 seconds before it truly died
+    * Fixed a bug where max units wouldn't be properly changed when changing NG difficulty in the menu
+    * Fixed Whispers of Doom applying before curses, now it applies after and triggers their effect when enemies are killed due to it
+    * Fixed mobile users not being able to close the credits screen due to there being no close button
+    * Fixed shop party numbers not being updated when units are bought or sold
+    * Fixed a bug where movement speed would become zero if the game was paused while under the effects of decaying haste
+    * Fixed baneling burst not dealing the correct amount of damage
 
 ---
 
+Invoker - casts attacks and spells from other units
+  having a unit like this from the start will help ensure that attacks are behind function calls that can be accessed by another unit easily rather than mostly hidden like they are now
 
 Future ideas:
 Chaos related classes
-  Invoker - shoots a projectile with random properties, Lv.3 effect - ???
 Trappers:
 Emitters: +projectile damage, projectile mods
   warping
@@ -115,10 +113,21 @@ https://steamcommunity.com/app/915310/discussions/0/4658391921156086711/ - gener
 https://steamcommunity.com/app/915310/discussions/0/4658391921156325745/ - math on gold, rerolls and units
 https://steamcommunity.com/app/915310/discussions/0/3069747783686815659/ - general feedback
 https://steamcommunity.com/app/915310/discussions/0/3069747783688708231/ - general feedback
+https://steamcommunity.com/app/915310/discussions/0/3046104862443040220/ - general feedback
 Challenge mode
   Units die permanently when they die
   Slower scaling with less individually threatening units
   Max snake size goes up every 10 levels
+Draft mode
+Enemy ideas - https://steamcommunity.com/app/915310/discussions/0/3069747783691890511/
+Unit ideas - https://i.imgur.com/VNMS2YV.png
+Unit ideas - https://steamcommunity.com/app/915310/discussions/0/3069747783693969554/
+Unit ideas - https://steamcommunity.com/app/915310/discussions/0/3046104336668792953/
+
+Draft system
+Ban system
+Class select
+Random select
 
 
 --

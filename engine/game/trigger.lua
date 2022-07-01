@@ -3,6 +3,7 @@
 Trigger = Object:extend()
 function Trigger:init()
   self.triggers = {}
+  self.time = love.timer.getTime()
 end
 
 
@@ -171,6 +172,12 @@ function Trigger:get_timer_and_delay(tag)
 end
 
 
+function Trigger:get_time()
+  self.time = love.timer.getTime()
+  return self.time
+end
+
+
 function Trigger:resolve_delay(delay)
   if type(delay) == "table" then
     return random:float(delay[1], delay[2])
@@ -186,6 +193,8 @@ end
 
 
 function Trigger:update(dt)
+  self.time = self.time + dt
+
   for tag, trigger in pairs(self.triggers) do
     if trigger.timer then
       trigger.timer = trigger.timer + dt

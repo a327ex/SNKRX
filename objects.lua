@@ -5,11 +5,11 @@ function SpawnMarker:init(args)
   self.color = red[0]
   self.r = random:float(0, 2*math.pi)
   self.spring:pull(random:float(0.4, 0.6), 200, 10)
-  self.t:after(0.75, function() self.dead = true end)
+  self.t:after(1.125, function() self.dead = true end)
   self.m = 1
   self.n = 0
   pop3:play{pitch = 1, volume = 0.15}
-  self.t:every({0.13, 0.16}, function()
+  self.t:every({0.195, 0.24}, function()
     self.hidden = not self.hidden
     self.m = self.m*random:float(0.84, 0.87)
   end, nil, nil, 'blink')
@@ -233,6 +233,17 @@ function Unit:calculate_stats(first_run)
       if self.boss then
         local x = self.level
         local y = {0, 0, 3, 0, 0, 6, 0, 0, 9, 0, 0, 12, 0, 0, 18, 0, 0, 40, 0, 0, 32, 0, 0, 64, 90}
+        local y2 = {0, 0, 24, 0, 0, 28, 0, 0, 32, 0, 0, 36, 0, 0, 44, 0, 0, 64, 0, 0, 48, 0, 0, 80, 100}
+        local k = 1.1
+        for i = 26, 50 do y[i] = y2[i] end
+        for i = 51, 5000 do
+          local n = i % 25
+          if n == 0 then
+            n = 25
+            k = k + 0.1
+          end
+          y[i] = y2[n]*k
+        end
         self.base_hp = 100 + (current_new_game_plus*5) + (90 + current_new_game_plus*10)*y[x]
         self.base_dmg = (12 + current_new_game_plus*2) + (2 + current_new_game_plus)*y[x]
         self.base_mvspd = 35 + 1.5*y[x]
@@ -243,6 +254,15 @@ function Unit:calculate_stats(first_run)
       else
         local x = self.level
         local y = {0, 1, 3, 3, 4, 6, 5, 6, 9, 7, 8, 12, 10, 11, 15, 12, 13, 18, 16, 17, 21, 17, 20, 24, 25}
+        local k = 1.2
+        for i = 26, 5000 do
+          local n = i % 25
+          if n == 0 then
+            n = 25
+            k = k + 0.2
+          end
+          y[i] = y[n]*k
+        end
         self.base_hp = 25 + 16.5*y[x]
         self.base_dmg = 4.5 + 2.5*y[x]
         self.base_mvspd = 70 + 3*y[x]
@@ -251,6 +271,17 @@ function Unit:calculate_stats(first_run)
       if self.boss then
         local x = self.level
         local y = {0, 0, 3, 0, 0, 6, 0, 0, 9, 0, 0, 12, 0, 0, 18, 0, 0, 40, 0, 0, 32, 0, 0, 64, 90}
+        local y2 = {0, 0, 24, 0, 0, 28, 0, 0, 32, 0, 0, 36, 0, 0, 44, 0, 0, 64, 0, 0, 48, 0, 0, 80, 100}
+        local k = 1.1
+        for i = 26, 50 do y[i] = y2[i] end
+        for i = 51, 5000 do
+          local n = i % 25
+          if n == 0 then
+            n = 25
+            k = k + 0.1
+          end
+          y[i] = y2[n]*k
+        end
         self.base_hp = 100 + (current_new_game_plus*5) + (90 + current_new_game_plus*10)*y[x]
         self.base_dmg = (12 + current_new_game_plus*2) + (2 + current_new_game_plus)*y[x]
         self.base_mvspd = 35 + 1.5*y[x]
@@ -261,8 +292,17 @@ function Unit:calculate_stats(first_run)
       else
         local x = self.level
         local y = {0, 1, 3, 3, 4, 6, 5, 6, 9, 7, 8, 12, 10, 11, 15, 12, 13, 18, 16, 17, 21, 17, 20, 24, 25}
+        local k = 1.2
+        for i = 26, 5000 do
+          local n = i % 25
+          if n == 0 then
+            n = 25
+            k = k + 0.2
+          end
+          y[i] = y[n]*k
+        end
         self.base_hp = 22 + (current_new_game_plus*3) + (15 + current_new_game_plus*2.7)*y[x]
-        self.base_dmg = (4 + current_new_game_plus*1.15) + (2 + current_new_game_plus*1)*y[x]
+        self.base_dmg = (4 + current_new_game_plus*1.15) + (2 + current_new_game_plus*0.83)*y[x]
         self.base_mvspd = 70 + 3*y[x]
       end
     end
@@ -270,13 +310,22 @@ function Unit:calculate_stats(first_run)
     self.base_hp = 100*math.pow(2, self.level-1)
     self.base_dmg = 10*math.pow(2, self.level-1)
     self.base_mvspd = 75
-  elseif self:is(Illusion) then
+  elseif self:is(Automaton) then
     self.base_hp = 100*math.pow(2, self.level-1)
     self.base_dmg = 10*math.pow(2, self.level-1)
     self.base_mvspd = 15
   elseif self:is(EnemyCritter) or self:is(Critter) then
     local x = self.level
     local y = {0, 1, 3, 3, 4, 6, 5, 6, 9, 7, 8, 12, 10, 11, 15, 12, 13, 18, 16, 17, 21, 17, 20, 24, 25}
+    local k = 1.2
+    for i = 26, 5000 do
+      local n = i % 25
+      if n == 0 then
+        n = 25
+        k = k + 0.2
+      end
+      y[i] = y[n]*k
+    end
     self.base_hp = 25 + 30*(y[x] or 1)
     self.base_dmg = 10 + 3*(y[x] or 1)
     self.base_mvspd = 60 + 3*(y[x] or 1)
