@@ -4,5 +4,6 @@ if not path:find("init") then
   mlib = require(path .. ".mlib")
   -- if not web then clipper = require(path .. ".clipper") end
   ripple = require(path .. ".ripple")
-  steam = require 'luasteam'
+  local ok, luasteam = pcall(require, 'luasteam')
+  steam = ok and luasteam or require(path .. ".steam_stub")
 end
