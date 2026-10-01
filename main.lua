@@ -1196,15 +1196,15 @@ function init()
 
   -- Pair synergies: an extra bonus that turns on when two different classes both have their first set bonus active
   class_synergies = {
-    {name = 'marksmen', title = 'Marksmen', classes = {'ranger', 'rogue'}, description = 'rangers gain [yellow]+15%[fg] crit chance'},
+    {name = 'marksmen', title = 'Marksmen', classes = {'ranger', 'rogue'}, description = 'rangers gain [yellow]+8%[fg] crit chance'},
     {name = 'iron_wall', title = 'Iron Wall', classes = {'warrior', 'forcer'}, description = 'warriors gain [yellow]+25[fg] defense'},
     {name = 'field_medic', title = 'Field Medic', classes = {'warrior', 'healer'}, description = '[yellow]+30%[fg] healing received by all allies'},
-    {name = 'hexfire', title = 'Hexfire', classes = {'mage', 'voider'}, description = '[yellow]+25%[fg] damage over time to all allies'},
+    {name = 'hexfire', title = 'Hexfire', classes = {'mage', 'voider'}, description = '[yellow]+15%[fg] damage over time to all allies'},
     {name = 'mind_over_matter', title = 'Mind over Matter', classes = {'mage', 'psyker'}, description = '[yellow]+2[fg] total psyker orbs'},
     {name = 'shockwave', title = 'Shockwave', classes = {'nuker', 'forcer'}, description = '[yellow]+15%[fg] area damage and size to nukers'},
     {name = 'plague_swarm', title = 'Plague Swarm', classes = {'curser', 'swarmer'}, description = '[yellow]+2[fg] hits to critters'},
     {name = 'arcane_engineering', title = 'Arcane Engineering', classes = {'conjurer', 'enchanter'}, description = '[yellow]+25%[fg] construct damage and duration'},
-    {name = 'pickpockets', title = 'Pickpockets', classes = {'rogue', 'mercenary'}, description = '[yellow]+8%[fg] chance for enemies to drop gold on death'},
+    {name = 'pickpockets', title = 'Pickpockets', classes = {'rogue', 'mercenary'}, description = '[yellow]+4%[fg] chance for enemies to drop gold on death'},
   }
 
   get_active_synergies = function(units)

@@ -1270,11 +1270,11 @@ function Player:update(dt)
 
   -- Class pair synergies, applied on top of the class bonuses above (which are all re-set every frame)
   if synergy_active('marksmen') and table.any(self.classes, function(v) return v == 'ranger' end) then
-    self.chance_to_crit = (table.any(self.classes, function(v) return v == 'rogue' end) and self.chance_to_crit or 0) + 15
+    self.chance_to_crit = (table.any(self.classes, function(v) return v == 'rogue' end) and self.chance_to_crit or 0) + 8
   end
   if synergy_active('iron_wall') and table.any(self.classes, function(v) return v == 'warrior' end) then self.warrior_def_a = (self.warrior_def_a or 0) + 25 end
   if synergy_active('field_medic') then self.heal_effect_m = self.heal_effect_m*1.3 end
-  if synergy_active('hexfire') then self.dot_dmg_m = self.dot_dmg_m*1.25 end
+  if synergy_active('hexfire') then self.dot_dmg_m = self.dot_dmg_m*1.15 end
   if synergy_active('shockwave') and table.any(self.classes, function(v) return v == 'nuker' end) then
     self.nuker_area_size_m = self.nuker_area_size_m*1.15
     self.nuker_area_dmg_m = self.nuker_area_dmg_m*1.15
