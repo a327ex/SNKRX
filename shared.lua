@@ -14,6 +14,7 @@ function shared_init()
     purple = ColorRamp(Color'#8e559e', 0.025),
     blue2 = ColorRamp(Color'#4778ba', 0.025),
     yellow2 = ColorRamp(Color'#f59f10', 0.025),
+    teal = ColorRamp(Color'#2bb5a0', 0.025),
   }
   for name, color in pairs(colors) do
     _G[name] = color
@@ -502,6 +503,7 @@ global_text_tags = {
   purple = TextTag{draw = function(c, i, text) graphics.set_color(purple[0]) end},
   blue = TextTag{draw = function(c, i, text) graphics.set_color(blue[0]) end},
   blue2 = TextTag{draw = function(c, i, text) graphics.set_color(blue2[0]) end},
+  teal = TextTag{draw = function(c, i, text) graphics.set_color(teal[0]) end},
   bg = TextTag{draw = function(c, i, text) graphics.set_color(bg[0]) end},
   bg3 = TextTag{draw = function(c, i, text) graphics.set_color(bg[3]) end},
   bg10 = TextTag{draw = function(c, i, text) graphics.set_color(bg[10]) end},
@@ -903,6 +905,32 @@ function record_level_reached(level)
     best.level = level
     system.save_state()
   end
+  if run_modes.daily then
+    if not state.daily_best or state.daily_best.date ~= run_modes.daily then state.daily_best = {date = run_modes.daily, level = 0} end
+    if level > state.daily_best.level then
+      state.daily_best.level = level
+      system.save_state()
+    end
+  end
+end
+
+
+-- Keeps the last 10 finished runs (died or won), newest first
+function record_run_end(won, level, units)
+  state.run_history = state.run_history or {}
+  local characters = {}
+  for _, unit in ipairs(units or {}) do table.insert(characters, unit.character) end
+  table.insert(state.run_history, 1, {date = os.date('%Y-%m-%d'), level = level, won = won, ng = current_new_game_plus, time = math.floor(run_time or 0), units = characters,
+    challenge = run_modes.challenge, daily = run_modes.daily ~= nil, start = run_modes.start})
+  while #state.run_history > 10 do table.remove(state.run_history) end
+  system.save_state()
+end
+
+
+-- Random generator for shop and item rolls; daily runs reseed it per level so every player gets the same rolls
+function reseed_run_random(offset)
+  if run_modes.daily then run_random = Random(tonumber(run_modes.daily)*1000 + offset)
+  else run_random = random end
 end
 
 

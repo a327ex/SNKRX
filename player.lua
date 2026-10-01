@@ -608,6 +608,45 @@ function Player:init(args)
       end, nil, nil, 'spawn')
     end
 
+  elseif self.character == 'hatcher' then
+    self.t:every(3, function()
+      critter1:play{pitch = random:float(0.95, 1.05), volume = 0.3}
+      for i = 1, (self.level == 3 and 2 or 1) do
+        Critter{group = main.current.main, x = self.x, y = self.y, color = orange[0], r = random:float(0, 2*math.pi), v = 10, dmg = self.dmg, parent = self}
+      end
+    end, nil, nil, 'spawn')
+
+  elseif self.character == 'seraph' then
+    self.t:every(8, function()
+      local units = table.shuffle(self:get_all_units())
+      for i = 1, (self.level == 3 and 2 or 1) do
+        local unit = units[i]
+        if unit and not unit.dead then
+          unit.seraph_def_m = 2
+          buff1:play{pitch = random:float(0.95, 1.05), volume = 0.4}
+          HitCircle{group = main.current.effects, x = unit.x, y = unit.y, rs = 10, color = teal[0], duration = 0.3}
+          unit.t:after(6, function() unit.seraph_def_m = nil end, 'seraph')
+        end
+      end
+    end, nil, nil, 'attack')
+
+  elseif self.character == 'ringmaster' then
+    if self.level == 3 then
+      self.t:every(10, function()
+        for k = 1, 5 do
+          self.t:after((k - 1)*0.5, function()
+            if self.dead then return end
+            for i = -2, 2 do
+              Area{group = main.current.effects, x = self.x + i*20, y = self.y, w = self.area_size_m*16, color = teal[0], dmg = self.area_dmg_m*self.dmg, character = self.character, level = self.level, parent = self}
+              if i ~= 0 then
+                Area{group = main.current.effects, x = self.x, y = self.y + i*20, w = self.area_size_m*16, color = teal[0], dmg = self.area_dmg_m*self.dmg, character = self.character, level = self.level, parent = self}
+              end
+            end
+          end)
+        end
+      end, nil, nil, 'attack')
+    end
+
   elseif self.character == 'carver' then
     self.t:every(16, function()
       Tree{group = main.current.main, x = self.x, y = self.y, color = self.color, parent = self, level = self.level}
@@ -1169,22 +1208,9 @@ function Player:update(dt)
   if self.character == 'vagrant' and self.level == 3 then
     local class_levels = get_class_levels(self:get_all_units())
     local number_of_active_sets = 0
-    if class_levels.ranger >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.warrior >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.mage >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.rogue >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.healer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.conjurer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.enchanter >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.psyker >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.nuker >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.curser >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.forcer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.swarmer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.voider >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.sorcerer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.mercenary >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.explorer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    for _, class_level in pairs(class_levels) do
+      if class_level >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    end
     self.vagrant_dmg_m = 1 + 0.1*number_of_active_sets
     self.vagrant_aspd_m = 1 + 0.1*number_of_active_sets
   end
@@ -1235,22 +1261,9 @@ function Player:update(dt)
   if table.any(self.classes, function(v) return v == 'explorer' end) then
     local class_levels = get_class_levels(self:get_all_units())
     local number_of_active_sets = 0
-    if class_levels.ranger >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.warrior >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.mage >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.rogue >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.healer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.conjurer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.enchanter >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.psyker >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.nuker >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.curser >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.forcer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.swarmer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.voider >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.sorcerer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.mercenary >= 1 then number_of_active_sets = number_of_active_sets + 1 end
-    if class_levels.explorer >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    for _, class_level in pairs(class_levels) do
+      if class_level >= 1 then number_of_active_sets = number_of_active_sets + 1 end
+    end
     self.explorer_dmg_m = 1 + 0.15*number_of_active_sets
     self.explorer_aspd_m = 1 + 0.15*number_of_active_sets
   end
@@ -1345,10 +1358,49 @@ function Player:update(dt)
     else self.haste_mvspd_m = 1 end
   end
 
+  -- Optional self collision: the head running into the snake's own body (3rd unit onwards) kills that unit
+  if state.self_collision and self.leader and main.current:is(Arena) and not main.current.died and not main.current.won and (self.self_collision_cooldown or 0) <= 0 then
+    for i, follower in ipairs(self.followers) do
+      if i >= 2 and not follower.dead and math.distance(self.x, self.y, follower.x, follower.y) < 7 then
+        camera:shake(6, 0.5)
+        follower:hit(10*follower.max_hp, nil, true)
+        self.self_collision_cooldown = 1
+        break
+      end
+    end
+  end
+  if self.self_collision_cooldown then self.self_collision_cooldown = self.self_collision_cooldown - dt end
+
+  -- Assist class: buffs that depend on which units are next to each other in the snake
+  self.assist_dmg_m, self.assist_aspd_m, self.assist_def_m, self.dodge_chance, self.absorber = 1, 1, 1, 0, nil
+  if main.current.has_assists then
+    local units = self:get_all_units()
+    local index
+    for j, unit in ipairs(units) do if unit == self then index = j; break end end
+    if index then
+      for _, offset in ipairs({-1, 1}) do
+        local adjacent = units[index + offset]
+        if adjacent and not adjacent.dead then
+          if table.any(adjacent.classes, function(v) return v == 'assist' end) then
+            self.assist_dmg_m = self.assist_dmg_m*((main.current.assist_level == 2 and 1.2) or (main.current.assist_level == 1 and 1.1) or 1)
+          end
+          if adjacent.character == 'oracle' then self.dodge_chance = self.dodge_chance + (adjacent.level == 3 and 20 or 10) end
+          if adjacent.character == 'ringmaster' then
+            self.assist_dmg_m = self.assist_dmg_m*1.15
+            self.assist_aspd_m = self.assist_aspd_m*1.15
+            self.assist_def_m = self.assist_def_m*1.15
+          end
+          if adjacent.character == 'absorber' then self.absorber = adjacent end
+        end
+      end
+    end
+  end
+  if self.character == 'absorber' and self.level == 3 then self.assist_def_m = self.assist_def_m*1.25 end
+
   self.buff_def_a = (self.warrior_def_a or 0)
-  self.buff_aspd_m = (self.chronomancer_aspd_m or 1)*(self.vagrant_aspd_m or 1)*(self.outlaw_aspd_m or 1)*(self.fairy_aspd_m or 1)*(self.psyker_aspd_m or 1)*(self.chronomancy_aspd_m or 1)*(self.awakening_aspd_m or 1)*(self.berserking_aspd_m or 1)*(self.reinforce_aspd_m or 1)*(self.squire_aspd_m or 1)*(self.speed_3_aspd_m or 1)*(self.last_stand_aspd_m or 1)*(self.enchanted_aspd_m or 1)*(self.explorer_aspd_m or 1)*(self.magician_aspd_m or 1)
-  self.buff_dmg_m = (self.squire_dmg_m or 1)*(self.vagrant_dmg_m or 1)*(self.enchanter_dmg_m or 1)*(self.swordsman_dmg_m or 1)*(self.flagellant_dmg_m or 1)*(self.psyker_dmg_m or 1)*(self.ballista_dmg_m or 1)*(self.awakening_dmg_m or 1)*(self.reinforce_dmg_m or 1)*(self.payback_dmg_m or 1)*(self.immolation_dmg_m or 1)*(self.damage_4_dmg_m or 1)*(self.offensive_stance_dmg_m or 1)*(self.last_stand_dmg_m or 1)*(self.dividends_dmg_m or 1)*(self.explorer_dmg_m or 1)
-  self.buff_def_m = (self.squire_def_m or 1)*(self.ouroboros_def_m or 1)*(self.unwavering_stance_def_m or 1)*(self.reinforce_def_m or 1)*(self.defensive_stance_def_m or 1)*(self.last_stand_def_m or 1)*(self.unrelenting_stance_def_m or 1)*(self.hardening_def_m or 1)
+  self.buff_aspd_m = (self.chronomancer_aspd_m or 1)*(self.vagrant_aspd_m or 1)*(self.outlaw_aspd_m or 1)*(self.fairy_aspd_m or 1)*(self.psyker_aspd_m or 1)*(self.chronomancy_aspd_m or 1)*(self.awakening_aspd_m or 1)*(self.berserking_aspd_m or 1)*(self.reinforce_aspd_m or 1)*(self.squire_aspd_m or 1)*(self.speed_3_aspd_m or 1)*(self.last_stand_aspd_m or 1)*(self.enchanted_aspd_m or 1)*(self.explorer_aspd_m or 1)*(self.magician_aspd_m or 1)*(self.assist_aspd_m or 1)
+  self.buff_dmg_m = (self.squire_dmg_m or 1)*(self.vagrant_dmg_m or 1)*(self.enchanter_dmg_m or 1)*(self.swordsman_dmg_m or 1)*(self.flagellant_dmg_m or 1)*(self.psyker_dmg_m or 1)*(self.ballista_dmg_m or 1)*(self.awakening_dmg_m or 1)*(self.reinforce_dmg_m or 1)*(self.payback_dmg_m or 1)*(self.immolation_dmg_m or 1)*(self.damage_4_dmg_m or 1)*(self.offensive_stance_dmg_m or 1)*(self.last_stand_dmg_m or 1)*(self.dividends_dmg_m or 1)*(self.explorer_dmg_m or 1)*(self.assist_dmg_m or 1)
+  self.buff_def_m = (self.squire_def_m or 1)*(self.ouroboros_def_m or 1)*(self.unwavering_stance_def_m or 1)*(self.reinforce_def_m or 1)*(self.defensive_stance_def_m or 1)*(self.last_stand_def_m or 1)*(self.unrelenting_stance_def_m or 1)*(self.hardening_def_m or 1)*(self.assist_def_m or 1)*(self.seraph_def_m or 1)
   self.buff_area_size_m = (self.nuker_area_size_m or 1)*(self.magnify_area_size_m or 1)*(self.unleash_area_size_m or 1)*(self.last_stand_area_size_m or 1)
   self.buff_area_dmg_m = (self.nuker_area_dmg_m or 1)*(self.amplify_area_dmg_m or 1)*(self.unleash_area_dmg_m or 1)*(self.last_stand_area_dmg_m or 1)
   self.buff_mvspd_m = (self.wall_rider_mvspd_m or 1)*(self.centipede_mvspd_m or 1)*(self.squire_mvspd_m or 1)*(self.last_stand_mvspd_m or 1)*(self.haste_mvspd_m or 1)
@@ -1531,10 +1583,23 @@ function Player:on_collision_enter(other, contact)
 end
 
 
-function Player:hit(damage, from_undead)
+function Player:hit(damage, from_undead, from_absorber)
   if self.dead then return end
   if self.magician_invulnerable then return end
   if self.undead and not from_undead then return end
+  if not from_absorber then
+    -- Oracle: adjacent units can dodge
+    if self.dodge_chance and self.dodge_chance > 0 and random:bool(self.dodge_chance) then
+      HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 8, color = teal[0], duration = 0.1}
+      return
+    end
+    -- Absorber: takes part of the damage dealt to adjacent units
+    if self.absorber and not self.absorber.dead then
+      local absorbed = damage*(self.absorber.level == 3 and 0.75 or 0.5)
+      self.absorber:hit(absorbed, from_undead, true)
+      damage = damage - absorbed
+    end
+  end
   self.hfx:use('hit', 0.25, 200, 10)
   self:show_hp()
 

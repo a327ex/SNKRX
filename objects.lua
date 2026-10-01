@@ -306,6 +306,14 @@ function Unit:calculate_stats(first_run)
         self.base_mvspd = math.min(70 + 3*y[x], 70 + 3*y[150])
       end
     end
+    -- Challenge mode: enemies get relatively weaker as levels go up, down to 70% at level 25
+    if run_modes and run_modes.challenge then
+      local m = 1 - math.min(0.3, 0.012*self.level)
+      self.base_hp, self.base_dmg = m*self.base_hp, m*self.base_dmg
+    end
+    if main.current and main.current.modifier == 'fragile' then
+      self.base_hp, self.base_dmg = 0.7*self.base_hp, 1.3*self.base_dmg
+    end
   elseif self:is(Saboteur) then
     self.base_hp = 100*math.pow(2, self.level-1)
     self.base_dmg = 10*math.pow(2, self.level-1)

@@ -279,7 +279,7 @@ function Seeker:update(dt)
   if self.slowed then self.slow_mvspd_m = self.slowed
   else self.slow_mvspd_m = 1 end
 
-  self.buff_mvspd_m = (self.speed_boosting_mvspd_m or 1)*(self.slow_mvspd_m or 1)*(self.temporal_chains_mvspd_m or 1)*(self.tank and 0.35 or 1)*(self.deceleration_mvspd_m or 1)
+  self.buff_mvspd_m = (self.speed_boosting_mvspd_m or 1)*(self.slow_mvspd_m or 1)*(self.temporal_chains_mvspd_m or 1)*(self.tank and 0.35 or 1)*(self.deceleration_mvspd_m or 1)*(main.current.modifier == 'swift' and 1.25 or 1)
   self.buff_def_m = (self.seeping_def_m or 1)
 
   self:calculate_stats()
@@ -537,8 +537,8 @@ function Seeker:hit(damage, projectile, dot, from_enemy)
     HitCircle{group = main.current.effects, x = self.x, y = self.y, rs = 12}:scale_down(0.3):change_color(0.5, self.color)
     _G[random:table{'enemy_die1', 'enemy_die2'}]:play{pitch = random:float(0.9, 1.1), volume = 0.5}
 
-    if main.current.mercenary_level > 0 then
-      if random:bool(((main.current.mercenary_level == 2 and 16) or (main.current.mercenary_level == 1 and 8) or 0) + (synergy_active('pickpockets') and 4 or 0)) then
+    if main.current.mercenary_level > 0 or main.current.modifier == 'bounty' then
+      if random:bool(((main.current.mercenary_level == 2 and 16) or (main.current.mercenary_level == 1 and 8) or 0) + (synergy_active('pickpockets') and 4 or 0) + (main.current.modifier == 'bounty' and 10 or 0)) then
         trigger:after(0.01, function()
           if not main.current.main.world then return end
           Gold{group = main.current.main, x = self.x, y = self.y}
@@ -868,7 +868,7 @@ function EnemyCritter:update(dt)
 
   if self.slowed then self.slow_mvspd_m = self.slowed
   else self.slow_mvspd_m = 1 end
-  self.buff_mvspd_m = (self.speed_boosting_mvspd_m or 1)*(self.slow_mvspd_m or 1)*(self.temporal_chains_mvspd_m or 1)
+  self.buff_mvspd_m = (self.speed_boosting_mvspd_m or 1)*(self.slow_mvspd_m or 1)*(self.temporal_chains_mvspd_m or 1)*(main.current.modifier == 'swift' and 1.25 or 1)
   if not self.classes then return end
   self:calculate_stats()
 

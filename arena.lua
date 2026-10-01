@@ -20,6 +20,7 @@ function Arena:on_enter(from, level, loop, units, passives, shop_level, shop_xp,
 
   self.starting_units = table.copy(units)
   record_level_reached(self.level)
+  reseed_run_random(500 + self.level)
 
   if not state.mouse_control then
     input:set_mouse_visible(false)
@@ -101,6 +102,22 @@ function Arena:on_enter(from, level, loop, units, passives, shop_level, shop_xp,
   for _, unit in ipairs(units) do
     local chp = CharacterHP{group = self.effects, x = self.x1 + 8 + (unit.ii-1)*22, y = self.y2 + 14, parent = unit}
     unit.character_hp = chp
+  end
+
+  -- Arena modifiers: levels 4, 9, 14, 19... (when not a boss level) get a random twist
+  local relative_level = self.level - 25*self.loop
+  self.modifier = nil
+  if relative_level % 5 == 4 and relative_level % 6 ~= 0 and self.level % 25 ~= 0 then
+    self.modifier = run_random:table(arena_modifier_order)
+    local modifier = arena_modifiers[self.modifier]
+    self.modifier_text = Text2{group = self.ui, x = gw/2, y = self.y1 - 12, force_update = true, lines = {
+      {text = '[wavy_mid, yellow]' .. modifier.title .. '[fg] - ' .. modifier.description, font = pixul_font, alignment = 'center'}}}
+    self.t:after(6, function() if self.modifier_text then self.modifier_text.dead = true; self.modifier_text = nil end end)
+    if self.modifier == 'turrets' then
+      for _, p in ipairs({{self.x1, gh/2 - 40}, {self.x1, gh/2 + 40}, {self.x2, gh/2 - 40}, {self.x2, gh/2 + 40}}) do
+        ArenaTurret{group = self.effects, x = p[1], y = p[2], dmg = 10 + 3*self.level}
+      end
+    end
   end
 
   if self.level == 1000 then
@@ -259,6 +276,8 @@ function Arena:on_enter(from, level, loop, units, passives, shop_level, shop_xp,
   self.sorcerer_level = class_levels.sorcerer
   self.mercenary_level = class_levels.mercenary
   self.active_synergies = get_active_synergies(units)
+  self.assist_level = class_levels.assist
+  self.has_assists = table.any(units, function(u) return table.any(u.classes, function(v) return v == 'assist' end) end)
 
   self.t:every(0.375, function()
     local p = random:table(star_positions)
@@ -405,6 +424,7 @@ function Arena:quit()
       self.won = true
       locked_state = nil
       if self.level == 25 then record_win_time(run_time) end
+      record_run_end(true, self.level, self.units)
 
       if current_new_game_plus == new_game_plus then
         new_game_plus = new_game_plus + 1
@@ -433,6 +453,12 @@ function Arena:quit()
           CharacterPart{group = self.ui, x = 20, y = 40 + (i-1)*19, character = unit.character, level = unit.level, force_update = true, cant_click = true, parent = self}
           Text2{group = self.ui, x = 20 + 14 + pixul_font:get_text_width(unit.character)/2, y = 40 + (i-1)*19, force_update = true, lines = {
             {text = '[' .. character_color_strings[unit.character] .. ']' .. unit.character, font = pixul_font, alignment = 'left'}
+          }}
+        end
+        local synergy_titles = get_active_synergy_titles(self.units)
+        if synergy_titles then
+          Text2{group = self.ui, x = 20 + pixul_font:get_text_width(synergy_titles)/2, y = 40 + #self.units*19 + 4, force_update = true, lines = {
+            {text = '[yellow]' .. synergy_titles, font = pixul_font, alignment = 'left'}
           }}
         end
         for i, passive in ipairs(self.passives) do
@@ -544,6 +570,12 @@ function Arena:quit()
             {text = '[' .. character_color_strings[unit.character] .. ']' .. unit.character, font = pixul_font, alignment = 'left'}
           }}
         end
+        local synergy_titles = get_active_synergy_titles(self.units)
+        if synergy_titles then
+          Text2{group = self.ui, x = 20 + pixul_font:get_text_width(synergy_titles)/2, y = 40 + #self.units*19 + 4, force_update = true, lines = {
+            {text = '[yellow]' .. synergy_titles, font = pixul_font, alignment = 'left'}
+          }}
+        end
         for i, passive in ipairs(self.passives) do
           ItemCard{group = self.ui, x = 120 + (i-1)*30, y = gh - 30, w = 30, h = 45, sx = 0.75, sy = 0.75, force_update = true, passive = passive.passive , level = passive.level, xp = passive.xp, parent = self}
         end
@@ -569,10 +601,10 @@ function Arena:set_passives(from_reroll)
   local w = 4*card_w + 3*20
   self.choosing_passives = true
   self.cards = {}
-  local passive_1 = random:table_remove(run_passive_pool)
-  local passive_2 = random:table_remove(run_passive_pool)
-  local passive_3 = random:table_remove(run_passive_pool)
-  local passive_4 = random:table_remove(run_passive_pool)
+  local passive_1 = run_random:table_remove(run_passive_pool)
+  local passive_2 = run_random:table_remove(run_passive_pool)
+  local passive_3 = run_random:table_remove(run_passive_pool)
+  local passive_4 = run_random:table_remove(run_passive_pool)
   if passive_1 then
     table.insert(self.cards, PassiveCard{group = main.current.ui, x = gw/2 - w/2 + 0*(card_w + 20) + card_w/2 + 45, y = gh/2 - 20, w = card_w, h = card_h, card_i = 1, arena = self, passive = passive_1, force_update = true})
   end
@@ -669,6 +701,7 @@ function Arena:die()
     input:set_mouse_visible(true)
     self.t:cancel('divine_punishment')
     self.died = true
+    record_run_end(false, self.level, self.units)
     locked_state = nil
     system.save_run()
     self.t:tween(2, self, {main_slow_amount = 0}, math.linear, function() self.main_slow_amount = 0 end)
@@ -809,6 +842,17 @@ function Arena:gain_gold()
     end
   end
   self.gold_gained = random:int(level_to_gold_gained[self.level][1], level_to_gold_gained[self.level][2])
+  if self.modifier == 'swift' then self.gold_gained = self.gold_gained + 3 end
+  -- Pardoners give gold for each unit next to them in the snake
+  if self.player and not self.player.dead then
+    local units = self.player:get_all_units()
+    for i, unit in ipairs(units) do
+      if unit.character == 'pardoner' then
+        local adjacent = (units[i-1] and 1 or 0) + (units[i+1] and 1 or 0)
+        self.gold_gained = self.gold_gained + adjacent*(unit.level == 3 and 2 or 1)
+      end
+    end
+  end
   self.interest = math.min(math.floor(gold/5), 5) + math.min((merchant and math.floor(gold/10) or 0), 10)
   gold = gold + self.gold_gained + self.gold_picked_up + self.interest
 end
@@ -816,6 +860,18 @@ end
 
 function Arena:transition()
   self.transitioning = true
+  -- Challenge mode: units that died in the arena are gone for good
+  if run_modes.challenge and self.player then
+    local alive = {}
+    for _, unit in ipairs(self.player:get_all_units()) do
+      if not unit.dead then alive[unit.character] = true end
+    end
+    local survivors = {}
+    for _, unit in ipairs(self.units) do
+      if alive[unit.character] then table.insert(survivors, unit) end
+    end
+    self.units = survivors
+  end
   if not self.lock then locked_state = nil end
   ui_transition2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
   TransitionEffect{group = main.transitions, x = self.player.x, y = self.player.y, color = state.dark_transitions and bg[-2] or self.color, transition_action = function(t)
@@ -979,9 +1035,8 @@ function Arena:spawn_n_enemies(p, j, n, pass)
     SpawnEffect{group = self.effects, x = p.x + o.x, y = p.y + o.y, action = function(x, y)
       spawn1:play{pitch = random:float(0.8, 1.2), volume = 0.15}
       if not pass then
-        check_circle:move_to(x, y)
-        local objects = self.main:get_objects_in_shape(check_circle, {Seeker, EnemyCritter, Critter, Player, Sentry, Automaton, Bomb, Volcano, Saboteur, Pet, Turret})
-        if #objects > 0 then self.enemy_spawns_prevented = self.enemy_spawns_prevented + 1; return end
+        x, y = self:find_free_spawn_position(x, y)
+        if not x then self.enemy_spawns_prevented = self.enemy_spawns_prevented + 1; return end
       end
 
       if random:bool(table.reduce(level_to_elite_spawn_weights[self.level], function(memo, v) return memo + v end)) then
@@ -993,6 +1048,62 @@ function Arena:spawn_n_enemies(p, j, n, pass)
       end
     end}
   end, n, nil, 'spawn_enemies_' .. j)
+end
+
+
+-- Checks cells on a 12px grid in growing rings around (x, y) and returns the first one inside the arena that no unit overlaps
+function Arena:find_free_spawn_position(x, y)
+  local check_circle = Circle(x, y, 6)
+  local blocking = {Seeker, EnemyCritter, Critter, Player, Sentry, Automaton, Bomb, Volcano, Saboteur, Pet, Turret}
+  for ring = 0, 3 do
+    for i = -ring, ring do
+      for j = -ring, ring do
+        if math.max(math.abs(i), math.abs(j)) == ring then
+          local cx, cy = x + 12*i, y + 12*j
+          if cx > self.x1 + 6 and cx < self.x2 - 6 and cy > self.y1 + 6 and cy < self.y2 - 6 then
+            check_circle:move_to(cx, cy)
+            if #self.main:get_objects_in_shape(check_circle, blocking) == 0 then return cx, cy end
+          end
+        end
+      end
+    end
+  end
+end
+
+
+arena_modifier_order = {'swift', 'fragile', 'turrets', 'bounty'}
+arena_modifiers = {
+  swift = {title = 'Swift', description = 'enemies move 25% faster, +3 gold at the end of the round'},
+  fragile = {title = 'Glass Horde', description = 'enemies have 30% less health but deal 30% more damage'},
+  turrets = {title = 'Turrets', description = 'turrets on the walls fire at your snake'},
+  bounty = {title = 'Bounty', description = 'enemies have a 10% chance to drop gold'},
+}
+
+
+-- Wall turret for the 'turrets' arena modifier
+ArenaTurret = Object:extend()
+ArenaTurret:implement(GameObject)
+function ArenaTurret:init(args)
+  self:init_game_object(args)
+  self.t:every({3, 4.5}, function()
+    local arena = main.current
+    local player = arena.player
+    if not player or player.dead or arena.died or arena.won or arena.quitting or arena.arena_clear_text or arena.choosing_passives then return end
+    local r = math.atan2(player.y - self.y, player.x - self.x)
+    shoot1:play{pitch = random:float(0.95, 1.05), volume = 0.15}
+    HitCircle{group = arena.effects, x = self.x + 6*math.cos(r), y = self.y + 6*math.sin(r), rs = 5, color = red[0]}
+    EnemyProjectile{group = arena.main, x = self.x + 10*math.cos(r), y = self.y + 10*math.sin(r), color = red[0], r = r, v = 90, dmg = self.dmg, source = 'shooter'}
+  end)
+end
+
+
+function ArenaTurret:update(dt)
+  self:update_game_object(dt)
+end
+
+
+function ArenaTurret:draw()
+  graphics.rectangle(self.x, self.y, 8, 12, 2, 2, red[0])
 end
 
 

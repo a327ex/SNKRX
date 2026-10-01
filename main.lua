@@ -147,6 +147,7 @@ function init()
   sorcerer = Image('sorcerer')
   mercenary = Image('mercenary')
   explorer = Image('explorer')
+  assist = Image('assist')
   star = Image('star')
   arrow = Image('arrow')
   centipede = Image('centipede')
@@ -251,6 +252,7 @@ function init()
     ['sorcerer'] = blue2[0],
     ['mercenary'] = yellow2[0],
     ['explorer'] = fg[0],
+    ['assist'] = teal[0],
   }
 
   class_color_strings = {
@@ -270,6 +272,7 @@ function init()
     ['sorcerer'] = 'blue2',
     ['mercenary'] = 'yellow2',
     ['explorer'] = 'fg',
+    ['assist'] = 'teal',
   }
 
   character_names = {
@@ -330,6 +333,12 @@ function init()
     ['usurer'] = 'Usurer',
     ['gambler'] = 'Gambler',
     ['thief'] = 'Thief',
+    ['hatcher'] = 'Hatcher',
+    ['oracle'] = 'Oracle',
+    ['absorber'] = 'Absorber',
+    ['seraph'] = 'Seraph',
+    ['pardoner'] = 'Pardoner',
+    ['ringmaster'] = 'Ringmaster',
   }
 
   character_colors = {
@@ -390,6 +399,12 @@ function init()
     ['usurer'] = purple[0],
     ['gambler'] = yellow2[0],
     ['thief'] = red[0],
+    ['hatcher'] = orange[0],
+    ['oracle'] = teal[0],
+    ['absorber'] = teal[0],
+    ['seraph'] = teal[0],
+    ['pardoner'] = teal[0],
+    ['ringmaster'] = teal[0],
   }
 
   character_color_strings = {
@@ -450,6 +465,12 @@ function init()
     ['usurer'] = 'purple',
     ['gambler'] = 'yellow2',
     ['thief'] = 'red',
+    ['hatcher'] = 'orange',
+    ['oracle'] = 'teal',
+    ['absorber'] = 'teal',
+    ['seraph'] = 'teal',
+    ['pardoner'] = 'teal',
+    ['ringmaster'] = 'teal',
   }
 
   character_classes = {
@@ -470,7 +491,7 @@ function init()
     ['squire'] = {'warrior', 'enchanter'},
     ['cannoneer'] = {'ranger', 'nuker'},
     ['dual_gunner'] = {'ranger', 'rogue'},
-    -- ['hunter'] = {'ranger', 'conjurer', 'forcer'},
+    ['hunter'] = {'ranger', 'conjurer'},
     ['sentry'] = {'ranger', 'conjurer'},
     ['chronomancer'] = {'mage', 'enchanter'},
     ['spellblade'] = {'mage', 'rogue'},
@@ -510,6 +531,12 @@ function init()
     ['usurer'] = {'curser', 'mercenary', 'voider'},
     ['gambler'] = {'mercenary', 'sorcerer'},
     ['thief'] = {'rogue', 'mercenary'},
+    ['hatcher'] = {'swarmer'},
+    ['oracle'] = {'assist'},
+    ['absorber'] = {'assist', 'warrior'},
+    ['seraph'] = {'assist', 'healer'},
+    ['pardoner'] = {'assist', 'mercenary'},
+    ['ringmaster'] = {'assist', 'nuker'},
   }
 
   character_class_strings = {
@@ -530,7 +557,7 @@ function init()
     ['squire'] = '[yellow]Warrior, [blue]Enchanter',
     ['cannoneer'] = '[green]Ranger, [red]Nuker',
     ['dual_gunner'] = '[green]Ranger, [red]Rogue',
-    -- ['hunter'] = '[green]Ranger, [orange]Conjurer, [yellow]Forcer',
+    ['hunter'] = '[green]Ranger, [orange]Builder',
     ['sentry'] = '[green]Ranger, [orange]Builder',
     ['chronomancer'] = '[blue]Mage, Enchanter',
     ['spellblade'] = '[blue]Mage, [red]Rogue',
@@ -570,6 +597,12 @@ function init()
     ['usurer'] = '[purple]Curser, [yellow2]Mercenary, [purple]Voider',
     ['gambler'] = '[yellow2]Mercenary, [blue2]Sorcerer',
     ['thief'] = '[red]Rogue, [yellow2]Mercenary',
+    ['hatcher'] = '[orange]Swarmer',
+    ['oracle'] = '[teal]Assist',
+    ['absorber'] = '[teal]Assist, [yellow]Warrior',
+    ['seraph'] = '[teal]Assist, [green]Healer',
+    ['pardoner'] = '[teal]Assist, [yellow2]Mercenary',
+    ['ringmaster'] = '[teal]Assist, [red]Nuker',
   }
 
   get_character_stat_string = function(character, level)
@@ -647,6 +680,12 @@ function init()
     ['usurer'] = function(lvl) return '[fg]curses [yellow]3[fg] nearby enemies indefinitely with debt, dealing [yellow]' .. get_character_stat('usurer', lvl, 'dmg') .. '[fg] damage per second' end,
     ['gambler'] = function(lvl) return '[fg]deal [yellow]2X[fg] damage to a single random enemy where X is how much gold you have' end,
     ['thief'] = function(lvl) return '[fg]throws a knife that deals [yellow]' .. 2*get_character_stat('thief', lvl, 'dmg') .. '[fg] damage and chains [yellow]5[fg] times' end,
+    ['hatcher'] = function(lvl) return '[fg]spawns [yellow]1[fg] small critter every [yellow]3[fg] seconds' end,
+    ['oracle'] = function(lvl) return '[yellow]+10%[fg] chance for adjacent units to dodge attacks' end,
+    ['absorber'] = function(lvl) return '[fg]absorbs [yellow]50%[fg] of the damage taken by adjacent units' end,
+    ['seraph'] = function(lvl) return '[fg]every [yellow]8[fg] seconds, gives [yellow]1[fg] random ally [yellow]+100%[fg] defense for [yellow]6[fg] seconds' end,
+    ['pardoner'] = function(lvl) return '[fg]gain [yellow]+1[fg] gold at the end of each round for each adjacent unit' end,
+    ['ringmaster'] = function(lvl) return '[yellow]+15%[fg] damage, attack speed and defense to adjacent units' end,
   }
 
   character_effect_names = {
@@ -707,6 +746,12 @@ function init()
     ['usurer'] = '[purple]Bankruptcy',
     ['gambler'] = '[yellow2]Multicast',
     ['thief'] = '[red]Ultrakill',
+    ['hatcher'] = '[orange]Brood',
+    ['oracle'] = '[teal]Foresight',
+    ['absorber'] = '[teal]Bulwark',
+    ['seraph'] = '[teal]Sanctuary',
+    ['pardoner'] = '[teal]Indulgences',
+    ['ringmaster'] = '[teal]Grand Finale',
   }
 
   character_effect_names_gray = {
@@ -767,6 +812,12 @@ function init()
     ['usurer'] = '[light_bg]Bankruptcy',
     ['gambler'] = '[light_bg]Multicast',
     ['thief'] = '[light_bg]Ultrakill',
+    ['hatcher'] = '[light_bg]Brood',
+    ['oracle'] = '[light_bg]Foresight',
+    ['absorber'] = '[light_bg]Bulwark',
+    ['seraph'] = '[light_bg]Sanctuary',
+    ['pardoner'] = '[light_bg]Indulgences',
+    ['ringmaster'] = '[light_bg]Grand Finale',
   }
 
   character_effect_descriptions = {
@@ -827,6 +878,12 @@ function init()
     ['usurer'] = function() return '[fg]if the same enemy is cursed [yellow]3[fg] times it takes [yellow]' .. 10*get_character_stat('usurer', 3, 'dmg') .. '[fg] damage' end,
     ['gambler'] = function() return '[yellow]60/40/20%[fg] chance to cast the attack [yellow]2/3/4[fg] times' end,
     ['thief'] = function() return '[fg]if the knife crits it deals [yellow]' .. 10*get_character_stat('thief', 3, 'dmg') .. '[fg] damage, chains [yellow]10[fg] times and grants [yellow]1[fg] gold' end,
+    ['hatcher'] = function() return '[fg]spawns [yellow]2[fg] critters at a time instead' end,
+    ['oracle'] = function() return '[yellow]+20%[fg] dodge chance to adjacent units instead' end,
+    ['absorber'] = function() return '[fg]absorbs [yellow]75%[fg] of the damage instead and gains [yellow]+25%[fg] defense' end,
+    ['seraph'] = function() return '[fg]chooses [yellow]2[fg] allies instead' end,
+    ['pardoner'] = function() return '[yellow]+2[fg] gold for each adjacent unit instead' end,
+    ['ringmaster'] = function() return '[fg]every [yellow]10[fg] seconds, creates a cross that deals AoE damage [yellow]5[fg] times' end,
   }
 
   character_effect_descriptions_gray = {
@@ -887,6 +944,12 @@ function init()
     ['usurer'] = function() return '[light_bg]if the same enemy is cursed 3 times it takes ' .. 10*get_character_stat('usurer', 3, 'dmg') .. ' damage' end,
     ['gambler'] = function() return '[light_bg]60/40/20% chance to cast the attack 2/3/4 times' end,
     ['thief'] = function() return '[light_bg]if the knife crits it deals ' .. 10*get_character_stat('thief', 3, 'dmg') .. ' damage, chains 10 times and grants 1 gold' end,
+    ['hatcher'] = function() return '[light_bg]spawns 2 critters at a time instead' end,
+    ['oracle'] = function() return '[light_bg]+20% dodge chance to adjacent units instead' end,
+    ['absorber'] = function() return '[light_bg]absorbs 75% of the damage instead and gains +25% defense' end,
+    ['seraph'] = function() return '[light_bg]chooses 2 allies instead' end,
+    ['pardoner'] = function() return '[light_bg]+2 gold for each adjacent unit instead' end,
+    ['ringmaster'] = function() return '[light_bg]every 10 seconds, creates a cross that deals AoE damage 5 times' end,
   }
 
   character_stats = {
@@ -947,6 +1010,12 @@ function init()
     ['usurer'] = function(lvl) return get_character_stat_string('usurer', lvl) end,
     ['gambler'] = function(lvl) return get_character_stat_string('gambler', lvl) end,
     ['thief'] = function(lvl) return get_character_stat_string('thief', lvl) end,
+    ['hatcher'] = function(lvl) return get_character_stat_string('hatcher', lvl) end,
+    ['oracle'] = function(lvl) return get_character_stat_string('oracle', lvl) end,
+    ['absorber'] = function(lvl) return get_character_stat_string('absorber', lvl) end,
+    ['seraph'] = function(lvl) return get_character_stat_string('seraph', lvl) end,
+    ['pardoner'] = function(lvl) return get_character_stat_string('pardoner', lvl) end,
+    ['ringmaster'] = function(lvl) return get_character_stat_string('ringmaster', lvl) end,
   }
 
   class_stat_multipliers = {
@@ -966,6 +1035,7 @@ function init()
     ['sorcerer'] = {hp = 0.8, dmg = 1.3, aspd = 1, area_dmg = 1.2, area_size = 1, def = 0.8, mvspd = 1},
     ['mercenary'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 1},
     ['explorer'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 1.25},
+    ['assist'] = {hp = 1.1, dmg = 0.9, aspd = 1, area_dmg = 1, area_size = 1, def = 1.1, mvspd = 1},
     ['seeker'] = {hp = 0.5, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 0.3},
     ['mini_boss'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 0.3},
     ['enemy_critter'] = {hp = 1, dmg = 1, aspd = 1, area_dmg = 1, area_size = 1, def = 1, mvspd = 0.5},
@@ -1007,17 +1077,18 @@ function init()
     end,
     ['mercenary'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+8%[light_bg]/[' .. ylb2(lvl) .. ']+16% [fg]chance for enemies to drop gold on death' end,
     ['explorer'] = function(lvl) return '[yellow]+15%[fg] attack speed and damage per active class to allied explorers' end,
+    ['assist'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+10%[light_bg]/[' .. ylb2(lvl) .. ']+20% [fg]damage to units next to each assist in the snake' end,
   }
 
   tier_to_characters = {
-    [1] = {'vagrant', 'swordsman', 'magician', 'archer', 'scout', 'cleric', 'arcanist', 'merchant'},
-    [2] = {'wizard', 'bomber', 'sage', 'squire', 'dual_gunner', 'sentry', 'chronomancer', 'barbarian', 'cryomancer', 'beastmaster', 'jester', 'carver', 'psychic', 'witch', 'silencer', 'outlaw', 'miner'},
-    [3] = {'elementor', 'stormweaver', 'spellblade', 'psykeeper', 'engineer', 'juggernaut', 'pyromancer', 'host', 'assassin', 'bane', 'barrager', 'infestor', 'flagellant', 'artificer', 'usurer', 'gambler'},
-    [4] = {'priest', 'highlander', 'psykino', 'fairy', 'blade', 'plague_doctor', 'cannoneer', 'vulcanist', 'warden', 'corruptor', 'thief'},
+    [1] = {'vagrant', 'swordsman', 'magician', 'archer', 'scout', 'cleric', 'arcanist', 'merchant', 'hunter', 'launcher', 'hatcher', 'oracle'},
+    [2] = {'wizard', 'bomber', 'sage', 'squire', 'dual_gunner', 'sentry', 'chronomancer', 'barbarian', 'cryomancer', 'beastmaster', 'jester', 'carver', 'psychic', 'witch', 'silencer', 'outlaw', 'miner', 'absorber', 'seraph'},
+    [3] = {'elementor', 'stormweaver', 'spellblade', 'psykeeper', 'juggernaut', 'pyromancer', 'host', 'assassin', 'bane', 'barrager', 'infestor', 'flagellant', 'artificer', 'gambler', 'pardoner'},
+    [4] = {'priest', 'highlander', 'psykino', 'fairy', 'blade', 'plague_doctor', 'cannoneer', 'vulcanist', 'warden', 'corruptor', 'thief', 'lich', 'engineer', 'usurer', 'ringmaster'},
   }
 
-  non_attacking_characters = {'cleric', 'stormweaver', 'squire', 'chronomancer', 'sage', 'psykeeper', 'bane', 'carver', 'fairy', 'priest', 'flagellant', 'merchant', 'miner'}
-  non_cooldown_characters = {'squire', 'chronomancer', 'psykeeper', 'merchant', 'miner'}
+  non_attacking_characters = {'cleric', 'stormweaver', 'squire', 'chronomancer', 'sage', 'psykeeper', 'bane', 'carver', 'fairy', 'priest', 'flagellant', 'merchant', 'miner', 'oracle', 'absorber', 'seraph', 'pardoner', 'ringmaster'}
+  non_cooldown_characters = {'squire', 'chronomancer', 'psykeeper', 'merchant', 'miner', 'oracle', 'absorber', 'pardoner', 'ringmaster'}
 
   character_tiers = {
     ['vagrant'] = 1,
@@ -1037,21 +1108,21 @@ function init()
     ['squire'] = 2,
     ['cannoneer'] = 4,
     ['dual_gunner'] = 2,
-    -- ['hunter'] = 2,
+    ['hunter'] = 1,
     ['sentry'] = 2,
     ['chronomancer'] = 2,
     ['spellblade'] = 3,
     ['psykeeper'] = 3,
-    ['engineer'] = 3,
+    ['engineer'] = 4,
     ['plague_doctor'] = 4,
     ['barbarian'] = 2,
     ['juggernaut'] = 3,
-    -- ['lich'] = 4,
+    ['lich'] = 4,
     ['cryomancer'] = 2,
     ['pyromancer'] = 3,
     ['corruptor'] = 4,
     ['beastmaster'] = 2,
-    -- ['launcher'] = 2,
+    ['launcher'] = 1,
     ['jester'] = 2,
     ['assassin'] = 3,
     ['host'] = 3,
@@ -1074,9 +1145,15 @@ function init()
     ['psychic'] = 2,
     ['miner'] = 2,
     ['merchant'] = 1,
-    ['usurer'] = 3,
+    ['usurer'] = 4,
     ['gambler'] = 3,
     ['thief'] = 4,
+    ['hatcher'] = 1,
+    ['oracle'] = 1,
+    ['absorber'] = 2,
+    ['seraph'] = 2,
+    ['pardoner'] = 3,
+    ['ringmaster'] = 4,
   }
 
   launches_projectiles = function(character)
@@ -1086,44 +1163,12 @@ function init()
   end
 
   get_number_of_units_per_class = function(units)
-    local rangers = 0
-    local warriors = 0
-    local healers = 0
-    local mages = 0
-    local nukers = 0
-    local conjurers = 0
-    local rogues = 0
-    local enchanters = 0
-    local psykers = 0
-    local cursers = 0
-    local forcers = 0
-    local swarmers = 0
-    local voiders = 0
-    local sorcerers = 0
-    local mercenaries = 0
-    local explorers = 0
+    local counts = {}
+    for class, _ in pairs(class_colors) do counts[class] = 0 end
     for _, unit in ipairs(units) do
-      for _, unit_class in ipairs(character_classes[unit.character]) do
-        if unit_class == 'ranger' then rangers = rangers + 1 end
-        if unit_class == 'warrior' then warriors = warriors + 1 end
-        if unit_class == 'healer' then healers = healers + 1 end
-        if unit_class == 'mage' then mages = mages + 1 end
-        if unit_class == 'nuker' then nukers = nukers + 1 end
-        if unit_class == 'conjurer' then conjurers = conjurers + 1 end
-        if unit_class == 'rogue' then rogues = rogues + 1 end
-        if unit_class == 'enchanter' then enchanters = enchanters + 1 end
-        if unit_class == 'psyker' then psykers = psykers + 1 end
-        if unit_class == 'curser' then cursers = cursers + 1 end
-        if unit_class == 'forcer' then forcers = forcers + 1 end
-        if unit_class == 'swarmer' then swarmers = swarmers + 1 end
-        if unit_class == 'voider' then voiders = voiders + 1 end
-        if unit_class == 'sorcerer' then sorcerers = sorcerers + 1 end
-        if unit_class == 'mercenary' then mercenaries = mercenaries + 1 end
-        if unit_class == 'explorer' then explorers = explorers + 1 end
-      end
+      for _, unit_class in ipairs(character_classes[unit.character]) do counts[unit_class] = counts[unit_class] + 1 end
     end
-    return {ranger = rangers, warrior = warriors, healer = healers, mage = mages, nuker = nukers, conjurer = conjurers, rogue = rogues,
-      enchanter = enchanters, psyker = psykers, curser = cursers, forcer = forcers, swarmer = swarmers, voider = voiders, sorcerer = sorcerers, mercenary = mercenaries, explorer = explorers}
+    return counts
   end
 
   get_class_levels = function(units)
@@ -1133,7 +1178,7 @@ function init()
         if number_of_units >= 6 then return 2
         elseif number_of_units >= 3 then return 1
         else return 0 end
-      elseif class == 'healer' or class == 'conjurer' or class == 'enchanter' or class == 'curser' or class == 'forcer' or class == 'swarmer' or class == 'voider' or class == 'mercenary' or class == 'psyker' then
+      elseif class == 'healer' or class == 'conjurer' or class == 'enchanter' or class == 'curser' or class == 'forcer' or class == 'swarmer' or class == 'voider' or class == 'mercenary' or class == 'psyker' or class == 'assist' then
         if number_of_units >= 4 then return 2
         elseif number_of_units >= 2 then return 1
         else return 0 end
@@ -1147,24 +1192,9 @@ function init()
         else return 0 end
       end
     end
-    return {
-      ranger = units_to_class_level(units_per_class.ranger, 'ranger'),
-      warrior = units_to_class_level(units_per_class.warrior, 'warrior'),
-      mage = units_to_class_level(units_per_class.mage, 'mage'),
-      nuker = units_to_class_level(units_per_class.nuker, 'nuker'),
-      rogue = units_to_class_level(units_per_class.rogue, 'rogue'),
-      healer = units_to_class_level(units_per_class.healer, 'healer'),
-      conjurer = units_to_class_level(units_per_class.conjurer, 'conjurer'),
-      enchanter = units_to_class_level(units_per_class.enchanter, 'enchanter'),
-      psyker = units_to_class_level(units_per_class.psyker, 'psyker'),
-      curser = units_to_class_level(units_per_class.curser, 'curser'),
-      forcer = units_to_class_level(units_per_class.forcer, 'forcer'),
-      swarmer = units_to_class_level(units_per_class.swarmer, 'swarmer'),
-      voider = units_to_class_level(units_per_class.voider, 'voider'),
-      sorcerer = units_to_class_level(units_per_class.sorcerer, 'sorcerer'),
-      mercenary = units_to_class_level(units_per_class.mercenary, 'mercenary'),
-      explorer = units_to_class_level(units_per_class.explorer, 'explorer'),
-    }
+    local levels = {}
+    for class, _ in pairs(class_colors) do levels[class] = units_to_class_level(units_per_class[class], class) end
+    return levels
   end
 
   get_classes = function(units)
@@ -1192,6 +1222,7 @@ function init()
     ['sorcerer'] = function(units) return 2, 4, 6, get_number_of_units_per_class(units).sorcerer end,
     ['mercenary'] = function(units) return 2, 4, nil, get_number_of_units_per_class(units).mercenary end,
     ['explorer'] = function(units) return 1, 1, nil, get_number_of_units_per_class(units).explorer end,
+    ['assist'] = function(units) return 2, 4, nil, get_number_of_units_per_class(units).assist end,
   }
 
   -- Pair synergies: an extra bonus that turns on when two different classes both have their first set bonus active
@@ -1214,6 +1245,15 @@ function init()
       if class_levels[synergy.classes[1]] >= 1 and class_levels[synergy.classes[2]] >= 1 then active[synergy.name] = true end
     end
     return active
+  end
+
+  -- Comma separated titles of the active synergies for a party, or nil if none are active
+  get_active_synergy_titles = function(units)
+    local active, titles = get_active_synergies(units), {}
+    for _, synergy in ipairs(class_synergies) do
+      if active[synergy.name] then table.insert(titles, synergy.title) end
+    end
+    if #titles > 0 then return table.concat(titles, ', ') end
   end
 
   synergy_active = function(name)
@@ -1729,6 +1769,9 @@ function init()
   if not state.current_new_game_plus then state.current_new_game_plus = current_new_game_plus end
   max_units = math.clamp(7 + current_new_game_plus, 7, 12)
 
+  -- Modes of the current run: start = 'standard'/'draft'/'class pick'/'random', challenge = true/nil, daily = 'YYYYMMDD'/nil
+  run_modes = {}
+  run_random = random
   main_song_instance = _G[random:table{'song1', 'song2', 'song3', 'song4', 'song5'}]:play{volume = 0.5}
   main = Main()
 

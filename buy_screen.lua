@@ -47,6 +47,9 @@ function BuyScreen:on_enter(from, level, loop, units, passives, shop_level, shop
   self.shop_xp = shop_xp
   camera.x, camera.y = gw/2, gh/2
   max_units = math.clamp(7 + current_new_game_plus + self.loop, 7, 12)
+  -- Challenge mode: the snake starts 2 units smaller and grows back by 1 at levels 11 and 21
+  if run_modes.challenge then max_units = math.max(max_units - 2 + math.min(2, math.floor((self.level - 1)/10)), 3) end
+  reseed_run_random(self.level)
 
   input:set_mouse_visible(true)
 
@@ -230,6 +233,7 @@ function BuyScreen:draw()
   self.effects:draw()
   if self.items_text then self.items_text:draw(32, 145) end
   if self.level_text then self.level_text:draw(265, gh - 20) end
+  if self.synergy_titles then graphics.print_centered('synergies: ' .. self.synergy_titles, pixul_font, 265, gh - 38, 0, 1, 1, nil, nil, yellow[0]) end
 
   if self.unit_grabbed then
     local x, y = camera:get_mouse_position()
@@ -342,9 +346,9 @@ function BuyScreen:set_cards(shop_level, dont_spawn_effect, first_call)
   local shop_level = shop_level or 1
   local tier_weights = level_to_shop_odds[shop_level]
   repeat 
-    unit_1 = random:table(tier_to_characters[random:weighted_pick(unpack(tier_weights))])
-    unit_2 = random:table(tier_to_characters[random:weighted_pick(unpack(tier_weights))])
-    unit_3 = random:table(tier_to_characters[random:weighted_pick(unpack(tier_weights))])
+    unit_1 = run_random:table(tier_to_characters[run_random:weighted_pick(unpack(tier_weights))])
+    unit_2 = run_random:table(tier_to_characters[run_random:weighted_pick(unpack(tier_weights))])
+    unit_3 = run_random:table(tier_to_characters[run_random:weighted_pick(unpack(tier_weights))])
     all_units = {unit_1, unit_2, unit_3}
   until not table.all(all_units, function(v) return table.any(non_attacking_characters, function(u) return v == u end) end)
   if first_call and locked_state then
@@ -367,6 +371,8 @@ function BuyScreen:set_party_and_sets()
     table.insert(self.characters, CharacterPart{group = self.main, x = gw - 30, y = y + (i-1)*19, character = unit.character, level = unit.level, reserve = unit.reserve, i = i, spawn_effect = unit.spawn_effect, parent = self})
     unit.spawn_effect = false
   end
+
+  self.synergy_titles = get_active_synergy_titles(self.units)
 
   if self.sets then for _, icon in ipairs(self.sets) do icon:die(true) end end
   self.sets = {}
