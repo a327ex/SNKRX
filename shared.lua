@@ -876,3 +876,59 @@ end
 function WallCover:draw()
   self.shape:draw(self.color)
 end
+
+
+-- Marks an achievement as earned in the local save and, if Steam is available, unlocks it on Steam too.
+-- state_name is the suffix of the state.achievement_* save key, steam_id is the Steamworks achievement API name.
+function unlock_achievement(state_name, steam_id)
+  state['achievement_' .. state_name] = true
+  system.save_state()
+  steam.userStats.setAchievement(steam_id)
+  steam.userStats.storeStats()
+end
+
+
+
+-- Best-run records, kept per NG+ difficulty: state.best_runs[ng] = {level = highest level reached, win_time = fastest win in seconds}
+function get_best_run(ng)
+  state.best_runs = state.best_runs or {}
+  state.best_runs[ng] = state.best_runs[ng] or {}
+  return state.best_runs[ng]
+end
+
+
+function record_level_reached(level)
+  local best = get_best_run(current_new_game_plus)
+  if level > (best.level or 0) then
+    best.level = level
+    system.save_state()
+  end
+end
+
+
+function record_win_time(t)
+  local best = get_best_run(current_new_game_plus)
+  if not best.win_time or t < best.win_time then
+    best.win_time = t
+    system.save_state()
+  end
+end
+
+
+function format_run_time(t)
+  return string.format('%d:%02d', math.floor(t/60), math.floor(t%60))
+end
+
+
+-- Every item that can show up in a run. Returns a new table each call since runs remove items from their pool as they're taken.
+function new_run_passive_pool()
+  return {
+    'centipede', 'ouroboros_technique_r', 'ouroboros_technique_l', 'amplify', 'resonance', 'ballista', 'call_of_the_void', 'crucio', 'speed_3', 'damage_4', 'shoot_5', 'death_6', 'lasting_7',
+    'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'hextouch', 'whispers_of_doom', 'tremor', 'heavy_impact',
+    'fracture', 'meat_shield', 'hive', 'baneling_burst', 'blunt_arrow', 'explosive_arrow', 'divine_machine_arrow', 'chronomancy', 'awakening', 'divine_punishment', 'assassination', 'flying_daggers', 'ultimatum',
+    'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism', 'insurance', 'dividends', 'berserking',
+    'unwavering_stance', 'unrelenting_stance', 'blessing', 'haste', 'divine_barrage', 'orbitism', 'psyker_orbs', 'psychosink', 'rearm', 'taunt', 'construct_instability', 'intimidation', 'vulnerability',
+    'temporal_chains', 'ceremonial_dagger', 'homing_barrage', 'critical_strike', 'noxious_strike', 'infesting_strike', 'burning_strike', 'lucky_strike', 'healing_strike', 'stunning_strike', 'silencing_strike', 'culling_strike', 'lightning_strike',
+    'psycholeak', 'divine_blessing', 'hardening', 'kinetic_strike',
+  }
+end

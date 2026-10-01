@@ -13,7 +13,7 @@ https://user-images.githubusercontent.com/409773/119258159-ea982b00-bb9e-11eb-80
 
 ### Running
 
-Download this repository, `cd` into it and then run `engine/love/love.exe --console .`. You need to have Steam up to run it successfully.
+Download this repository, `cd` into it and then run `engine/love/love.exe --console .`. If Steam is running, achievements and Rich Presence are enabled; otherwise the game runs without them.
 
 ### LICENSE
 

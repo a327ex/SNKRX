@@ -46,7 +46,10 @@ end
 function engine_run(config)
   if not web then
     love.filesystem.setIdentity(config.game_name)
-    steam.init()
+    if not steam or not steam.init() then
+      print("Steam not available, running without Steam features.")
+      steam = steam_stub()
+    end
     system.load_state()
 
     local _, _, flags = love.window.getMode()
@@ -126,12 +129,14 @@ function engine_run(config)
             return a or 0
           end
         elseif name == "focus" then
-          --[[]
-          if main.current:is(Arena) then
-            if not a then open_options(main.current)
-            else close_options(main.current) end
+          -- Pause when the window loses focus mid-arena; the player resumes manually
+          local cur = main and main.current
+          if not a and not state.no_auto_pause and cur and cur:is(Arena) and not cur.paused and not cur.focus_pausing
+          and not cur.died and not cur.won and not cur.transitioning and not cur.choosing_passives and not cur.in_credits then
+            cur.focus_pausing = true
+            open_options(cur)
+            trigger:after(0.5, function() cur.focus_pausing = false end)
           end
-          ]]--
         elseif name == "keypressed" then input.keyboard_state[a] = true; input.last_key_pressed = a
         elseif name == "keyreleased" then input.keyboard_state[a] = false
         elseif name == "mousepressed" then input.mouse_state[input.mouse_buttons[c]] = true; input.last_key_pressed = input.mouse_buttons[c]

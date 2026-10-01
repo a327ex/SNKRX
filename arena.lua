@@ -19,6 +19,7 @@ function Arena:on_enter(from, level, loop, units, passives, shop_level, shop_xp,
   self.lock = lock
 
   self.starting_units = table.copy(units)
+  record_level_reached(self.level)
 
   if not state.mouse_control then
     input:set_mouse_visible(false)
@@ -146,32 +147,11 @@ function Arena:on_enter(from, level, loop, units, passives, shop_level, shop_xp,
       end)
       self.t:every(function() return self.start_time <= 0 and (self.boss and self.boss.dead) and #self.main:get_objects_by_classes(self.enemies) <= 0 and not self.spawning_enemies and not self.quitting end, function()
         self:quit()
-        if self.level == 6 then
-          state.achievement_speed_booster = true
-          system.save_state()
-          steam.userStats.setAchievement('SPEED_BOOSTER')
-          steam.userStats.storeStats()
-        elseif self.level == 12 then
-          state.achievement_exploder = true
-          system.save_state()
-          steam.userStats.setAchievement('EXPLODER')
-          steam.userStats.storeStats()
-        elseif self.level == 18 then
-          state.achievement_swarmer = true
-          system.save_state()
-          steam.userStats.setAchievement('SWARMER')
-          steam.userStats.storeStats()
-        elseif self.level == 24 then
-          state.achievement_forcer = true
-          system.save_state()
-          steam.userStats.setAchievement('FORCER')
-          steam.userStats.storeStats()
-        elseif self.level == 25 then
-          state.achievement_cluster = true
-          system.save_state()
-          steam.userStats.setAchievement('CLUSTER')
-          steam.userStats.storeStats()
-        end
+        local level_achievement = ({
+          [6] = {'speed_booster', 'SPEED_BOOSTER'}, [12] = {'exploder', 'EXPLODER'}, [18] = {'swarmer', 'SWARMER'},
+          [24] = {'forcer', 'FORCER'}, [25] = {'cluster', 'CLUSTER'},
+        })[self.level]
+        if level_achievement then unlock_achievement(unpack(level_achievement)) end
       end)
     end)
   else
@@ -278,6 +258,7 @@ function Arena:on_enter(from, level, loop, units, passives, shop_level, shop_xp,
   self.conjurer_level = class_levels.conjurer
   self.sorcerer_level = class_levels.sorcerer
   self.mercenary_level = class_levels.mercenary
+  self.active_synergies = get_active_synergies(units)
 
   self.t:every(0.375, function()
     local p = random:table(star_positions)
@@ -379,15 +360,7 @@ function Arena:update(dt)
         gold = 3
         passives = {}
         main_song_instance:stop()
-        run_passive_pool = {
-          'centipede', 'ouroboros_technique_r', 'ouroboros_technique_l', 'amplify', 'resonance', 'ballista', 'call_of_the_void', 'crucio', 'speed_3', 'damage_4', 'shoot_5', 'death_6', 'lasting_7',
-          'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'hextouch', 'whispers_of_doom',
-          'tremor', 'heavy_impact', 'fracture', 'meat_shield', 'hive', 'baneling_burst', 'blunt_arrow', 'explosive_arrow', 'divine_machine_arrow', 'chronomancy', 'awakening', 'divine_punishment',
-          'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
-          'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance', 'blessing', 'haste', 'divine_barrage', 'orbitism', 'psyker_orbs', 'psychosink', 'rearm', 'taunt', 'construct_instability',
-          'intimidation', 'vulnerability', 'temporal_chains', 'ceremonial_dagger', 'homing_barrage', 'critical_strike', 'noxious_strike', 'infesting_strike', 'burning_strike', 'lucky_strike', 'healing_strike', 'stunning_strike',
-          'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 'kinetic_strike',
-        }
+        run_passive_pool = new_run_passive_pool()
         max_units = math.clamp(7 + current_new_game_plus + self.loop, 7, 12)
         main:add(BuyScreen'buy_screen')
         locked_state = nil
@@ -406,14 +379,16 @@ function Arena:update(dt)
     end
   end
 
-  self:update_game_object(dt*slow_amount)
+  -- The game speed option only speeds up gameplay, UI and music stay at normal speed
+  local game_speed = (self.paused or self.choosing_passives) and 1 or (state.game_speed or 1)
+  self:update_game_object(dt*slow_amount*game_speed)
   main_song_instance.pitch = math.clamp(slow_amount*music_slow_amount, 0.05, 1)
 
-  star_group:update(dt*slow_amount)
-  self.floor:update(dt*slow_amount)
-  self.main:update(dt*slow_amount*self.main_slow_amount)
-  self.post_main:update(dt*slow_amount)
-  self.effects:update(dt*slow_amount)
+  star_group:update(dt*slow_amount*game_speed)
+  self.floor:update(dt*slow_amount*game_speed)
+  self.main:update(dt*slow_amount*self.main_slow_amount*game_speed)
+  self.post_main:update(dt*slow_amount*game_speed)
+  self.effects:update(dt*slow_amount*game_speed)
   self.ui:update(dt*slow_amount)
   self.credits:update(dt)
 end
@@ -429,6 +404,7 @@ function Arena:quit()
       input:set_mouse_visible(true)
       self.won = true
       locked_state = nil
+      if self.level == 25 then record_win_time(run_time) end
 
       if current_new_game_plus == new_game_plus then
         new_game_plus = new_game_plus + 1
@@ -519,153 +495,28 @@ function Arena:quit()
         end
       end)
 
-      if current_new_game_plus == 2 then
-        state.achievement_new_game_1 = true
-        system.save_state()
-        steam.userStats.setAchievement('NEW_GAME_1')
-        steam.userStats.storeStats()
+      if current_new_game_plus == 2 then unlock_achievement('new_game_1', 'NEW_GAME_1') end
+      if current_new_game_plus == 6 then unlock_achievement('new_game_5', 'GAME_COMPLETE') end
+
+      -- Winning with a class set active (sorcerers need their level 3 bonus)
+      local class_win_achievements = {
+        {'ranger', 'rangers'}, {'warrior', 'warriors'}, {'mage', 'mages'}, {'rogue', 'rogues'}, {'healer', 'healers'}, {'enchanter', 'enchanters'},
+        {'nuker', 'nukers'}, {'conjurer', 'conjurers'}, {'psyker', 'psykers'}, {'curser', 'cursers'}, {'forcer', 'forcers'}, {'swarmer', 'swarmers'},
+        {'voider', 'voiders'}, {'sorcerer', 'sorcerers', 3}, {'mercenary', 'mercenaries'},
+      }
+      for _, a in ipairs(class_win_achievements) do
+        local class, plural, required_level = a[1], a[2], a[3] or 2
+        if self[class .. '_level'] >= required_level then unlock_achievement(plural .. '_win', plural:upper() .. '_WIN') end
       end
 
-      if current_new_game_plus == 6 then
-        state.achievement_new_game_5 = true
-        system.save_state()
-        steam.userStats.setAchievement('GAME_COMPLETE')
-        steam.userStats.storeStats()
-      end
-
-      if self.ranger_level >= 2 then
-        state.achievement_rangers_win = true
-        system.save_state()
-        steam.userStats.setAchievement('RANGERS_WIN')
-        steam.userStats.storeStats()
-      end
-
-      if self.warrior_level >= 2 then
-        state.achievement_warriors_win = true
-        system.save_state()
-        steam.userStats.setAchievement('WARRIORS_WIN')
-        steam.userStats.storeStats()
-      end
-
-      if self.mage_level >= 2 then
-        state.achievement_mages_win = true
-        system.save_state()
-        steam.userStats.setAchievement('MAGES_WIN')
-        steam.userStats.storeStats()
-      end
-
-      if self.rogue_level >= 2 then
-        state.achievement_rogues_win = true
-        system.save_state()
-        steam.userStats.setAchievement('ROGUES_WIN')
-        steam.userStats.storeStats()
-      end
-
-      if self.healer_level >= 2 then
-        state.achievement_healers_win = true
-        system.save_state()
-        steam.userStats.setAchievement('HEALERS_WIN')
-        steam.userStats.storeStats()
-      end
-
-      if self.enchanter_level >= 2 then
-        state.achievement_enchanters_win = true
-        system.save_state()
-        steam.userStats.setAchievement('ENCHANTERS_WIN')
-        steam.userStats.storeStats()
-      end
-
-      if self.nuker_level >= 2 then
-        state.achievement_nukers_win = true
-        system.save_state()
-        steam.userStats.setAchievement('NUKERS_WIN')
-        steam.userStats.storeStats()
-      end
-
-      if self.conjurer_level >= 2 then
-        state.achievement_conjurers_win = true
-        system.save_state()
-        steam.userStats.setAchievement('CONJURERS_WIN')
-        steam.userStats.storeStats()
-      end
-
-      if self.psyker_level >= 2 then
-        state.achievement_psykers_win = true
-        system.save_state()
-        steam.userStats.setAchievement('PSYKERS_WIN')
-        steam.userStats.storeStats()
-      end
-
-      if self.curser_level >= 2 then
-        state.achievement_cursers_win = true
-        system.save_state()
-        steam.userStats.setAchievement('CURSERS_WIN')
-        steam.userStats.storeStats()
-      end
-
-      if self.forcer_level >= 2 then
-        state.achievement_forcers_win = true
-        system.save_state()
-        steam.userStats.setAchievement('FORCERS_WIN')
-        steam.userStats.storeStats()
-      end
-
-      if self.swarmer_level >= 2 then
-        state.achievement_swarmers_win = true
-        system.save_state()
-        steam.userStats.setAchievement('SWARMERS_WIN')
-        steam.userStats.storeStats()
-      end
-
-      if self.voider_level >= 2 then
-        state.achievement_voiders_win = true
-        system.save_state()
-        steam.userStats.setAchievement('VOIDERS_WIN')
-        steam.userStats.storeStats()
-      end
-
-      if self.sorcerer_level >= 3 then
-        state.achievement_sorcerers_win = true
-        system.save_state()
-        steam.userStats.setAchievement('SORCERERS_WIN')
-        steam.userStats.storeStats()
-      end
-
-      if self.mercenary_level >= 2 then
-        state.achievement_mercenaries_win = true
-        system.save_state()
-        steam.userStats.setAchievement('MERCENARIES_WIN')
-        steam.userStats.storeStats()
-      end
-
-      local all_units_level_2 = true
-      for _, unit in ipairs(self.starting_units) do
-        if unit.level ~= 2 then
-          all_units_level_2 = false
-          break
+      local function all_starting_units_at_level(level)
+        for _, unit in ipairs(self.starting_units) do
+          if unit.level ~= level then return false end
         end
+        return true
       end
-      if all_units_level_2 then
-        state.achievement_level_2_win = true
-        system.save_state()
-        steam.userStats.setAchievement('LEVEL_2_WIN')
-        steam.userStats.storeStats()
-      end
-
-      local units = self.player:get_all_units()
-      local all_units_level_3 = true
-      for _, unit in ipairs(self.starting_units) do
-        if unit.level ~= 3 then
-          all_units_level_3 = false
-          break
-        end
-      end
-      if all_units_level_3 then
-        state.achievement_level_3_win = true
-        system.save_state()
-        steam.userStats.setAchievement('LEVEL_3_WIN')
-        steam.userStats.storeStats()
-      end
+      if all_starting_units_at_level(2) then unlock_achievement('level_2_win', 'LEVEL_2_WIN') end
+      if all_starting_units_at_level(3) then unlock_achievement('level_3_win', 'LEVEL_3_WIN') end
     end
 
   else
@@ -852,15 +703,7 @@ function Arena:die()
           gold = 3
           passives = {}
           main_song_instance:stop()
-          run_passive_pool = {
-            'centipede', 'ouroboros_technique_r', 'ouroboros_technique_l', 'amplify', 'resonance', 'ballista', 'call_of_the_void', 'crucio', 'speed_3', 'damage_4', 'shoot_5', 'death_6', 'lasting_7',
-            'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'hextouch', 'whispers_of_doom',
-            'tremor', 'heavy_impact', 'fracture', 'meat_shield', 'hive', 'baneling_burst', 'blunt_arrow', 'explosive_arrow', 'divine_machine_arrow', 'chronomancy', 'awakening', 'divine_punishment',
-            'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
-            'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance', 'blessing', 'haste', 'divine_barrage', 'orbitism', 'psyker_orbs', 'psychosink', 'rearm', 'taunt', 'construct_instability',
-            'intimidation', 'vulnerability', 'temporal_chains', 'ceremonial_dagger', 'homing_barrage', 'critical_strike', 'noxious_strike', 'infesting_strike', 'burning_strike', 'lucky_strike', 'healing_strike', 'stunning_strike',
-            'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 'kinetic_strike',
-          }
+          run_passive_pool = new_run_passive_pool()
           max_units = math.clamp(7 + current_new_game_plus, 7, 12)
           main:add(BuyScreen'buy_screen')
           system.save_run()

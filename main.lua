@@ -1194,6 +1194,32 @@ function init()
     ['explorer'] = function(units) return 1, 1, nil, get_number_of_units_per_class(units).explorer end,
   }
 
+  -- Pair synergies: an extra bonus that turns on when two different classes both have their first set bonus active
+  class_synergies = {
+    {name = 'marksmen', title = 'Marksmen', classes = {'ranger', 'rogue'}, description = 'rangers gain [yellow]+15%[fg] crit chance'},
+    {name = 'iron_wall', title = 'Iron Wall', classes = {'warrior', 'forcer'}, description = 'warriors gain [yellow]+25[fg] defense'},
+    {name = 'field_medic', title = 'Field Medic', classes = {'warrior', 'healer'}, description = '[yellow]+30%[fg] healing received by all allies'},
+    {name = 'hexfire', title = 'Hexfire', classes = {'mage', 'voider'}, description = '[yellow]+25%[fg] damage over time to all allies'},
+    {name = 'mind_over_matter', title = 'Mind over Matter', classes = {'mage', 'psyker'}, description = '[yellow]+2[fg] total psyker orbs'},
+    {name = 'shockwave', title = 'Shockwave', classes = {'nuker', 'forcer'}, description = '[yellow]+15%[fg] area damage and size to nukers'},
+    {name = 'plague_swarm', title = 'Plague Swarm', classes = {'curser', 'swarmer'}, description = '[yellow]+2[fg] hits to critters'},
+    {name = 'arcane_engineering', title = 'Arcane Engineering', classes = {'conjurer', 'enchanter'}, description = '[yellow]+25%[fg] construct damage and duration'},
+    {name = 'pickpockets', title = 'Pickpockets', classes = {'rogue', 'mercenary'}, description = '[yellow]+8%[fg] chance for enemies to drop gold on death'},
+  }
+
+  get_active_synergies = function(units)
+    local class_levels = get_class_levels(units)
+    local active = {}
+    for _, synergy in ipairs(class_synergies) do
+      if class_levels[synergy.classes[1]] >= 1 and class_levels[synergy.classes[2]] >= 1 then active[synergy.name] = true end
+    end
+    return active
+  end
+
+  synergy_active = function(name)
+    return main.current.active_synergies ~= nil and main.current.active_synergies[name] == true
+  end
+
   passive_names = {
     ['centipede'] = 'Centipede',
     ['ouroboros_technique_r'] = 'Ouroboros Technique R',
@@ -1717,15 +1743,7 @@ function init()
   
   --[[
   gold = 10
-  run_passive_pool = {
-    'centipede', 'ouroboros_technique_r', 'ouroboros_technique_l', 'amplify', 'resonance', 'ballista', 'call_of_the_void', 'crucio', 'speed_3', 'damage_4', 'shoot_5', 'death_6', 'lasting_7',
-    'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'hextouch', 'whispers_of_doom',
-    'tremor', 'heavy_impact', 'fracture', 'meat_shield', 'hive', 'baneling_burst', 'blunt_arrow', 'explosive_arrow', 'divine_machine_arrow', 'chronomancy', 'awakening', 'divine_punishment',
-    'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
-    'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance', 'blessing', 'haste', 'divine_barrage', 'orbitism', 'psyker_orbs', 'psychosink', 'rearm', 'taunt', 'construct_instability',
-    'intimidation', 'vulnerability', 'temporal_chains', 'ceremonial_dagger', 'homing_barrage', 'critical_strike', 'noxious_strike', 'infesting_strike', 'burning_strike', 'lucky_strike', 'healing_strike', 'stunning_strike',
-    'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 'kinetic_strike',
-  }
+  run_passive_pool = new_run_passive_pool()
   main:add(Arena'arena')
   main:go_to('arena', 21, 0, {
     {character = 'magician', level = 3},
@@ -1876,6 +1894,8 @@ function open_options(self)
         if self.quit_button then self.quit_button.dead = true; self.quit_button = nil end
         if self.screen_shake_button then self.screen_shake_button.dead = true; self.screen_shake_button = nil end
         if self.screen_movement_button then self.screen_movement_button.dead = true; self.screen_movement_button = nil end
+        if self.auto_pause_button then self.auto_pause_button.dead = true; self.auto_pause_button = nil end
+        if self.game_speed_button then self.game_speed_button.dead = true; self.game_speed_button = nil end
         if self.cooldown_snake_button then self.cooldown_snake_button.dead = true; self.cooldown_snake_button = nil end
         if self.arrow_snake_button then self.arrow_snake_button.dead = true; self.arrow_snake_button = nil end
         if self.ng_plus_plus_button then self.ng_plus_plus_button.dead = true; self.ng_plus_plus_button = nil end
@@ -1900,15 +1920,7 @@ function open_options(self)
           gold = 3
           passives = {}
           main_song_instance:stop()
-          run_passive_pool = {
-            'centipede', 'ouroboros_technique_r', 'ouroboros_technique_l', 'amplify', 'resonance', 'ballista', 'call_of_the_void', 'crucio', 'speed_3', 'damage_4', 'shoot_5', 'death_6', 'lasting_7',
-            'defensive_stance', 'offensive_stance', 'kinetic_bomb', 'porcupine_technique', 'last_stand', 'seeping', 'deceleration', 'annihilation', 'malediction', 'hextouch', 'whispers_of_doom',
-            'tremor', 'heavy_impact', 'fracture', 'meat_shield', 'hive', 'baneling_burst', 'blunt_arrow', 'explosive_arrow', 'divine_machine_arrow', 'chronomancy', 'awakening', 'divine_punishment',
-            'assassination', 'flying_daggers', 'ultimatum', 'magnify', 'echo_barrage', 'unleash', 'reinforce', 'payback', 'enchanted', 'freezing_field', 'burning_field', 'gravity_field', 'magnetism',
-            'insurance', 'dividends', 'berserking', 'unwavering_stance', 'unrelenting_stance', 'blessing', 'haste', 'divine_barrage', 'orbitism', 'psyker_orbs', 'psychosink', 'rearm', 'taunt', 'construct_instability',
-            'intimidation', 'vulnerability', 'temporal_chains', 'ceremonial_dagger', 'homing_barrage', 'critical_strike', 'noxious_strike', 'infesting_strike', 'burning_strike', 'lucky_strike', 'healing_strike', 'stunning_strike',
-            'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 'kinetic_strike',
-          }
+          run_passive_pool = new_run_passive_pool()
           max_units = math.clamp(7 + current_new_game_plus, 7, 12)
           main:add(BuyScreen'buy_screen')
           locked_state = nil
@@ -2024,28 +2036,28 @@ function open_options(self)
       love.window.setMode(window_width, window_height)
     end}
 
-    self.screen_shake_button = Button{group = self.ui, x = gw/2 - 57, y = gh - 100, w = 110, force_update = true, button_text = '[bg10]screen shake: ' .. tostring(state.no_screen_shake and 'no' or 'yes'), 
+    self.screen_shake_button = Button{group = self.ui, x = gw/2 - 22, y = gh - 100, w = 110, force_update = true, button_text = '[bg10]screen shake: ' .. tostring(state.no_screen_shake and 'no' or 'yes'), 
     fg_color = 'bg10', bg_color = 'bg', action = function(b)
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       state.no_screen_shake = not state.no_screen_shake
       b:set_text('screen shake: ' .. tostring(state.no_screen_shake and 'no' or 'yes'))
     end}
 
-    self.cooldown_snake_button = Button{group = self.ui, x = gw/2 + 75, y = gh - 100, w = 145, force_update = true, button_text = '[bg10]cooldowns on snake: ' .. tostring(state.cooldown_snake and 'yes' or 'no'), 
+    self.cooldown_snake_button = Button{group = self.ui, x = gw/2 + 110, y = gh - 100, w = 145, force_update = true, button_text = '[bg10]cooldowns on snake: ' .. tostring(state.cooldown_snake and 'yes' or 'no'), 
     fg_color = 'bg10', bg_color = 'bg', action = function(b)
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       state.cooldown_snake = not state.cooldown_snake
       b:set_text('cooldowns on snake: ' .. tostring(state.cooldown_snake and 'yes' or 'no'))
     end}
 
-    self.arrow_snake_button = Button{group = self.ui, x = gw/2 + 65, y = gh - 75, w = 125, force_update = true, button_text = '[bg10]arrow on snake: ' .. tostring(state.arrow_snake and 'yes' or 'no'),
+    self.arrow_snake_button = Button{group = self.ui, x = gw/2 + 15, y = gh - 75, w = 125, force_update = true, button_text = '[bg10]arrow on snake: ' .. tostring(state.arrow_snake and 'yes' or 'no'),
     fg_color = 'bg10', bg_color = 'bg', action = function(b)
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       state.arrow_snake = not state.arrow_snake
       b:set_text('arrow on snake: ' .. tostring(state.arrow_snake and 'yes' or 'no'))
     end}
 
-    self.screen_movement_button = Button{group = self.ui, x = gw/2 - 69, y = gh - 75, w = 135, force_update = true, button_text = '[bg10]screen movement: ' .. tostring(state.no_screen_movement and 'no' or 'yes'), 
+    self.screen_movement_button = Button{group = self.ui, x = gw/2 - 120, y = gh - 75, w = 135, force_update = true, button_text = '[bg10]screen movement: ' .. tostring(state.no_screen_movement and 'no' or 'yes'), 
     fg_color = 'bg10', bg_color = 'bg', action = function(b)
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       state.no_screen_movement = not state.no_screen_movement
@@ -2054,6 +2066,25 @@ function open_options(self)
         camera.r = 0
       end
       b:set_text('screen movement: ' .. tostring(state.no_screen_movement and 'no' or 'yes'))
+    end}
+
+    self.auto_pause_button = Button{group = self.ui, x = gw/2 - 132, y = gh - 100, w = 100, force_update = true, button_text = '[bg10]auto pause: ' .. tostring(state.no_auto_pause and 'no' or 'yes'),
+    fg_color = 'bg10', bg_color = 'bg', action = function(b)
+      ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      state.no_auto_pause = not state.no_auto_pause
+      b:set_text('auto pause: ' .. tostring(state.no_auto_pause and 'no' or 'yes'))
+    end}
+
+    self.game_speed_button = Button{group = self.ui, x = gw/2 + 135, y = gh - 75, w = 105, force_update = true, button_text = '[bg10]game speed: ' .. (state.game_speed or 1) .. 'x',
+    fg_color = 'bg10', bg_color = 'bg', action = function(b)
+      ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      local speeds = {1, 1.5, 2}
+      local next_speed = speeds[1]
+      for i, speed in ipairs(speeds) do
+        if speed == (state.game_speed or 1) then next_speed = speeds[i % #speeds + 1] end
+      end
+      state.game_speed = next_speed
+      b:set_text('game speed: ' .. state.game_speed .. 'x')
     end}
 
     if self:is(MainMenu) then
@@ -2122,6 +2153,8 @@ function close_options(self)
     if self.video_button_4 then self.video_button_4.dead = true; self.video_button_4 = nil end
     if self.screen_shake_button then self.screen_shake_button.dead = true; self.screen_shake_button = nil end
     if self.screen_movement_button then self.screen_movement_button.dead = true; self.screen_movement_button = nil end
+    if self.auto_pause_button then self.auto_pause_button.dead = true; self.auto_pause_button = nil end
+    if self.game_speed_button then self.game_speed_button.dead = true; self.game_speed_button = nil end
     if self.cooldown_snake_button then self.cooldown_snake_button.dead = true; self.cooldown_snake_button = nil end
     if self.arrow_snake_button then self.arrow_snake_button.dead = true; self.arrow_snake_button = nil end
     if self.quit_button then self.quit_button.dead = true; self.quit_button = nil end

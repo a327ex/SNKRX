@@ -538,7 +538,7 @@ function Seeker:hit(damage, projectile, dot, from_enemy)
     _G[random:table{'enemy_die1', 'enemy_die2'}]:play{pitch = random:float(0.9, 1.1), volume = 0.5}
 
     if main.current.mercenary_level > 0 then
-      if random:bool((main.current.mercenary_level == 2 and 16) or (main.current.mercenary_level == 1 and 8) or 0) then
+      if random:bool(((main.current.mercenary_level == 2 and 16) or (main.current.mercenary_level == 1 and 8) or 0) + (synergy_active('pickpockets') and 8 or 0)) then
         trigger:after(0.01, function()
           if not main.current.main.world then return end
           Gold{group = main.current.main, x = self.x, y = self.y}

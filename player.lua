@@ -1103,7 +1103,7 @@ function Player:init(args)
         end
       end
 
-      for i = 1, ((main.current.psyker_level == 2 and 4) or (main.current.psyker_level == 1 and 2) or (main.current.psyker_level == 0 and 0) or 0) do
+      for i = 1, ((main.current.psyker_level == 2 and 4) or (main.current.psyker_level == 1 and 2) or (main.current.psyker_level == 0 and 0) or 0) + (synergy_active('mind_over_matter') and 2 or 0) do
         local unit = random:table(#psykers > 0 and psykers or units)
         Projectile{group = main.current.main, x = unit.x + 24*math.cos(unit.r), y = unit.y + 24*math.sin(unit.r), color = fg[0], v = 200, dmg = unit.dmg, character = 'psyker', parent = unit}
       end
@@ -1267,6 +1267,19 @@ function Player:update(dt)
     else self.dot_dmg_m = 1 end
   end
   if self.call_of_the_void then self.dot_dmg_m = (self.dot_dmg_m or 1)*((self.call_of_the_void == 1 and 1.3) or (self.call_of_the_void == 2 and 1.6) or (self.call_of_the_void == 3 and 1.9) or 1) end
+
+  -- Class pair synergies, applied on top of the class bonuses above (which are all re-set every frame)
+  if synergy_active('marksmen') and table.any(self.classes, function(v) return v == 'ranger' end) then
+    self.chance_to_crit = (table.any(self.classes, function(v) return v == 'rogue' end) and self.chance_to_crit or 0) + 15
+  end
+  if synergy_active('iron_wall') and table.any(self.classes, function(v) return v == 'warrior' end) then self.warrior_def_a = (self.warrior_def_a or 0) + 25 end
+  if synergy_active('field_medic') then self.heal_effect_m = self.heal_effect_m*1.3 end
+  if synergy_active('hexfire') then self.dot_dmg_m = self.dot_dmg_m*1.25 end
+  if synergy_active('shockwave') and table.any(self.classes, function(v) return v == 'nuker' end) then
+    self.nuker_area_size_m = self.nuker_area_size_m*1.15
+    self.nuker_area_dmg_m = self.nuker_area_dmg_m*1.15
+  end
+  if synergy_active('arcane_engineering') then self.conjurer_buff_m = self.conjurer_buff_m*1.25 end
 
   if self.ouroboros_technique_l and self.leader then
     local units = self:get_all_units()
@@ -3888,7 +3901,7 @@ function Critter:init(args)
   self.t:after(0.5, function() self.invulnerable = false end)
 
   self.dmg = args.dmg or self.parent.dmg
-  self.hp = 1 + ((main.current.swarmer_level == 2 and 3) or (main.current.swarmer_level == 1 and 1) or 0) + (self.parent.hive or 0)
+  self.hp = 1 + ((main.current.swarmer_level == 2 and 3) or (main.current.swarmer_level == 1 and 1) or 0) + (self.parent.hive or 0) + (synergy_active('plague_swarm') and 2 or 0)
 end
 
 
